@@ -92,14 +92,22 @@ export default function NewsPage() {
                     {item.summary}
                   </p>
 
-                  {/* Date */}
-                  <time className="text-xs text-gray-400 font-medium">
-                    {new Date(item.date).toLocaleDateString("ko-KR", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </time>
+                  {/* Date & Source */}
+                  <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
+                    <time>
+                      {new Date(item.date).toLocaleDateString("ko-KR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </time>
+                    {item.sourceName && (
+                      <>
+                        <span aria-hidden="true">·</span>
+                        <span>{item.sourceName}</span>
+                      </>
+                    )}
+                  </div>
                 </div>
               </Link>
             ))}

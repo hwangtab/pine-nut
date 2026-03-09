@@ -5,7 +5,7 @@ import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import { timelineEvents, type TimelineEvent } from "@/data/timeline";
 
-const YEARS = ["전체", 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026] as const;
+const YEARS = ["전체", 2019, 2021, 2022, 2023, 2024, 2025, 2026] as const;
 
 const categoryColors: Record<TimelineEvent["category"], { dot: string; pill: string; pillText: string }> = {
   회의: { dot: "bg-green-500", pill: "bg-green-100", pillText: "text-green-800" },

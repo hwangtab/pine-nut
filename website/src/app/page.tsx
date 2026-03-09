@@ -179,7 +179,7 @@ export default function HomePage() {
             {[
               { target: 7, suffix: "년+", label: "투쟁 기간" },
               { target: 680, suffix: "회+", label: "집회 횟수" },
-              { target: 70, suffix: "대+", label: "주민 평균 연령" },
+              { target: 140, suffix: "개+", label: "연대 단체" },
             ].map((item) => (
               <div key={item.label} className="flex flex-col items-center">
                 <span className="text-4xl sm:text-5xl md:text-6xl font-black text-[var(--color-earth-light)]">
@@ -239,20 +239,24 @@ export default function HomePage() {
                 <strong className="text-[var(--color-text)]">
                   강원도 홍천군 화촌면
                 </strong>
-                에 위치한 작은 마을, 풍천리.
+                에 위치한 작은 마을, 풍천리. 산림청 지정{" "}
+                <strong className="text-[var(--color-text)]">
+                  &lsquo;100대 명품숲&rsquo;, 1,800ha 규모 국내 최대 잣나무 숲
+                </strong>
+                에 둘러싸인 가리산 자락의 산촌입니다.
               </p>
               <p>
                 <strong className="text-[var(--color-text)]">
-                  잣나무 숲으로 둘러싸인
-                </strong>{" "}
-                자연 속 공동체에서 주민들은 서로 기대며 살아왔습니다.
+                  주민 약 70%가 잣 생산으로 생계를 유지
+                </strong>
+                하는 이 마을은, 숲과 사람이 함께 숨 쉬는 곳입니다.
               </p>
               <p>
-                수십 년간{" "}
+                이 숲에는{" "}
                 <strong className="text-[var(--color-text)]">
-                  잣 생산으로 생계를 이어온
+                  산양(천연기념물), 까막딱다구리, 수달
                 </strong>{" "}
-                이 마을은, 숲과 사람이 함께 숨 쉬는 곳입니다.
+                등 멸종위기종이 서식하고 있습니다.
               </p>
             </div>
           </FadeIn>
@@ -276,25 +280,25 @@ export default function HomePage() {
               {
                 icon: TreePine,
                 title: "생태계 파괴",
-                desc: "잣나무 군락지와 야생동물 서식지가 사라집니다",
+                desc: "잣나무 약 11만 그루 벌채 예정, 153ha 산림 파괴. 산양·까막딱다구리·수달 서식지가 사라집니다",
                 delay: 0,
               },
               {
                 icon: Volume2,
                 title: "소음·분진",
-                desc: "대규모 공사로 고령 주민들의 건강이 위협받습니다",
+                desc: "84개월(7년) 공사, 총사업비 1.59조원 규모. 대규모 공사로 고령 주민들의 건강이 위협받습니다",
                 delay: 0.1,
               },
               {
                 icon: Home,
                 title: "공동체 와해",
-                desc: "수십 년간 이어온 마을 공동체가 해체됩니다",
+                desc: "51가구 수몰·이주 예정. 수십 년간 이어온 마을 공동체가 해체됩니다",
                 delay: 0.2,
               },
               {
                 icon: Sprout,
                 title: "생계 위협",
-                desc: "잣 생산지가 소멸하여 주민들의 생계수단이 사라집니다",
+                desc: "주민 70%가 잣 생산에 의존. 이미 2024년 10월 이설도로 건설로 2,256그루 벌채가 시작되었습니다",
                 delay: 0.3,
               },
             ].map((card) => (
@@ -328,20 +332,20 @@ export default function HomePage() {
             {[
               {
                 quote:
-                  "저는 올해 78살입니다. 이 마을에서 태어나 평생을 살았습니다. 잣나무 숲이 없어지면 우리는 어디로 가야 합니까.",
-                name: "김○○ 주민",
+                  "100년 된 잣나무 숲, 야생동물, 마을 공동체 모두 지키고 싶어요.",
+                name: "허순이 주민",
                 delay: 0,
               },
               {
                 quote:
-                  "매주 군청 앞에 섭니다. 다리가 아파도 섭니다. 우리 손주들에게 이 숲을 물려주고 싶습니다.",
-                name: "박○○ 주민",
+                  "매주 군청 앞에 섭니다. 우리가 아니면 누가 이 숲을 지킵니까.",
+                name: "풍천리 주민",
                 delay: 0.15,
               },
               {
                 quote:
-                  "전과자가 되었습니다. 70 평생 남에게 해를 끼친 적 없는 사람이, 내 땅을 지키겠다는 이유로 전과자가 되었습니다.",
-                name: "이○○ 주민",
+                  "퇴거불응 혐의로 벌금 300만원을 구형받았습니다. 70 평생 남에게 해를 끼친 적 없는 사람이, 내 땅을 지키겠다는 이유로.",
+                name: "기소된 주민",
                 delay: 0.3,
               },
             ].map((item) => (
@@ -439,8 +443,8 @@ export default function HomePage() {
             {[
               { number: "2019년~", label: "투쟁 시작" },
               { number: "680회+", label: "집회 횟수" },
-              { number: "30개+", label: "연대 단체" },
-              { number: "0회", label: "주민 동의" },
+              { number: "140개+", label: "연대 단체" },
+              { number: "11만+", label: "벌채 예정 잣나무" },
             ].map((stat, i) => (
               <FadeIn key={stat.label} delay={i * 0.1}>
                 <div>
