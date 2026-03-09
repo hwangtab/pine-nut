@@ -1,4 +1,4 @@
-import { Download, FileText, Image, Archive, Mail, Phone } from "lucide-react";
+import { FileText, Image, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,27 +12,37 @@ const pressKitItems = [
     title: "보도자료",
     description: "풍천리 양수발전소 반대 투쟁 보도자료",
     icon: FileText,
-    href: "#",
     color: "text-blue-600 bg-blue-50",
+    notice: "준비 중",
   },
   {
     title: "팩트시트",
     description: "풍천리 투쟁 핵심 정리 (1페이지)",
     icon: FileText,
-    href: "#",
     color: "text-purple-600 bg-purple-50",
+    notice: "준비 중",
   },
   {
     title: "사진 자료",
     description: "고화질 사진 모음 (ZIP)",
     icon: Image,
-    href: "#",
     color: "text-green-600 bg-green-50",
+    notice: "준비 중",
   },
 ];
 
 const factSheetData = [
   { label: "위치", value: "강원도 홍천군 화촌면 풍천리" },
+  { label: "사업자", value: "한국수력원자력(한수원)" },
+  { label: "시공자", value: "대우건설 컨소시엄" },
+  { label: "시설 규모", value: "600MW (300MW × 2기)" },
+  { label: "사업 면적", value: "1,530,279㎡ (약 153ha)" },
+  { label: "총 사업비", value: "1조 5,863억원" },
+  { label: "벌채 예정 잣나무", value: "약 11만 그루" },
+  { label: "잣나무 숲", value: "1,800ha (산림청 지정 '100대 명품숲')" },
+  { label: "수몰 가구", value: "51가구" },
+  { label: "주민 생계", value: "약 70%가 잣 생산으로 생계 유지" },
+  { label: "멸종위기종", value: "산양(천연기념물), 까막딱다구리, 수달 서식" },
   { label: "투쟁 기간", value: "2019년 3월 ~ 현재 (7년+)" },
   { label: "집회 횟수", value: "680회 이상" },
   { label: "주민 참여", value: "만장일치 반대" },
@@ -40,7 +50,6 @@ const factSheetData = [
     label: "주요 쟁점",
     value: "생태계 파괴, 소음·분진, 잣 생산지 소멸, 공동체 와해",
   },
-  { label: "사업자", value: "한국수력원자력" },
 ];
 
 export default function PressPage() {
@@ -66,10 +75,9 @@ export default function PressPage() {
             {pressKitItems.map((item) => {
               const Icon = item.icon;
               return (
-                <a
+                <div
                   key={item.title}
-                  href={item.href}
-                  className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
+                  className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-gray-100 shadow-sm"
                 >
                   <div
                     className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 ${item.color}`}
@@ -82,14 +90,16 @@ export default function PressPage() {
                   <p className="text-sm text-gray-500 mb-4 leading-relaxed">
                     {item.description}
                   </p>
-                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-forest)] group-hover:underline">
-                    <Download className="w-4 h-4" />
-                    다운로드
+                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-400">
+                    {item.notice}
                   </span>
-                </a>
+                </div>
               );
             })}
           </div>
+          <p className="mt-4 text-sm text-[var(--color-text-muted)] text-center">
+            보도 키트 자료는 현재 준비 중이며, 빠른 시일 내에 제공할 예정입니다.
+          </p>
         </section>
 
         {/* Fact Sheet Section */}
@@ -104,7 +114,7 @@ export default function PressPage() {
                   key={fact.label}
                   className="flex flex-col sm:flex-row sm:items-center px-6 py-4 gap-1 sm:gap-4"
                 >
-                  <dt className="text-sm font-bold text-gray-500 sm:w-32 shrink-0">
+                  <dt className="text-sm font-bold text-gray-500 sm:w-36 shrink-0">
                     {fact.label}
                   </dt>
                   <dd className="text-base text-gray-900 font-medium">
@@ -123,35 +133,23 @@ export default function PressPage() {
           </h2>
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8">
             <p className="text-gray-600 mb-6 leading-relaxed">
-              취재 및 자료 요청은 아래 연락처로 문의해 주세요. 빠른 시일 내에
+              취재 및 자료 요청은 빠띠 캠페인 페이지를 통해 문의해 주세요. 빠른 시일 내에
               답변드리겠습니다.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
-                <Mail className="w-5 h-5 text-[var(--color-forest)] mt-0.5 shrink-0" />
+                <ExternalLink className="w-5 h-5 text-[var(--color-forest)] mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-gray-500 mb-0.5">
-                    이메일
+                    캠페인 페이지
                   </p>
                   <a
-                    href="mailto:press@pungcheon.kr"
+                    href="https://campaigns.do/campaigns/1328"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-base font-medium text-gray-900 hover:text-[var(--color-forest)] transition-colors"
                   >
-                    press@pungcheon.kr
-                  </a>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
-                <Phone className="w-5 h-5 text-[var(--color-forest)] mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-semibold text-gray-500 mb-0.5">
-                    전화
-                  </p>
-                  <a
-                    href="tel:000-0000-0000"
-                    className="text-base font-medium text-gray-900 hover:text-[var(--color-forest)] transition-colors"
-                  >
-                    000-0000-0000
+                    빠띠 캠페인 페이지에서 문의하기
                   </a>
                 </div>
               </div>

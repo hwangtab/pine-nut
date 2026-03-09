@@ -13,20 +13,15 @@ const notoSansKR = Noto_Sans_KR({
 
 export const metadata: Metadata = {
   title: "풍천리를 지켜주세요 — 양수발전소 건설 반대",
+  metadataBase: new URL("https://pungcheonri.vercel.app"),
   description:
-    "경북 풍천리 주민들은 마을과 자연을 파괴하는 양수발전소 건설에 반대합니다. 40년 넘게 지켜온 삶의 터전, 깨끗한 물과 산림을 지키기 위한 주민들의 이야기를 들어주세요.",
+    "강원도 홍천군 화촌면 풍천리 주민들은 양수발전소 건설에 반대하며 7년 넘게 싸우고 있습니다. 680여 차례 집회, 70대 이상 고령 주민들의 생존권 투쟁에 함께해주세요.",
   openGraph: {
     title: "풍천리를 지켜주세요 — 양수발전소 건설 반대",
     description:
-      "40년 넘게 지켜온 마을, 양수발전소 건설로 사라질 위기에 처했습니다. 풍천리 주민들의 목소리에 귀 기울여 주세요.",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "풍천리를 지켜주세요",
-      },
-    ],
+      "7년간 680번의 외침. 강원도 홍천 풍천리 주민들의 양수발전소 반대 투쟁에 함께해주세요.",
+    siteName: "풍천리를 지켜주세요",
+    url: "https://pungcheonri.vercel.app",
     type: "website",
     locale: "ko_KR",
   },

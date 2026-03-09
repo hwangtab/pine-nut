@@ -102,9 +102,12 @@ function RecentSignatures() {
 
   return (
     <section className="w-full" aria-label="최근 서명">
-      <h2 className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]">
-        최근 서명
+      <h2 className="text-xl sm:text-2xl font-bold mb-2 text-[var(--color-text)]">
+        응원 메시지 예시
       </h2>
+      <p className="text-sm text-[var(--color-text-muted)] mb-6">
+        * 아래는 예시 메시지이며, 실제 서명 시 표시될 형태입니다.
+      </p>
       <div className="space-y-3 overflow-hidden max-h-[320px]">
         <AnimatePresence mode="popLayout">
           {ordered.slice(0, 5).map((sig, i) => (
@@ -148,6 +151,7 @@ export default function PetitionPage() {
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [agreeAge, setAgreeAge] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPrivacy, setShowPrivacy] = useState(false);
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -204,9 +208,26 @@ export default function PetitionPage() {
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
   };
 
-  const handleShareKakao = () => {
-    /* 카카오 SDK가 연동되면 여기에 구현 */
-    alert("카카오톡 공유 기능은 곧 연동될 예정입니다.");
+  const handleShareKakao = async () => {
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({
+          title: "풍천리를 지켜주세요",
+          text: "풍천리 주민들의 양수발전소 건설 반대 서명에 함께해주세요!",
+          url: window.location.href,
+        });
+      } catch {
+        /* 사용자가 공유를 취소한 경우 */
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        setUrlCopied(true);
+        setTimeout(() => setUrlCopied(false), 2000);
+      } catch {
+        /* fallback: do nothing */
+      }
+    }
   };
 
   return (
@@ -226,6 +247,9 @@ export default function PetitionPage() {
             <AnimatedCounter target={signatureCount} />
             <span className="text-[var(--color-text-muted)] text-lg mt-1">
               명이 함께하고 있습니다
+            </span>
+            <span className="text-[var(--color-text-muted)] text-xs mt-1">
+              * 서명 수는 예시이며, 실제 백엔드 연동 시 업데이트됩니다.
             </span>
           </div>
         </div>
@@ -359,11 +383,7 @@ export default function PetitionPage() {
                         <button
                           type="button"
                           className="underline text-[var(--color-sky)] hover:text-[var(--color-sky)]/80"
-                          onClick={() =>
-                            alert(
-                              "수집 항목: 이름, 이메일\n수집 목적: 서명 확인 및 캠페인 안내\n보유 기간: 캠페인 종료 후 즉시 파기\n\n동의를 거부할 수 있으며, 거부 시 서명 참여가 제한됩니다."
-                            )
-                          }
+                          onClick={() => setShowPrivacy(!showPrivacy)}
                         >
                           개인정보 수집·이용
                         </button>
@@ -371,6 +391,14 @@ export default function PetitionPage() {
                         <span className="text-[var(--color-warm)]">*</span>
                       </span>
                     </label>
+                    {showPrivacy && (
+                      <div className="ml-8 mt-2 p-4 bg-[var(--color-bg-warm)] rounded-xl text-sm text-[var(--color-text-muted)] leading-relaxed">
+                        <p className="mb-1"><strong>수집 항목:</strong> 이름, 이메일</p>
+                        <p className="mb-1"><strong>수집 목적:</strong> 서명 확인 및 캠페인 안내</p>
+                        <p className="mb-1"><strong>보유 기간:</strong> 캠페인 종료 후 즉시 파기</p>
+                        <p>동의를 거부할 수 있으며, 거부 시 서명 참여가 제한됩니다.</p>
+                      </div>
+                    )}
                     {errors.agreePrivacy && (
                       <p
                         id="sig-privacy-error"

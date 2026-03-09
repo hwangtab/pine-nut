@@ -234,10 +234,12 @@ export default function EnglishPage() {
                 media coverage of this story.
               </p>
               <a
-                href="mailto:pungcheon@example.com"
+                href="https://campaigns.do/campaigns/1328"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center text-sm font-bold text-white underline underline-offset-4 decoration-white/40 hover:decoration-white transition-colors"
               >
-                pungcheon@example.com
+                Contact via campaign page
               </a>
             </div>
           </div>

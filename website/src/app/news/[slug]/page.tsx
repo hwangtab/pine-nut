@@ -82,14 +82,33 @@ export default async function NewsDetailPage({
           {item.title}
         </h1>
 
-        {/* Date */}
-        <time className="block text-sm text-gray-400 font-medium mb-10">
-          {new Date(item.date).toLocaleDateString("ko-KR", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </time>
+        {/* Date & Source */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-400 font-medium mb-10">
+          <time>
+            {new Date(item.date).toLocaleDateString("ko-KR", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </time>
+          {item.sourceName && (
+            <>
+              <span aria-hidden="true">·</span>
+              {item.sourceUrl ? (
+                <a
+                  href={item.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--color-forest)] hover:underline"
+                >
+                  {item.sourceName} 원문 보기 &nearr;
+                </a>
+              ) : (
+                <span>{item.sourceName}</span>
+              )}
+            </>
+          )}
+        </div>
 
         {/* Content */}
         <div className="prose prose-lg max-w-none mb-12">

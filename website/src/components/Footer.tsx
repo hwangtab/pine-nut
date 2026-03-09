@@ -14,6 +14,7 @@ const quickLinks = [
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
 
   const handleNewsletterSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,21 +60,14 @@ export default function Footer() {
             <h3 className="text-base font-bold mb-4">연락처</h3>
             <ul className="space-y-2 text-sm text-white/70">
               <li>
-                <span className="block text-white/50 text-xs mb-0.5">이메일</span>
+                <span className="block text-white/50 text-xs mb-0.5">캠페인 페이지</span>
                 <a
-                  href="mailto:pungcheon@example.com"
+                  href="https://campaigns.do/campaigns/1328"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:text-white transition-colors"
                 >
-                  pungcheon@example.com
-                </a>
-              </li>
-              <li>
-                <span className="block text-white/50 text-xs mb-0.5">전화</span>
-                <a
-                  href="tel:054-000-0000"
-                  className="hover:text-white transition-colors"
-                >
-                  054-000-0000
+                  빠띠 캠페인 페이지 바로가기
                 </a>
               </li>
             </ul>
@@ -106,6 +100,9 @@ export default function Footer() {
                 >
                   구독하기
                 </button>
+                <p className="text-xs text-white/50">
+                  * 뉴스레터 기능은 현재 준비 중입니다.
+                </p>
               </form>
             )}
           </div>
@@ -115,32 +112,51 @@ export default function Footer() {
         <div className="mt-12 pt-8 border-t border-white/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/50">
           <p>&copy; {new Date().getFullYear()} 풍천리 주민회. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <Link
-              href="/privacy"
+            <button
+              type="button"
+              onClick={() => setShowPrivacy(!showPrivacy)}
               className="hover:text-white transition-colors"
             >
               개인정보처리방침
-            </Link>
+            </button>
             <a
-              href="https://facebook.com"
+              href="https://campaigns.do/campaigns/1328"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white transition-colors"
-              aria-label="페이스북"
             >
-              Facebook
-            </a>
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
-              aria-label="인스타그램"
-            >
-              Instagram
+              빠띠 캠페인
             </a>
           </div>
         </div>
+
+        {/* Privacy Policy Inline */}
+        {showPrivacy && (
+          <div className="mt-6 p-6 bg-white/10 rounded-xl text-sm text-white/80 leading-relaxed">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="font-bold text-white">개인정보처리방침</h4>
+              <button
+                type="button"
+                onClick={() => setShowPrivacy(false)}
+                className="text-white/50 hover:text-white transition-colors text-xs"
+              >
+                닫기
+              </button>
+            </div>
+            <p className="mb-2">
+              <strong>수집 항목:</strong> 이름, 이메일
+            </p>
+            <p className="mb-2">
+              <strong>수집 목적:</strong> 서명 확인 및 캠페인 소식 안내
+            </p>
+            <p className="mb-2">
+              <strong>보유 기간:</strong> 캠페인 종료 후 즉시 파기
+            </p>
+            <p>
+              동의를 거부할 수 있으며, 거부 시 서명 참여 및 뉴스레터 수신이 제한됩니다.
+            </p>
+          </div>
+        )}
       </div>
     </footer>
   );

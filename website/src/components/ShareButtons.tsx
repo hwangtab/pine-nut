@@ -17,8 +17,20 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
     return "";
   };
 
-  const handleKakao = () => {
-    alert("카카오톡 SDK 연동 예정");
+  const handleKakao = async () => {
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          url: getUrl(),
+        });
+      } catch {
+        /* 사용자가 공유를 취소한 경우 */
+      }
+    } else {
+      // Web Share API를 지원하지 않는 경우 URL 복사로 대체
+      handleCopyUrl();
+    }
   };
 
   const handleTwitter = () => {
