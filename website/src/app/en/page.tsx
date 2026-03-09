@@ -41,33 +41,45 @@ export default function EnglishPage() {
           <div className="space-y-6 text-[var(--color-text)] leading-relaxed text-base md:text-lg">
             <p>
               Pungcheon-ri is a small mountain village in{" "}
-              <strong>Hongcheon County, Gangwon Province, South Korea</strong>.
-              Nestled among ancient pine nut forests, its residents &mdash;
-              mostly in their 70s and older &mdash; have sustained their
-              livelihoods through pine nut harvesting and farming for decades.
+              <strong>Hongcheon County, Gangwon Province, South Korea</strong>,
+              nestled in a{" "}
+              <strong>1,800-hectare pine nut forest</strong> &mdash; the largest
+              in South Korea and one of the Korea Forest Service&rsquo;s
+              designated &ldquo;Top 100 Forests.&rdquo; Century-old Korean pine
+              nut trees grow along the slopes of Mt. Gari, and the forest is
+              home to endangered species including the{" "}
+              <strong>goral (natural monument), black woodpecker, and otter</strong>.
+              About <strong>70% of residents</strong> depend on pine nut
+              production for their livelihoods.
             </p>
             <p>
-              In 2019, the South Korean government announced plans to build a{" "}
-              <strong>pumped-storage hydroelectric power plant</strong> in the
-              area. The project would require carving away entire mountainsides,
-              constructing two massive artificial reservoirs, and destroying
-              hundreds of thousands of square meters of forest &mdash; the very
-              forest that sustains the village.
+              In 2019, <strong>Korea Hydro &amp; Nuclear Power (KHNP)</strong>{" "}
+              selected the area for a{" "}
+              <strong>600MW pumped-storage hydroelectric power plant</strong>{" "}
+              (2 &times; 300MW) after Hongcheon County applied to host the
+              project. The total cost is{" "}
+              <strong>1.59 trillion KRW (~$1.1 billion USD)</strong>, covering{" "}
+              <strong>153 hectares</strong> of project area. Construction is
+              contracted to the <strong>Daewoo E&amp;C consortium</strong>{" "}
+              (Daewoo E&amp;C, DL E&amp;C, Hyosung) at 615.5 billion KRW. An
+              estimated <strong>~110,000 pine nut trees</strong> are slated
+              for felling, and <strong>51 households</strong> face submersion
+              and relocation.
             </p>
             <p>
               The villagers voted <strong>unanimously to oppose</strong> the
               project. Since then, they have held{" "}
               <strong>over 680 weekly protests</strong> in front of the county
               office, traveled to Seoul to petition the National Assembly and
-              government ministries, and built alliances with environmental
-              organizations across the country.
+              government ministries, and built alliances with{" "}
+              <strong>over 140 organizations</strong> nationwide.
             </p>
             <p>
-              Despite their age, despite the personal cost &mdash; some
-              residents have even gained criminal records for their peaceful
-              resistance &mdash; they have not backed down. Their fight is
-              conducted entirely through{" "}
-              <strong>lawful, democratic means</strong>.
+              <strong>7 residents (ages 60&ndash;80)</strong> have been
+              criminally charged with refusal to vacate after a standoff at
+              Hongcheon County Hall in July 2024. Despite the personal cost,
+              they have not backed down. Their fight is conducted entirely
+              through <strong>lawful, democratic means</strong>.
             </p>
           </div>
         </div>
@@ -83,8 +95,8 @@ export default function EnglishPage() {
             {[
               { number: "7+", label: "Years of resistance" },
               { number: "680+", label: "Weekly protests held" },
-              { number: "70+", label: "Average age of residents" },
-              { number: "100%", label: "Community opposition" },
+              { number: "140+", label: "Organizations in solidarity" },
+              { number: "110K+", label: "Pine nut trees at risk" },
             ].map((stat, i) => (
               <div
                 key={i}
@@ -129,9 +141,10 @@ export default function EnglishPage() {
                 Ecological Destruction
               </h3>
               <p className="text-[var(--color-text-muted)] leading-relaxed text-[15px]">
-                Ancient pine nut forests and critical wildlife habitats
-                &mdash; home to endangered species like the goral and Siberian
-                flying squirrel &mdash; face permanent destruction.
+                ~110,000 pine nut trees slated for felling across 153 hectares.
+                A 1,800-hectare &ldquo;Top 100 Forest&rdquo; &mdash; home to
+                the goral (natural monument), black woodpecker, and otter
+                &mdash; faces permanent destruction.
               </p>
             </div>
 
@@ -155,9 +168,10 @@ export default function EnglishPage() {
                 Livelihood Loss
               </h3>
               <p className="text-[var(--color-text-muted)] leading-relaxed text-[15px]">
-                Pine nut harvesting is the primary income source for elderly
-                residents. Destroying the forest means destroying their only
-                means of survival.
+                70% of residents depend on pine nut production. Felling has
+                already begun &mdash; 2,256 trees were cut in October 2024
+                for access road construction. Destroying the forest means
+                destroying their only means of survival.
               </p>
             </div>
 
@@ -181,9 +195,10 @@ export default function EnglishPage() {
                 Community Dissolution
               </h3>
               <p className="text-[var(--color-text-muted)] leading-relaxed text-[15px]">
-                Decades-old bonds between neighbors are being torn apart by
-                relocation pressure and years of construction stress. Once
-                scattered, this community cannot be rebuilt.
+                51 households face submersion and forced relocation. 7
+                residents (ages 60&ndash;80) have been criminally charged.
+                Decades-old bonds are being torn apart. Once scattered, this
+                community cannot be rebuilt.
               </p>
             </div>
           </div>
