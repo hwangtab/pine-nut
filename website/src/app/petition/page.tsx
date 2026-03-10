@@ -322,6 +322,11 @@ export default function PetitionPage() {
       </section>
 
       <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 space-y-16">
+        {/* Emotional prompt */}
+        <p className="text-center text-xl font-serif text-[var(--color-text-muted)] mb-6">
+          680번의 외침에 당신의 이름을 더해주세요
+        </p>
+
         {/* ── Form / Success ── */}
         <AnimatePresence mode="wait">
           {!submitted ? (

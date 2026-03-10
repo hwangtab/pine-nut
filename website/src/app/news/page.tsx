@@ -46,6 +46,11 @@ export default function NewsPage() {
         </p>
       </section>
 
+      {/* Emotional context line */}
+      <p className="text-center text-[var(--color-text-muted)] mb-8 px-4">
+        풍천리의 이야기는 계속되고 있습니다. 언론이 주목하는 7년의 기록.
+      </p>
+
       {/* Category filter pills */}
       <div className="max-w-4xl mx-auto px-4 mb-10">
         <div className="flex flex-wrap gap-2 justify-center">

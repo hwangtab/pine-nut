@@ -17,6 +17,14 @@ export const metadata: Metadata = {
     url: "https://pungcheonri.vercel.app",
     type: "website",
     locale: "ko_KR",
+    images: [
+      {
+        url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg",
+        width: 1200,
+        height: 630,
+        alt: "드론 촬영 풍천리 전경",
+      },
+    ],
   },
 };
 

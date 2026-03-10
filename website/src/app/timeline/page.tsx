@@ -125,6 +125,13 @@ export default function TimelinePage() {
         </motion.p>
       </section>
 
+      {/* Emotional quote banner */}
+      <div className="border-t border-b border-gray-200 py-6 px-4">
+        <p className="text-center text-lg italic text-gray-500 max-w-2xl mx-auto">
+          &ldquo;2019년부터 오늘까지, 단 하루도 쉬지 않았습니다&rdquo;
+        </p>
+      </div>
+
       {/* Year filter bar */}
       <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-3">

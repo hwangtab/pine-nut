@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { motion, useInView, animate } from "framer-motion";
+import { motion, useInView, animate, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 // Image import removed — using external URLs with <img> and CSS background-image
 import { PenLine, Heart, Share2, ChevronDown } from "lucide-react";
@@ -127,6 +127,12 @@ export default function HomePage() {
   const [inlineSuccess, setInlineSuccess] = useState(false);
   const [inlineError, setInlineError] = useState<string | null>(null);
 
+  // Social proof toast state
+  const [recentSignatures, setRecentSignatures] = useState<{ name: string }[]>([]);
+  const [toastName, setToastName] = useState<string | null>(null);
+  const [toastVisible, setToastVisible] = useState(false);
+  const toastCountRef = useRef(0);
+
   useEffect(() => {
     fetch("/api/signatures")
       .then((res) => {
@@ -135,11 +141,55 @@ export default function HomePage() {
       })
       .then((data) => {
         if (typeof data.count === "number") setSignatureCount(data.count);
+        if (Array.isArray(data.signatures) && data.signatures.length > 0) {
+          setRecentSignatures(data.signatures);
+        }
       })
       .catch(() => {
         /* graceful degradation — show nothing */
       });
   }, []);
+
+  // Social proof toast rotation
+  useEffect(() => {
+    if (recentSignatures.length === 0) return;
+
+    const MAX_TOASTS = 5;
+    const INITIAL_DELAY = 5000; // 5s before first toast
+    const INTERVAL = 8000; // 8s between toasts
+    const DISPLAY_DURATION = 4000; // 4s visible
+
+    const showToast = () => {
+      if (toastCountRef.current >= MAX_TOASTS) return;
+      const randomSig =
+        recentSignatures[Math.floor(Math.random() * recentSignatures.length)];
+      setToastName(randomSig.name);
+      setToastVisible(true);
+      toastCountRef.current += 1;
+
+      setTimeout(() => {
+        setToastVisible(false);
+      }, DISPLAY_DURATION);
+    };
+
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+
+    const initialTimer = setTimeout(() => {
+      showToast();
+      intervalId = setInterval(() => {
+        if (toastCountRef.current >= MAX_TOASTS) {
+          if (intervalId) clearInterval(intervalId);
+          return;
+        }
+        showToast();
+      }, INTERVAL);
+    }, INITIAL_DELAY);
+
+    return () => {
+      clearTimeout(initialTimer);
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [recentSignatures]);
 
   const scrollToStory = useCallback(() => {
     storyRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -450,6 +500,91 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ════════ SECTION 3.5 — 희망/연대 ════════ */}
+      <section className="py-24 md:py-36 px-6 bg-[var(--color-bg-warm)]">
+        <div className="max-w-5xl mx-auto">
+          <FadeIn className="text-center mb-6">
+            <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-forest)] opacity-60 mb-4">
+              그럼에도 주민들은 포기하지 않았습니다
+            </p>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-6 text-[var(--color-forest)]">
+              그럼에도, 포기하지 않았습니다
+            </h2>
+            <p className="text-lg md:text-xl text-[var(--color-text-muted)] leading-relaxed max-w-2xl mx-auto">
+              7년간 680번의 집회. 70대 어르신들이 매주 버스를 타고 홍천군청까지 갔습니다.
+            </p>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 mt-14">
+            {[
+              {
+                title: "672차 기도회",
+                desc: "매주 빠짐없이 모여 평화로운 기도회를 이어왔습니다",
+                delay: 0,
+                icon: (
+                  <svg viewBox="0 0 48 48" fill="none" className="w-10 h-10" aria-hidden="true">
+                    <path d="M24 4C24 4 14 18 14 26a10 10 0 0020 0C34 18 24 4 24 4z" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M24 18v12M20 28l4 4 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.6"/>
+                  </svg>
+                ),
+              },
+              {
+                title: "140개 단체 연대",
+                desc: "전국의 환경·시민단체가 풍천리와 함께합니다",
+                delay: 0.1,
+                icon: (
+                  <svg viewBox="0 0 48 48" fill="none" className="w-10 h-10" aria-hidden="true">
+                    <circle cx="24" cy="16" r="6" stroke="currentColor" strokeWidth="2.5" fill="none"/>
+                    <circle cx="12" cy="20" r="4" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6"/>
+                    <circle cx="36" cy="20" r="4" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6"/>
+                    <path d="M16 34c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+                    <path d="M6 36c0-3.3 2.7-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.6"/>
+                    <path d="M42 36c0-3.3-2.7-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.6"/>
+                  </svg>
+                ),
+              },
+              {
+                title: "시민공모전 대상",
+                desc: "한국내셔널트러스트 '이곳만은 지키자' 시민공모전 대상 수상",
+                delay: 0.2,
+                icon: (
+                  <svg viewBox="0 0 48 48" fill="none" className="w-10 h-10" aria-hidden="true">
+                    <polygon points="24,4 29,18 44,18 32,27 36,42 24,33 12,42 16,27 4,18 19,18" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" fill="none"/>
+                  </svg>
+                ),
+              },
+            ].map((card) => (
+              <FadeIn key={card.title} delay={card.delay}>
+                <div className="bg-white rounded-2xl p-8 border border-[var(--color-border)] text-center h-full flex flex-col items-center shadow-sm">
+                  <div className="text-[var(--color-forest)] mb-5">
+                    {card.icon}
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">{card.title}</h3>
+                  <p className="text-[var(--color-text-muted)] leading-relaxed">
+                    {card.desc}
+                  </p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+
+          {/* Protest photo */}
+          <FadeIn delay={0.3}>
+            <div className="mt-14">
+              <img
+                src="https://www.pressian.com/_resources/10/2025/11/12/2025111117101271238_l.png"
+                alt="672차 결의대회 사진"
+                className="w-full rounded-2xl shadow-lg"
+                loading="lazy"
+              />
+              <p className="text-xs text-gray-400 mt-2">
+                사진: 풍천리양수발전소반대대책위 / 프레시안
+              </p>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
       {/* ════════ SECTION 4 — 주민들의 목소리 ════════ */}
       <section className="py-24 md:py-36 px-6 bg-[var(--color-sky)] text-white">
         <div className="max-w-4xl mx-auto">
@@ -659,6 +794,22 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ════════ Social Proof Toast ════════ */}
+      <AnimatePresence>
+        {toastVisible && toastName && (
+          <motion.div
+            initial={{ x: -100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -100, opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="fixed bottom-20 left-4 z-40 max-w-xs px-4 py-3 rounded-lg bg-gray-900/90 backdrop-blur text-white text-sm shadow-lg pointer-events-none"
+          >
+            <span aria-hidden="true" className="mr-1.5">🎉</span>
+            방금 {toastName}님이 서명했습니다
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
