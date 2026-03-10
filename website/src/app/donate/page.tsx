@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import {
   Check,
   ExternalLink,
@@ -91,12 +90,10 @@ export default function DonatePage() {
       <section className="relative bg-[var(--color-bg-warm)]">
         {/* Solidarity photo */}
         <div className="relative w-full h-[260px] sm:h-[340px] overflow-hidden">
-          <Image
+          <img
             src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
             alt="강원생명평화기도회 모임 사진"
-            fill
-            className="object-cover"
-            priority
+            className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-warm)] via-[var(--color-bg-warm)]/40 to-transparent" />
           <p className="absolute bottom-2 right-3 text-[11px] text-white/70">

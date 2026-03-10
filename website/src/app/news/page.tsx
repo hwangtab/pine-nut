@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { newsItems, type NewsItem } from "@/data/news";
 
 type Category = "전체" | NewsItem["category"];
@@ -81,12 +80,11 @@ export default function NewsPage() {
                 {/* Thumbnail */}
                 <div className="relative w-full h-48 bg-gray-100">
                   {item.thumbnailUrl ? (
-                    <Image
+                    <img
                       src={item.thumbnailUrl}
                       alt={item.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
