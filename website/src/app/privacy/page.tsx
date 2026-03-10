@@ -160,21 +160,21 @@ export default function PrivacyPage() {
               <p className="text-[var(--color-text)] text-[15px]">
                 <strong>빠띠 캠페인 페이지:</strong>{" "}
                 <a
-                  href="https://campaigns.parti.xyz"
+                  href="https://campaigns.do/campaigns/1328"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[var(--color-sky)] underline underline-offset-2 hover:text-[var(--color-sky)]/80 transition-colors"
                 >
-                  campaigns.parti.xyz
+                  campaigns.do/campaigns/1328
                 </a>
               </p>
               <p className="text-[var(--color-text)] text-[15px]">
-                <strong>이메일:</strong>{" "}
+                <strong>전화:</strong>{" "}
                 <a
-                  href="mailto:pungcheon@example.com"
+                  href="tel:010-8918-8933"
                   className="text-[var(--color-sky)] underline underline-offset-2 hover:text-[var(--color-sky)]/80 transition-colors"
                 >
-                  pungcheon@example.com
+                  010-8918-8933 (이창후 총무)
                 </a>
               </p>
             </div>

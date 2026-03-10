@@ -8,11 +8,11 @@ import { timelineEvents, type TimelineEvent } from "@/data/timeline";
 const YEARS = ["전체", 2019, 2021, 2022, 2023, 2024, 2025, 2026] as const;
 
 const categoryColors: Record<TimelineEvent["category"], { dot: string; pill: string; pillText: string }> = {
-  회의: { dot: "bg-green-500", pill: "bg-green-100", pillText: "text-green-800" },
-  집회: { dot: "bg-orange-500", pill: "bg-orange-100", pillText: "text-orange-800" },
+  회의: { dot: "bg-[var(--color-forest)]", pill: "bg-[var(--color-forest)]/10", pillText: "text-[var(--color-forest)]" },
+  집회: { dot: "bg-[var(--color-warm)]", pill: "bg-[var(--color-warm)]/10", pillText: "text-[var(--color-warm)]" },
   법률: { dot: "bg-red-500", pill: "bg-red-100", pillText: "text-red-800" },
-  연대: { dot: "bg-blue-500", pill: "bg-blue-100", pillText: "text-blue-800" },
-  기타: { dot: "bg-gray-500", pill: "bg-gray-100", pillText: "text-gray-800" },
+  연대: { dot: "bg-[var(--color-sky)]", pill: "bg-[var(--color-sky)]/10", pillText: "text-[var(--color-sky)]" },
+  기타: { dot: "bg-[var(--color-earth)]", pill: "bg-[var(--color-earth)]/10", pillText: "text-[var(--color-earth)]" },
 };
 
 function TimelineCard({ event, index }: { event: TimelineEvent; index: number }) {
@@ -50,7 +50,7 @@ function TimelineCard({ event, index }: { event: TimelineEvent; index: number })
           isLeft ? "md:mr-auto md:pr-8" : "md:ml-auto md:pl-8"
         }`}
       >
-        <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-[var(--color-border)]">
           {/* Event image */}
           {event.imageUrl && (
             <div className="relative w-full">
@@ -68,17 +68,17 @@ function TimelineCard({ event, index }: { event: TimelineEvent; index: number })
 
           <div className="p-5 md:p-6">
           {/* Date badge */}
-          <span className="inline-block text-sm font-medium text-amber-700 bg-amber-50 px-3 py-1 rounded-full mb-3">
+          <span className="inline-block text-sm font-medium text-[var(--color-warm)] bg-[var(--color-bg-warm)] px-3 py-1 rounded-full mb-3">
             {event.date}
           </span>
 
           {/* Title */}
-          <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 leading-snug">
+          <h3 className="text-lg md:text-xl font-bold text-[var(--color-text)] mb-2 leading-snug">
             {event.title}
           </h3>
 
           {/* Description */}
-          <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-3">
+          <p className="text-[var(--color-text-muted)] text-sm md:text-base leading-relaxed mb-3">
             {event.description}
           </p>
 
@@ -104,36 +104,44 @@ export default function TimelinePage() {
       : timelineEvents.filter((e) => e.year === selectedYear);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-amber-50/60 via-white to-stone-50">
+    <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg-warm)]/60 via-[var(--color-bg)] to-stone-50">
       {/* Header */}
-      <section className="pt-16 pb-10 md:pt-24 md:pb-14 px-4 text-center bg-gradient-to-b from-amber-50 to-transparent">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4"
-        >
-          7년의 기록
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-          className="text-base md:text-lg text-gray-600 max-w-xl mx-auto leading-relaxed"
-        >
-          2019년부터 현재까지, 풍천리 주민들의 발자취
-        </motion.p>
+      <section className="relative text-white pt-32 md:pt-40 pb-16 md:pb-20 px-4 text-center overflow-hidden">
+        <img
+          src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
+          alt="" role="presentation"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="relative">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-3xl md:text-5xl font-extrabold text-white mb-4"
+          >
+            7년의 기록
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="text-base md:text-lg text-white/80 max-w-xl mx-auto leading-relaxed"
+          >
+            2019년부터 현재까지, 풍천리 주민들의 발자취
+          </motion.p>
+        </div>
       </section>
 
       {/* Emotional quote banner */}
-      <div className="border-t border-b border-gray-200 py-6 px-4">
-        <p className="text-center text-lg italic text-gray-500 max-w-2xl mx-auto">
+      <div className="border-t border-b border-white/10 bg-[var(--color-bg-warm)] py-6 px-4">
+        <p className="text-center text-lg italic text-[var(--color-text-muted)] max-w-2xl mx-auto">
           &ldquo;2019년부터 오늘까지, 단 하루도 쉬지 않았습니다&rdquo;
         </p>
       </div>
 
       {/* Year filter bar */}
-      <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm">
+      <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-[var(--color-border)] shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 justify-center">
             {YEARS.map((year) => (
@@ -142,8 +150,8 @@ export default function TimelinePage() {
                 onClick={() => setSelectedYear(year)}
                 className={`shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
                   selectedYear === year
-                    ? "bg-amber-600 text-white shadow-md"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? "bg-[var(--color-warm)] text-white shadow-md"
+                    : "bg-[var(--color-bg)] text-[var(--color-text-muted)] hover:bg-[var(--color-border)]"
                 }`}
               >
                 {year === "전체" ? "전체" : `${year}년`}
@@ -156,36 +164,36 @@ export default function TimelinePage() {
       {/* Timeline */}
       <section className="max-w-4xl mx-auto px-4 py-12 md:py-16 relative">
         {/* Vertical line - mobile (left) */}
-        <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-200 md:hidden" />
+        <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-[var(--color-border)] md:hidden" />
 
         {/* Vertical line - desktop (center) */}
-        <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gray-200 -translate-x-1/2" />
+        <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-[var(--color-border)] -translate-x-1/2" />
 
         {filteredEvents.length > 0 ? (
           filteredEvents.map((event, index) => (
             <TimelineCard key={event.id} event={event} index={index} />
           ))
         ) : (
-          <p className="text-center text-gray-500 py-20 text-lg">
+          <p className="text-center text-[var(--color-text-muted)] py-20 text-lg">
             해당 연도의 기록이 없습니다.
           </p>
         )}
       </section>
 
       {/* Bottom CTA */}
-      <section className="py-16 md:py-20 px-4 text-center bg-gradient-to-t from-amber-50 to-transparent">
+      <section className="py-16 md:py-20 px-4 text-center bg-gradient-to-t from-[var(--color-bg-warm)] to-transparent">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-6">
             이 투쟁에 함께해주세요
           </h2>
           <Link
             href="/petition"
-            className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-semibold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
+            className="inline-block bg-[var(--color-warm)] hover:brightness-110 text-white font-semibold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
           >
             서명에 참여하기
           </Link>

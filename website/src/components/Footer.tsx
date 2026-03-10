@@ -7,8 +7,9 @@ const quickLinks = [
   { label: "이야기", href: "/story" },
   { label: "타임라인", href: "/timeline" },
   { label: "소식", href: "/news" },
+  { label: "갤러리", href: "/gallery" },
   { label: "자료실", href: "/press" },
-  { label: "함께하기", href: "/petition" },
+  { label: "후원하기", href: "/donate" },
 ];
 
 export default function Footer() {
@@ -24,8 +25,8 @@ export default function Footer() {
               풍천리를 지켜주세요
             </Link>
             <p className="text-white/70 text-sm leading-relaxed">
-              풍천리 주민회는 마을과 자연을 지키기 위해 양수발전소 건설에 반대하는
-              주민들의 모임입니다.
+              풍천리양수발전소건설반대위원회는 마을과 자연을 지키기 위해 양수발전소
+              건설에 반대하는 주민들의 모임입니다.
             </p>
           </div>
 
@@ -49,7 +50,20 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h3 className="text-base font-bold mb-4">연락처</h3>
-            <ul className="space-y-2 text-sm text-white/70">
+            <ul className="space-y-3 text-sm text-white/70">
+              <li>
+                <span className="block text-white/50 text-xs mb-0.5">전화 문의</span>
+                <a
+                  href="tel:010-8918-8933"
+                  className="hover:text-white transition-colors"
+                >
+                  010-8918-8933 (이창후 총무)
+                </a>
+              </li>
+              <li>
+                <span className="block text-white/50 text-xs mb-0.5">후원 계좌</span>
+                <span>농협 356-1559-4666-63 이창후</span>
+              </li>
               <li>
                 <span className="block text-white/50 text-xs mb-0.5">캠페인 페이지</span>
                 <a
@@ -84,6 +98,9 @@ export default function Footer() {
             >
               빠띠 캠페인
             </a>
+            <Link href="/en" className="hover:text-white transition-colors">
+              English
+            </Link>
           </div>
         </div>
 

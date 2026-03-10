@@ -278,23 +278,22 @@ export default function GalleryPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-stone-50 via-white to-amber-50/30">
       {/* Hero */}
-      <section className="pt-16 pb-12 md:pt-24 md:pb-16 px-4 text-center bg-gradient-to-b from-stone-100 to-transparent">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4"
-        >
-          풍천리의 기록
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-          className="text-base md:text-lg text-gray-600 max-w-xl mx-auto leading-relaxed"
-        >
-          잣나무숲의 아름다움, 투쟁의 현장, 연대의 순간을 사진으로 기록합니다
-        </motion.p>
+      <section className="relative text-white pt-32 md:pt-40 pb-16 md:pb-20 px-4 text-center overflow-hidden">
+        <img
+          src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+          alt="" role="presentation"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="relative">
+          <Camera className="w-10 h-10 mx-auto mb-4 text-white/70" />
+          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
+            갤러리
+          </h1>
+          <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto leading-relaxed">
+            풍천리의 현장을 담은 사진들
+          </p>
+        </div>
       </section>
 
       {/* Gallery sections */}

@@ -62,7 +62,7 @@ export default function PressReleasePage() {
           <div className="text-sm text-[var(--color-text-muted)] space-y-1">
             <p>배포일: 2026년 3월</p>
             <p>발신: 풍천리 주민회</p>
-            <p>문의: campaigns.do/campaigns/1328</p>
+            <p>문의: 010-8918-8933 (이창후 총무)</p>
           </div>
         </header>
 
@@ -191,7 +191,9 @@ export default function PressReleasePage() {
           </h2>
           <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
             <p className="text-sm text-gray-700 leading-relaxed">
-              <strong>풍천리 주민회</strong>
+              <strong>풍천리양수발전소건설반대위원회</strong>
+              <br />
+              담당: 이창후 총무 / 010-8918-8933
               <br />
               캠페인 페이지:{" "}
               <a

@@ -1,4 +1,4 @@
-import { FileText, Image, ExternalLink } from "lucide-react";
+import { FileText, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -13,25 +13,15 @@ const pressKitItems = [
     title: "보도자료",
     description: "풍천리 양수발전소 반대 투쟁 보도자료",
     icon: FileText,
-    color: "text-blue-600 bg-blue-50",
+    color: "text-[var(--color-forest)] bg-[var(--color-bg-warm)]",
     href: "/press/release",
-    notice: null,
   },
   {
     title: "팩트시트",
     description: "풍천리 투쟁 핵심 정리 (1페이지)",
     icon: FileText,
-    color: "text-purple-600 bg-purple-50",
+    color: "text-[var(--color-warm)] bg-[var(--color-bg-warm)]",
     href: "/press/factsheet",
-    notice: null,
-  },
-  {
-    title: "사진 자료",
-    description: "고화질 사진 모음 (ZIP)",
-    icon: Image,
-    color: "text-green-600 bg-green-50",
-    href: null,
-    notice: "준비 중",
   },
 ];
 
@@ -59,95 +49,77 @@ const factSheetData = [
 export default function PressPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
-      {/* Header */}
-      <section className="pt-16 pb-10 md:pt-24 md:pb-14 px-4 text-center">
-        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4">
-          자료실
-        </h1>
-        <p className="text-base md:text-lg text-[var(--color-text-muted)] max-w-xl mx-auto leading-relaxed">
-          언론인·연구자·활동가를 위한 자료 모음
-        </p>
+      {/* Hero */}
+      <section className="relative text-white pt-32 md:pt-40 pb-16 md:pb-20 px-4 text-center overflow-hidden">
+        <img
+          src="https://image.newsis.com/2024/06/21/NISI20240621_0020630006_web.jpg"
+          alt="" role="presentation"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[var(--color-forest)]/80" />
+        <div className="relative">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
+            자료실
+          </h1>
+          <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto leading-relaxed">
+            언론인, 연구자, 활동가를 위한 자료 모음
+          </p>
+        </div>
       </section>
 
       <div className="max-w-4xl mx-auto px-4 pb-20 space-y-16">
         {/* Press Kit Section */}
         <section>
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6">
             보도 키트
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {pressKitItems.map((item) => {
               const Icon = item.icon;
-              const content = (
-                <>
+              return (
+                <Link
+                  key={item.title}
+                  href={item.href}
+                  target="_blank"
+                  className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-[var(--color-border)] shadow-sm hover:shadow-md hover:border-[var(--color-forest)]/20 transition-all"
+                >
                   <div
                     className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 ${item.color}`}
                   >
                     <Icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-base font-bold text-gray-900 mb-1">
+                  <h3 className="text-base font-bold text-[var(--color-text)] mb-1">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-gray-500 mb-4 leading-relaxed">
+                  <p className="text-sm text-[var(--color-text-muted)] mb-4 leading-relaxed">
                     {item.description}
                   </p>
-                  {item.href ? (
-                    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-forest)] group-hover:text-[var(--color-forest-light)] transition-colors">
-                      다운로드
-                      <ExternalLink className="w-4 h-4" />
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-400">
-                      {item.notice}
-                    </span>
-                  )}
-                </>
-              );
-
-              if (item.href) {
-                return (
-                  <Link
-                    key={item.title}
-                    href={item.href}
-                    target="_blank"
-                    className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[var(--color-forest)]/20 transition-all"
-                  >
-                    {content}
-                  </Link>
-                );
-              }
-
-              return (
-                <div
-                  key={item.title}
-                  className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-gray-100 shadow-sm"
-                >
-                  {content}
-                </div>
+                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-forest)] group-hover:text-[var(--color-forest-light)] transition-colors">
+                    다운로드
+                    <ExternalLink className="w-4 h-4" />
+                  </span>
+                </Link>
               );
             })}
           </div>
-          <p className="mt-4 text-sm text-[var(--color-text-muted)] text-center">
-            사진 자료는 현재 준비 중이며, 빠른 시일 내에 제공할 예정입니다.
-          </p>
         </section>
 
         {/* Fact Sheet Section */}
         <section>
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6">
             핵심 팩트시트
           </h2>
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="divide-y divide-gray-100">
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm overflow-hidden">
+            <div className="divide-y divide-[var(--color-border)]">
               {factSheetData.map((fact) => (
                 <div
                   key={fact.label}
                   className="flex flex-col sm:flex-row sm:items-center px-6 py-4 gap-1 sm:gap-4"
                 >
-                  <dt className="text-sm font-bold text-gray-500 sm:w-36 shrink-0">
+                  <dt className="text-sm font-bold text-[var(--color-text-muted)] sm:w-36 shrink-0">
                     {fact.label}
                   </dt>
-                  <dd className="text-base text-gray-900 font-medium">
+                  <dd className="text-base text-[var(--color-text)] font-medium">
                     {fact.value}
                   </dd>
                 </div>
@@ -158,26 +130,26 @@ export default function PressPage() {
 
         {/* Media Contact Section */}
         <section>
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6">
             언론 연락처
           </h2>
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8">
-            <p className="text-gray-600 mb-6 leading-relaxed">
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm p-6 md:p-8">
+            <p className="text-[var(--color-text-muted)] mb-6 leading-relaxed">
               취재 및 자료 요청은 빠띠 캠페인 페이지를 통해 문의해 주세요. 빠른 시일 내에
               답변드리겠습니다.
             </p>
             <div className="grid grid-cols-1 gap-4">
-              <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
+              <div className="flex items-start gap-3 p-4 bg-[var(--color-bg-warm)] rounded-xl">
                 <ExternalLink className="w-5 h-5 text-[var(--color-forest)] mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold text-gray-500 mb-0.5">
+                  <p className="text-sm font-semibold text-[var(--color-text-muted)] mb-0.5">
                     캠페인 페이지
                   </p>
                   <a
                     href="https://campaigns.do/campaigns/1328"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-base font-medium text-gray-900 hover:text-[var(--color-forest)] transition-colors"
+                    className="text-base font-medium text-[var(--color-text)] hover:text-[var(--color-forest)] transition-colors"
                   >
                     빠띠 캠페인 페이지에서 문의하기
                   </a>
@@ -189,25 +161,25 @@ export default function PressPage() {
 
         {/* How to Cite Section */}
         <section>
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6">
             인용 안내
           </h2>
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8">
-            <p className="text-gray-600 mb-4 leading-relaxed">
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm p-6 md:p-8">
+            <p className="text-[var(--color-text-muted)] mb-4 leading-relaxed">
               연구 및 보도 시 아래 형식으로 인용해 주시기 바랍니다.
             </p>
-            <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-              <p className="text-sm text-gray-800 leading-relaxed font-mono">
+            <div className="bg-[var(--color-bg-warm)] rounded-xl p-5 border border-[var(--color-border)]">
+              <p className="text-sm text-[var(--color-text)] leading-relaxed font-mono">
                 풍천리 주민회. (2026). 풍천리 양수발전소 반대 투쟁 기록.
                 <br />
                 https://pungcheon.kr
               </p>
             </div>
-            <p className="text-sm text-gray-500 mt-4 leading-relaxed">
+            <p className="text-sm text-[var(--color-text-muted)] mt-4 leading-relaxed">
               APA 형식 예시:
             </p>
-            <div className="bg-gray-50 rounded-xl p-5 border border-gray-200 mt-2">
-              <p className="text-sm text-gray-800 leading-relaxed font-mono">
+            <div className="bg-[var(--color-bg-warm)] rounded-xl p-5 border border-[var(--color-border)] mt-2">
+              <p className="text-sm text-[var(--color-text)] leading-relaxed font-mono">
                 풍천리 주민회 (2026).{" "}
                 <em>풍천리를 지켜주세요: 양수발전소 건설 반대 투쟁 기록</em>.
                 https://pungcheon.kr

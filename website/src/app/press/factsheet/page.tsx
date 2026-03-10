@@ -1,7 +1,5 @@
 "use client";
 
-import type { Metadata } from "next";
-
 const factSheetData = [
   { label: "위치", value: "강원도 홍천군 화촌면 풍천리" },
   { label: "사업자", value: "한국수력원자력(한수원)" },

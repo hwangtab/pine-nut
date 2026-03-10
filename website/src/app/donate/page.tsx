@@ -39,8 +39,8 @@ const FUND_BREAKDOWN = [
   },
 ];
 
-const BANK_ACCOUNT = "301-0000-0000-00";
-const BANK_ACCOUNT_FULL = "농협 301-0000-0000-00 풍천리주민회";
+const BANK_ACCOUNT = "356-1559-4666-63";
+const BANK_ACCOUNT_FULL = "농협 356-1559-4666-63 이창후";
 
 /* ──────────────────────── Toast Notification ──────────────────────── */
 function Toast({ message, visible }: { message: string; visible: boolean }) {
@@ -89,13 +89,13 @@ export default function DonatePage() {
       {/* ── Hero with Photo ── */}
       <section className="relative bg-[var(--color-bg-warm)]">
         {/* Solidarity photo */}
-        <div className="relative w-full h-[260px] sm:h-[340px] overflow-hidden">
+        <div className="relative w-full h-[320px] sm:h-[400px] overflow-hidden">
           <img
             src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
             alt="강원생명평화기도회 모임 사진"
             className="absolute inset-0 w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-warm)] via-[var(--color-bg-warm)]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-warm)] via-black/20 to-black/40" />
           <p className="absolute bottom-2 right-3 text-[11px] text-white/70">
             사진: 오마이뉴스
           </p>
@@ -158,7 +158,7 @@ export default function DonatePage() {
             {/* Account display */}
             <div className="bg-[var(--color-bg)] rounded-xl px-5 py-4 mb-4 text-center">
               <p className="text-sm text-[var(--color-text-muted)] mb-1">
-                농협 | 풍천리주민회
+                농협 | 이창후
               </p>
               <p className="text-2xl sm:text-3xl font-black text-[var(--color-text)] tracking-wide">
                 {BANK_ACCOUNT}
@@ -331,7 +331,14 @@ export default function DonatePage() {
             <p className="text-[15px] font-semibold text-[var(--color-text)] mb-3">
               후원 관련 문의
             </p>
-            <div className="space-y-2">
+            <div className="space-y-3">
+              <a
+                href="tel:010-8918-8933"
+                className="flex items-center gap-3 text-[15px] text-[var(--color-text)] hover:text-[var(--color-warm)] transition-colors min-h-[44px]"
+              >
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                010-8918-8933 (이창후 총무)
+              </a>
               <a
                 href="https://campaigns.do/campaigns/1328"
                 target="_blank"

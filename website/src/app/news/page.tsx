@@ -35,14 +35,22 @@ export default function NewsPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
-      {/* Header */}
-      <section className="pt-16 pb-10 md:pt-24 md:pb-14 px-4 text-center">
-        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4">
-          소식
-        </h1>
-        <p className="text-base md:text-lg text-[var(--color-text-muted)] max-w-xl mx-auto leading-relaxed">
-          풍천리의 최신 소식을 전합니다
-        </p>
+      {/* Hero */}
+      <section className="relative text-white pt-32 md:pt-40 pb-16 md:pb-20 px-4 text-center overflow-hidden">
+        <img
+          src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499236_STD.jpg"
+          alt="" role="presentation"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[var(--color-forest)]/75" />
+        <div className="relative">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
+            소식
+          </h1>
+          <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto leading-relaxed">
+            풍천리의 최신 소식을 전합니다
+          </p>
+        </div>
       </section>
 
       {/* Emotional context line */}

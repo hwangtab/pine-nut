@@ -11,8 +11,14 @@ export default function StoryPage() {
   return (
     <article>
       {/* ── Hero ── */}
-      <section className="bg-[var(--color-forest)] text-white py-24 md:py-36 px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="relative text-white pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 overflow-hidden">
+        <img
+          src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+          alt="" role="presentation"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[var(--color-forest)]/80" />
+        <div className="relative max-w-3xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight">
             풍천리 이야기
           </h1>

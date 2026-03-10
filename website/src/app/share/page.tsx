@@ -11,8 +11,14 @@ export default function SharePage() {
   return (
     <article>
       {/* Hero */}
-      <section className="bg-[var(--color-forest)] text-white py-20 md:py-28 px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="relative text-white pt-32 md:pt-40 pb-16 md:pb-20 px-4 sm:px-6 overflow-hidden">
+        <img
+          src="https://www.pressian.com/_resources/10/2025/11/12/2025111117101271238_l.png"
+          alt="" role="presentation"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[var(--color-forest)]/80" />
+        <div className="relative max-w-3xl mx-auto text-center">
           <p className="text-xs tracking-[0.3em] uppercase text-white/50 mb-4 font-medium">
             Share &amp; Spread
           </p>

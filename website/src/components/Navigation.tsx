@@ -26,7 +26,7 @@ export default function Navigation() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [scrollY, setScrollY] = useState(0);
 
-  const isHeroPage = pathname === "/";
+  const isHeroPage = true;
   const isTransparent = isHeroPage && scrollY < 80 && !mobileMenuOpen;
 
   const handleScroll = useCallback(() => {
@@ -177,8 +177,6 @@ export default function Navigation() {
         </div>
       )}
 
-      {/* Spacer to prevent content from hiding behind fixed nav */}
-      {!isHeroPage && <div className="h-16" />}
     </>
   );
 }

@@ -59,7 +59,7 @@ export default async function NewsDetailPage({
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
-      <article className="max-w-3xl mx-auto px-4 pt-12 pb-20 md:pt-20">
+      <article className="max-w-3xl mx-auto px-4 pt-32 pb-20 md:pt-40">
         {/* Back link */}
         <Link
           href="/news"
