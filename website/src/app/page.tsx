@@ -113,94 +113,6 @@ function MountainSilhouette() {
   );
 }
 
-/* ──────────────── Newsletter Section ──────────────────────── */
-
-function NewsletterSection() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      const endpoint = process.env.NEXT_PUBLIC_NEWSLETTER_ENDPOINT || "";
-      if (endpoint) {
-        await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        });
-      }
-      setSubmitted(true);
-      setEmail("");
-    } catch {
-      setError("구독 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <section className="py-24 md:py-36 px-6 bg-[var(--color-forest)]">
-      <div className="max-w-2xl mx-auto text-center">
-        <FadeIn>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-white">
-            소식 받기
-          </h2>
-          <p className="text-lg text-white/70 mb-10">
-            풍천리 소식을 이메일로 받아보세요
-          </p>
-        </FadeIn>
-
-        <FadeIn delay={0.15}>
-          {submitted ? (
-            <div className="bg-white/10 rounded-2xl p-8 border border-white/20">
-              <p className="text-xl font-bold text-white mb-2">
-                구독해주셔서 감사합니다!
-              </p>
-              <p className="text-white/70">
-                풍천리 소식을 이메일로 보내드리겠습니다.
-              </p>
-            </div>
-          ) : (
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col sm:flex-row items-center gap-3 max-w-lg mx-auto"
-            >
-              <label htmlFor="landing-email" className="sr-only">
-                이메일 주소
-              </label>
-              <input
-                id="landing-email"
-                type="email"
-                required
-                placeholder="이메일 주소를 입력하세요"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={loading}
-                className="w-full sm:flex-1 px-5 py-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 text-base focus:outline-none focus:ring-2 focus:ring-white/40 min-h-[52px] disabled:opacity-50"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-[var(--color-forest)] font-bold text-base hover:bg-white/90 transition-colors min-h-[52px] disabled:opacity-50 shrink-0"
-              >
-                {loading ? "처리 중..." : "구독하기"}
-              </button>
-            </form>
-          )}
-          {error && (
-            <p className="mt-3 text-sm text-red-300">{error}</p>
-          )}
-        </FadeIn>
-      </div>
-    </section>
-  );
-}
 
 /* ═══════════════════════════════════════════════════════════ */
 /*                        PAGE                                */
@@ -576,9 +488,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* ════════ SECTION 5.5 — 소식 받기 ════════ */}
-      <NewsletterSection />
 
       {/* ════════ SECTION 6 — Key Numbers Bar ════════ */}
       <section className="py-16 md:py-20 px-6 bg-[#0a0a0a] text-white">
