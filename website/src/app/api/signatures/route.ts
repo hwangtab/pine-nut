@@ -1,6 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX = 5; // max 5 requests per minute per IP
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return false;
+  }
+  entry.count++;
+  return entry.count > RATE_LIMIT_MAX;
+}
+
+const MESSAGE_MAX_LENGTH = 100;
+
 const DEMO_SIGNATURES = [
   { name: "김*수", message: "풍천리 주민분들 힘내세요!", created_at: "2026-03-10T09:00:00Z" },
   { name: "박*영", message: "자연을 지키는 일에 함께합니다.", created_at: "2026-03-09T14:00:00Z" },
@@ -60,6 +77,14 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: '너무 많은 요청입니다. 잠시 후 다시 시도해주세요.' },
+      { status: 429 }
+    );
+  }
+
   let body: { name?: string; email?: string; message?: string };
   try {
     body = await request.json();
@@ -72,8 +97,14 @@ export async function POST(request: NextRequest) {
   if (!name || !name.trim()) {
     return NextResponse.json({ error: '이름을 입력해주세요.' }, { status: 400 });
   }
+  if (name.trim().length > 50) {
+    return NextResponse.json({ error: '이름이 너무 깁니다.' }, { status: 400 });
+  }
   if (!email || !email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: '올바른 이메일을 입력해주세요.' }, { status: 400 });
+  }
+  if (message && message.length > MESSAGE_MAX_LENGTH) {
+    return NextResponse.json({ error: `메시지는 ${MESSAGE_MAX_LENGTH}자 이내로 입력해주세요.` }, { status: 400 });
   }
 
   if (!supabase) {

@@ -246,6 +246,14 @@ export default function PetitionPage() {
       setSubmitted(true);
       setShowConfetti(true);
 
+      // Track successful signature
+      if (typeof window !== "undefined" && window.gtag) {
+        window.gtag("event", "signature_complete", {
+          event_category: "conversion",
+          event_label: "form_submit",
+        });
+      }
+
       // Refresh signatures list
       fetchSignatures();
 
