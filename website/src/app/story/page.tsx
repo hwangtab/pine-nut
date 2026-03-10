@@ -195,6 +195,17 @@ export default function StoryPage() {
               </p>
             </div>
           </div>
+
+          {/* Evidence photo: construction damage */}
+          <div className="mt-12 max-w-3xl mx-auto">
+            <img
+              src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535385_STD.jpg"
+              alt="이설 공사로 훼손되고 있는 가리산 현장"
+              className="w-full rounded-xl shadow-lg my-6"
+              loading="lazy"
+            />
+            <p className="text-xs text-gray-400 mt-1">사진: 오마이뉴스</p>
+          </div>
         </div>
       </section>
 
@@ -242,6 +253,28 @@ export default function StoryPage() {
                 </p>
               </div>
             ))}
+          </div>
+
+          {/* Real protest photos */}
+          <div className="mt-12 space-y-8">
+            <div>
+              <img
+                src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535381_STD.jpg"
+                alt="풍천리 주민들의 대통령실 앞 기자회견 현장"
+                className="w-full rounded-xl shadow-lg my-6"
+                loading="lazy"
+              />
+              <p className="text-xs text-gray-400 mt-1">사진: 오마이뉴스</p>
+            </div>
+            <div>
+              <img
+                src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535384_STD.jpg"
+                alt="풍천리 마을에 설치된 양수발전소 반대 플래카드"
+                className="w-full rounded-xl shadow-lg my-6"
+                loading="lazy"
+              />
+              <p className="text-xs text-gray-400 mt-1">사진: 오마이뉴스</p>
+            </div>
           </div>
         </div>
       </section>

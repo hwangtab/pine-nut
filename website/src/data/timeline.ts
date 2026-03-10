@@ -54,6 +54,8 @@ export const timelineEvents: TimelineEvent[] = [
     description:
       "주민들이 '풍천리양수발전소건설반대대책위원회'를 공식 결성하고, 매주 정기 집회를 시작했습니다. 이때부터 7년이 넘는 장기 투쟁의 본격적인 막이 올랐습니다.",
     category: "집회",
+    imageUrl: "https://www.pressian.com/_resources/10/2025/11/12/2025111116512855285_l.jpg",
+    imageAlt: "2019년 풍천리 주민들의 양수발전소 반대 집회",
   },
   {
     id: 6,
@@ -117,6 +119,8 @@ export const timelineEvents: TimelineEvent[] = [
     description:
       "주민들이 홍천군청 2층에서 경찰과 대치하는 사태가 벌어졌습니다. 전경이 투입되면서 상황이 격화되었으며, 고령의 주민들이 물리적 충돌 상황에 내몰리는 안타까운 장면이 연출되었습니다.",
     category: "집회",
+    imageUrl: "https://img1.newsis.com/2024/07/22/NISI20240722_0001608612_web.jpg",
+    imageAlt: "2024년 7월 홍천군청에서 경찰과 대치하는 풍천리 주민들",
   },
   {
     id: 13,
@@ -126,6 +130,8 @@ export const timelineEvents: TimelineEvent[] = [
     description:
       "이설도로 건설을 위해 10.96ha 면적의 잣나무 2,256그루에 대한 벌채가 시작되었습니다. 산업부의 실시계획 승인이 나오기도 전에 벌채가 진행되어 절차적 정당성에 대한 논란이 일었습니다.",
     category: "기타",
+    imageUrl: "https://img1.newsis.com/2024/10/24/NISI20241024_0001684437_web.jpg",
+    imageAlt: "이설도로 건설로 잘려나가는 잣나무들",
   },
   {
     id: 14,
@@ -135,6 +141,8 @@ export const timelineEvents: TimelineEvent[] = [
     description:
       "7년간의 투쟁 과정에서 받은 상처를 치유하고 주민들의 결속을 다지기 위해 풍천리 잣나무숲에서 음악회와 마을잔치가 개최되었습니다. 전국의 연대자들도 함께하며 주민들에게 힘을 보탰습니다.",
     category: "연대",
+    imageUrl: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg",
+    imageAlt: "2025년 강원생명평화기도회에 모인 연대 참가자들",
   },
   {
     id: 15,
@@ -153,6 +161,8 @@ export const timelineEvents: TimelineEvent[] = [
     description:
       "산업통상자원부가 홍천 양수발전소 실시계획인가를 고시했습니다(제2025-151호). 사업의 법적 근거가 확정되면서 주민들과 연대 단체들은 강력히 반발하며 대립이 심화되었습니다.",
     category: "법률",
+    imageUrl: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535382_STD.jpg",
+    imageAlt: "국정기획위원회 앞 풍천리 주민들의 기자회견",
   },
   {
     id: 17,
@@ -171,6 +181,8 @@ export const timelineEvents: TimelineEvent[] = [
     description:
       "60대에서 80대의 고령 주민 7명이 퇴거불응 혐의로 기소되어 벌금 200~300만원이 구형되었습니다. 평생 마을을 지켜온 어르신들이 전과자가 되는 고통을 겪게 되었습니다.",
     category: "법률",
+    imageUrl: "https://www.pressian.com/_resources/10/2025/11/12/2025111116494078758_l.JPG",
+    imageAlt: "시민공모전 대상을 수상한 풍천리 주민들",
   },
   {
     id: 19,
@@ -180,6 +192,8 @@ export const timelineEvents: TimelineEvent[] = [
     description:
       "2019년부터 이어온 정기 집회가 680여 차를 달성했습니다. 6년이 넘는 세월 동안 매주 한 번도 빠지지 않고 집회를 이어온 주민들의 끈기와 의지를 보여주는 기록입니다.",
     category: "집회",
+    imageUrl: "https://www.pressian.com/_resources/10/2025/11/12/2025111117101271238_l.png",
+    imageAlt: "672차 강원생명평화기도회 및 백지화 결의대회",
   },
   {
     id: 20,

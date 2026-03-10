@@ -1,46 +1,147 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { TreePine, Users, Heart, Camera } from "lucide-react";
-import Link from "next/link";
-import type { LucideIcon } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Camera, X } from "lucide-react";
 
-interface PlaceholderCard {
+interface GalleryPhoto {
   id: number;
-  caption: string;
-  bgColor: string;
-  iconColor: string;
-  Icon: LucideIcon;
+  title: string;
+  url: string;
+  credit: string;
+  description: string;
 }
 
-const naturePlaceholders: PlaceholderCard[] = [
-  { id: 1, caption: "100년 된 잣나무 군락지", bgColor: "bg-emerald-800", iconColor: "text-emerald-300", Icon: TreePine },
-  { id: 2, caption: "풍천리 마을 전경", bgColor: "bg-emerald-700", iconColor: "text-emerald-200", Icon: TreePine },
-  { id: 3, caption: "잣나무숲 산책로", bgColor: "bg-emerald-900", iconColor: "text-emerald-400", Icon: TreePine },
-  { id: 4, caption: "멸종위기 산양 서식지", bgColor: "bg-green-800", iconColor: "text-green-300", Icon: TreePine },
-  { id: 5, caption: "풍천리의 사계절", bgColor: "bg-teal-800", iconColor: "text-teal-300", Icon: TreePine },
-  { id: 6, caption: "마을 공동체의 터전", bgColor: "bg-emerald-600", iconColor: "text-emerald-100", Icon: TreePine },
+const beautyPhotos: GalleryPhoto[] = [
+  {
+    id: 1,
+    title: "드론으로 본 풍천리 전경",
+    url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg",
+    credit: "오마이뉴스",
+    description: "가리산 자락에 자리한 풍천리 마을의 항공 촬영 사진",
+  },
+  {
+    id: 2,
+    title: "100년 잣나무숲",
+    url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499236_STD.jpg",
+    credit: "오마이뉴스",
+    description: "전국 최고 품질의 잣을 생산하는 풍천리 잣나무숲",
+  },
+  {
+    id: 3,
+    title: "하부댐 건설 예정 지역",
+    url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535386_STD.jpg",
+    credit: "오마이뉴스",
+    description: "양수발전소 하부댐으로 수몰될 위기의 풍천리 계곡",
+  },
 ];
 
-const protestPlaceholders: PlaceholderCard[] = [
-  { id: 7, caption: "680여 차 정기 집회", bgColor: "bg-orange-700", iconColor: "text-orange-200", Icon: Users },
-  { id: 8, caption: "홍천군청 앞 주민 시위", bgColor: "bg-amber-800", iconColor: "text-amber-200", Icon: Users },
-  { id: 9, caption: "잣나무 벌채 현장", bgColor: "bg-orange-800", iconColor: "text-orange-300", Icon: Users },
-  { id: 10, caption: "주민 철야 농성", bgColor: "bg-red-800", iconColor: "text-red-300", Icon: Users },
-  { id: 11, caption: "이설도로 공사 현장", bgColor: "bg-orange-900", iconColor: "text-orange-200", Icon: Users },
-  { id: 12, caption: "대책위원회 회의", bgColor: "bg-amber-700", iconColor: "text-amber-100", Icon: Users },
+const strugglePhotos: GalleryPhoto[] = [
+  {
+    id: 4,
+    title: "주민들의 거리 집회 (2019)",
+    url: "https://www.pressian.com/_resources/10/2025/11/12/2025111116512855285_l.jpg",
+    credit: "풍천리양수발전소반대대책위 / 프레시안",
+    description: "2019년 양수발전소 건설 반대를 외치는 풍천리 주민들",
+  },
+  {
+    id: 5,
+    title: "시내 거리 행진 (2019)",
+    url: "https://www.pressian.com/_resources/10/2025/11/12/2025111116584845825_l.jpg",
+    credit: "풍천리양수발전소반대대책위 / 프레시안",
+    description: "2019년 양수발전소 건립 철회를 요구하는 시내 집회",
+  },
+  {
+    id: 6,
+    title: "홍천군청 경찰 대치 (2024)",
+    url: "https://img1.newsis.com/2024/07/22/NISI20240722_0001608612_web.jpg",
+    credit: "뉴시스",
+    description: "2024년 7월 홍천군청에서 경찰과 대치하는 주민들",
+  },
+  {
+    id: 7,
+    title: "농성장 철거 (2020)",
+    url: "https://www.pressian.com/_resources/10/2025/11/12/2025111116580311974_l.jpg",
+    credit: "풍천리양수발전소반대대책위 / 프레시안",
+    description: "2020년 홍천군청 인근 농성장이 철거되는 모습",
+  },
+  {
+    id: 8,
+    title: "가리산 훼손 현장",
+    url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535385_STD.jpg",
+    credit: "오마이뉴스",
+    description: "이설도로 공사로 훼손되고 있는 56번 도로 부근 가리산",
+  },
+  {
+    id: 9,
+    title: "드론 촬영 댐 계획 부지",
+    url: "https://www.pressian.com/_resources/10/2025/11/12/2025111116565874407_l.jpg",
+    credit: "풍천리양수발전소반대대책위 / 프레시안",
+    description:
+      "드론으로 촬영한 댐 건설 계획 부지. 이설도로 공사로 벌목된 산이 보인다",
+  },
+  {
+    id: 10,
+    title: "마을 반대 플래카드",
+    url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535384_STD.jpg",
+    credit: "오마이뉴스",
+    description:
+      "'댐 2개 양수발전소가 관광자원? 아무도 믿지 않을 거짓말!' 풍천리 마을 플래카드",
+  },
 ];
 
-const solidarityPlaceholders: PlaceholderCard[] = [
-  { id: 13, caption: "청소년직접행동 연대 방문", bgColor: "bg-sky-700", iconColor: "text-sky-200", Icon: Heart },
-  { id: 14, caption: "전국 140여 개 단체 연대", bgColor: "bg-blue-800", iconColor: "text-blue-200", Icon: Heart },
-  { id: 15, caption: "잣나무숲 음악회", bgColor: "bg-sky-800", iconColor: "text-sky-300", Icon: Heart },
-  { id: 16, caption: "마을잔치", bgColor: "bg-indigo-700", iconColor: "text-indigo-200", Icon: Heart },
-  { id: 17, caption: "강원녹색당 연대 성명", bgColor: "bg-blue-700", iconColor: "text-blue-100", Icon: Heart },
-  { id: 18, caption: "시민 응원 메시지", bgColor: "bg-sky-900", iconColor: "text-sky-200", Icon: Heart },
+const solidarityPhotos: GalleryPhoto[] = [
+  {
+    id: 11,
+    title: "대통령실 앞 기자회견 (2025.6)",
+    url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535381_STD.jpg",
+    credit: "오마이뉴스",
+    description:
+      "2025년 6월 10일 대통령실 앞에서 열린 양수발전소 건설반대 기자회견",
+  },
+  {
+    id: 12,
+    title: "국정기획위 기자회견 (2025.8)",
+    url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535382_STD.jpg",
+    credit: "오마이뉴스",
+    description:
+      "2025년 8월 1일 국정기획위원회 앞 기자회견장의 풍천리 주민들",
+  },
+  {
+    id: 13,
+    title: "강원생명평화기도회 (2025.8)",
+    url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg",
+    credit: "오마이뉴스",
+    description:
+      "2025년 8월 22일 강원생명평화기도회에 모인 연대 참가자들",
+  },
+  {
+    id: 14,
+    title: "시민공모전 대상 수상 (2025.10)",
+    url: "https://www.pressian.com/_resources/10/2025/11/12/2025111116494078758_l.JPG",
+    credit: "프레시안 (손가영 기자)",
+    description:
+      "한국내셔널트러스트 '이곳만은 지키자' 시민공모전에서 대상을 수상한 주민들",
+  },
+  {
+    id: 15,
+    title: "672차 결의대회 (2025.10)",
+    url: "https://www.pressian.com/_resources/10/2025/11/12/2025111117101271238_l.png",
+    credit: "풍천리양수발전소반대대책위 / 프레시안",
+    description:
+      "672차 강원생명평화기도회 및 양수발전소·송전탑 백지화 결의대회",
+  },
 ];
 
-function GalleryCard({ card, index }: { card: PlaceholderCard; index: number }) {
+function PhotoCard({
+  photo,
+  index,
+  onOpen,
+}: {
+  photo: GalleryPhoto;
+  index: number;
+  onOpen: (photo: GalleryPhoto) => void;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -48,25 +149,24 @@ function GalleryCard({ card, index }: { card: PlaceholderCard; index: number }) 
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.4, delay: index * 0.06 }}
       className="group cursor-pointer"
+      onClick={() => onOpen(photo)}
     >
-      <div
-        className={`relative aspect-[4/3] rounded-2xl ${card.bgColor} shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col items-center justify-center gap-3 hover:scale-[1.02]`}
-      >
-        {/* Icon */}
-        <card.Icon className={`w-12 h-12 ${card.iconColor} opacity-60 group-hover:opacity-80 transition-opacity`} />
+      <div className="relative aspect-[4/3] rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden hover:scale-[1.02] bg-gray-100">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={photo.url}
+          alt={photo.description}
+          loading="lazy"
+          className="w-full h-full object-cover"
+        />
 
-        {/* Placeholder overlay text */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20">
-          <Camera className="w-8 h-8 text-white/50 mb-2" />
-          <span className="text-white/70 text-sm font-medium">
-            사진 준비 중
-          </span>
-        </div>
-
-        {/* Caption */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 pt-8">
+        {/* Gradient overlay with title and credit */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-4 pt-10">
           <p className="text-white text-sm font-medium leading-snug">
-            {card.caption}
+            {photo.title}
+          </p>
+          <p className="text-white/70 text-xs mt-1">
+            사진: {photo.credit}
           </p>
         </div>
       </div>
@@ -74,14 +174,70 @@ function GalleryCard({ card, index }: { card: PlaceholderCard; index: number }) 
   );
 }
 
+function Lightbox({
+  photo,
+  onClose,
+}: {
+  photo: GalleryPhoto;
+  onClose: () => void;
+}) {
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+        onClick={onClose}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+          aria-label="닫기"
+        >
+          <X className="w-6 h-6 text-white" />
+        </button>
+
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="max-w-4xl w-full"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={photo.url}
+            alt={photo.description}
+            className="w-full max-h-[75vh] object-contain rounded-lg"
+          />
+          <div className="mt-4 text-center">
+            <h3 className="text-white text-lg font-semibold">
+              {photo.title}
+            </h3>
+            <p className="text-white/80 text-sm mt-1">{photo.description}</p>
+            <p className="text-white/50 text-xs mt-2">
+              사진: {photo.credit}
+            </p>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 function GallerySection({
   title,
   description,
-  cards,
+  photos,
+  onOpenPhoto,
 }: {
   title: string;
   description: string;
-  cards: PlaceholderCard[];
+  photos: GalleryPhoto[];
+  onOpenPhoto: (photo: GalleryPhoto) => void;
 }) {
   return (
     <section className="mb-16 md:mb-24">
@@ -100,9 +256,14 @@ function GallerySection({
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-        {cards.map((card, index) => (
-          <GalleryCard key={card.id} card={card} index={index} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        {photos.map((photo, index) => (
+          <PhotoCard
+            key={photo.id}
+            photo={photo}
+            index={index}
+            onOpen={onOpenPhoto}
+          />
         ))}
       </div>
     </section>
@@ -110,6 +271,10 @@ function GallerySection({
 }
 
 export default function GalleryPage() {
+  const [lightboxPhoto, setLightboxPhoto] = useState<GalleryPhoto | null>(
+    null
+  );
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-stone-50 via-white to-amber-50/30">
       {/* Hero */}
@@ -137,19 +302,22 @@ export default function GalleryPage() {
         <GallerySection
           title="풍천리의 아름다움"
           description="100년 넘은 잣나무 군락지와 멸종위기 산양이 살아가는 풍천리의 자연. 이 숲은 주민들의 삶의 터전이자, 지켜야 할 생태계의 보고입니다."
-          cards={naturePlaceholders}
+          photos={beautyPhotos}
+          onOpenPhoto={setLightboxPhoto}
         />
 
         <GallerySection
           title="투쟁의 현장"
           description="2019년부터 7년이 넘도록 매주 이어온 정기 집회, 680여 차의 기록. 60~80대 어르신들이 마을을 지키기 위해 걸어온 길입니다."
-          cards={protestPlaceholders}
+          photos={strugglePhotos}
+          onOpenPhoto={setLightboxPhoto}
         />
 
         <GallerySection
           title="연대의 순간"
           description="전국 140여 개 단체, 청소년에서 시민까지. 풍천리 주민들과 함께 손을 잡은 연대의 순간들입니다."
-          cards={solidarityPlaceholders}
+          photos={solidarityPhotos}
+          onOpenPhoto={setLightboxPhoto}
         />
       </div>
 
@@ -167,7 +335,8 @@ export default function GalleryPage() {
             사진을 제보해주세요
           </h2>
           <p className="text-gray-600 mb-6 leading-relaxed">
-            풍천리의 아름다운 자연, 투쟁의 현장, 연대의 순간을 담은 사진이 있으시다면 제보해주세요. 함께 기록을 남깁니다.
+            풍천리의 아름다운 자연, 투쟁의 현장, 연대의 순간을 담은 사진이
+            있으시다면 제보해주세요. 함께 기록을 남깁니다.
           </p>
           <a
             href="https://campaigns.do"
@@ -179,6 +348,22 @@ export default function GalleryPage() {
           </a>
         </motion.div>
       </section>
+
+      {/* Copyright notice */}
+      <div className="max-w-5xl mx-auto px-4 pb-8 text-center">
+        <p className="text-gray-400 text-xs leading-relaxed">
+          사진 출처: 오마이뉴스, 프레시안, 뉴시스, 풍천리양수발전소반대대책위.
+          언론 보도 사진은 출처를 표기하여 사용합니다.
+        </p>
+      </div>
+
+      {/* Lightbox */}
+      {lightboxPhoto && (
+        <Lightbox
+          photo={lightboxPhoto}
+          onClose={() => setLightboxPhoto(null)}
+        />
+      )}
     </main>
   );
 }

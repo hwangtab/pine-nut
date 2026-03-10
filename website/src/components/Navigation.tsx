@@ -14,6 +14,7 @@ const navLinks: NavLink[] = [
   { label: "이야기", href: "/story" },
   { label: "타임라인", href: "/timeline" },
   { label: "소식", href: "/news" },
+  { label: "갤러리", href: "/gallery" },
   { label: "자료실", href: "/press" },
   { label: "카드뉴스", href: "/share" },
 ];

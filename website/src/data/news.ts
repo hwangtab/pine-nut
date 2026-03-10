@@ -30,7 +30,66 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.pressian.com/pages/articles/2025111117201617280",
     sourceName: "프레시안",
-    thumbnailUrl: "/images/korean-mountains.jpg",
+    thumbnailUrl:
+      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535384_STD.jpg",
+  },
+  {
+    id: 10,
+    slug: "ohmynews-pastor-tragedy",
+    title:
+      "국내 최대 잣 생산지의 비극... 목사가 보여준 잔혹한 광경",
+    summary:
+      "풍천리 주민들의 투쟁을 함께하는 박성율 목사가 양수발전소 건설로 파괴되고 있는 가리산과 풍천리의 현실을 고발합니다.",
+    content: "",
+    date: "2025-10-27",
+    category: "언론보도" as const,
+    sourceUrl:
+      "https://www.ohmynews.com/NWS_Web/Series/series_premium_pg.aspx?CNTN_CD=A0003174314",
+    sourceName: "오마이뉴스",
+    thumbnailUrl:
+      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535385_STD.jpg",
+  },
+  {
+    id: 6,
+    slug: "hcsinmoon-approval-residents-backlash",
+    title: "홍천양수발전소 승인·고시에 주민들 강력 반발, 대립 심화 우려",
+    summary:
+      "산업통상자원부의 실시계획인가 고시 이후 풍천리 주민들이 강력히 반발하며 대립이 심화될 우려가 커지고 있다.",
+    content: `산업통상자원부가 홍천 양수발전소 실시계획인가를 고시(제2025-151호)한 이후, 풍천리 주민들이 강력히 반발하고 있습니다. 주민들은 사업 승인 과정에서 자신들의 반대 의견이 완전히 무시되었다며 분노하고 있습니다.
+
+실시계획인가 고시로 사업의 법적 근거가 확정되면서, 대우건설 컨소시엄이 시공자로 선정되고 6,155억원 규모의 84개월 공사가 본격화될 예정입니다. 진입도로와 국도56호선 이설도로 등 선행공사가 이미 시작된 상황입니다.
+
+주민들은 2019년부터 7년 가까이 매주 집회를 이어오며 사업 백지화를 요구해왔습니다. 홍천군수의 '주민 반대 시 중단' 약속이 지켜지지 않은 것에 대한 불신이 깊은 가운데, 실시계획인가 고시는 주민들의 분노에 불을 지폈습니다.
+
+지역사회에서는 앞으로 본공사가 시작되면 주민과 시공사 간의 물리적 충돌이 발생할 수 있다는 우려가 나오고 있으며, 갈등 해소를 위한 대화의 장이 필요하다는 목소리도 커지고 있습니다.`,
+    date: "2025-09-01",
+    category: "언론보도",
+    sourceUrl:
+      "https://www.hcsinmoon.co.kr/news/articleView.html?idxno=78735",
+    sourceName: "홍천신문",
+    thumbnailUrl:
+      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535382_STD.jpg",
+  },
+  {
+    id: 3,
+    slug: "ohmynews-nationwide-pumped-hydro-opposition",
+    title: '"홍천 등 전국 15곳 신규 양수발전소 건설, 중단해야"',
+    summary:
+      "홍천을 포함한 전국 15곳에서 추진 중인 신규 양수발전소 건설의 전면 중단을 요구하는 목소리가 높아지고 있다.",
+    content: `홍천 풍천리를 포함하여 전국 15곳에서 동시에 추진되고 있는 신규 양수발전소 건설 사업에 대해 전면 중단을 요구하는 목소리가 커지고 있습니다. 환경단체와 주민 단체들은 양수발전소의 실제 필요성과 환경 파괴 문제를 동시에 제기하고 있습니다.
+
+양수발전소는 전력 수요가 적을 때 물을 퍼 올려 저장했다가 수요가 많을 때 방류하여 전기를 생산하는 시설입니다. 그러나 반대 측은 에너지 효율이 낮고, 건설 과정에서 대규모 환경 파괴가 불가피하다는 점을 지적하고 있습니다.
+
+특히 홍천 풍천리의 사례는 전국 양수발전소 반대 운동의 상징적 사례로 부각되고 있습니다. 7년 넘게 이어진 주민들의 투쟁과 680여 차례의 정기 집회는 다른 후보지 주민들에게도 큰 영향을 미치고 있습니다.
+
+전국 140여 개 시민·환경 단체가 연대하여 신규 양수발전소 건설의 전면적 재검토를 요구하고 있으며, 에너지 정책의 전환과 주민 참여 보장을 촉구하고 있습니다.`,
+    date: "2025-08-01",
+    category: "연대",
+    sourceUrl:
+      "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003153731",
+    sourceName: "오마이뉴스",
+    thumbnailUrl:
+      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535381_STD.jpg",
   },
   {
     id: 2,
@@ -51,47 +110,8 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003150780",
     sourceName: "오마이뉴스",
-    thumbnailUrl: "/images/pine-forest-1.jpg",
-  },
-  {
-    id: 3,
-    slug: "ohmynews-nationwide-pumped-hydro-opposition",
-    title: '"홍천 등 전국 15곳 신규 양수발전소 건설, 중단해야"',
-    summary:
-      "홍천을 포함한 전국 15곳에서 추진 중인 신규 양수발전소 건설의 전면 중단을 요구하는 목소리가 높아지고 있다.",
-    content: `홍천 풍천리를 포함하여 전국 15곳에서 동시에 추진되고 있는 신규 양수발전소 건설 사업에 대해 전면 중단을 요구하는 목소리가 커지고 있습니다. 환경단체와 주민 단체들은 양수발전소의 실제 필요성과 환경 파괴 문제를 동시에 제기하고 있습니다.
-
-양수발전소는 전력 수요가 적을 때 물을 퍼 올려 저장했다가 수요가 많을 때 방류하여 전기를 생산하는 시설입니다. 그러나 반대 측은 에너지 효율이 낮고, 건설 과정에서 대규모 환경 파괴가 불가피하다는 점을 지적하고 있습니다.
-
-특히 홍천 풍천리의 사례는 전국 양수발전소 반대 운동의 상징적 사례로 부각되고 있습니다. 7년 넘게 이어진 주민들의 투쟁과 680여 차례의 정기 집회는 다른 후보지 주민들에게도 큰 영향을 미치고 있습니다.
-
-전국 140여 개 시민·환경 단체가 연대하여 신규 양수발전소 건설의 전면적 재검토를 요구하고 있으며, 에너지 정책의 전환과 주민 참여 보장을 촉구하고 있습니다.`,
-    date: "2025-08-01",
-    category: "연대",
-    sourceUrl:
-      "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003153731",
-    sourceName: "오마이뉴스",
-    thumbnailUrl: "/images/mountain-forest.jpg",
-  },
-  {
-    id: 4,
-    slug: "newsis-police-confrontation-county-office",
-    title: "홍천 양수발전 반대 주민, 경찰과 홍천군청서 대치 중",
-    summary:
-      "양수발전소 건설에 반대하는 풍천리 주민들이 홍천군청 2층에서 경찰과 대치하는 사태가 발생했다.",
-    content: `2024년 7월 22일, 홍천 양수발전소 건설에 반대하는 풍천리 주민들이 홍천군청 2층에서 경찰과 대치하는 상황이 발생했습니다. 주민들은 군청을 방문하여 양수발전소 건설 중단을 요구했으며, 경찰이 투입되면서 긴장이 고조되었습니다.
-
-주민들은 홍천군이 주민 반대 의사를 지속적으로 무시하고 사업을 강행하고 있다며 강력히 항의했습니다. 2019년 홍천군수가 '주민이 반대하면 중단하겠다'고 약속했음에도 이를 이행하지 않은 점이 주민들의 분노를 키웠습니다.
-
-전경이 투입된 가운데 고령의 주민들이 물리적 대치 상황에 놓이면서, 현장의 긴장감은 극도로 높아졌습니다. 이 사건은 양수발전소를 둘러싼 주민과 행정기관 간의 갈등이 얼마나 심각한 수준에 이르렀는지를 보여주는 사건으로 기록되었습니다.
-
-이후에도 주민들은 매주 정기 집회를 이어가며 투쟁을 계속하고 있으며, 이 사건은 언론과 시민사회의 관심을 환기시키는 계기가 되었습니다.`,
-    date: "2024-07-22",
-    category: "집회",
-    sourceUrl:
-      "https://www.newsis.com/view/NISX20240722_0002820126",
-    sourceName: "뉴시스",
-    thumbnailUrl: "/images/korean-mountains.jpg",
+    thumbnailUrl:
+      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499236_STD.jpg",
   },
   {
     id: 5,
@@ -111,27 +131,8 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.ikpnews.net/news/articleView.html?idxno=67812",
     sourceName: "한국농정신문",
-    thumbnailUrl: "/images/mountain-village.jpg",
-  },
-  {
-    id: 6,
-    slug: "hcsinmoon-approval-residents-backlash",
-    title: "홍천양수발전소 승인·고시에 주민들 강력 반발, 대립 심화 우려",
-    summary:
-      "산업통상자원부의 실시계획인가 고시 이후 풍천리 주민들이 강력히 반발하며 대립이 심화될 우려가 커지고 있다.",
-    content: `산업통상자원부가 홍천 양수발전소 실시계획인가를 고시(제2025-151호)한 이후, 풍천리 주민들이 강력히 반발하고 있습니다. 주민들은 사업 승인 과정에서 자신들의 반대 의견이 완전히 무시되었다며 분노하고 있습니다.
-
-실시계획인가 고시로 사업의 법적 근거가 확정되면서, 대우건설 컨소시엄이 시공자로 선정되고 6,155억원 규모의 84개월 공사가 본격화될 예정입니다. 진입도로와 국도56호선 이설도로 등 선행공사가 이미 시작된 상황입니다.
-
-주민들은 2019년부터 7년 가까이 매주 집회를 이어오며 사업 백지화를 요구해왔습니다. 홍천군수의 '주민 반대 시 중단' 약속이 지켜지지 않은 것에 대한 불신이 깊은 가운데, 실시계획인가 고시는 주민들의 분노에 불을 지폈습니다.
-
-지역사회에서는 앞으로 본공사가 시작되면 주민과 시공사 간의 물리적 충돌이 발생할 수 있다는 우려가 나오고 있으며, 갈등 해소를 위한 대화의 장이 필요하다는 목소리도 커지고 있습니다.`,
-    date: "2025-09-01",
-    category: "언론보도",
-    sourceUrl:
-      "https://www.hcsinmoon.co.kr/news/articleView.html?idxno=78735",
-    sourceName: "홍천신문",
-    thumbnailUrl: "/images/forest-aerial.jpg",
+    thumbnailUrl:
+      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg",
   },
   {
     id: 7,
@@ -151,7 +152,8 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.womennews.co.kr/news/articleView.html?idxno=249863",
     sourceName: "여성신문",
-    thumbnailUrl: "/images/forest-landscape.jpg",
+    thumbnailUrl:
+      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499234_STD.jpg",
   },
   {
     id: 8,
@@ -171,7 +173,29 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.newsis.com/view/NISX20241024_0002931932",
     sourceName: "뉴시스",
-    thumbnailUrl: "/images/pine-forest-2.jpg",
+    thumbnailUrl:
+      "https://img1.newsis.com/2024/10/24/NISI20241024_0001684437_web.jpg",
+  },
+  {
+    id: 4,
+    slug: "newsis-police-confrontation-county-office",
+    title: "홍천 양수발전 반대 주민, 경찰과 홍천군청서 대치 중",
+    summary:
+      "양수발전소 건설에 반대하는 풍천리 주민들이 홍천군청 2층에서 경찰과 대치하는 사태가 발생했다.",
+    content: `2024년 7월 22일, 홍천 양수발전소 건설에 반대하는 풍천리 주민들이 홍천군청 2층에서 경찰과 대치하는 상황이 발생했습니다. 주민들은 군청을 방문하여 양수발전소 건설 중단을 요구했으며, 경찰이 투입되면서 긴장이 고조되었습니다.
+
+주민들은 홍천군이 주민 반대 의사를 지속적으로 무시하고 사업을 강행하고 있다며 강력히 항의했습니다. 2019년 홍천군수가 '주민이 반대하면 중단하겠다'고 약속했음에도 이를 이행하지 않은 점이 주민들의 분노를 키웠습니다.
+
+전경이 투입된 가운데 고령의 주민들이 물리적 대치 상황에 놓이면서, 현장의 긴장감은 극도로 높아졌습니다. 이 사건은 양수발전소를 둘러싼 주민과 행정기관 간의 갈등이 얼마나 심각한 수준에 이르렀는지를 보여주는 사건으로 기록되었습니다.
+
+이후에도 주민들은 매주 정기 집회를 이어가며 투쟁을 계속하고 있으며, 이 사건은 언론과 시민사회의 관심을 환기시키는 계기가 되었습니다.`,
+    date: "2024-07-22",
+    category: "집회",
+    sourceUrl:
+      "https://www.newsis.com/view/NISX20240722_0002820126",
+    sourceName: "뉴시스",
+    thumbnailUrl:
+      "https://img1.newsis.com/2024/07/22/NISI20240722_0001608612_web.jpg",
   },
   {
     id: 9,
@@ -191,6 +215,7 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0002856920",
     sourceName: "오마이뉴스",
-    thumbnailUrl: "/images/pine-nuts.jpg",
+    thumbnailUrl:
+      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535377_STD.jpg",
   },
 ];

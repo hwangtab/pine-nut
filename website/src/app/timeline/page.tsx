@@ -3,7 +3,6 @@
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
 import { timelineEvents, type TimelineEvent } from "@/data/timeline";
 
 const YEARS = ["전체", 2019, 2021, 2022, 2023, 2024, 2025, 2026] as const;
@@ -54,14 +53,16 @@ function TimelineCard({ event, index }: { event: TimelineEvent; index: number })
         <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-100">
           {/* Event image */}
           {event.imageUrl && (
-            <div className="relative w-full h-48 md:h-56">
-              <Image
+            <div className="relative w-full">
+              <img
                 src={event.imageUrl}
                 alt={event.imageAlt || event.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
+                className="w-full h-48 md:h-56 object-cover"
+                loading="lazy"
               />
+              <span className="absolute bottom-2 right-2 text-[10px] text-white/80 bg-black/40 px-2 py-0.5 rounded">
+                사진 출처: 언론 보도
+              </span>
             </div>
           )}
 

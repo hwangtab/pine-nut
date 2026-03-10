@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useInView, animate } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
+// Image import removed — using external URLs with <img> and CSS background-image
 import { PenLine, Heart, Share2, ChevronDown } from "lucide-react";
 
 /* ───────────────────────── helpers ───────────────────────── */
@@ -211,14 +211,10 @@ export default function HomePage() {
       {/* ════════════════ SECTION 1 — HERO ════════════════ */}
       <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden text-white px-6 text-center">
         {/* Background photo */}
-        <Image
-          src="/images/pine-forest-1.jpg"
-          alt="풍천리 잣나무 숲 전경"
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-          quality={85}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: 'url(https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg)' }}
+          aria-label="풍천리 마을과 잣나무 숲 드론 항공 사진"
         />
         {/* Dark gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 z-[1]" />
@@ -284,6 +280,11 @@ export default function HomePage() {
           </motion.button>
         </div>
 
+        {/* Photo credit */}
+        <div className="absolute bottom-16 right-6 z-10">
+          <p className="text-xs text-white/40">사진: 오마이뉴스</p>
+        </div>
+
         {/* Scroll indicator */}
         <motion.div
           animate={{ y: [0, 12, 0] }}
@@ -327,15 +328,14 @@ export default function HomePage() {
 
           {/* Pine forest photo */}
           <FadeIn delay={0.4}>
-            <div className="relative w-full aspect-[16/9] my-10 rounded-2xl overflow-hidden shadow-lg">
-              <Image
-                src="/images/forest-landscape.jpg"
-                alt="울창한 잣나무 숲 풍경"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 768px"
-                quality={80}
+            <div className="my-10">
+              <img
+                src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499236_STD.jpg"
+                alt="풍천리 잣나무 숲 실제 풍경"
+                className="w-full rounded-2xl shadow-lg"
+                loading="lazy"
               />
+              <p className="text-xs text-gray-400 mt-1">사진: 오마이뉴스</p>
             </div>
           </FadeIn>
 
