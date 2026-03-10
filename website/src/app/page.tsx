@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useInView, animate } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { TreePine, Volume2, Home, Sprout, PenLine, Heart, Share2, ChevronDown } from "lucide-react";
+import { PenLine, Heart, Share2, ChevronDown } from "lucide-react";
 
 /* ───────────────────────── helpers ───────────────────────── */
 
@@ -120,6 +120,21 @@ function MountainSilhouette() {
 
 export default function HomePage() {
   const storyRef = useRef<HTMLDivElement>(null);
+  const [signatureCount, setSignatureCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/signatures")
+      .then((res) => {
+        if (!res.ok) throw new Error("fetch failed");
+        return res.json();
+      })
+      .then((data) => {
+        if (typeof data.count === "number") setSignatureCount(data.count);
+      })
+      .catch(() => {
+        /* graceful degradation — show nothing */
+      });
+  }, []);
 
   const scrollToStory = useCallback(() => {
     storyRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -311,52 +326,70 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
             {[
               {
-                icon: TreePine,
                 title: "생태계 파괴",
                 desc: "잣나무 약 11만 그루 벌채 예정, 153ha 산림 파괴. 산양·까막딱다구리·수달 서식지가 사라집니다",
                 delay: 0,
-                image: "/images/forest-aerial.jpg",
-                imageAlt: "항공에서 본 울창한 산림 — 파괴 위기에 놓인 숲",
+                gradient: "from-emerald-600 to-green-800",
+                svgIcon: (
+                  <svg viewBox="0 0 64 64" fill="none" className="w-14 h-14" aria-hidden="true">
+                    <path d="M32 6L18 26h6L14 44h8L10 58h44L42 44h8L40 26h6L32 6z" fill="white" fillOpacity="0.9"/>
+                    <rect x="29" y="54" width="6" height="10" rx="1" fill="white" fillOpacity="0.7"/>
+                  </svg>
+                ),
               },
               {
-                icon: Volume2,
                 title: "소음·분진",
                 desc: "84개월(7년) 공사, 총사업비 1.59조원 규모. 대규모 공사로 고령 주민들의 건강이 위협받습니다",
                 delay: 0.1,
-                image: "/images/korean-mountains.jpg",
-                imageAlt: "산간 마을 주변 산 풍경",
+                gradient: "from-gray-500 to-gray-700",
+                svgIcon: (
+                  <svg viewBox="0 0 64 64" fill="none" className="w-14 h-14" aria-hidden="true">
+                    <path d="M10 28v8h8l12 12V16L18 28H10z" fill="white" fillOpacity="0.9"/>
+                    <path d="M38 20a12 12 0 010 24" stroke="white" strokeOpacity="0.7" strokeWidth="3" strokeLinecap="round"/>
+                    <path d="M42 14a20 20 0 010 36" stroke="white" strokeOpacity="0.5" strokeWidth="3" strokeLinecap="round"/>
+                    <circle cx="50" cy="18" r="2" fill="white" fillOpacity="0.4"/>
+                    <circle cx="54" cy="28" r="1.5" fill="white" fillOpacity="0.3"/>
+                    <circle cx="52" cy="40" r="2.5" fill="white" fillOpacity="0.35"/>
+                    <circle cx="48" cy="48" r="1.5" fill="white" fillOpacity="0.3"/>
+                  </svg>
+                ),
               },
               {
-                icon: Home,
                 title: "공동체 와해",
                 desc: "51가구 수몰·이주 예정. 수십 년간 이어온 마을 공동체가 해체됩니다",
                 delay: 0.2,
-                image: "/images/mountain-village.jpg",
-                imageAlt: "산촌 마을 풍경",
+                gradient: "from-amber-700 to-yellow-900",
+                svgIcon: (
+                  <svg viewBox="0 0 64 64" fill="none" className="w-14 h-14" aria-hidden="true">
+                    <path d="M8 38L32 18l24 20H8z" fill="white" fillOpacity="0.9"/>
+                    <rect x="16" y="38" width="32" height="18" fill="white" fillOpacity="0.9"/>
+                    <rect x="26" y="42" width="12" height="14" rx="1" fill="currentColor" fillOpacity="0.3"/>
+                    <line x1="18" y1="16" x2="46" y2="52" stroke="#ef4444" strokeWidth="3" strokeLinecap="round"/>
+                    <line x1="46" y1="16" x2="18" y2="52" stroke="#ef4444" strokeWidth="3" strokeLinecap="round"/>
+                  </svg>
+                ),
               },
               {
-                icon: Sprout,
                 title: "생계 위협",
                 desc: "주민 70%가 잣 생산에 의존. 이미 2024년 10월 이설도로 건설로 2,256그루 벌채가 시작되었습니다",
                 delay: 0.3,
-                image: "/images/pine-nuts.jpg",
-                imageAlt: "잣 — 풍천리 주민 생계의 근간",
+                gradient: "from-amber-500 to-orange-700",
+                svgIcon: (
+                  <svg viewBox="0 0 64 64" fill="none" className="w-14 h-14" aria-hidden="true">
+                    <ellipse cx="32" cy="40" rx="18" ry="14" fill="white" fillOpacity="0.9"/>
+                    <ellipse cx="32" cy="32" rx="18" ry="6" fill="white" fillOpacity="0.7"/>
+                    <path d="M24 20c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="white" strokeOpacity="0.8" strokeWidth="3" strokeLinecap="round"/>
+                    <line x1="14" y1="14" x2="50" y2="54" stroke="#ef4444" strokeWidth="3" strokeLinecap="round"/>
+                  </svg>
+                ),
               },
             ].map((card) => (
               <FadeIn key={card.title} delay={card.delay}>
                 <div className="bg-white rounded-2xl border border-[var(--color-border)] hover:shadow-lg transition-shadow h-full overflow-hidden">
-                  <div className="relative w-full h-40">
-                    <Image
-                      src={card.image}
-                      alt={card.imageAlt}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 640px) 100vw, 50vw"
-                      quality={75}
-                    />
+                  <div className={`w-full h-48 bg-gradient-to-br ${card.gradient} flex items-center justify-center`}>
+                    {card.svgIcon}
                   </div>
                   <div className="p-8">
-                    <card.icon className="w-10 h-10 text-[var(--color-warm)] mb-5" />
                     <h3 className="text-xl font-bold mb-3">{card.title}</h3>
                     <p className="text-[var(--color-text-muted)] leading-relaxed">
                       {card.desc}
@@ -435,6 +468,16 @@ export default function HomePage() {
               작은 관심이 큰 힘이 됩니다
             </p>
           </FadeIn>
+
+          {signatureCount !== null && (
+            <FadeIn className="text-center mb-12">
+              <p className="text-lg text-[var(--color-text-muted)] mb-2">현재</p>
+              <p className="text-5xl sm:text-6xl md:text-7xl font-black text-[var(--color-warm)]">
+                <AnimatedCounter target={signatureCount} suffix="명" />
+              </p>
+              <p className="text-lg text-[var(--color-text-muted)] mt-2">이 함께하고 있습니다</p>
+            </FadeIn>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
             {[

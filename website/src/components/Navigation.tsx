@@ -14,7 +14,6 @@ const navLinks: NavLink[] = [
   { label: "이야기", href: "/story" },
   { label: "타임라인", href: "/timeline" },
   { label: "소식", href: "/news" },
-  { label: "갤러리", href: "/gallery" },
   { label: "자료실", href: "/press" },
   { label: "카드뉴스", href: "/share" },
 ];
@@ -24,6 +23,10 @@ export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [visible, setVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+
+  const isHeroPage = pathname === "/";
+  const isTransparent = isHeroPage && scrollY < 80 && !mobileMenuOpen;
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -37,6 +40,7 @@ export default function Navigation() {
     }
 
     setLastScrollY(currentScrollY);
+    setScrollY(currentScrollY);
   }, [lastScrollY]);
 
   useEffect(() => {
@@ -68,8 +72,12 @@ export default function Navigation() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-[var(--color-border)] transition-transform duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           visible ? "translate-y-0" : "-translate-y-full"
+        } ${
+          isTransparent
+            ? "bg-transparent border-b border-transparent"
+            : "bg-white/90 backdrop-blur-md border-b border-[var(--color-border)]"
         }`}
       >
         <nav
@@ -79,7 +87,9 @@ export default function Navigation() {
           {/* Logo */}
           <Link
             href="/"
-            className="text-lg font-bold text-[var(--color-forest)] shrink-0 min-h-[44px] flex items-center"
+            className={`text-lg font-bold shrink-0 min-h-[44px] flex items-center transition-colors duration-300 ${
+              isTransparent ? "text-white" : "text-[var(--color-forest)]"
+            }`}
           >
             풍천리를 지켜주세요
           </Link>
@@ -90,10 +100,14 @@ export default function Navigation() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-4 py-2 rounded-lg text-[15px] font-medium min-h-[44px] flex items-center transition-colors ${
-                  isActive(link.href)
-                    ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
-                    : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-gray-100"
+                className={`px-4 py-2 rounded-lg text-[15px] font-medium min-h-[44px] flex items-center transition-colors duration-300 ${
+                  isTransparent
+                    ? isActive(link.href)
+                      ? "text-white bg-white/20"
+                      : "text-white/80 hover:text-white hover:bg-white/10"
+                    : isActive(link.href)
+                      ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
+                      : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-gray-100"
                 }`}
                 aria-current={isActive(link.href) ? "page" : undefined}
               >
@@ -111,7 +125,9 @@ export default function Navigation() {
           {/* Mobile hamburger */}
           <button
             type="button"
-            className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+            className={`md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors duration-300 ${
+              isTransparent ? "hover:bg-white/10" : "hover:bg-gray-100"
+            }`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-menu"
@@ -120,7 +136,7 @@ export default function Navigation() {
             {mobileMenuOpen ? (
               <X className="w-6 h-6 text-[var(--color-text)]" />
             ) : (
-              <Menu className="w-6 h-6 text-[var(--color-text)]" />
+              <Menu className={`w-6 h-6 transition-colors duration-300 ${isTransparent ? "text-white" : "text-[var(--color-text)]"}`} />
             )}
           </button>
         </nav>
@@ -161,7 +177,7 @@ export default function Navigation() {
       )}
 
       {/* Spacer to prevent content from hiding behind fixed nav */}
-      <div className="h-16" />
+      {!isHeroPage && <div className="h-16" />}
     </>
   );
 }

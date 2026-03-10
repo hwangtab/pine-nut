@@ -30,6 +30,7 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.pressian.com/pages/articles/2025111117201617280",
     sourceName: "프레시안",
+    thumbnailUrl: "/images/korean-mountains.jpg",
   },
   {
     id: 2,
@@ -50,6 +51,7 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003150780",
     sourceName: "오마이뉴스",
+    thumbnailUrl: "/images/pine-forest-1.jpg",
   },
   {
     id: 3,
@@ -69,6 +71,7 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003153731",
     sourceName: "오마이뉴스",
+    thumbnailUrl: "/images/mountain-forest.jpg",
   },
   {
     id: 4,
@@ -88,6 +91,7 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.newsis.com/view/NISX20240722_0002820126",
     sourceName: "뉴시스",
+    thumbnailUrl: "/images/korean-mountains.jpg",
   },
   {
     id: 5,
@@ -107,6 +111,7 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.ikpnews.net/news/articleView.html?idxno=67812",
     sourceName: "한국농정신문",
+    thumbnailUrl: "/images/mountain-village.jpg",
   },
   {
     id: 6,
@@ -126,6 +131,7 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.hcsinmoon.co.kr/news/articleView.html?idxno=78735",
     sourceName: "홍천신문",
+    thumbnailUrl: "/images/forest-aerial.jpg",
   },
   {
     id: 7,
@@ -145,6 +151,7 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.womennews.co.kr/news/articleView.html?idxno=249863",
     sourceName: "여성신문",
+    thumbnailUrl: "/images/forest-landscape.jpg",
   },
   {
     id: 8,
@@ -164,6 +171,7 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.newsis.com/view/NISX20241024_0002931932",
     sourceName: "뉴시스",
+    thumbnailUrl: "/images/pine-forest-2.jpg",
   },
   {
     id: 9,
@@ -183,5 +191,6 @@ export const newsItems: NewsItem[] = [
     sourceUrl:
       "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0002856920",
     sourceName: "오마이뉴스",
+    thumbnailUrl: "/images/pine-nuts.jpg",
   },
 ];
