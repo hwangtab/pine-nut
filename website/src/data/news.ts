@@ -8,6 +8,7 @@ export interface NewsItem {
   slug: string;
   sourceUrl: string;
   sourceName: string;
+  thumbnailUrl?: string;
 }
 
 export const newsItems: NewsItem[] = [

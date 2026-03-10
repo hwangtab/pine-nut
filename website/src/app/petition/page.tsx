@@ -1,17 +1,15 @@
 "use client";
 
-import { useState, useEffect, useRef, FormEvent } from "react";
+import { useState, useEffect, useRef, useCallback, FormEvent } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
-import { Send, Check, Copy, X } from "lucide-react";
+import { Send, Check, Copy, X, Loader2 } from "lucide-react";
 
-/* ──────────────────────── Demo data ──────────────────────── */
-const DEMO_SIGNATURES = [
-  { name: "김*수", message: "풍천리 주민분들 힘내세요!", date: "2026-03-10" },
-  { name: "박*영", message: "자연을 지키는 일에 함께합니다.", date: "2026-03-09" },
-  { name: "이*현", message: "응원합니다. 끝까지 싸워주세요.", date: "2026-03-09" },
-  { name: "정*미", message: "작은 힘이라도 보태고 싶습니다.", date: "2026-03-08" },
-  { name: "최*호", message: "", date: "2026-03-08" },
-];
+/* ──────────────────────── Types ──────────────────────── */
+interface Signature {
+  name: string;
+  message: string;
+  created_at: string;
+}
 
 /* ──────────────────────── Animated Counter ──────────────────────── */
 function AnimatedCounter({ target }: { target: number }) {
@@ -85,64 +83,88 @@ function Confetti() {
 }
 
 /* ──────────────────────── Rolling Signatures ──────────────────────── */
-function RecentSignatures() {
+function RecentSignatures({ signatures, loading }: { signatures: Signature[]; loading: boolean }) {
   const [offset, setOffset] = useState(0);
 
   useEffect(() => {
+    if (signatures.length === 0) return;
     const timer = setInterval(() => {
-      setOffset((prev) => (prev + 1) % DEMO_SIGNATURES.length);
+      setOffset((prev) => (prev + 1) % signatures.length);
     }, 3000);
     return () => clearInterval(timer);
-  }, []);
+  }, [signatures.length]);
 
-  const ordered = [
-    ...DEMO_SIGNATURES.slice(offset),
-    ...DEMO_SIGNATURES.slice(0, offset),
-  ];
+  const ordered = signatures.length > 0
+    ? [...signatures.slice(offset), ...signatures.slice(0, offset)]
+    : [];
+
+  const formatDate = (dateStr: string) => {
+    try {
+      return new Date(dateStr).toLocaleDateString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    } catch {
+      return dateStr;
+    }
+  };
 
   return (
     <section className="w-full" aria-label="최근 서명">
-      <h2 className="text-xl sm:text-2xl font-bold mb-2 text-[var(--color-text)]">
-        응원 메시지 예시
+      <h2 className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]">
+        최근 서명
       </h2>
-      <p className="text-sm text-[var(--color-text-muted)] mb-6">
-        * 아래는 예시 메시지이며, 실제 서명 시 표시될 형태입니다.
-      </p>
-      <div className="space-y-3 overflow-hidden max-h-[320px]">
-        <AnimatePresence mode="popLayout">
-          {ordered.slice(0, 5).map((sig, i) => (
-            <motion.div
-              key={`${sig.name}-${(offset + i) % DEMO_SIGNATURES.length}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
-              className="bg-white border border-[var(--color-border)] rounded-xl px-5 py-4"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-[var(--color-text)]">{sig.name}</span>
-                <span className="text-sm text-[var(--color-text-muted)]">{sig.date}</span>
-              </div>
-              {sig.message && (
-                <p className="mt-1 text-[var(--color-text-muted)] text-[15px]">
-                  &ldquo;{sig.message}&rdquo;
-                </p>
-              )}
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+      {loading ? (
+        <div className="flex items-center justify-center py-12 text-[var(--color-text-muted)]">
+          <Loader2 className="w-5 h-5 animate-spin mr-2" />
+          불러오는 중...
+        </div>
+      ) : signatures.length === 0 ? (
+        <p className="text-center py-8 text-[var(--color-text-muted)]">
+          아직 서명이 없습니다. 첫 번째로 서명해주세요!
+        </p>
+      ) : (
+        <div className="space-y-3 overflow-hidden max-h-[320px]">
+          <AnimatePresence mode="popLayout">
+            {ordered.slice(0, 5).map((sig, i) => (
+              <motion.div
+                key={`${sig.name}-${(offset + i) % signatures.length}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+                className="bg-white border border-[var(--color-border)] rounded-xl px-5 py-4"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-[var(--color-text)]">{sig.name}</span>
+                  <span className="text-sm text-[var(--color-text-muted)]">{formatDate(sig.created_at)}</span>
+                </div>
+                {sig.message && (
+                  <p className="mt-1 text-[var(--color-text-muted)] text-[15px]">
+                    &ldquo;{sig.message}&rdquo;
+                  </p>
+                )}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      )}
     </section>
   );
 }
 
 /* ──────────────────────── Main Page ──────────────────────── */
 export default function PetitionPage() {
-  const [signatureCount, setSignatureCount] = useState(2847);
+  const [signatureCount, setSignatureCount] = useState(0);
+  const [signatures, setSignatures] = useState<Signature[]>([]);
+  const [loadingSignatures, setLoadingSignatures] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const [submittedName, setSubmittedName] = useState("");
   const [showConfetti, setShowConfetti] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   // Form state
   const [name, setName] = useState("");
@@ -154,6 +176,24 @@ export default function PetitionPage() {
   const [showPrivacy, setShowPrivacy] = useState(false);
 
   const formRef = useRef<HTMLFormElement>(null);
+
+  const fetchSignatures = useCallback(async () => {
+    try {
+      const res = await fetch("/api/signatures");
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      setSignatureCount(data.count);
+      setSignatures(data.signatures || []);
+    } catch (err) {
+      console.error("Failed to fetch signatures:", err);
+    } finally {
+      setLoadingSignatures(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchSignatures();
+  }, [fetchSignatures]);
 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -177,17 +217,46 @@ export default function PetitionPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
-    const newCount = signatureCount + 1;
-    setSignatureCount(newCount);
-    setSubmittedName(name.trim());
-    setSubmitted(true);
-    setShowConfetti(true);
+    setSubmitting(true);
+    setSubmitError("");
 
-    setTimeout(() => setShowConfetti(false), 3000);
+    try {
+      const res = await fetch("/api/signatures", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          message: message.trim(),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "서명 제출에 실패했습니다.");
+      }
+
+      setSignatureCount(data.count);
+      setSubmittedName(name.trim());
+      setSubmitted(true);
+      setShowConfetti(true);
+
+      // Refresh signatures list
+      fetchSignatures();
+
+      setTimeout(() => setShowConfetti(false), 3000);
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : "서명 제출에 실패했습니다. 다시 시도해주세요."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleCopyUrl = async () => {
@@ -247,9 +316,6 @@ export default function PetitionPage() {
             <AnimatedCounter target={signatureCount} />
             <span className="text-[var(--color-text-muted)] text-lg mt-1">
               명이 함께하고 있습니다
-            </span>
-            <span className="text-[var(--color-text-muted)] text-xs mt-1">
-              * 서명 수는 예시이며, 실제 백엔드 연동 시 업데이트됩니다.
             </span>
           </div>
         </div>
@@ -442,13 +508,30 @@ export default function PetitionPage() {
                   </div>
                 </div>
 
+                {/* 제출 에러 */}
+                {submitError && (
+                  <p className="text-sm text-red-600 text-center" role="alert">
+                    {submitError}
+                  </p>
+                )}
+
                 {/* 제출 */}
                 <button
                   type="submit"
-                  className="w-full min-h-[52px] rounded-xl bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold text-lg flex items-center justify-center gap-2 transition-colors"
+                  disabled={submitting}
+                  className="w-full min-h-[52px] rounded-xl bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold text-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <Send className="w-5 h-5" />
-                  서명하기
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      서명 중...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5" />
+                      서명하기
+                    </>
+                  )}
                 </button>
               </form>
             </motion.section>
@@ -520,6 +603,7 @@ export default function PetitionPage() {
                   setAgreePrivacy(false);
                   setAgreeAge(false);
                   setErrors({});
+                  setSubmitError("");
                 }}
                 className="mt-8 text-[var(--color-text-muted)] underline text-sm hover:text-[var(--color-text)] transition-colors min-h-[44px]"
               >
@@ -530,7 +614,7 @@ export default function PetitionPage() {
         </AnimatePresence>
 
         {/* ── Recent Signatures ── */}
-        <RecentSignatures />
+        <RecentSignatures signatures={signatures} loading={loadingSignatures} />
 
         {/* ── Why Sign ── */}
         <section aria-label="서명이 왜 중요한가요">

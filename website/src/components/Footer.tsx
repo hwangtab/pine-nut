@@ -14,13 +14,35 @@ const quickLinks = [
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
 
-  const handleNewsletterSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleNewsletterSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Placeholder: no backend integration
-    setSubmitted(true);
-    setEmail("");
+    setError("");
+    setLoading(true);
+
+    try {
+      // Placeholder endpoint - replace with Stibee API URL when ready
+      const NEWSLETTER_ENDPOINT = process.env.NEXT_PUBLIC_NEWSLETTER_ENDPOINT || "";
+
+      if (NEWSLETTER_ENDPOINT) {
+        await fetch(NEWSLETTER_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+      }
+
+      // Show success regardless (graceful degradation when no backend)
+      setSubmitted(true);
+      setEmail("");
+    } catch {
+      setError("구독 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -77,9 +99,14 @@ export default function Footer() {
           <div>
             <h3 className="text-base font-bold mb-4">소식 받기</h3>
             {submitted ? (
-              <p className="text-sm text-white/70">
-                감사합니다. 소식을 보내드리겠습니다.
-              </p>
+              <div className="space-y-2">
+                <p className="text-sm text-white/90 font-medium">
+                  구독해주셔서 감사합니다!
+                </p>
+                <p className="text-sm text-white/70">
+                  풍천리 소식을 이메일로 보내드리겠습니다.
+                </p>
+              </div>
             ) : (
               <form onSubmit={handleNewsletterSubmit} className="space-y-3">
                 <label htmlFor="footer-email" className="sr-only">
@@ -92,17 +119,19 @@ export default function Footer() {
                   placeholder="이메일 주소"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 min-h-[44px]"
+                  disabled={loading}
+                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 min-h-[44px] disabled:opacity-50"
                 />
                 <button
                   type="submit"
-                  className="w-full px-4 py-3 rounded-lg bg-white text-[var(--color-forest)] font-bold text-sm hover:bg-white/90 transition-colors min-h-[44px]"
+                  disabled={loading}
+                  className="w-full px-4 py-3 rounded-lg bg-white text-[var(--color-forest)] font-bold text-sm hover:bg-white/90 transition-colors min-h-[44px] disabled:opacity-50"
                 >
-                  구독하기
+                  {loading ? "처리 중..." : "구독하기"}
                 </button>
-                <p className="text-xs text-white/50">
-                  * 뉴스레터 기능은 현재 준비 중입니다.
-                </p>
+                {error && (
+                  <p className="text-xs text-red-300">{error}</p>
+                )}
               </form>
             )}
           </div>

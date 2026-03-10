@@ -5,6 +5,8 @@ export interface TimelineEvent {
   title: string;
   description: string;
   category: "회의" | "집회" | "법률" | "연대" | "기타";
+  imageUrl?: string;
+  imageAlt?: string;
 }
 
 export const timelineEvents: TimelineEvent[] = [

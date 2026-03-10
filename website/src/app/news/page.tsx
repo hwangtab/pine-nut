@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { newsItems, type NewsItem } from "@/data/news";
 
 type Category = "전체" | NewsItem["category"];
@@ -72,6 +73,18 @@ export default function NewsPage() {
                 href={`/news/${item.slug}`}
                 className="group block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 overflow-hidden"
               >
+                {/* Thumbnail */}
+                {item.thumbnailUrl && (
+                  <div className="relative w-full h-48">
+                    <Image
+                      src={item.thumbnailUrl}
+                      alt={item.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  </div>
+                )}
                 <div className="p-6">
                   {/* Category tag */}
                   <span

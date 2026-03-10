@@ -280,6 +280,48 @@ export default function StoryPage() {
         </div>
       </section>
 
+      {/* ── 영상으로 보기 ── */}
+      <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10 text-center">
+            영상으로 보기
+          </h2>
+          <p className="text-center text-[var(--color-text-muted)] mb-8 text-base md:text-lg">
+            풍천리 주민들의 7년간의 투쟁과 잣나무 숲을 지키려는 이야기를 영상으로 만나보세요.
+          </p>
+          <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-lg border-2 border-[var(--color-forest)]/15">
+            <iframe
+              src="https://www.youtube.com/embed/MtmOKKpkGMk"
+              title="풍천리 양수발전소 반대 — 생명의 편에 선 당신에게"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="w-full h-full border-0"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ── 풍천리는 어디에 있나요 ── */}
+      <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg-warm)]">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10">
+            풍천리는 어디에 있나요?
+          </h2>
+          <div className="rounded-2xl overflow-hidden border-2 border-[var(--color-forest)]/15 shadow-sm">
+            <iframe
+              src="https://www.openstreetmap.org/export/embed.html?bbox=127.93,37.78,128.04,37.85&layer=mapnik&marker=37.8167,127.9833"
+              className="w-full h-[300px] md:h-[400px] lg:h-[450px] border-0"
+              loading="lazy"
+              title="풍천리 위치 지도"
+            />
+          </div>
+          <p className="mt-4 text-center text-sm md:text-base text-[var(--color-text-muted)]">
+            강원도 홍천군 화촌면 풍천리 — 가리산 자락 해발 400~700m 산촌
+          </p>
+        </div>
+      </section>
+
       {/* ── CTA ── */}
       <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-forest)] text-white text-center">
         <div className="max-w-2xl mx-auto">

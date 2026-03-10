@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { timelineEvents, type TimelineEvent } from "@/data/timeline";
 
 const YEARS = ["전체", 2019, 2021, 2022, 2023, 2024, 2025, 2026] as const;
@@ -50,7 +51,21 @@ function TimelineCard({ event, index }: { event: TimelineEvent; index: number })
           isLeft ? "md:mr-auto md:pr-8" : "md:ml-auto md:pl-8"
         }`}
       >
-        <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow p-5 md:p-6 border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-100">
+          {/* Event image */}
+          {event.imageUrl && (
+            <div className="relative w-full h-48 md:h-56">
+              <Image
+                src={event.imageUrl}
+                alt={event.imageAlt || event.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+          )}
+
+          <div className="p-5 md:p-6">
           {/* Date badge */}
           <span className="inline-block text-sm font-medium text-amber-700 bg-amber-50 px-3 py-1 rounded-full mb-3">
             {event.date}
@@ -72,6 +87,7 @@ function TimelineCard({ event, index }: { event: TimelineEvent; index: number })
           >
             {event.category}
           </span>
+          </div>
         </div>
       </motion.div>
     </div>

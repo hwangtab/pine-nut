@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useInView, animate } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { TreePine, Volume2, Home, Sprout, PenLine, Heart, Share2, ChevronDown } from "lucide-react";
 
 /* ───────────────────────── helpers ───────────────────────── */
@@ -86,7 +87,7 @@ function PineTreeIcon({ className = "" }: { className?: string }) {
 
 function MountainSilhouette() {
   return (
-    <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] pointer-events-none">
+    <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] pointer-events-none z-[2]">
       <svg
         viewBox="0 0 1440 320"
         preserveAspectRatio="none"
@@ -109,6 +110,95 @@ function MountainSilhouette() {
         />
       </svg>
     </div>
+  );
+}
+
+/* ──────────────── Newsletter Section ──────────────────────── */
+
+function NewsletterSection() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const endpoint = process.env.NEXT_PUBLIC_NEWSLETTER_ENDPOINT || "";
+      if (endpoint) {
+        await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+      }
+      setSubmitted(true);
+      setEmail("");
+    } catch {
+      setError("구독 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <section className="py-24 md:py-36 px-6 bg-[var(--color-forest)]">
+      <div className="max-w-2xl mx-auto text-center">
+        <FadeIn>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-white">
+            소식 받기
+          </h2>
+          <p className="text-lg text-white/70 mb-10">
+            풍천리 소식을 이메일로 받아보세요
+          </p>
+        </FadeIn>
+
+        <FadeIn delay={0.15}>
+          {submitted ? (
+            <div className="bg-white/10 rounded-2xl p-8 border border-white/20">
+              <p className="text-xl font-bold text-white mb-2">
+                구독해주셔서 감사합니다!
+              </p>
+              <p className="text-white/70">
+                풍천리 소식을 이메일로 보내드리겠습니다.
+              </p>
+            </div>
+          ) : (
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col sm:flex-row items-center gap-3 max-w-lg mx-auto"
+            >
+              <label htmlFor="landing-email" className="sr-only">
+                이메일 주소
+              </label>
+              <input
+                id="landing-email"
+                type="email"
+                required
+                placeholder="이메일 주소를 입력하세요"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+                className="w-full sm:flex-1 px-5 py-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 text-base focus:outline-none focus:ring-2 focus:ring-white/40 min-h-[52px] disabled:opacity-50"
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-[var(--color-forest)] font-bold text-base hover:bg-white/90 transition-colors min-h-[52px] disabled:opacity-50 shrink-0"
+              >
+                {loading ? "처리 중..." : "구독하기"}
+              </button>
+            </form>
+          )}
+          {error && (
+            <p className="mt-3 text-sm text-red-300">{error}</p>
+          )}
+        </FadeIn>
+      </div>
+    </section>
   );
 }
 
@@ -144,7 +234,19 @@ export default function HomePage() {
   return (
     <>
       {/* ════════════════ SECTION 1 — HERO ════════════════ */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#1a3a0a] via-[#142e08] to-[#0a0a0a] text-white px-6 text-center">
+      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden text-white px-6 text-center">
+        {/* Background photo */}
+        <Image
+          src="/images/pine-forest-1.jpg"
+          alt="풍천리 잣나무 숲 전경"
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+          quality={85}
+        />
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 z-[1]" />
         <MountainSilhouette />
 
         {/* Content */}
@@ -245,6 +347,25 @@ export default function HomePage() {
                 </strong>
                 에 둘러싸인 가리산 자락의 산촌입니다.
               </p>
+            </div>
+          </FadeIn>
+
+          {/* Pine forest photo */}
+          <FadeIn delay={0.4}>
+            <div className="relative w-full aspect-[16/9] my-10 rounded-2xl overflow-hidden shadow-lg">
+              <Image
+                src="/images/forest-landscape.jpg"
+                alt="울창한 잣나무 숲 풍경"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 768px"
+                quality={80}
+              />
+            </div>
+          </FadeIn>
+
+          <FadeIn delay={0.45}>
+            <div className="space-y-6 text-lg md:text-xl text-[var(--color-text-muted)] leading-relaxed">
               <p>
                 <strong className="text-[var(--color-text)]">
                   주민 약 70%가 잣 생산으로 생계를 유지
@@ -282,33 +403,53 @@ export default function HomePage() {
                 title: "생태계 파괴",
                 desc: "잣나무 약 11만 그루 벌채 예정, 153ha 산림 파괴. 산양·까막딱다구리·수달 서식지가 사라집니다",
                 delay: 0,
+                image: "/images/forest-aerial.jpg",
+                imageAlt: "항공에서 본 울창한 산림 — 파괴 위기에 놓인 숲",
               },
               {
                 icon: Volume2,
                 title: "소음·분진",
                 desc: "84개월(7년) 공사, 총사업비 1.59조원 규모. 대규모 공사로 고령 주민들의 건강이 위협받습니다",
                 delay: 0.1,
+                image: "/images/korean-mountains.jpg",
+                imageAlt: "산간 마을 주변 산 풍경",
               },
               {
                 icon: Home,
                 title: "공동체 와해",
                 desc: "51가구 수몰·이주 예정. 수십 년간 이어온 마을 공동체가 해체됩니다",
                 delay: 0.2,
+                image: "/images/mountain-village.jpg",
+                imageAlt: "산촌 마을 풍경",
               },
               {
                 icon: Sprout,
                 title: "생계 위협",
                 desc: "주민 70%가 잣 생산에 의존. 이미 2024년 10월 이설도로 건설로 2,256그루 벌채가 시작되었습니다",
                 delay: 0.3,
+                image: "/images/pine-nuts.jpg",
+                imageAlt: "잣 — 풍천리 주민 생계의 근간",
               },
             ].map((card) => (
               <FadeIn key={card.title} delay={card.delay}>
-                <div className="bg-white rounded-2xl p-8 border border-[var(--color-border)] hover:shadow-lg transition-shadow h-full">
-                  <card.icon className="w-10 h-10 text-[var(--color-warm)] mb-5" />
-                  <h3 className="text-xl font-bold mb-3">{card.title}</h3>
-                  <p className="text-[var(--color-text-muted)] leading-relaxed">
-                    {card.desc}
-                  </p>
+                <div className="bg-white rounded-2xl border border-[var(--color-border)] hover:shadow-lg transition-shadow h-full overflow-hidden">
+                  <div className="relative w-full h-40">
+                    <Image
+                      src={card.image}
+                      alt={card.imageAlt}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, 50vw"
+                      quality={75}
+                    />
+                  </div>
+                  <div className="p-8">
+                    <card.icon className="w-10 h-10 text-[var(--color-warm)] mb-5" />
+                    <h3 className="text-xl font-bold mb-3">{card.title}</h3>
+                    <p className="text-[var(--color-text-muted)] leading-relaxed">
+                      {card.desc}
+                    </p>
+                  </div>
                 </div>
               </FadeIn>
             ))}
@@ -435,6 +576,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ════════ SECTION 5.5 — 소식 받기 ════════ */}
+      <NewsletterSection />
 
       {/* ════════ SECTION 6 — Key Numbers Bar ════════ */}
       <section className="py-16 md:py-20 px-6 bg-[#0a0a0a] text-white">
