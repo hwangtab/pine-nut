@@ -1,6 +1,7 @@
 import { FileText, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import SubHero from "@/components/SubHero";
 
 export const metadata: Metadata = {
   title: "자료실 — 풍천리를 지켜주세요",
@@ -49,23 +50,11 @@ const factSheetData = [
 export default function PressPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
-      {/* Hero */}
-      <section className="relative text-white pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 text-center overflow-hidden">
-        <img
-          src="https://image.newsis.com/2024/06/21/NISI20240621_0020630006_web.jpg"
-          alt="" role="presentation"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/55" />
-        <div className="relative max-w-3xl mx-auto">
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
-            자료실
-          </h1>
-          <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto leading-relaxed">
-            언론인, 연구자, 활동가를 위한 자료 모음
-          </p>
-        </div>
-      </section>
+      <SubHero
+        imageUrl="https://image.newsis.com/2024/06/21/NISI20240621_0020630006_web.jpg"
+        title="자료실"
+        subtitle="언론인·활동가를 위한 풍천리 관련 자료"
+      />
 
       <div className="max-w-4xl mx-auto px-4 pt-12 md:pt-16 pb-20 space-y-16">
         {/* Press Kit Section */}

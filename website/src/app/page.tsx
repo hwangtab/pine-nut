@@ -369,7 +369,7 @@ export default function HomePage() {
                 </strong>
                 에 위치한 작은 마을, 풍천리. 산림청 지정{" "}
                 <strong className="text-[var(--color-text)]">
-                  &lsquo;100대 명품숲&rsquo;, 1,800ha 규모 국내 최대 잣나무 숲
+                  {"\u2018"}100대 명품숲{"\u2019"}, 1,800ha 규모 국내 최대 잣나무 숲
                 </strong>
                 에 둘러싸인 가리산 자락의 산촌입니다.
               </p>
@@ -385,7 +385,7 @@ export default function HomePage() {
                 className="w-full rounded-2xl shadow-lg"
                 loading="lazy"
               />
-              <p className="text-xs text-gray-400 mt-1">사진: 오마이뉴스</p>
+              <p className="text-xs text-[var(--color-text-muted)] mt-1">사진: 오마이뉴스</p>
             </div>
           </FadeIn>
 
@@ -577,7 +577,7 @@ export default function HomePage() {
                 className="w-full rounded-2xl shadow-lg"
                 loading="lazy"
               />
-              <p className="text-xs text-gray-400 mt-2">
+              <p className="text-xs text-[var(--color-text-muted)] mt-2">
                 사진: 풍천리양수발전소반대대책위 / 프레시안
               </p>
             </div>
@@ -625,7 +625,7 @@ export default function HomePage() {
                     className="absolute top-0 left-0 text-6xl md:text-8xl font-serif leading-none text-white/20 select-none"
                     aria-hidden="true"
                   >
-                    &ldquo;
+                    {"\u201C"}
                   </span>
                   <p className="text-xl sm:text-2xl md:text-3xl font-medium leading-relaxed mb-4">
                     {item.quote}
@@ -803,7 +803,7 @@ export default function HomePage() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -100, opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="fixed bottom-20 left-4 z-40 max-w-xs px-4 py-3 rounded-lg bg-gray-900/90 backdrop-blur text-white text-sm shadow-lg pointer-events-none"
+            className="fixed bottom-20 left-4 z-40 max-w-xs px-4 py-3 rounded-lg bg-[var(--color-text)]/90 backdrop-blur text-white text-sm shadow-lg pointer-events-none"
           >
             <span aria-hidden="true" className="mr-1.5">🎉</span>
             방금 {toastName}님이 서명했습니다

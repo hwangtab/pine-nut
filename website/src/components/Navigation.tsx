@@ -26,7 +26,8 @@ export default function Navigation() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [scrollY, setScrollY] = useState(0);
 
-  const isHeroPage = true;
+  const heroPages = ['/', '/story', '/timeline', '/news', '/gallery', '/press', '/share', '/petition', '/donate', '/en'];
+  const isHeroPage = heroPages.includes(pathname);
   const isTransparent = isHeroPage && scrollY < 80 && !mobileMenuOpen;
 
   const handleScroll = useCallback(() => {
@@ -108,7 +109,7 @@ export default function Navigation() {
                       : "text-white/80 hover:text-white hover:bg-white/10"
                     : isActive(link.href)
                       ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
-                      : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-gray-100"
+                      : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]"
                 }`}
                 aria-current={isActive(link.href) ? "page" : undefined}
               >
@@ -127,7 +128,7 @@ export default function Navigation() {
           <button
             type="button"
             className={`md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors duration-300 ${
-              isTransparent ? "hover:bg-white/10" : "hover:bg-gray-100"
+              isTransparent ? "hover:bg-white/10" : "hover:bg-[var(--color-bg)]"
             }`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-expanded={mobileMenuOpen}
@@ -160,7 +161,7 @@ export default function Navigation() {
                 className={`px-4 py-4 rounded-xl text-xl font-medium min-h-[44px] flex items-center transition-colors ${
                   isActive(link.href)
                     ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
-                    : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-gray-50"
+                    : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]"
                 }`}
                 aria-current={isActive(link.href) ? "page" : undefined}
               >

@@ -77,7 +77,7 @@ export default function FactsheetPage() {
           <p className="text-sm font-semibold text-[var(--color-forest)] tracking-wider uppercase mb-2">
             FACT SHEET
           </p>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight mb-3">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--color-text)] leading-tight mb-3">
             풍천리 양수발전소 반대 투쟁
             <br />
             핵심 팩트시트
@@ -90,7 +90,7 @@ export default function FactsheetPage() {
         {/* Summary */}
         <section className="mb-8">
           <div className="bg-[var(--color-bg-warm)] rounded-xl p-5 border border-[var(--color-border)]">
-            <p className="text-base text-gray-800 leading-relaxed">
+            <p className="text-base text-[var(--color-text)] leading-relaxed">
               강원도 홍천군 풍천리 주민들은 2019년부터 한수원의 양수발전소 건설
               계획에 맞서 7년 넘게 투쟁하고 있습니다. 이 사업은 산림청이 지정한
               &apos;100대 명품숲&apos;을 파괴하고, 11만 그루의 잣나무를 벌채하며, 51가구의
@@ -101,23 +101,23 @@ export default function FactsheetPage() {
 
         {/* Fact table */}
         <section className="mb-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
             <span className="w-1.5 h-6 bg-[var(--color-forest)] rounded-full inline-block" />
             사업 개요 및 현황
           </h2>
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <div className="divide-y divide-gray-100">
+          <div className="bg-white rounded-xl border border-[var(--color-border)] overflow-hidden">
+            <div className="divide-y divide-[var(--color-border)]">
               {factSheetData.map((fact, i) => (
                 <div
                   key={fact.label}
                   className={`flex flex-col sm:flex-row sm:items-center px-5 py-3 gap-1 sm:gap-4 ${
-                    i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    i % 2 === 0 ? "bg-white" : "bg-[var(--color-bg)]"
                   }`}
                 >
                   <dt className="text-sm font-bold text-[var(--color-forest)] sm:w-40 shrink-0">
                     {fact.label}
                   </dt>
-                  <dd className="text-sm text-gray-900 font-medium">
+                  <dd className="text-sm text-[var(--color-text)] font-medium">
                     {fact.value}
                   </dd>
                 </div>
@@ -128,7 +128,7 @@ export default function FactsheetPage() {
 
         {/* Key numbers highlight */}
         <section className="mb-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
             <span className="w-1.5 h-6 bg-[var(--color-warm)] rounded-full inline-block" />
             핵심 수치
           </h2>
@@ -156,12 +156,12 @@ export default function FactsheetPage() {
 
         {/* Contact */}
         <section className="mb-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
             <span className="w-1.5 h-6 bg-[var(--color-sky)] rounded-full inline-block" />
             문의
           </h2>
-          <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-            <p className="text-sm text-gray-700 leading-relaxed">
+          <div className="bg-[var(--color-bg)] rounded-xl p-5 border border-[var(--color-border)]">
+            <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
               <strong>풍천리 주민회</strong>
               <br />
               캠페인 페이지:{" "}
@@ -178,7 +178,7 @@ export default function FactsheetPage() {
         </section>
 
         {/* Footer */}
-        <footer className="pt-6 border-t border-gray-200">
+        <footer className="pt-6 border-t border-[var(--color-border)]">
           <p className="text-xs text-[var(--color-text-muted)] text-center">
             풍천리를 지켜주세요 | pungcheon.kr | 2026년 3월 발행
           </p>

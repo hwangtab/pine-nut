@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import SubHero from "@/components/SubHero";
 
 export const metadata: Metadata = {
   title: "풍천리 이야기 — 잣나무 숲과 마을을 지키려는 7년간의 싸움",
@@ -10,23 +11,11 @@ export const metadata: Metadata = {
 export default function StoryPage() {
   return (
     <article>
-      {/* ── Hero ── */}
-      <section className="relative text-white pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 text-center overflow-hidden">
-        <img
-          src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
-          alt="" role="presentation"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/55" />
-        <div className="relative max-w-3xl mx-auto">
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
-            풍천리 이야기
-          </h1>
-          <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto leading-relaxed">
-            잣나무 숲과 마을을 지키려는 7년간의 싸움
-          </p>
-        </div>
-      </section>
+      <SubHero
+        imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+        title="풍천리 이야기"
+        subtitle="잣나무 숲과 마을을 지키려는 7년간의 싸움"
+      />
 
       {/* ── 풍천리는 어떤 마을인가요 ── */}
       <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]">
@@ -38,7 +27,7 @@ export default function StoryPage() {
             <p>
               풍천리는 <strong>강원도 홍천군 화촌면</strong>에 자리한 작은 산촌
               마을입니다. 산림청 지정{" "}
-              <strong>&lsquo;100대 명품숲&rsquo;</strong> 중 하나인{" "}
+              <strong>'100대 명품숲'</strong> 중 하나인{" "}
               <strong>1,800ha 규모의 국내 최대 잣나무 숲</strong>에 둘러싸인
               곳으로, 100년 된 잣나무들이 자라는{" "}
               <strong>가리산 자락</strong>에 위치해 있습니다.
@@ -210,7 +199,7 @@ export default function StoryPage() {
               className="w-full rounded-xl shadow-lg my-6"
               loading="lazy"
             />
-            <p className="text-xs text-gray-400 mt-1">사진: 오마이뉴스</p>
+            <p className="text-xs text-[var(--color-text-muted)] mt-1">사진: 오마이뉴스</p>
           </div>
         </div>
       </section>
@@ -270,7 +259,7 @@ export default function StoryPage() {
                 className="w-full rounded-xl shadow-lg my-6"
                 loading="lazy"
               />
-              <p className="text-xs text-gray-400 mt-1">사진: 오마이뉴스</p>
+              <p className="text-xs text-[var(--color-text-muted)] mt-1">사진: 오마이뉴스</p>
             </div>
             <div>
               <img
@@ -279,7 +268,7 @@ export default function StoryPage() {
                 className="w-full rounded-xl shadow-lg my-6"
                 loading="lazy"
               />
-              <p className="text-xs text-gray-400 mt-1">사진: 오마이뉴스</p>
+              <p className="text-xs text-[var(--color-text-muted)] mt-1">사진: 오마이뉴스</p>
             </div>
           </div>
         </div>
@@ -311,9 +300,9 @@ export default function StoryPage() {
           </ul>
           <blockquote className="border-l-4 border-[var(--color-forest)] pl-6 md:pl-8 py-2">
             <p className="text-xl md:text-2xl lg:text-3xl font-bold text-[var(--color-forest)] leading-snug">
-              &ldquo;우리는 우리의 숲, 우리의 마을,
+              {"\u201C"}우리는 우리의 숲, 우리의 마을,
               <br className="hidden sm:inline" /> 우리의 삶을 지키고
-              싶습니다.&rdquo;
+              싶습니다.{"\u201D"}
             </p>
           </blockquote>
         </div>

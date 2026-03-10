@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
+import SubHero from "@/components/SubHero";
 import { timelineEvents, type TimelineEvent } from "@/data/timeline";
 
 const YEARS = ["전체", 2019, 2021, 2022, 2023, 2024, 2025, 2026] as const;
@@ -105,38 +106,16 @@ export default function TimelinePage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg-warm)]/60 via-[var(--color-bg)] to-stone-50">
-      {/* Header */}
-      <section className="relative text-white pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 text-center overflow-hidden">
-        <img
-          src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
-          alt="" role="presentation"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/55" />
-        <div className="relative max-w-3xl mx-auto">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-3xl md:text-5xl font-extrabold text-white mb-4"
-          >
-            7년의 기록
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="text-base md:text-lg text-white/80 max-w-xl mx-auto leading-relaxed"
-          >
-            2019년부터 현재까지, 풍천리 주민들의 발자취
-          </motion.p>
-        </div>
-      </section>
+      <SubHero
+        imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
+        title="7년의 기록"
+        subtitle="2019년부터 현재까지, 풍천리 주민들의 발자취"
+      />
 
       {/* Emotional quote banner */}
       <div className="border-t border-b border-white/10 bg-[var(--color-bg-warm)] py-6 px-4">
         <p className="text-center text-lg italic text-[var(--color-text-muted)] max-w-2xl mx-auto">
-          &ldquo;2019년부터 오늘까지, 단 하루도 쉬지 않았습니다&rdquo;
+          {"\u201C"}2019년부터 오늘까지, 단 하루도 쉬지 않았습니다{"\u201D"}
         </p>
       </div>
 

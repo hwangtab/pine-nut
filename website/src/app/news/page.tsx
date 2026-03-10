@@ -3,22 +3,23 @@
 import { useState } from "react";
 import Link from "next/link";
 import { newsItems, type NewsItem } from "@/data/news";
+import SubHero from "@/components/SubHero";
 
 type Category = "전체" | NewsItem["category"];
 
 const categories: { label: Category; color: string; activeColor: string }[] = [
-  { label: "전체", color: "bg-gray-100 text-gray-700", activeColor: "bg-gray-800 text-white" },
-  { label: "공지", color: "bg-blue-50 text-blue-700", activeColor: "bg-blue-600 text-white" },
-  { label: "집회", color: "bg-orange-50 text-orange-700", activeColor: "bg-orange-600 text-white" },
-  { label: "언론보도", color: "bg-purple-50 text-purple-700", activeColor: "bg-purple-600 text-white" },
-  { label: "연대", color: "bg-green-50 text-green-700", activeColor: "bg-green-600 text-white" },
+  { label: "전체", color: "bg-[var(--color-bg)] text-[var(--color-text-muted)]", activeColor: "bg-[var(--color-text)] text-white" },
+  { label: "공지", color: "bg-[var(--color-sky)]/10 text-[var(--color-sky)]", activeColor: "bg-[var(--color-sky)] text-white" },
+  { label: "집회", color: "bg-[var(--color-warm)]/10 text-[var(--color-warm)]", activeColor: "bg-[var(--color-warm)] text-white" },
+  { label: "언론보도", color: "bg-[var(--color-earth)]/10 text-[var(--color-earth)]", activeColor: "bg-[var(--color-earth)] text-white" },
+  { label: "연대", color: "bg-[var(--color-forest)]/10 text-[var(--color-forest)]", activeColor: "bg-[var(--color-forest)] text-white" },
 ];
 
 const categoryTagColors: Record<NewsItem["category"], string> = {
-  공지: "bg-blue-100 text-blue-800",
-  집회: "bg-orange-100 text-orange-800",
-  언론보도: "bg-purple-100 text-purple-800",
-  연대: "bg-green-100 text-green-800",
+  공지: "bg-[var(--color-sky)]/10 text-[var(--color-sky)]",
+  집회: "bg-[var(--color-warm)]/10 text-[var(--color-warm)]",
+  언론보도: "bg-[var(--color-earth)]/10 text-[var(--color-earth)]",
+  연대: "bg-[var(--color-forest)]/10 text-[var(--color-forest)]",
 };
 
 export default function NewsPage() {
@@ -35,23 +36,11 @@ export default function NewsPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
-      {/* Hero */}
-      <section className="relative text-white pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 text-center overflow-hidden">
-        <img
-          src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499236_STD.jpg"
-          alt="" role="presentation"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/55" />
-        <div className="relative max-w-3xl mx-auto">
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
-            소식
-          </h1>
-          <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto leading-relaxed">
-            풍천리의 최신 소식을 전합니다
-          </p>
-        </div>
-      </section>
+      <SubHero
+        imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499236_STD.jpg"
+        title="소식"
+        subtitle="풍천리의 최신 소식을 전합니다"
+      />
 
       {/* Emotional context line */}
       <p className="text-center text-[var(--color-text-muted)] pt-12 md:pt-16 mb-8 px-4">
@@ -83,10 +72,10 @@ export default function NewsPage() {
               <Link
                 key={item.id}
                 href={`/news/${item.slug}`}
-                className="group block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 overflow-hidden"
+                className="group block bg-white rounded-2xl border border-[var(--color-border)] shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 overflow-hidden"
               >
                 {/* Thumbnail */}
-                <div className="relative w-full h-48 bg-gray-100">
+                <div className="relative w-full h-48 bg-[var(--color-bg)]">
                   {item.thumbnailUrl ? (
                     <img
                       src={item.thumbnailUrl}
@@ -95,9 +84,9 @@ export default function NewsPage() {
                       loading="lazy"
                     />
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[var(--color-bg)] to-[var(--color-border)]">
                       <svg
-                        className="w-12 h-12 text-gray-300"
+                        className="w-12 h-12 text-[var(--color-text-muted)]"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -122,17 +111,17 @@ export default function NewsPage() {
                 </div>
                 <div className="p-5">
                   {/* Title */}
-                  <h2 className="text-lg font-bold text-gray-900 mb-2 leading-snug group-hover:text-[var(--color-forest)] transition-colors line-clamp-2">
+                  <h2 className="text-lg font-bold text-[var(--color-text)] mb-2 leading-snug group-hover:text-[var(--color-forest)] transition-colors line-clamp-2">
                     {item.title}
                   </h2>
 
                   {/* Summary (2 lines truncated) */}
-                  <p className="text-sm text-gray-600 leading-relaxed mb-4 line-clamp-2">
+                  <p className="text-sm text-[var(--color-text-muted)] leading-relaxed mb-4 line-clamp-2">
                     {item.summary}
                   </p>
 
                   {/* Date & Source */}
-                  <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
+                  <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)] font-medium">
                     <time>
                       {new Date(item.date).toLocaleDateString("ko-KR", {
                         year: "numeric",
@@ -153,7 +142,7 @@ export default function NewsPage() {
           </div>
         ) : (
           <div className="text-center py-20">
-            <p className="text-gray-400 text-lg">
+            <p className="text-[var(--color-text-muted)] text-lg">
               해당 카테고리의 소식이 없습니다.
             </p>
           </div>

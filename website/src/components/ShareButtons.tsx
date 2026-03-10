@@ -66,7 +66,7 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
 
   return (
     <div className="relative">
-      <p className="text-sm font-semibold text-gray-500 mb-3">공유하기</p>
+      <p className="text-sm font-semibold text-[var(--color-text-muted)] mb-3">공유하기</p>
       <div className="flex flex-wrap gap-2">
         <button
           onClick={handleKakao}
@@ -78,7 +78,7 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
         </button>
         <button
           onClick={handleTwitter}
-          className={`${buttonBase} bg-gray-900 text-white hover:bg-gray-800`}
+          className={`${buttonBase} bg-[var(--color-text)] text-white hover:bg-[var(--color-text)]/90`}
           aria-label="트위터(X)로 공유"
         >
           <Twitter className="w-4 h-4" />
@@ -94,7 +94,7 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
         </button>
         <button
           onClick={handleCopyUrl}
-          className={`${buttonBase} bg-gray-100 text-gray-700 hover:bg-gray-200`}
+          className={`${buttonBase} bg-[var(--color-bg)] text-[var(--color-text-muted)] hover:bg-[var(--color-border)]`}
           aria-label="URL 복사"
         >
           <Link className="w-4 h-4" />
@@ -104,7 +104,7 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
 
       {/* Toast */}
       {copied && (
-        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm px-4 py-2 rounded-lg shadow-lg animate-fade-in">
+        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[var(--color-text)] text-white text-sm px-4 py-2 rounded-lg shadow-lg animate-fade-in">
           복사되었습니다!
         </div>
       )}

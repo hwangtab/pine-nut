@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import SubHero from "@/components/SubHero";
 
 export const metadata: Metadata = {
   title: "Save Pungcheon-ri — Stop the Pumped-Storage Power Plant",
@@ -18,21 +19,12 @@ export default function EnglishPage() {
   return (
     <article>
       {/* ── Hero ── */}
-      <section className="relative text-white pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 text-center overflow-hidden">
-        <img src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg" alt="" role="presentation" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-black/55" />
-        <div className="relative max-w-3xl mx-auto">
-          <p className="text-sm uppercase tracking-widest text-white/60 mb-4 font-medium">
-            English Summary
-          </p>
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
-            Save Pungcheon-ri
-          </h1>
-          <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto leading-relaxed">
-            A 7-Year Fight to Protect a Village, a Forest, and a Way of Life
-          </p>
-        </div>
-      </section>
+      <SubHero
+        imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+        title="Save Pungcheon-ri"
+        subtitle="A 7-Year Fight to Protect a Village, a Forest, and a Way of Life"
+        above={<p className="text-sm uppercase tracking-widest text-white/60 mb-4 font-medium">English Summary</p>}
+      />
 
       {/* ── The Story ── */}
       <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]">
@@ -45,9 +37,9 @@ export default function EnglishPage() {
               Pungcheon-ri is a small mountain village in{" "}
               <strong>Hongcheon County, Gangwon Province, South Korea</strong>,
               nestled in a{" "}
-              <strong>1,800-hectare pine nut forest</strong> &mdash; the largest
-              in South Korea and one of the Korea Forest Service&rsquo;s
-              designated &ldquo;Top 100 Forests.&rdquo; Century-old Korean pine
+              <strong>1,800-hectare pine nut forest</strong> — the largest
+              in South Korea and one of the Korea Forest Service's
+              designated "Top 100 Forests." Century-old Korean pine
               nut trees grow along the slopes of Mt. Gari, and the forest is
               home to endangered species including the{" "}
               <strong>goral (natural monument), black woodpecker, and otter</strong>.
@@ -55,15 +47,15 @@ export default function EnglishPage() {
               production for their livelihoods.
             </p>
             <p>
-              In 2019, <strong>Korea Hydro &amp; Nuclear Power (KHNP)</strong>{" "}
+              In 2019, <strong>Korea Hydro & Nuclear Power (KHNP)</strong>{" "}
               selected the area for a{" "}
               <strong>600MW pumped-storage hydroelectric power plant</strong>{" "}
-              (2 &times; 300MW) after Hongcheon County applied to host the
+              (2 × 300MW) after Hongcheon County applied to host the
               project. The total cost is{" "}
               <strong>1.59 trillion KRW (~$1.1 billion USD)</strong>, covering{" "}
               <strong>153 hectares</strong> of project area. Construction is
-              contracted to the <strong>Daewoo E&amp;C consortium</strong>{" "}
-              (Daewoo E&amp;C, DL E&amp;C, Hyosung) at 615.5 billion KRW. An
+              contracted to the <strong>Daewoo E&C consortium</strong>{" "}
+              (Daewoo E&C, DL E&C, Hyosung) at 615.5 billion KRW. An
               estimated <strong>~110,000 pine nut trees</strong> are slated
               for felling, and <strong>51 households</strong> face submersion
               and relocation.
@@ -77,7 +69,7 @@ export default function EnglishPage() {
               <strong>over 140 organizations</strong> nationwide.
             </p>
             <p>
-              <strong>7 residents (ages 60&ndash;80)</strong> have been
+              <strong>7 residents (ages 60–80)</strong> have been
               criminally charged with refusal to vacate after a standoff at
               Hongcheon County Hall in July 2024. Despite the personal cost,
               they have not backed down. Their fight is conducted entirely
@@ -120,7 +112,7 @@ export default function EnglishPage() {
       <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-12 text-center">
-            What&rsquo;s at Stake
+            What's at Stake
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             <div className="bg-white rounded-2xl p-8 border border-[var(--color-border)] shadow-sm">
@@ -144,9 +136,9 @@ export default function EnglishPage() {
               </h3>
               <p className="text-[var(--color-text-muted)] leading-relaxed text-[15px]">
                 ~110,000 pine nut trees slated for felling across 153 hectares.
-                A 1,800-hectare &ldquo;Top 100 Forest&rdquo; &mdash; home to
+                A 1,800-hectare "Top 100 Forest" — home to
                 the goral (natural monument), black woodpecker, and otter
-                &mdash; faces permanent destruction.
+                — faces permanent destruction.
               </p>
             </div>
 
@@ -171,7 +163,7 @@ export default function EnglishPage() {
               </h3>
               <p className="text-[var(--color-text-muted)] leading-relaxed text-[15px]">
                 70% of residents depend on pine nut production. Felling has
-                already begun &mdash; 2,256 trees were cut in October 2024
+                already begun — 2,256 trees were cut in October 2024
                 for access road construction. Destroying the forest means
                 destroying their only means of survival.
               </p>
@@ -198,7 +190,7 @@ export default function EnglishPage() {
               </h3>
               <p className="text-[var(--color-text-muted)] leading-relaxed text-[15px]">
                 51 households face submersion and forced relocation. 7
-                residents (ages 60&ndash;80) have been criminally charged.
+                residents (ages 60–80) have been criminally charged.
                 Decades-old bonds are being torn apart. Once scattered, this
                 community cannot be rebuilt.
               </p>
@@ -229,7 +221,7 @@ export default function EnglishPage() {
                 href="/petition"
                 className="inline-flex items-center text-sm font-bold text-white underline underline-offset-4 decoration-white/40 hover:decoration-white transition-colors"
               >
-                Go to petition &rarr;
+                Go to petition →
               </Link>
             </div>
 

@@ -10,6 +10,7 @@ import {
   Megaphone,
   Settings,
 } from "lucide-react";
+import SubHero from "@/components/SubHero";
 
 /* ──────────────────────── Demo transparency data ──────────────────────── */
 const FUND_BREAKDOWN = [
@@ -86,42 +87,23 @@ export default function DonatePage() {
     <div className="min-h-screen bg-[var(--color-bg)]">
       <Toast message={toastMessage} visible={toastVisible} />
 
-      {/* ── Hero with Photo ── */}
-      <section className="relative bg-[var(--color-bg-warm)]">
-        {/* Solidarity photo */}
-        <div className="relative w-full h-[340px] sm:h-[420px] overflow-hidden">
-          <img
-            src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
-            alt="강원생명평화기도회 모임 사진"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-warm)] via-black/20 to-black/40" />
-          <p className="absolute bottom-2 right-3 text-[11px] text-white/70">
-            사진: 오마이뉴스
-          </p>
-        </div>
+      <SubHero
+        imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
+        title="후원으로 함께해주세요"
+        subtitle="주민들의 투쟁을 직접 도울 수 있습니다"
+      />
 
-        {/* Header text */}
-        <div className="max-w-3xl mx-auto text-center px-4 pb-12 sm:pb-16 -mt-16 relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-black text-[var(--color-text)] mb-4">
-            후원으로 함께해주세요
-          </h1>
-          <p className="text-lg text-[var(--color-text-muted)] mb-6">
-            주민들의 투쟁을 직접 도울 수 있습니다
+      <div className="bg-[var(--color-bg-warm)] py-8 px-4">
+        <blockquote className="max-w-xl mx-auto bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-2xl px-6 py-5 text-[var(--color-text)] text-center">
+          <p className="text-[15px] sm:text-base leading-relaxed font-medium italic">
+            {"\u201C"}여러분의 후원은 70대 어르신들이 매주 서울까지 버스를 타고
+            갈 수 있는 교통비가 됩니다{"\u201D"}
           </p>
-
-          {/* Emotional quote */}
-          <blockquote className="max-w-xl mx-auto bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-2xl px-6 py-5 text-[var(--color-text)]">
-            <p className="text-[15px] sm:text-base leading-relaxed font-medium italic">
-              &ldquo;여러분의 후원은 70대 어르신들이 매주 서울까지 버스를 타고
-              갈 수 있는 교통비가 됩니다&rdquo;
-            </p>
-            <footer className="mt-2 text-sm text-[var(--color-text-muted)]">
-              &mdash; 풍천리 주민
-            </footer>
-          </blockquote>
-        </div>
-      </section>
+          <footer className="mt-2 text-sm text-[var(--color-text-muted)]">
+            — 풍천리 주민
+          </footer>
+        </blockquote>
+      </div>
 
       <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 space-y-12">
         {/* ── Primary CTA: Bank Transfer ── */}
@@ -271,7 +253,7 @@ export default function DonatePage() {
                       </span>
                     </div>
                     <div
-                      className="h-3 rounded-full bg-gray-100 overflow-hidden"
+                      className="h-3 rounded-full bg-[var(--color-bg)] overflow-hidden"
                       role="progressbar"
                       aria-valuenow={item.percent}
                       aria-valuemin={0}

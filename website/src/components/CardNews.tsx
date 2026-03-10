@@ -162,7 +162,7 @@ function Card3() {
 
       <div className="relative z-10 flex flex-col items-center px-7 py-10 h-full w-full">
         {/* Large quote mark */}
-        <div className="text-[#d4a853]/30 text-[72px] leading-none font-serif -mb-4">&ldquo;</div>
+        <div className="text-[#d4a853]/30 text-[72px] leading-none font-serif -mb-4">{"\u201C"}</div>
 
         <h2 className="text-[22px] font-black leading-snug text-center mb-5 max-w-[280px]">
           70대 어르신들이
@@ -187,9 +187,9 @@ function Card3() {
         </div>
 
         <p className="text-[13px] text-white/45 italic text-center max-w-[260px] leading-relaxed">
-          &ldquo;70 평생 남에게 해를 끼친 적 없는 사람이,
+          {"\u201C"}70 평생 남에게 해를 끼친 적 없는 사람이,
           <br />
-          내 땅을 지키겠다는 이유로.&rdquo;
+          내 땅을 지키겠다는 이유로.{"\u201D"}
         </p>
 
         <Watermark />
@@ -413,14 +413,14 @@ function CardWithActions({ card }: { card: CardItem }) {
         </button>
         <button
           onClick={handleCopyLink}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-100 text-gray-700 text-xs font-semibold hover:bg-gray-200 transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--color-bg)] text-[var(--color-text-muted)] text-xs font-semibold hover:bg-[var(--color-border)] transition-colors cursor-pointer"
         >
           <Link size={14} />
           링크 복사
         </button>
         <button
           onClick={handleShare}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-100 text-gray-700 text-xs font-semibold hover:bg-gray-200 transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--color-bg)] text-[var(--color-text-muted)] text-xs font-semibold hover:bg-[var(--color-border)] transition-colors cursor-pointer"
         >
           <Share2 size={14} />
           공유

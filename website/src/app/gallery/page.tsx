@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, X } from "lucide-react";
+import SubHero from "@/components/SubHero";
 
 interface GalleryPhoto {
   id: number;
@@ -151,7 +152,7 @@ function PhotoCard({
       className="group cursor-pointer"
       onClick={() => onOpen(photo)}
     >
-      <div className="relative aspect-[4/3] rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden hover:scale-[1.02] bg-gray-100">
+      <div className="relative aspect-[4/3] rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden hover:scale-[1.02] bg-[var(--color-bg)]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={photo.url}
@@ -248,10 +249,10 @@ function GallerySection({
         transition={{ duration: 0.5 }}
         className="mb-8"
       >
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+        <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3">
           {title}
         </h2>
-        <p className="text-gray-600 text-base md:text-lg leading-relaxed max-w-2xl">
+        <p className="text-[var(--color-text-muted)] text-base md:text-lg leading-relaxed max-w-2xl">
           {description}
         </p>
       </motion.div>
@@ -278,23 +279,12 @@ export default function GalleryPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-stone-50 via-white to-amber-50/30">
       {/* Hero */}
-      <section className="relative text-white pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 text-center overflow-hidden">
-        <img
-          src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
-          alt="" role="presentation"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/55" />
-        <div className="relative max-w-3xl mx-auto">
-          <Camera className="w-10 h-10 mx-auto mb-4 text-white/70" />
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
-            갤러리
-          </h1>
-          <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto leading-relaxed">
-            풍천리의 현장을 담은 사진들
-          </p>
-        </div>
-      </section>
+      <SubHero
+        imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+        title="갤러리"
+        subtitle="풍천리의 현장을 담은 사진들"
+        above={<Camera className="w-10 h-10 mx-auto mb-4 text-white/70" />}
+      />
 
       {/* Gallery sections */}
       <div className="max-w-5xl mx-auto px-4 pt-12 md:pt-16 pb-8 md:pb-12">
@@ -329,11 +319,11 @@ export default function GalleryPage() {
           transition={{ duration: 0.6 }}
           className="max-w-lg mx-auto"
         >
-          <Camera className="w-10 h-10 text-amber-600 mx-auto mb-4" />
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+          <Camera className="w-10 h-10 text-[var(--color-warm)] mx-auto mb-4" />
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3">
             사진을 제보해주세요
           </h2>
-          <p className="text-gray-600 mb-6 leading-relaxed">
+          <p className="text-[var(--color-text-muted)] mb-6 leading-relaxed">
             풍천리의 아름다운 자연, 투쟁의 현장, 연대의 순간을 담은 사진이
             있으시다면 제보해주세요. 함께 기록을 남깁니다.
           </p>
@@ -341,7 +331,7 @@ export default function GalleryPage() {
             href="https://campaigns.do"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-semibold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
+            className="inline-block bg-[var(--color-warm)] hover:bg-[var(--color-warm)]/90 text-white font-semibold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
           >
             사진 제보하기
           </a>
@@ -350,7 +340,7 @@ export default function GalleryPage() {
 
       {/* Copyright notice */}
       <div className="max-w-5xl mx-auto px-4 pb-8 text-center">
-        <p className="text-gray-400 text-xs leading-relaxed">
+        <p className="text-[var(--color-text-muted)] text-xs leading-relaxed">
           사진 출처: 오마이뉴스, 프레시안, 뉴시스, 풍천리양수발전소반대대책위.
           언론 보도 사진은 출처를 표기하여 사용합니다.
         </p>

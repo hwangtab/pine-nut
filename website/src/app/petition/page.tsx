@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback, FormEvent } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { Send, Check, Copy, X, Loader2 } from "lucide-react";
+import SubHero from "@/components/SubHero";
 
 /* ──────────────────────── Types ──────────────────────── */
 interface Signature {
@@ -142,7 +143,7 @@ function RecentSignatures({ signatures, loading }: { signatures: Signature[]; lo
                 </div>
                 {sig.message && (
                   <p className="mt-1 text-[var(--color-text-muted)] text-[15px]">
-                    &ldquo;{sig.message}&rdquo;
+                    \u201C{sig.message}\u201D
                   </p>
                 )}
               </motion.div>
@@ -312,28 +313,19 @@ export default function PetitionPage() {
       {showConfetti && <Confetti />}
 
       {/* ── Header ── */}
-      <section className="relative text-white pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 text-center overflow-hidden">
-        <img
-          src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
-          alt="" role="presentation"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/55" />
-        <div className="relative max-w-3xl mx-auto">
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-3">
-            서명으로 함께해주세요
-          </h1>
-          <p className="text-lg text-white/80 mb-8">
-            당신의 이름 하나가 풍천리 주민들에게 큰 힘이 됩니다
-          </p>
-          <div className="flex flex-col items-center gap-1">
+      <SubHero
+        imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
+        title="서명으로 함께해주세요"
+        subtitle="당신의 이름 하나가 풍천리 주민들에게 큰 힘이 됩니다"
+        below={
+          <div className="flex flex-col items-center gap-1 mt-8">
             <AnimatedCounter target={signatureCount} />
             <span className="text-white/80 text-lg mt-1">
               명이 함께하고 있습니다
             </span>
           </div>
-        </div>
-      </section>
+        }
+      />
 
       <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 space-y-16">
         {/* Emotional prompt */}
@@ -596,7 +588,7 @@ export default function PetitionPage() {
                   </button>
                   <button
                     onClick={handleCopyUrl}
-                    className="min-h-[48px] px-6 py-3 rounded-xl bg-gray-100 text-[var(--color-text)] font-semibold flex items-center justify-center gap-2 transition-colors hover:bg-gray-200"
+                    className="min-h-[48px] px-6 py-3 rounded-xl bg-[var(--color-bg)] text-[var(--color-text)] font-semibold flex items-center justify-center gap-2 transition-colors hover:bg-[var(--color-border)]"
                   >
                     {urlCopied ? (
                       <>
@@ -687,7 +679,7 @@ export default function PetitionPage() {
                   주민들에게 큰 위안이 됩니다
                 </h3>
                 <p className="text-[var(--color-text-muted)] text-[15px]">
-                  &ldquo;우리만의 싸움이 아니구나&rdquo;라는 사실이
+                  \u201C우리만의 싸움이 아니구나\u201D라는 사실이
                   풍천리 어르신들에게 가장 큰 힘이 됩니다.
                 </p>
               </div>

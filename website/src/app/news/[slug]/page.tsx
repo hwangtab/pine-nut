@@ -5,10 +5,10 @@ import ShareButtons from "@/components/ShareButtons";
 import type { Metadata } from "next";
 
 const categoryTagColors: Record<string, string> = {
-  공지: "bg-blue-100 text-blue-800",
-  집회: "bg-orange-100 text-orange-800",
-  언론보도: "bg-purple-100 text-purple-800",
-  연대: "bg-green-100 text-green-800",
+  공지: "bg-[var(--color-sky)]/10 text-[var(--color-sky)]",
+  집회: "bg-[var(--color-warm)]/10 text-[var(--color-warm)]",
+  언론보도: "bg-[var(--color-earth)]/10 text-[var(--color-earth)]",
+  연대: "bg-[var(--color-forest)]/10 text-[var(--color-forest)]",
 };
 
 // Sort by date descending for consistent prev/next ordering
@@ -65,25 +65,25 @@ export default async function NewsDetailPage({
           href="/news"
           className="inline-flex items-center text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors mb-8"
         >
-          &larr; 소식 목록으로
+          ← 소식 목록으로
         </Link>
 
         {/* Category tag */}
         <span
           className={`inline-block text-xs font-semibold px-3 py-1 rounded-full mb-4 ${
-            categoryTagColors[item.category] || "bg-gray-100 text-gray-800"
+            categoryTagColors[item.category] || "bg-[var(--color-bg)] text-[var(--color-text)]"
           }`}
         >
           {item.category}
         </span>
 
         {/* Title */}
-        <h1 className="text-2xl md:text-4xl font-extrabold text-gray-900 mb-4 leading-tight">
+        <h1 className="text-2xl md:text-4xl font-extrabold text-[var(--color-text)] mb-4 leading-tight">
           {item.title}
         </h1>
 
         {/* Date & Source */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-400 font-medium mb-10">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--color-text-muted)] font-medium mb-10">
           <time>
             {new Date(item.date).toLocaleDateString("ko-KR", {
               year: "numeric",
@@ -101,7 +101,7 @@ export default async function NewsDetailPage({
                   rel="noopener noreferrer"
                   className="text-[var(--color-forest)] hover:underline"
                 >
-                  {item.sourceName} 원문 보기 &nearr;
+                  {item.sourceName} 원문 보기 ↗
                 </a>
               ) : (
                 <span>{item.sourceName}</span>
@@ -115,7 +115,7 @@ export default async function NewsDetailPage({
           {paragraphs.map((paragraph, index) => (
             <p
               key={index}
-              className="text-gray-700 leading-relaxed mb-6 text-base md:text-lg"
+              className="text-[var(--color-text-muted)] leading-relaxed mb-6 text-base md:text-lg"
             >
               {paragraph}
             </p>
@@ -123,7 +123,7 @@ export default async function NewsDetailPage({
         </div>
 
         {/* Divider */}
-        <hr className="border-gray-200 mb-8" />
+        <hr className="border-[var(--color-border)] mb-8" />
 
         {/* Share buttons */}
         <div className="mb-12">
@@ -131,17 +131,17 @@ export default async function NewsDetailPage({
         </div>
 
         {/* Divider */}
-        <hr className="border-gray-200 mb-8" />
+        <hr className="border-[var(--color-border)] mb-8" />
 
         {/* Previous/Next navigation */}
         <nav className="grid grid-cols-1 sm:grid-cols-2 gap-4" aria-label="이전/다음 소식">
           {prevItem ? (
             <Link
               href={`/news/${prevItem.slug}`}
-              className="group flex flex-col p-5 rounded-xl border border-gray-200 hover:border-[var(--color-forest)] hover:shadow-md transition-all"
+              className="group flex flex-col p-5 rounded-xl border border-[var(--color-border)] hover:border-[var(--color-forest)] hover:shadow-md transition-all"
             >
-              <span className="text-xs text-gray-400 mb-1">&larr; 이전 소식</span>
-              <span className="text-sm font-semibold text-gray-800 group-hover:text-[var(--color-forest)] transition-colors line-clamp-2">
+              <span className="text-xs text-[var(--color-text-muted)] mb-1">← 이전 소식</span>
+              <span className="text-sm font-semibold text-[var(--color-text)] group-hover:text-[var(--color-forest)] transition-colors line-clamp-2">
                 {prevItem.title}
               </span>
             </Link>
@@ -151,10 +151,10 @@ export default async function NewsDetailPage({
           {nextItem ? (
             <Link
               href={`/news/${nextItem.slug}`}
-              className="group flex flex-col items-end text-right p-5 rounded-xl border border-gray-200 hover:border-[var(--color-forest)] hover:shadow-md transition-all"
+              className="group flex flex-col items-end text-right p-5 rounded-xl border border-[var(--color-border)] hover:border-[var(--color-forest)] hover:shadow-md transition-all"
             >
-              <span className="text-xs text-gray-400 mb-1">다음 소식 &rarr;</span>
-              <span className="text-sm font-semibold text-gray-800 group-hover:text-[var(--color-forest)] transition-colors line-clamp-2">
+              <span className="text-xs text-[var(--color-text-muted)] mb-1">다음 소식 →</span>
+              <span className="text-sm font-semibold text-[var(--color-text)] group-hover:text-[var(--color-forest)] transition-colors line-clamp-2">
                 {nextItem.title}
               </span>
             </Link>
