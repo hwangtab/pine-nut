@@ -1,4 +1,5 @@
 import { FileText, Image, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,20 +14,23 @@ const pressKitItems = [
     description: "풍천리 양수발전소 반대 투쟁 보도자료",
     icon: FileText,
     color: "text-blue-600 bg-blue-50",
-    notice: "준비 중",
+    href: "/press/release",
+    notice: null,
   },
   {
     title: "팩트시트",
     description: "풍천리 투쟁 핵심 정리 (1페이지)",
     icon: FileText,
     color: "text-purple-600 bg-purple-50",
-    notice: "준비 중",
+    href: "/press/factsheet",
+    notice: null,
   },
   {
     title: "사진 자료",
     description: "고화질 사진 모음 (ZIP)",
     icon: Image,
     color: "text-green-600 bg-green-50",
+    href: null,
     notice: "준비 중",
   },
 ];
@@ -74,11 +78,8 @@ export default function PressPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {pressKitItems.map((item) => {
               const Icon = item.icon;
-              return (
-                <div
-                  key={item.title}
-                  className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-gray-100 shadow-sm"
-                >
+              const content = (
+                <>
                   <div
                     className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 ${item.color}`}
                   >
@@ -90,15 +91,44 @@ export default function PressPage() {
                   <p className="text-sm text-gray-500 mb-4 leading-relaxed">
                     {item.description}
                   </p>
-                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-400">
-                    {item.notice}
-                  </span>
+                  {item.href ? (
+                    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-forest)] group-hover:text-[var(--color-forest-light)] transition-colors">
+                      다운로드
+                      <ExternalLink className="w-4 h-4" />
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-400">
+                      {item.notice}
+                    </span>
+                  )}
+                </>
+              );
+
+              if (item.href) {
+                return (
+                  <Link
+                    key={item.title}
+                    href={item.href}
+                    target="_blank"
+                    className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[var(--color-forest)]/20 transition-all"
+                  >
+                    {content}
+                  </Link>
+                );
+              }
+
+              return (
+                <div
+                  key={item.title}
+                  className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-gray-100 shadow-sm"
+                >
+                  {content}
                 </div>
               );
             })}
           </div>
           <p className="mt-4 text-sm text-[var(--color-text-muted)] text-center">
-            보도 키트 자료는 현재 준비 중이며, 빠른 시일 내에 제공할 예정입니다.
+            사진 자료는 현재 준비 중이며, 빠른 시일 내에 제공할 예정입니다.
           </p>
         </section>
 

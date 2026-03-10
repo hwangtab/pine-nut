@@ -121,6 +121,11 @@ function MountainSilhouette() {
 export default function HomePage() {
   const storyRef = useRef<HTMLDivElement>(null);
   const [signatureCount, setSignatureCount] = useState<number | null>(null);
+  const [inlineName, setInlineName] = useState("");
+  const [inlineEmail, setInlineEmail] = useState("");
+  const [inlineSubmitting, setInlineSubmitting] = useState(false);
+  const [inlineSuccess, setInlineSuccess] = useState(false);
+  const [inlineError, setInlineError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/signatures")
@@ -157,6 +162,49 @@ export default function HomePage() {
       /* user cancelled */
     }
   }, []);
+
+  const handleInlineSign = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      setInlineError(null);
+
+      const trimmedName = inlineName.trim();
+      const trimmedEmail = inlineEmail.trim();
+
+      if (!trimmedName) {
+        setInlineError("이름을 입력해주세요.");
+        return;
+      }
+      if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+        setInlineError("올바른 이메일 주소를 입력해주세요.");
+        return;
+      }
+
+      setInlineSubmitting(true);
+      try {
+        const res = await fetch("/api/signatures", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: trimmedName, email: trimmedEmail }),
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || "서명에 실패했습니다. 다시 시도해주세요.");
+        }
+        setInlineSuccess(true);
+        setInlineName("");
+        setInlineEmail("");
+        setSignatureCount((prev) => (prev !== null ? prev + 1 : prev));
+      } catch (err) {
+        setInlineError(
+          err instanceof Error ? err.message : "서명에 실패했습니다. 다시 시도해주세요."
+        );
+      } finally {
+        setInlineSubmitting(false);
+      }
+    },
+    [inlineName, inlineEmail]
+  );
 
   return (
     <>
@@ -478,6 +526,61 @@ export default function HomePage() {
               <p className="text-lg text-[var(--color-text-muted)] mt-2">이 함께하고 있습니다</p>
             </FadeIn>
           )}
+
+          {/* ── Inline Signature Form ── */}
+          <FadeIn className="mb-12">
+            <div className="max-w-2xl mx-auto">
+              {inlineSuccess ? (
+                <div className="text-center py-6">
+                  <p className="text-xl font-bold text-[var(--color-forest)]">
+                    감사합니다! 서명이 완료되었습니다 🎉
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleInlineSign} className="space-y-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input
+                      type="text"
+                      placeholder="이름"
+                      value={inlineName}
+                      onChange={(e) => {
+                        setInlineName(e.target.value);
+                        setInlineError(null);
+                      }}
+                      className="flex-1 px-5 py-3 rounded-full border border-[var(--color-border)] bg-white text-base outline-none focus:border-[var(--color-warm)] focus:ring-2 focus:ring-[var(--color-warm)]/30 transition-all"
+                    />
+                    <input
+                      type="email"
+                      placeholder="이메일"
+                      value={inlineEmail}
+                      onChange={(e) => {
+                        setInlineEmail(e.target.value);
+                        setInlineError(null);
+                      }}
+                      className="flex-1 px-5 py-3 rounded-full border border-[var(--color-border)] bg-white text-base outline-none focus:border-[var(--color-warm)] focus:ring-2 focus:ring-[var(--color-warm)]/30 transition-all"
+                    />
+                    <button
+                      type="submit"
+                      disabled={inlineSubmitting}
+                      className="px-8 py-3 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold text-base transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+                    >
+                      {inlineSubmitting ? "서명 중…" : "서명하기"}
+                    </button>
+                  </div>
+                  {inlineError && (
+                    <p className="text-sm text-red-600 text-center">{inlineError}</p>
+                  )}
+                  <p className="text-xs text-[var(--color-text-muted)] text-center">
+                    서명 시{" "}
+                    <Link href="/privacy" className="underline hover:text-[var(--color-warm)]">
+                      개인정보처리방침
+                    </Link>
+                    에 동의합니다
+                  </p>
+                </form>
+              )}
+            </div>
+          </FadeIn>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
             {[

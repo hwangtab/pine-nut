@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import Analytics from "@/components/Analytics";
 
 export const metadata: Metadata = {
   title: "풍천리를 지켜주세요 — 양수발전소 건설 반대",
@@ -27,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="antialiased">
+        <Analytics />
         <Navigation />
         <main>{children}</main>
         <Footer />
