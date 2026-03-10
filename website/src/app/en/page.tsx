@@ -18,15 +18,17 @@ export default function EnglishPage() {
   return (
     <article>
       {/* ── Hero ── */}
-      <section className="bg-[var(--color-forest)] text-white py-24 md:py-36 px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="relative text-white pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 text-center overflow-hidden">
+        <img src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg" alt="" role="presentation" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black/55" />
+        <div className="relative max-w-3xl mx-auto">
           <p className="text-sm uppercase tracking-widest text-white/60 mb-4 font-medium">
             English Summary
           </p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
             Save Pungcheon-ri
           </h1>
-          <p className="text-lg md:text-xl text-white/80 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto leading-relaxed">
             A 7-Year Fight to Protect a Village, a Forest, and a Way of Life
           </p>
         </div>

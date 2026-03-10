@@ -278,14 +278,14 @@ export default function GalleryPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-stone-50 via-white to-amber-50/30">
       {/* Hero */}
-      <section className="relative text-white pt-32 md:pt-40 pb-16 md:pb-20 px-4 text-center overflow-hidden">
+      <section className="relative text-white pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 text-center overflow-hidden">
         <img
           src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
           alt="" role="presentation"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/60" />
-        <div className="relative">
+        <div className="absolute inset-0 bg-black/55" />
+        <div className="relative max-w-3xl mx-auto">
           <Camera className="w-10 h-10 mx-auto mb-4 text-white/70" />
           <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
             갤러리
@@ -297,7 +297,7 @@ export default function GalleryPage() {
       </section>
 
       {/* Gallery sections */}
-      <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
+      <div className="max-w-5xl mx-auto px-4 pt-12 md:pt-16 pb-8 md:pb-12">
         <GallerySection
           title="풍천리의 아름다움"
           description="100년 넘은 잣나무 군락지와 멸종위기 산양이 살아가는 풍천리의 자연. 이 숲은 주민들의 삶의 터전이자, 지켜야 할 생태계의 보고입니다."

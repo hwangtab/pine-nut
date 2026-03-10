@@ -89,7 +89,7 @@ export default function DonatePage() {
       {/* ── Hero with Photo ── */}
       <section className="relative bg-[var(--color-bg-warm)]">
         {/* Solidarity photo */}
-        <div className="relative w-full h-[320px] sm:h-[400px] overflow-hidden">
+        <div className="relative w-full h-[340px] sm:h-[420px] overflow-hidden">
           <img
             src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
             alt="강원생명평화기도회 모임 사진"

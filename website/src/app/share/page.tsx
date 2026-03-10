@@ -11,23 +11,23 @@ export default function SharePage() {
   return (
     <article>
       {/* Hero */}
-      <section className="relative text-white pt-32 md:pt-40 pb-16 md:pb-20 px-4 sm:px-6 overflow-hidden">
+      <section className="relative text-white pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 text-center overflow-hidden">
         <img
           src="https://www.pressian.com/_resources/10/2025/11/12/2025111117101271238_l.png"
           alt="" role="presentation"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-[var(--color-forest)]/80" />
-        <div className="relative max-w-3xl mx-auto text-center">
+        <div className="absolute inset-0 bg-black/55" />
+        <div className="relative max-w-3xl mx-auto">
           <p className="text-xs tracking-[0.3em] uppercase text-white/50 mb-4 font-medium">
             Share &amp; Spread
           </p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
             카드뉴스로
             <br />
             함께 알려주세요
           </h1>
-          <p className="text-lg md:text-xl text-white/70 leading-relaxed max-w-xl mx-auto">
+          <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto leading-relaxed">
             각 카드의 다운로드 버튼을 눌러 이미지를 저장한 뒤,
             <br className="hidden sm:block" />
             인스타그램·카카오톡·트위터 등에 공유해주세요.
@@ -36,7 +36,7 @@ export default function SharePage() {
       </section>
 
       {/* Cards */}
-      <section className="bg-[var(--color-bg)]">
+      <section className="bg-[var(--color-bg)] pt-12 md:pt-16">
         <CardNews />
       </section>
 

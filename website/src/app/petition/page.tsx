@@ -304,15 +304,15 @@ export default function PetitionPage() {
       {showConfetti && <Confetti />}
 
       {/* ── Header ── */}
-      <section className="relative text-white pt-32 sm:pt-36 pb-16 sm:pb-20 px-4 overflow-hidden">
+      <section className="relative text-white pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 text-center overflow-hidden">
         <img
           src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
           alt="" role="presentation"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/60" />
-        <div className="relative max-w-3xl mx-auto text-center">
-          <h1 className="text-3xl sm:text-4xl font-black text-white mb-3">
+        <div className="absolute inset-0 bg-black/55" />
+        <div className="relative max-w-3xl mx-auto">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-3">
             서명으로 함께해주세요
           </h1>
           <p className="text-lg text-white/80 mb-8">
@@ -320,7 +320,7 @@ export default function PetitionPage() {
           </p>
           <div className="flex flex-col items-center gap-1">
             <AnimatedCounter target={signatureCount} />
-            <span className="text-white/70 text-lg mt-1">
+            <span className="text-white/80 text-lg mt-1">
               명이 함께하고 있습니다
             </span>
           </div>
