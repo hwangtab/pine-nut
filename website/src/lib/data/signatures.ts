@@ -8,6 +8,7 @@ export interface SignatureStats {
 
 export async function getSignatureStats(days = 14): Promise<SignatureStats> {
   const supabase = await createSupabaseServerClient();
+  const periodDays = Math.max(1, days);
 
   const fallback: SignatureStats = {
     totalCount: 0,
@@ -31,7 +32,7 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
 
   // Daily counts for chart
   const sinceDate = new Date();
-  sinceDate.setDate(sinceDate.getDate() - days);
+  sinceDate.setDate(sinceDate.getDate() - (periodDays - 1));
   const { data: dailyRaw } = await supabase
     .from("signatures")
     .select("created_at")
@@ -39,8 +40,7 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
     .order("created_at", { ascending: true });
 
   const dailyMap = new Map<string, number>();
-  // Pre-fill all days
-  for (let i = days; i >= 0; i--) {
+  for (let i = periodDays - 1; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
     dailyMap.set(d.toISOString().split("T")[0], 0);

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback, FormEvent } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { Send, Check, Copy, Loader2 } from "lucide-react";
 import SubHero from "@/components/SubHero";
+import { events } from "@/lib/analytics";
 
 /* ──────────────────────── Types ──────────────────────── */
 interface Signature {
@@ -180,6 +181,7 @@ export default function PetitionPage() {
   const [agreeAge, setAgreeAge] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPrivacy, setShowPrivacy] = useState(false);
+  const [signatureStartedTracked, setSignatureStartedTracked] = useState(false);
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -238,6 +240,8 @@ export default function PetitionPage() {
           name: name.trim(),
           email: email.trim(),
           message: message.trim(),
+          agreePrivacy,
+          agreeAge,
         }),
       });
 
@@ -252,13 +256,7 @@ export default function PetitionPage() {
       setSubmitted(true);
       setShowConfetti(true);
 
-      // Track successful signature
-      if (typeof window !== "undefined" && window.gtag) {
-        window.gtag("event", "signature_complete", {
-          event_category: "conversion",
-          event_label: "form_submit",
-        });
-      }
+      events.signatureComplete();
 
       // Refresh signatures list
       fetchSignatures();
@@ -276,6 +274,7 @@ export default function PetitionPage() {
   const handleCopyUrl = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
+      events.shareClick("copy_url");
       setUrlCopied(true);
       setTimeout(() => setUrlCopied(false), 2000);
     } catch {
@@ -288,6 +287,7 @@ export default function PetitionPage() {
       "풍천리 주민들의 양수발전소 건설 반대 서명에 함께해주세요!"
     );
     const url = encodeURIComponent(window.location.href);
+    events.shareClick("twitter");
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
   };
 
@@ -299,12 +299,14 @@ export default function PetitionPage() {
           text: "풍천리 주민들의 양수발전소 건설 반대 서명에 함께해주세요!",
           url: window.location.href,
         });
+        events.shareClick("web_share");
       } catch {
         /* 사용자가 공유를 취소한 경우 */
       }
     } else {
       try {
         await navigator.clipboard.writeText(window.location.href);
+        events.shareClick("clipboard_share");
         setUrlCopied(true);
         setTimeout(() => setUrlCopied(false), 2000);
       } catch {
@@ -354,6 +356,12 @@ export default function PetitionPage() {
               <form
                 ref={formRef}
                 onSubmit={handleSubmit}
+                onFocusCapture={() => {
+                  if (!signatureStartedTracked) {
+                    events.signatureStart();
+                    setSignatureStartedTracked(true);
+                  }
+                }}
                 noValidate
                 className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 space-y-6"
               >
