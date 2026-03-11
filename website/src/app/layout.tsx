@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import PublicShell from "@/components/PublicShell";
 import Analytics from "@/components/Analytics";
+import AdminEditShell from "@/components/admin/AdminEditShell";
 import { SITE_URL } from "@/lib/site-config";
+import { getAllPageContent } from "@/lib/data/page-content";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 export const metadata: Metadata = {
   title: "풍천리를 지켜주세요 — 양수발전소 건설 반대",
@@ -28,16 +31,36 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+async function checkIsAdmin(): Promise<boolean> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    if (!supabase) return false;
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    return !!user;
+  } catch {
+    return false;
+  }
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [isAdmin, initialContent] = await Promise.all([
+    checkIsAdmin(),
+    getAllPageContent(),
+  ]);
+
   return (
     <html lang="ko">
       <body className="antialiased">
         <Analytics />
-        <PublicShell>{children}</PublicShell>
+        <AdminEditShell isAdmin={isAdmin} initialContent={initialContent}>
+          <PublicShell>{children}</PublicShell>
+        </AdminEditShell>
       </body>
     </html>
   );

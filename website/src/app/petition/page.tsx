@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { Send, Check, Copy, Loader2, HeartHandshake, Megaphone } from "lucide-react";
 import SubHero from "@/components/SubHero";
+import { EditableText, EditableList } from "@/components/editable";
 import { events } from "@/lib/analytics";
 
 /* ──────────────────────── Types ──────────────────────── */
@@ -327,8 +328,8 @@ export default function PetitionPage() {
       {/* ── Header ── */}
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
-        title="함께해주세요"
-        subtitle="서명, 후원, 공유 중 지금 할 수 있는 행동으로 풍천리 주민들과 함께해주세요"
+        title={<EditableText contentKey="petition.hero.title" defaultValue="함께해주세요" as="span" page="petition" section="hero" />}
+        subtitle={<EditableText contentKey="petition.hero.subtitle" defaultValue="서명, 후원, 공유 중 지금 할 수 있는 행동으로 풍천리 주민들과 함께해주세요" as="span" page="petition" section="hero" />}
         eyebrow="참여하기"
         variant="emphasis"
         metric={
@@ -343,53 +344,73 @@ export default function PetitionPage() {
 
       <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 space-y-16">
         <section aria-label="함께할 방법">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button
-              type="button"
-              onClick={handleScrollToForm}
-              className="text-left bg-white border border-[var(--color-border)] rounded-2xl p-6 transition-colors hover:bg-[var(--color-bg-warm)] cursor-pointer"
-            >
-              <div className="w-11 h-11 rounded-full bg-[var(--color-warm)]/10 text-[var(--color-warm)] flex items-center justify-center mb-4">
-                <Send className="w-5 h-5" />
-              </div>
-              <h2 className="text-lg font-bold text-[var(--color-text)] mb-2">서명하기</h2>
-              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
-                이름을 남겨 주민들의 목소리에 힘을 보태주세요.
-              </p>
-            </button>
-
-            <Link
-              href="/donate"
-              className="bg-white border border-[var(--color-border)] rounded-2xl p-6 transition-colors hover:bg-[var(--color-bg-warm)]"
-            >
-              <div className="w-11 h-11 rounded-full bg-[var(--color-forest)]/10 text-[var(--color-forest)] flex items-center justify-center mb-4">
-                <HeartHandshake className="w-5 h-5" />
-              </div>
-              <h2 className="text-lg font-bold text-[var(--color-text)] mb-2">후원하기</h2>
-              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
-                교통비와 법률비용 등 투쟁에 필요한 실질적 힘을 보태주세요.
-              </p>
-            </Link>
-
-            <Link
-              href="/share"
-              className="bg-white border border-[var(--color-border)] rounded-2xl p-6 transition-colors hover:bg-[var(--color-bg-warm)]"
-            >
-              <div className="w-11 h-11 rounded-full bg-[var(--color-sky)]/10 text-[var(--color-sky)] flex items-center justify-center mb-4">
-                <Megaphone className="w-5 h-5" />
-              </div>
-              <h2 className="text-lg font-bold text-[var(--color-text)] mb-2">공유하기</h2>
-              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
-                카드뉴스를 저장해 더 많은 사람에게 풍천리 이야기를 알려주세요.
-              </p>
-            </Link>
-          </div>
+          <EditableList
+            contentKey="petition.cta.cards"
+            defaultItems={[
+              { title: "서명하기", desc: "이름을 남겨 주민들의 목소리에 힘을 보태주세요." },
+              { title: "후원하기", desc: "교통비와 법률비용 등 투쟁에 필요한 실질적 힘을 보태주세요." },
+              { title: "공유하기", desc: "카드뉴스를 저장해 더 많은 사람에게 풍천리 이야기를 알려주세요." },
+            ]}
+            page="petition"
+            section="cta"
+            fields={[
+              { key: "title", label: "제목" },
+              { key: "desc", label: "설명", type: "textarea" },
+            ]}
+          >
+            {(items) => {
+              const icons = [
+                { Icon: Send, colorClass: "bg-[var(--color-warm)]/10 text-[var(--color-warm)]" },
+                { Icon: HeartHandshake, colorClass: "bg-[var(--color-forest)]/10 text-[var(--color-forest)]" },
+                { Icon: Megaphone, colorClass: "bg-[var(--color-sky)]/10 text-[var(--color-sky)]" },
+              ];
+              const wrappers = [
+                (children: React.ReactNode) => (
+                  <button key="cta-0" type="button" onClick={handleScrollToForm} className="text-left bg-white border border-[var(--color-border)] rounded-2xl p-6 transition-colors hover:bg-[var(--color-bg-warm)] cursor-pointer">
+                    {children}
+                  </button>
+                ),
+                (children: React.ReactNode) => (
+                  <Link key="cta-1" href="/donate" className="bg-white border border-[var(--color-border)] rounded-2xl p-6 transition-colors hover:bg-[var(--color-bg-warm)]">
+                    {children}
+                  </Link>
+                ),
+                (children: React.ReactNode) => (
+                  <Link key="cta-2" href="/share" className="bg-white border border-[var(--color-border)] rounded-2xl p-6 transition-colors hover:bg-[var(--color-bg-warm)]">
+                    {children}
+                  </Link>
+                ),
+              ];
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {items.map((item, i) => {
+                    const icon = icons[i] || icons[0];
+                    const wrap = wrappers[i] || wrappers[0];
+                    return wrap(
+                      <>
+                        <div className={`w-11 h-11 rounded-full ${icon.colorClass} flex items-center justify-center mb-4`}>
+                          <icon.Icon className="w-5 h-5" />
+                        </div>
+                        <h2 className="text-lg font-bold text-[var(--color-text)] mb-2">{item.title}</h2>
+                        <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">{item.desc}</p>
+                      </>
+                    );
+                  })}
+                </div>
+              );
+            }}
+          </EditableList>
         </section>
 
         {/* Emotional prompt */}
-        <p className="text-center text-xl font-serif text-[var(--color-text-muted)] mb-6">
-          680번의 외침에 당신의 이름을 더해주세요
-        </p>
+        <EditableText
+          contentKey="petition.emotional.prompt"
+          defaultValue="680번의 외침에 당신의 이름을 더해주세요"
+          as="p"
+          page="petition"
+          section="emotional"
+          className="text-center text-xl font-serif text-[var(--color-text-muted)] mb-6"
+        />
 
         {/* ── Form / Success ── */}
         <AnimatePresence mode="wait">
@@ -694,62 +715,51 @@ export default function PetitionPage() {
 
         {/* ── Why Sign ── */}
         <section aria-label="서명이 왜 중요한가요">
-          <h2 className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]">
-            서명이 왜 중요한가요?
-          </h2>
-          <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 space-y-5">
-            <div className="flex gap-4 items-start">
-              <span
-                className="shrink-0 w-10 h-10 rounded-full bg-[var(--color-warm)]/10 flex items-center justify-center text-[var(--color-warm)] font-bold"
-                aria-hidden="true"
-              >
-                1
-              </span>
-              <div>
-                <h3 className="font-semibold text-[var(--color-text)] mb-1">
-                  국회와 정부에 전달됩니다
-                </h3>
-                <p className="text-[var(--color-text-muted)] text-[15px]">
-                  모아진 서명은 국회 환경노동위원회와 산업통상자원부에 공식 제출되어,
-                  주민들의 목소리가 정책 결정 과정에 반영될 수 있도록 합니다.
-                </p>
+          <EditableText
+            contentKey="petition.reasons.heading"
+            defaultValue="서명이 왜 중요한가요?"
+            as="h2"
+            page="petition"
+            section="reasons"
+            className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]"
+          />
+          <EditableList
+            contentKey="petition.reasons.items"
+            defaultItems={[
+              { title: "국회와 정부에 전달됩니다", desc: "모아진 서명은 국회 환경노동위원회와 산업통상자원부에 공식 제출되어, 주민들의 목소리가 정책 결정 과정에 반영될 수 있도록 합니다." },
+              { title: "숫자가 곧 주민들의 힘입니다", desc: "서명 참여자가 많을수록 언론과 여론의 관심이 커집니다. 한 명 한 명의 서명이 모여 거대한 변화를 만듭니다." },
+              { title: "주민들에게 큰 위안이 됩니다", desc: "\u201C우리만의 싸움이 아니구나\u201D라는 사실이 풍천리 어르신들에게 가장 큰 힘이 됩니다." },
+            ]}
+            page="petition"
+            section="reasons"
+            fields={[
+              { key: "title", label: "제목" },
+              { key: "desc", label: "설명", type: "textarea" },
+            ]}
+          >
+            {(items) => (
+              <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 space-y-5">
+                {items.map((item, i) => (
+                  <div key={i} className="flex gap-4 items-start">
+                    <span
+                      className="shrink-0 w-10 h-10 rounded-full bg-[var(--color-warm)]/10 flex items-center justify-center text-[var(--color-warm)] font-bold"
+                      aria-hidden="true"
+                    >
+                      {i + 1}
+                    </span>
+                    <div>
+                      <h3 className="font-semibold text-[var(--color-text)] mb-1">
+                        {item.title}
+                      </h3>
+                      <p className="text-[var(--color-text-muted)] text-[15px]">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-            <div className="flex gap-4 items-start">
-              <span
-                className="shrink-0 w-10 h-10 rounded-full bg-[var(--color-warm)]/10 flex items-center justify-center text-[var(--color-warm)] font-bold"
-                aria-hidden="true"
-              >
-                2
-              </span>
-              <div>
-                <h3 className="font-semibold text-[var(--color-text)] mb-1">
-                  숫자가 곧 주민들의 힘입니다
-                </h3>
-                <p className="text-[var(--color-text-muted)] text-[15px]">
-                  서명 참여자가 많을수록 언론과 여론의 관심이 커집니다.
-                  한 명 한 명의 서명이 모여 거대한 변화를 만듭니다.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-4 items-start">
-              <span
-                className="shrink-0 w-10 h-10 rounded-full bg-[var(--color-warm)]/10 flex items-center justify-center text-[var(--color-warm)] font-bold"
-                aria-hidden="true"
-              >
-                3
-              </span>
-              <div>
-                <h3 className="font-semibold text-[var(--color-text)] mb-1">
-                  주민들에게 큰 위안이 됩니다
-                </h3>
-                <p className="text-[var(--color-text-muted)] text-[15px]">
-                  &ldquo;우리만의 싸움이 아니구나&rdquo;라는 사실이
-                  풍천리 어르신들에게 가장 큰 힘이 됩니다.
-                </p>
-              </div>
-            </div>
-          </div>
+            )}
+          </EditableList>
         </section>
       </div>
     </div>

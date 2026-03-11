@@ -8,9 +8,9 @@ interface SubHeroProps {
   imageUrl: string;
   fallbackImageUrl?: string;
   /** Main heading text */
-  title: string;
+  title: ReactNode;
   /** Optional subtitle text */
-  subtitle?: string;
+  subtitle?: ReactNode;
   eyebrow?: string;
   metric?: ReactNode;
   variant?: "standard" | "emphasis";

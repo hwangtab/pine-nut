@@ -6,7 +6,7 @@ export async function logAudit(
   supabase: SupabaseClient,
   tableName: string,
   recordId: number,
-  action: "create" | "update" | "delete" | "restore",
+  action: "create" | "update" | "delete" | "restore" | "bulk_update",
 ) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user?.email) return;

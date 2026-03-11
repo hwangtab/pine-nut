@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { EditableText } from "@/components/editable";
 
 interface NavLink {
   label: string;
@@ -156,7 +157,7 @@ export default function Navigation() {
               isTransparent ? "text-white" : "text-[var(--color-forest)]"
             }`}
           >
-            풍천리를 지켜주세요
+            <EditableText contentKey="nav.logo" defaultValue="풍천리를 지켜주세요" as="span" page="nav" section="header" />
           </Link>
 
           {/* Desktop nav */}
@@ -176,14 +177,14 @@ export default function Navigation() {
                 }`}
                 aria-current={isActive(link.href) ? "page" : undefined}
               >
-                {link.label}
+                <EditableText contentKey={`nav.link.${link.href.replace('/', '')}`} defaultValue={link.label} as="span" page="nav" section="links" />
               </Link>
             ))}
             <Link
               href="/petition"
               className="ml-3 px-5 py-2 rounded-full text-[15px] font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center transition-colors"
             >
-              함께하기
+              <EditableText contentKey="nav.cta" defaultValue="함께하기" as="span" page="nav" section="header" />
             </Link>
           </div>
 
@@ -247,7 +248,7 @@ export default function Navigation() {
                 }`}
                 aria-current={isActive(link.href) ? "page" : undefined}
               >
-                {link.label}
+                <EditableText contentKey={`nav.link.${link.href.replace('/', '')}`} defaultValue={link.label} as="span" page="nav" section="links" />
               </Link>
             ))}
             <Link
@@ -255,7 +256,7 @@ export default function Navigation() {
               onClick={() => closeMobileMenu()}
               className="mt-4 px-4 py-4 rounded-full text-xl font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center justify-center transition-colors"
             >
-              함께하기
+              <EditableText contentKey="nav.cta" defaultValue="함께하기" as="span" page="nav" section="header" />
             </Link>
           </nav>
         </div>

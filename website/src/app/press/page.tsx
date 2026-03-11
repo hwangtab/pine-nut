@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import SubHero from "@/components/SubHero";
 import { SITE_URL } from "@/lib/site-config";
+import { EditableText, EditableRichText, EditableList, EditableSection } from "@/components/editable";
 
 export const metadata: Metadata = {
   title: "자료실 — 풍천리를 지켜주세요",
@@ -54,130 +55,223 @@ export default function PressPage() {
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
         fallbackImageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
-        title="자료실"
-        subtitle="언론인·활동가를 위한 풍천리 관련 자료"
+        title={<EditableText contentKey="press.hero.title" defaultValue="자료실" as="span" page="press" section="hero" />}
+        subtitle={<EditableText contentKey="press.hero.subtitle" defaultValue="언론인·활동가를 위한 풍천리 관련 자료" as="span" page="press" section="hero" />}
         eyebrow="자료 아카이브"
       />
 
       <div className="max-w-4xl mx-auto px-4 pt-12 md:pt-16 pb-20 space-y-16">
         {/* Press Kit Section */}
-        <section>
-          <h2 className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6">
-            보도 키트
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {pressKitItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.title}
-                  href={item.href}
-                  className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-[var(--color-border)] shadow-sm hover:shadow-md hover:border-[var(--color-forest)]/20 transition-all"
-                >
-                  <div
-                    className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 ${item.color}`}
+        <EditableSection contentKey="press.kit.visibility" page="press" section="kit">
+          <section>
+            <EditableText
+              contentKey="press.kit.title"
+              defaultValue="보도 키트"
+              as="h2"
+              page="press"
+              section="kit"
+              className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {pressKitItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.title}
+                    href={item.href}
+                    className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-[var(--color-border)] shadow-sm hover:shadow-md hover:border-[var(--color-forest)]/20 transition-all"
                   >
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-base font-bold text-[var(--color-text)] mb-1">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-[var(--color-text-muted)] mb-4 leading-relaxed">
-                    {item.description}
-                  </p>
-                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-forest)] group-hover:text-[var(--color-forest-light)] transition-colors">
-                    열기
-                    <ArrowRight className="w-4 h-4" />
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
+                    <div
+                      className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 ${item.color}`}
+                    >
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-base font-bold text-[var(--color-text)] mb-1">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-[var(--color-text-muted)] mb-4 leading-relaxed">
+                      {item.description}
+                    </p>
+                    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-forest)] group-hover:text-[var(--color-forest-light)] transition-colors">
+                      <EditableText contentKey="press.kit.open" defaultValue="열기" as="span" page="press" section="kit" />
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        </EditableSection>
 
         {/* Fact Sheet Section */}
-        <section>
-          <h2 className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6">
-            핵심 팩트시트
-          </h2>
-          <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm overflow-hidden">
-            <div className="divide-y divide-[var(--color-border)]">
-              {factSheetData.map((fact) => (
-                <div
-                  key={fact.label}
-                  className="flex flex-col sm:flex-row sm:items-center px-6 py-4 gap-1 sm:gap-4"
-                >
-                  <dt className="text-sm font-bold text-[var(--color-text-muted)] sm:w-36 shrink-0">
-                    {fact.label}
-                  </dt>
-                  <dd className="text-base text-[var(--color-text)] font-medium">
-                    {fact.value}
-                  </dd>
+        <EditableSection contentKey="press.facts.visibility" page="press" section="facts">
+          <section>
+            <EditableText
+              contentKey="press.facts.title"
+              defaultValue="핵심 팩트시트"
+              as="h2"
+              page="press"
+              section="facts"
+              className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
+            />
+            <EditableList
+              contentKey="press.facts.items"
+              defaultItems={factSheetData}
+              page="press"
+              section="facts"
+              fields={[
+                { key: "label", label: "항목" },
+                { key: "value", label: "내용" },
+              ]}
+            >
+              {(items) => (
+                <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm overflow-hidden">
+                  <div className="divide-y divide-[var(--color-border)]">
+                    {items.map((fact) => (
+                      <div
+                        key={fact.label}
+                        className="flex flex-col sm:flex-row sm:items-center px-6 py-4 gap-1 sm:gap-4"
+                      >
+                        <dt className="text-sm font-bold text-[var(--color-text-muted)] sm:w-36 shrink-0">
+                          {fact.label}
+                        </dt>
+                        <dd className="text-base text-[var(--color-text)] font-medium">
+                          {fact.value}
+                        </dd>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
+              )}
+            </EditableList>
+          </section>
+        </EditableSection>
 
         {/* Media Contact Section */}
-        <section>
-          <h2 className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6">
-            언론 연락처
-          </h2>
-          <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm p-6 md:p-8">
-            <p className="text-[var(--color-text-muted)] mb-6 leading-relaxed">
-              취재 및 자료 요청은 빠띠 캠페인 페이지를 통해 문의해 주세요. 빠른 시일 내에
-              답변드리겠습니다.
-            </p>
-            <div className="grid grid-cols-1 gap-4">
-              <div className="flex items-start gap-3 p-4 bg-[var(--color-bg-warm)] rounded-xl">
-                <ExternalLink className="w-5 h-5 text-[var(--color-forest)] mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-semibold text-[var(--color-text-muted)] mb-0.5">
-                    캠페인 페이지
+        <EditableSection contentKey="press.contact.visibility" page="press" section="contact">
+          <section>
+            <EditableText
+              contentKey="press.contact.title"
+              defaultValue="언론 연락처"
+              as="h2"
+              page="press"
+              section="contact"
+              className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
+            />
+            <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm p-6 md:p-8">
+              <EditableRichText
+                contentKey="press.contact.description"
+                defaultValue="취재 및 자료 요청은 빠띠 캠페인 페이지를 통해 문의해 주세요. 빠른 시일 내에 답변드리겠습니다."
+                page="press"
+                section="contact"
+              >
+                {(value) => (
+                  <p className="text-[var(--color-text-muted)] mb-6 leading-relaxed">
+                    {value}
                   </p>
-                  <a
-                    href="https://campaigns.do/campaigns/1328"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-base font-medium text-[var(--color-text)] hover:text-[var(--color-forest)] transition-colors"
-                  >
-                    빠띠 캠페인 페이지에서 문의하기
-                  </a>
+                )}
+              </EditableRichText>
+              <div className="grid grid-cols-1 gap-4">
+                <div className="flex items-start gap-3 p-4 bg-[var(--color-bg-warm)] rounded-xl">
+                  <ExternalLink className="w-5 h-5 text-[var(--color-forest)] mt-0.5 shrink-0" />
+                  <div>
+                    <EditableText
+                      contentKey="press.contact.campaignLabel"
+                      defaultValue="캠페인 페이지"
+                      as="p"
+                      page="press"
+                      section="contact"
+                      className="text-sm font-semibold text-[var(--color-text-muted)] mb-0.5"
+                    />
+                    <a
+                      href="https://campaigns.do/campaigns/1328"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-base font-medium text-[var(--color-text)] hover:text-[var(--color-forest)] transition-colors"
+                    >
+                      <EditableText
+                        contentKey="press.contact.campaignLink"
+                        defaultValue="빠띠 캠페인 페이지에서 문의하기"
+                        as="span"
+                        page="press"
+                        section="contact"
+                      />
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </EditableSection>
 
         {/* How to Cite Section */}
-        <section>
-          <h2 className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6">
-            인용 안내
-          </h2>
-          <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm p-6 md:p-8">
-            <p className="text-[var(--color-text-muted)] mb-4 leading-relaxed">
-              연구 및 보도 시 아래 형식으로 인용해 주시기 바랍니다.
-            </p>
-            <div className="bg-[var(--color-bg-warm)] rounded-xl p-5 border border-[var(--color-border)]">
-              <p className="text-sm text-[var(--color-text)] leading-relaxed font-mono">
-                풍천리 주민회. (2026). 풍천리 양수발전소 반대 투쟁 기록.
-                <br />
-                {SITE_URL}
-              </p>
+        <EditableSection contentKey="press.cite.visibility" page="press" section="cite">
+          <section>
+            <EditableText
+              contentKey="press.cite.title"
+              defaultValue="인용 안내"
+              as="h2"
+              page="press"
+              section="cite"
+              className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
+            />
+            <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm p-6 md:p-8">
+              <EditableRichText
+                contentKey="press.cite.description"
+                defaultValue="연구 및 보도 시 아래 형식으로 인용해 주시기 바랍니다."
+                page="press"
+                section="cite"
+              >
+                {(value) => (
+                  <p className="text-[var(--color-text-muted)] mb-4 leading-relaxed">
+                    {value}
+                  </p>
+                )}
+              </EditableRichText>
+              <div className="bg-[var(--color-bg-warm)] rounded-xl p-5 border border-[var(--color-border)]">
+                <EditableRichText
+                  contentKey="press.cite.citation"
+                  defaultValue={`풍천리 주민회. (2026). 풍천리 양수발전소 반대 투쟁 기록.\n${SITE_URL}`}
+                  page="press"
+                  section="cite"
+                >
+                  {(value) => (
+                    <p className="text-sm text-[var(--color-text)] leading-relaxed font-mono">
+                      {value.split("\n").map((line, i) => (
+                        <span key={i}>
+                          {i > 0 && <br />}
+                          {line}
+                        </span>
+                      ))}
+                    </p>
+                  )}
+                </EditableRichText>
+              </div>
+              <EditableText
+                contentKey="press.cite.apaLabel"
+                defaultValue="APA 형식 예시:"
+                as="p"
+                page="press"
+                section="cite"
+                className="text-sm text-[var(--color-text-muted)] mt-4 leading-relaxed"
+              />
+              <div className="bg-[var(--color-bg-warm)] rounded-xl p-5 border border-[var(--color-border)] mt-2">
+                <EditableRichText
+                  contentKey="press.cite.apaCitation"
+                  defaultValue={`풍천리 주민회 (2026). 풍천리를 지켜주세요: 양수발전소 건설 반대 투쟁 기록. ${SITE_URL}`}
+                  page="press"
+                  section="cite"
+                >
+                  {(value) => (
+                    <p className="text-sm text-[var(--color-text)] leading-relaxed font-mono">
+                      {value}
+                    </p>
+                  )}
+                </EditableRichText>
+              </div>
             </div>
-            <p className="text-sm text-[var(--color-text-muted)] mt-4 leading-relaxed">
-              APA 형식 예시:
-            </p>
-            <div className="bg-[var(--color-bg-warm)] rounded-xl p-5 border border-[var(--color-border)] mt-2">
-              <p className="text-sm text-[var(--color-text)] leading-relaxed font-mono">
-                풍천리 주민회 (2026).{" "}
-                <em>풍천리를 지켜주세요: 양수발전소 건설 반대 투쟁 기록</em>.
-                {SITE_URL}
-              </p>
-            </div>
-          </div>
-        </section>
+          </section>
+        </EditableSection>
       </div>
     </div>
   );

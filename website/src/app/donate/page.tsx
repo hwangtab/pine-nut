@@ -11,34 +11,7 @@ import {
   Settings,
 } from "lucide-react";
 import SubHero from "@/components/SubHero";
-
-/* ──────────────────────── Demo transparency data ──────────────────────── */
-const FUND_BREAKDOWN = [
-  {
-    label: "교통비 (집회·상경 투쟁)",
-    percent: 40,
-    color: "var(--color-warm)",
-    icon: Bus,
-  },
-  {
-    label: "법률 비용",
-    percent: 30,
-    color: "var(--color-forest)",
-    icon: Scale,
-  },
-  {
-    label: "홍보물 제작",
-    percent: 15,
-    color: "var(--color-sky)",
-    icon: Megaphone,
-  },
-  {
-    label: "운영비",
-    percent: 15,
-    color: "var(--color-earth)",
-    icon: Settings,
-  },
-];
+import { EditableText, EditableList } from "@/components/editable";
 
 const BANK_ACCOUNT = "356-1559-4666-63";
 const BANK_ACCOUNT_FULL = "농협 356-1559-4666-63 이창후";
@@ -89,29 +62,43 @@ export default function DonatePage() {
 
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
-        title="후원으로 함께해주세요"
-        subtitle="주민들의 투쟁을 직접 도울 수 있습니다"
+        title={<EditableText contentKey="donate.hero.title" defaultValue="후원으로 함께해주세요" as="span" page="donate" section="hero" />}
+        subtitle={<EditableText contentKey="donate.hero.subtitle" defaultValue="주민들의 투쟁을 직접 도울 수 있습니다" as="span" page="donate" section="hero" />}
         eyebrow="후원 안내"
       />
 
       <div className="bg-[var(--color-bg-warm)] py-8 px-4">
         <blockquote className="max-w-xl mx-auto bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-2xl px-6 py-5 text-[var(--color-text)] text-center">
-          <p className="text-[15px] sm:text-base leading-relaxed font-medium italic">
-            {"\u201C"}여러분의 후원은 70대 어르신들이 매주 서울까지 버스를 타고
-            갈 수 있는 교통비가 됩니다{"\u201D"}
-          </p>
-          <footer className="mt-2 text-sm text-[var(--color-text-muted)]">
-            — 풍천리 주민
-          </footer>
+          <EditableText
+            contentKey="donate.quote.text"
+            defaultValue={"\u201C여러분의 후원은 70대 어르신들이 매주 서울까지 버스를 타고 갈 수 있는 교통비가 됩니다\u201D"}
+            as="p"
+            page="donate"
+            section="quote"
+            className="text-[15px] sm:text-base leading-relaxed font-medium italic"
+          />
+          <EditableText
+            contentKey="donate.quote.attribution"
+            defaultValue="— 풍천리 주민"
+            as="footer"
+            page="donate"
+            section="quote"
+            className="mt-2 text-sm text-[var(--color-text-muted)]"
+          />
         </blockquote>
       </div>
 
       <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 space-y-12">
         {/* ── Primary CTA: Bank Transfer ── */}
         <section aria-label="계좌 이체로 후원하기">
-          <h2 className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)] text-center">
-            지금 바로 후원하기
-          </h2>
+          <EditableText
+            contentKey="donate.bank.heading"
+            defaultValue="지금 바로 후원하기"
+            as="h2"
+            page="donate"
+            section="bank"
+            className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)] text-center"
+          />
           <div className="bg-white border-2 border-[var(--color-warm)] rounded-2xl p-6 sm:p-8 shadow-sm">
             {/* Bank icon + label */}
             <div className="text-center mb-5">
@@ -133,16 +120,26 @@ export default function DonatePage() {
                   <path d="M10 14h4" />
                 </svg>
               </div>
-              <p className="text-sm text-[var(--color-text-muted)] font-medium">
-                계좌 이체
-              </p>
+              <EditableText
+                contentKey="donate.bank.label"
+                defaultValue="계좌 이체"
+                as="p"
+                page="donate"
+                section="bank"
+                className="text-sm text-[var(--color-text-muted)] font-medium"
+              />
             </div>
 
             {/* Account display */}
             <div className="bg-[var(--color-bg)] rounded-xl px-5 py-4 mb-4 text-center">
-              <p className="text-sm text-[var(--color-text-muted)] mb-1">
-                농협 | 이창후
-              </p>
+              <EditableText
+                contentKey="donate.bank.accountLabel"
+                defaultValue="농협 | 이창후"
+                as="p"
+                page="donate"
+                section="bank"
+                className="text-sm text-[var(--color-text-muted)] mb-1"
+              />
               <p className="text-2xl sm:text-3xl font-black text-[var(--color-text)] tracking-wide">
                 {BANK_ACCOUNT}
               </p>
@@ -154,7 +151,7 @@ export default function DonatePage() {
               className="w-full min-h-[56px] rounded-xl bg-[var(--color-warm)] hover:brightness-110 active:scale-[0.98] text-white font-bold text-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <Copy className="w-5 h-5" />
-              계좌번호 복사
+              <EditableText contentKey="donate.bank.copy" defaultValue="계좌번호 복사" as="span" page="donate" section="bank" />
             </button>
 
             <p className="text-center text-xs text-[var(--color-text-muted)] mt-3">
@@ -165,9 +162,14 @@ export default function DonatePage() {
 
         {/* ── Quick Payment Links ── */}
         <section aria-label="간편 결제">
-          <h2 className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)] text-center">
-            간편하게 후원하기
-          </h2>
+          <EditableText
+            contentKey="donate.quick.heading"
+            defaultValue="간편하게 후원하기"
+            as="h2"
+            page="donate"
+            section="quick"
+            className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)] text-center"
+          />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* 카카오페이 */}
             <a
@@ -199,17 +201,27 @@ export default function DonatePage() {
               <ExternalLink className="w-4 h-4 opacity-50" />
             </a>
           </div>
-          <p className="text-center text-xs text-[var(--color-text-muted)] mt-3">
-            현재 빠띠 캠페인 페이지를 통해 후원하실 수 있습니다
-          </p>
+          <EditableText
+            contentKey="donate.quick.note"
+            defaultValue="현재 빠띠 캠페인 페이지를 통해 후원하실 수 있습니다"
+            as="p"
+            page="donate"
+            section="quick"
+            className="text-center text-xs text-[var(--color-text-muted)] mt-3"
+          />
         </section>
 
         {/* ── Campaign Page Link ── */}
         <section aria-label="빠띠 캠페인">
           <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 text-center">
-            <p className="text-[15px] text-[var(--color-text)] font-medium mb-4">
-              빠띠 캠페인 페이지에서도 후원 및 문의가 가능합니다
-            </p>
+            <EditableText
+              contentKey="donate.campaign.text"
+              defaultValue="빠띠 캠페인 페이지에서도 후원 및 문의가 가능합니다"
+              as="p"
+              page="donate"
+              section="campaign"
+              className="text-[15px] text-[var(--color-text)] font-medium mb-4"
+            />
             <a
               href="https://campaigns.do/campaigns/1328"
               target="_blank"
@@ -217,90 +229,137 @@ export default function DonatePage() {
               className="inline-flex items-center justify-center gap-2 min-h-[48px] px-8 rounded-xl bg-[var(--color-text)] hover:bg-[var(--color-text)]/90 text-white font-bold text-base transition-colors"
             >
               <ExternalLink className="w-5 h-5" />
-              빠띠 캠페인 페이지 방문
+              <EditableText contentKey="donate.campaign.link" defaultValue="빠띠 캠페인 페이지 방문" as="span" page="donate" section="campaign" />
             </a>
           </div>
         </section>
 
         {/* ── How Funds Are Used ── */}
         <section aria-label="후원금 사용 계획">
-          <h2 className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]">
-            후원금은 이렇게 사용됩니다
-          </h2>
+          <EditableText
+            contentKey="donate.funds.heading"
+            defaultValue="후원금은 이렇게 사용됩니다"
+            as="h2"
+            page="donate"
+            section="funds"
+            className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]"
+          />
           <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8">
-            <p className="text-sm text-[var(--color-text-muted)] mb-6">
-              * 아래는 후원금 사용 계획(안)이며, 실제 집행 시 변동될 수
-              있습니다.
-            </p>
+            <EditableText
+              contentKey="donate.funds.disclaimer"
+              defaultValue="* 아래는 후원금 사용 계획(안)이며, 실제 집행 시 변동될 수 있습니다."
+              as="p"
+              page="donate"
+              section="funds"
+              className="text-sm text-[var(--color-text-muted)] mb-6"
+            />
             {/* Visual bar breakdown */}
-            <div className="space-y-5 mb-8">
-              {FUND_BREAKDOWN.map((item) => {
-                const Icon = item.icon;
+            <EditableList
+              contentKey="donate.funds.items"
+              defaultItems={[
+                { label: "교통비 (집회·상경 투쟁)", percent: "40" },
+                { label: "법률 비용", percent: "30" },
+                { label: "홍보물 제작", percent: "15" },
+                { label: "운영비", percent: "15" },
+              ]}
+              page="donate"
+              section="funds"
+              fields={[
+                { key: "label", label: "항목명" },
+                { key: "percent", label: "비율 (%)" },
+              ]}
+            >
+              {(items) => {
+                const iconMap = [Bus, Scale, Megaphone, Settings];
+                const colorMap = ["var(--color-warm)", "var(--color-forest)", "var(--color-sky)", "var(--color-earth)"];
                 return (
-                  <div key={item.label}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="flex items-center gap-2 text-[15px] font-medium text-[var(--color-text)]">
-                        <Icon
-                          className="w-4 h-4 shrink-0"
-                          style={{ color: item.color }}
-                        />
-                        {item.label}
-                      </span>
-                      <span
-                        className="text-[15px] font-bold"
-                        style={{ color: item.color }}
-                      >
-                        {item.percent}%
-                      </span>
-                    </div>
-                    <div
-                      className="h-3 rounded-full bg-[var(--color-bg)] overflow-hidden"
-                      role="progressbar"
-                      aria-valuenow={item.percent}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                      aria-label={`${item.label}: ${item.percent}%`}
-                    >
-                      <div
-                        className="h-full rounded-full transition-all duration-700"
-                        style={{
-                          width: `${item.percent}%`,
-                          backgroundColor: item.color,
-                        }}
-                      />
-                    </div>
+                  <div className="space-y-5 mb-8">
+                    {items.map((item, i) => {
+                      const Icon = iconMap[i] || iconMap[0];
+                      const color = colorMap[i] || colorMap[0];
+                      const percent = parseInt(item.percent, 10) || 0;
+                      return (
+                        <div key={i}>
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="flex items-center gap-2 text-[15px] font-medium text-[var(--color-text)]">
+                              <Icon className="w-4 h-4 shrink-0" style={{ color }} />
+                              {item.label}
+                            </span>
+                            <span className="text-[15px] font-bold" style={{ color }}>
+                              {percent}%
+                            </span>
+                          </div>
+                          <div
+                            className="h-3 rounded-full bg-[var(--color-bg)] overflow-hidden"
+                            role="progressbar"
+                            aria-valuenow={percent}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            aria-label={`${item.label}: ${percent}%`}
+                          >
+                            <div
+                              className="h-full rounded-full transition-all duration-700"
+                              style={{ width: `${percent}%`, backgroundColor: color }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 );
-              })}
-            </div>
+              }}
+            </EditableList>
 
             {/* Transparency note */}
             <div className="bg-[var(--color-bg-warm)] rounded-xl px-5 py-4">
-              <p className="text-[15px] text-[var(--color-text)] font-medium">
-                후원금 사용 내역은 정리 후 이 페이지에 공개됩니다.
-              </p>
-              <p className="text-sm text-[var(--color-text-muted)] mt-1">
-                주민 여러분의 소중한 후원금이 어디에 쓰이는지 확인 가능한
-                형태로 투명하게 안내하겠습니다.
-              </p>
+              <EditableText
+                contentKey="donate.funds.transparencyTitle"
+                defaultValue="후원금 사용 내역은 정리 후 이 페이지에 공개됩니다."
+                as="p"
+                page="donate"
+                section="funds"
+                className="text-[15px] text-[var(--color-text)] font-medium"
+              />
+              <EditableText
+                contentKey="donate.funds.transparencyDesc"
+                defaultValue="주민 여러분의 소중한 후원금이 어디에 쓰이는지 확인 가능한 형태로 투명하게 안내하겠습니다."
+                as="p"
+                page="donate"
+                section="funds"
+                className="text-sm text-[var(--color-text-muted)] mt-1"
+              />
             </div>
           </div>
         </section>
 
         {/* ── Transparency Table (placeholder) ── */}
         <section aria-label="월별 후원금 내역">
-          <h2 className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]">
-            월별 후원금 내역
-          </h2>
+          <EditableText
+            contentKey="donate.monthly.heading"
+            defaultValue="월별 후원금 내역"
+            as="h2"
+            page="donate"
+            section="monthly"
+            className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]"
+          />
           <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8">
             <div className="bg-[var(--color-bg-warm)] rounded-xl px-5 py-4 text-center">
-              <p className="text-[15px] text-[var(--color-text)] font-medium">
-                후원금 사용 내역은 확정 후 공개 예정입니다.
-              </p>
-              <p className="text-sm text-[var(--color-text-muted)] mt-1">
-                후원금이 모이기 시작하면 매월 수입·지출 내역을 투명하게
-                공개하겠습니다.
-              </p>
+              <EditableText
+                contentKey="donate.monthly.statusTitle"
+                defaultValue="후원금 사용 내역은 확정 후 공개 예정입니다."
+                as="p"
+                page="donate"
+                section="monthly"
+                className="text-[15px] text-[var(--color-text)] font-medium"
+              />
+              <EditableText
+                contentKey="donate.monthly.statusDesc"
+                defaultValue="후원금이 모이기 시작하면 매월 수입·지출 내역을 투명하게 공개하겠습니다."
+                as="p"
+                page="donate"
+                section="monthly"
+                className="text-sm text-[var(--color-text-muted)] mt-1"
+              />
             </div>
           </div>
         </section>
@@ -311,9 +370,14 @@ export default function DonatePage() {
           aria-label="안내사항"
         >
           <div>
-            <p className="text-[15px] font-semibold text-[var(--color-text)] mb-3">
-              후원 관련 문의
-            </p>
+            <EditableText
+              contentKey="donate.contact.heading"
+              defaultValue="후원 관련 문의"
+              as="p"
+              page="donate"
+              section="contact"
+              className="text-[15px] font-semibold text-[var(--color-text)] mb-3"
+            />
             <div className="space-y-3">
               <a
                 href="tel:010-8918-8933"
