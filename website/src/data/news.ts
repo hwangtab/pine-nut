@@ -88,7 +88,7 @@ export const newsItems: NewsItem[] = [
 
 전국 140여 개 시민·환경 단체가 연대하여 신규 양수발전소 건설의 전면적 재검토를 요구하고 있으며, 에너지 정책의 전환과 주민 참여 보장을 촉구하고 있습니다.`,
     date: "2025-08-01",
-    category: "연대",
+    category: "언론보도",
     sourceUrl:
       "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003153731",
     sourceName: "오마이뉴스",
@@ -131,7 +131,7 @@ export const newsItems: NewsItem[] = [
 
 이 행사는 풍천리 투쟁이 단순한 반대 운동이 아닌, 마을 공동체와 자연환경을 지키려는 삶의 운동임을 보여주는 상징적 행사로 평가받고 있습니다.`,
     date: "2025-07-18",
-    category: "연대",
+    category: "언론보도",
     sourceUrl:
       "https://www.ikpnews.net/news/articleView.html?idxno=67812",
     sourceName: "한국농정신문",
@@ -194,7 +194,7 @@ export const newsItems: NewsItem[] = [
 
 이후에도 주민들은 매주 정기 집회를 이어가며 투쟁을 계속하고 있으며, 이 사건은 언론과 시민사회의 관심을 환기시키는 계기가 되었습니다.`,
     date: "2024-07-22",
-    category: "집회",
+    category: "언론보도",
     sourceUrl:
       "https://www.newsis.com/view/NISX20240722_0002820126",
     sourceName: "뉴시스",
@@ -215,7 +215,7 @@ export const newsItems: NewsItem[] = [
 
 이후 청소년직접행동은 풍천리 연대 활동을 지속하며, 온·오프라인에서 양수발전소 반대 캠페인을 이어가고 있습니다.`,
     date: "2022-08-15",
-    category: "연대",
+    category: "언론보도",
     sourceUrl:
       "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0002856920",
     sourceName: "오마이뉴스",
