@@ -61,17 +61,38 @@ export async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
   return rowToNewsItem(data);
 }
 
-export async function getAllNews(): Promise<(NewsItem & { isDeleted: boolean })[]> {
+export async function getAllNews(options?: { page?: number; perPage?: number; query?: string }): Promise<{ items: (NewsItem & { isDeleted: boolean })[]; total: number }> {
+  const page = options?.page ?? 1;
+  const perPage = options?.perPage ?? 20;
+  const query = options?.query?.trim();
+  const from = (page - 1) * perPage;
+  const to = from + perPage - 1;
+
   const supabase = await createSupabaseServerClient();
-  if (!supabase) return fallbackNews.map((n) => ({ ...n, isDeleted: false }));
+  if (!supabase) {
+    let items = fallbackNews.map((n) => ({ ...n, isDeleted: false }));
+    if (query) items = items.filter((n) => n.title.includes(query));
+    return { items: items.slice(from, to + 1), total: items.length };
+  }
 
-  const { data, error } = await supabase
-    .from("news")
-    .select("*")
-    .order("date", { ascending: false });
+  let countQuery = supabase.from("news").select("*", { count: "exact", head: true });
+  let dataQuery = supabase.from("news").select("*").order("date", { ascending: false }).range(from, to);
 
-  if (error || !data) return fallbackNews.map((n) => ({ ...n, isDeleted: false }));
-  return data.map((row: NewsRow) => ({ ...rowToNewsItem(row), isDeleted: row.is_deleted }));
+  if (query) {
+    countQuery = countQuery.ilike("title", `%${query}%`);
+    dataQuery = dataQuery.ilike("title", `%${query}%`);
+  }
+
+  const [{ count }, { data, error }] = await Promise.all([countQuery, dataQuery]);
+
+  if (error || !data) {
+    const items = fallbackNews.map((n) => ({ ...n, isDeleted: false }));
+    return { items: items.slice(from, to + 1), total: items.length };
+  }
+  return {
+    items: data.map((row: NewsRow) => ({ ...rowToNewsItem(row), isDeleted: row.is_deleted })),
+    total: count ?? 0,
+  };
 }
 
 export async function getNewsById(id: number): Promise<NewsItem | null> {

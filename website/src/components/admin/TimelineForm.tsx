@@ -1,18 +1,42 @@
 "use client";
 
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import type { TimelineEvent } from "@/data/timeline";
+import type { ActionState } from "@/lib/actions/news";
 
 const CATEGORIES = ["회의", "집회", "법률", "연대", "기타"] as const;
 
+function SubmitButton({ label }: { label: string }) {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="w-full sm:w-auto px-8 py-4 text-lg font-bold text-white bg-blue-700 hover:bg-blue-800 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {pending ? "저장 중..." : label}
+    </button>
+  );
+}
+
 interface TimelineFormProps {
-  action: (formData: FormData) => Promise<void>;
+  action: (prev: ActionState, formData: FormData) => Promise<ActionState>;
   initialData?: TimelineEvent & { sortOrder: number };
   submitLabel: string;
 }
 
 export default function TimelineForm({ action, initialData, submitLabel }: TimelineFormProps) {
+  const [state, formAction] = useActionState(action, null);
+
   return (
-    <form action={action} className="space-y-6">
+    <form action={formAction} className="space-y-6">
+      {state?.error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-base font-medium">
+          {state.error}
+        </div>
+      )}
+
       <div>
         <label htmlFor="title" className="block font-medium text-gray-700 mb-2">제목 *</label>
         <input
@@ -122,12 +146,7 @@ export default function TimelineForm({ action, initialData, submitLabel }: Timel
       </div>
 
       <div className="pt-4">
-        <button
-          type="submit"
-          className="w-full sm:w-auto px-8 py-4 text-lg font-bold text-white bg-blue-700 hover:bg-blue-800 rounded-xl transition-colors"
-        >
-          {submitLabel}
-        </button>
+        <SubmitButton label={submitLabel} />
       </div>
     </form>
   );

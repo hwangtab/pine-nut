@@ -44,17 +44,38 @@ export async function getPublishedTimeline(): Promise<TimelineEvent[]> {
   return data.map(rowToTimelineEvent);
 }
 
-export async function getAllTimeline(): Promise<(TimelineEvent & { sortOrder: number; isDeleted: boolean })[]> {
+export async function getAllTimeline(options?: { page?: number; perPage?: number; query?: string }): Promise<{ items: (TimelineEvent & { sortOrder: number; isDeleted: boolean })[]; total: number }> {
+  const page = options?.page ?? 1;
+  const perPage = options?.perPage ?? 20;
+  const query = options?.query?.trim();
+  const from = (page - 1) * perPage;
+  const to = from + perPage - 1;
+
   const supabase = await createSupabaseServerClient();
-  if (!supabase) return fallbackTimeline.map((t, i) => ({ ...t, sortOrder: i, isDeleted: false }));
+  if (!supabase) {
+    let items = fallbackTimeline.map((t, i) => ({ ...t, sortOrder: i, isDeleted: false }));
+    if (query) items = items.filter((t) => t.title.includes(query));
+    return { items: items.slice(from, to + 1), total: items.length };
+  }
 
-  const { data, error } = await supabase
-    .from("timeline_events")
-    .select("*")
-    .order("sort_order", { ascending: true });
+  let countQuery = supabase.from("timeline_events").select("*", { count: "exact", head: true });
+  let dataQuery = supabase.from("timeline_events").select("*").order("sort_order", { ascending: true }).range(from, to);
 
-  if (error || !data) return fallbackTimeline.map((t, i) => ({ ...t, sortOrder: i, isDeleted: false }));
-  return data.map((row: TimelineRow) => ({ ...rowToTimelineEvent(row), isDeleted: row.is_deleted }));
+  if (query) {
+    countQuery = countQuery.ilike("title", `%${query}%`);
+    dataQuery = dataQuery.ilike("title", `%${query}%`);
+  }
+
+  const [{ count }, { data, error }] = await Promise.all([countQuery, dataQuery]);
+
+  if (error || !data) {
+    const items = fallbackTimeline.map((t, i) => ({ ...t, sortOrder: i, isDeleted: false }));
+    return { items: items.slice(from, to + 1), total: items.length };
+  }
+  return {
+    items: data.map((row: TimelineRow) => ({ ...rowToTimelineEvent(row), isDeleted: row.is_deleted })),
+    total: count ?? 0,
+  };
 }
 
 export async function getTimelineById(id: number): Promise<(TimelineEvent & { sortOrder: number }) | null> {

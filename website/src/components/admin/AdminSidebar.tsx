@@ -1,10 +1,10 @@
 "use client";
 
+import { useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Newspaper, Clock, Users, LogOut } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
-import { useRouter } from "next/navigation";
 
 const navItems = [
   { href: "/admin", label: "홈", icon: Home },
@@ -13,18 +13,35 @@ const navItems = [
   { href: "/admin/signatures", label: "서명 현황", icon: Users },
 ];
 
+const SESSION_CHECK_INTERVAL = 60 * 60 * 1000; // 1시간마다 체크
+
 export default function AdminSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
 
-  async function handleLogout() {
+  const handleLogout = useCallback(async () => {
     const supabase = createSupabaseBrowserClient();
     if (supabase) {
       await supabase.auth.signOut();
     }
-    router.push("/admin/login");
-    router.refresh();
-  }
+    window.location.href = "/admin/login";
+  }, []);
+
+  // 세션 만료 자동 체크
+  useEffect(() => {
+    if (pathname === "/admin/login") return;
+
+    const checkSession = async () => {
+      const supabase = createSupabaseBrowserClient();
+      if (!supabase) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = "/admin/login";
+      }
+    };
+
+    const interval = setInterval(checkSession, SESSION_CHECK_INTERVAL);
+    return () => clearInterval(interval);
+  }, [pathname]);
 
   return (
     <>

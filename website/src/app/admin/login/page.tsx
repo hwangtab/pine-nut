@@ -1,18 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
+
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_SECONDS = 30;
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [lockedUntil, setLockedUntil] = useState<number | null>(null);
+  const [countdown, setCountdown] = useState(0);
+  const failCount = useRef(0);
   const router = useRouter();
+
+  const startCountdown = useCallback((seconds: number) => {
+    setCountdown(seconds);
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setLockedUntil(null);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (lockedUntil && Date.now() < lockedUntil) {
+      return;
+    }
+
     setError("");
     setLoading(true);
 
@@ -29,11 +54,21 @@ export default function AdminLoginPage() {
     });
 
     if (authError) {
-      setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+      failCount.current += 1;
+      if (failCount.current >= MAX_ATTEMPTS) {
+        const until = Date.now() + LOCKOUT_SECONDS * 1000;
+        setLockedUntil(until);
+        startCountdown(LOCKOUT_SECONDS);
+        setError(`로그인 시도가 ${MAX_ATTEMPTS}회 실패했습니다. ${LOCKOUT_SECONDS}초 후 다시 시도해주세요.`);
+        failCount.current = 0;
+      } else {
+        setError(`이메일 또는 비밀번호가 올바르지 않습니다. (${failCount.current}/${MAX_ATTEMPTS})`);
+      }
       setLoading(false);
       return;
     }
 
+    failCount.current = 0;
     router.push("/admin");
     router.refresh();
   }
@@ -88,10 +123,14 @@ export default function AdminLoginPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (lockedUntil !== null && Date.now() < lockedUntil)}
               className="w-full py-4 text-lg font-bold text-white bg-green-700 hover:bg-green-800 disabled:bg-gray-400 rounded-xl transition-colors"
             >
-              {loading ? "로그인 중..." : "로그인"}
+              {countdown > 0
+                ? `${countdown}초 후 재시도`
+                : loading
+                  ? "로그인 중..."
+                  : "로그인"}
             </button>
           </form>
         </div>
