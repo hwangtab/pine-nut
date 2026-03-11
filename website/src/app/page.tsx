@@ -235,7 +235,12 @@ export default function HomePage() {
         const res = await fetch("/api/signatures", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: trimmedName, email: trimmedEmail }),
+          body: JSON.stringify({
+            name: trimmedName,
+            email: trimmedEmail,
+            agreePrivacy: true,
+            agreeAge: true,
+          }),
         });
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
@@ -261,10 +266,13 @@ export default function HomePage() {
       {/* ════════════════ SECTION 1 — HERO ════════════════ */}
       <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden text-white px-6 text-center">
         {/* Background photo */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: 'url(https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg)' }}
-          aria-label="풍천리 마을과 잣나무 숲 드론 항공 사진"
+        <Image
+          src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+          alt="풍천리 마을과 잣나무 숲 드론 항공 사진"
+          fill
+          priority
+          sizes="100vw"
+          className="absolute inset-0 object-cover"
         />
         {/* Dark gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 z-[1]" />
@@ -324,7 +332,7 @@ export default function HomePage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2 }}
             onClick={scrollToStory}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold text-lg transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 min-h-[44px] px-8 py-4 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold text-lg transition-colors cursor-pointer"
           >
             이야기 보기 ↓
           </motion.button>
@@ -691,7 +699,7 @@ export default function HomePage() {
                       }}
                       aria-invalid={Boolean(inlineError)}
                       aria-describedby={inlineError ? "inline-signature-error" : undefined}
-                      className="flex-1 px-5 py-3 rounded-full border border-[var(--color-border)] bg-white text-base outline-none focus:border-[var(--color-warm)] focus:ring-2 focus:ring-[var(--color-warm)]/30 transition-all"
+                       className="min-h-[48px] flex-1 px-4 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] text-base placeholder:text-[var(--color-text-muted)]/60 outline-none focus:border-[var(--color-warm)] focus:ring-2 focus:ring-[var(--color-warm)]/30 transition-all"
                     />
                     <label htmlFor="inline-email" className="sr-only">
                       이메일
@@ -708,12 +716,12 @@ export default function HomePage() {
                       }}
                       aria-invalid={Boolean(inlineError)}
                       aria-describedby={inlineError ? "inline-signature-error" : undefined}
-                      className="flex-1 px-5 py-3 rounded-full border border-[var(--color-border)] bg-white text-base outline-none focus:border-[var(--color-warm)] focus:ring-2 focus:ring-[var(--color-warm)]/30 transition-all"
+                       className="min-h-[48px] flex-1 px-4 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] text-base placeholder:text-[var(--color-text-muted)]/60 outline-none focus:border-[var(--color-warm)] focus:ring-2 focus:ring-[var(--color-warm)]/30 transition-all"
                     />
                     <button
                       type="submit"
                       disabled={inlineSubmitting}
-                      className="px-8 py-3 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold text-base transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+                       className="min-h-[48px] px-8 py-3 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold text-base transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
                     >
                       {inlineSubmitting ? "서명 중…" : "서명하기"}
                     </button>
@@ -769,14 +777,14 @@ export default function HomePage() {
                   {card.href === "#share" ? (
                     <button
                       onClick={handleShare}
-                      className="inline-block px-6 py-3 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold transition-colors cursor-pointer"
+                      className="inline-block min-h-[44px] px-6 py-3 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold transition-colors cursor-pointer"
                     >
                       {card.title}
                     </button>
                   ) : (
                     <Link
                       href={card.href}
-                      className="inline-block px-6 py-3 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold transition-colors"
+                      className="inline-flex items-center justify-center min-h-[44px] px-6 py-3 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold transition-colors"
                     >
                       {card.title}
                     </Link>

@@ -9,6 +9,8 @@ const quickLinks = [
   { label: "소식", href: "/news" },
   { label: "갤러리", href: "/gallery" },
   { label: "자료실", href: "/press" },
+  { label: "카드뉴스", href: "/share" },
+  { label: "서명하기", href: "/petition" },
   { label: "후원하기", href: "/donate" },
 ];
 
@@ -38,7 +40,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-white/70 hover:text-white text-sm transition-colors"
+                    className="inline-flex items-center min-h-[44px] text-white/70 hover:text-white text-sm transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -55,7 +57,7 @@ export default function Footer() {
                 <span className="block text-white/50 text-xs mb-0.5">전화 문의</span>
                 <a
                   href="tel:010-8918-8933"
-                  className="hover:text-white transition-colors"
+                  className="inline-flex items-center min-h-[44px] hover:text-white transition-colors"
                 >
                   010-8918-8933 (이창후 총무)
                 </a>
@@ -70,7 +72,7 @@ export default function Footer() {
                   href="https://campaigns.do/campaigns/1328"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
+                  className="inline-flex items-center min-h-[44px] hover:text-white transition-colors"
                 >
                   빠띠 캠페인 페이지 바로가기
                 </a>
@@ -86,7 +88,7 @@ export default function Footer() {
             <button
               type="button"
               onClick={() => setShowPrivacy(!showPrivacy)}
-              className="hover:text-white transition-colors"
+              className="min-h-[44px] inline-flex items-center hover:text-white transition-colors"
             >
               개인정보처리방침
             </button>
@@ -94,11 +96,11 @@ export default function Footer() {
               href="https://campaigns.do/campaigns/1328"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
+              className="min-h-[44px] inline-flex items-center hover:text-white transition-colors"
             >
               빠띠 캠페인
             </a>
-            <Link href="/en" className="hover:text-white transition-colors">
+            <Link href="/en" className="min-h-[44px] inline-flex items-center hover:text-white transition-colors">
               English
             </Link>
           </div>
@@ -112,7 +114,7 @@ export default function Footer() {
               <button
                 type="button"
                 onClick={() => setShowPrivacy(false)}
-                className="text-white/50 hover:text-white transition-colors text-xs"
+                className="min-h-[44px] inline-flex items-center text-white/50 hover:text-white transition-colors text-xs"
               >
                 닫기
               </button>

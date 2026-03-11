@@ -181,7 +181,7 @@ export default function Navigation() {
             ))}
             <Link
               href="/petition"
-              className="ml-3 px-5 py-2 rounded-lg text-[15px] font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center transition-colors"
+              className="ml-3 px-5 py-2 rounded-full text-[15px] font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center transition-colors"
             >
               함께하기
             </Link>
@@ -253,7 +253,7 @@ export default function Navigation() {
             <Link
               href="/petition"
               onClick={() => closeMobileMenu()}
-              className="mt-4 px-4 py-4 rounded-xl text-xl font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center justify-center transition-colors"
+              className="mt-4 px-4 py-4 rounded-full text-xl font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center justify-center transition-colors"
             >
               함께하기
             </Link>

@@ -93,7 +93,7 @@ export default function NewsListClient({ newsItems }: { newsItems: NewsItem[] })
               <Link
                 key={item.id}
                 href={`/news/${item.slug}`}
-                className="group block bg-white rounded-2xl border border-[var(--color-border)] shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 overflow-hidden"
+                className="group block min-h-[44px] bg-white rounded-2xl border border-[var(--color-border)] shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 overflow-hidden"
               >
                 <div className="relative w-full h-48 bg-[var(--color-bg)]">
                   {item.thumbnailUrl ? (
@@ -138,7 +138,7 @@ export default function NewsListClient({ newsItems }: { newsItems: NewsItem[] })
                     {item.summary}
                   </p>
                   <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)] font-medium">
-                    <time>
+                    <time dateTime={item.date}>
                       {new Date(item.date).toLocaleDateString("ko-KR", {
                         year: "numeric",
                         month: "long",

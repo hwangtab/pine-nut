@@ -114,7 +114,7 @@ export default function TimelineClient({ timelineEvents }: { timelineEvents: Tim
               <button
                 key={year}
                 onClick={() => setSelectedYear(year)}
-                className={`shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
+                className={`shrink-0 min-h-[44px] px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
                   selectedYear === year
                     ? "bg-[var(--color-warm)] text-white shadow-md"
                     : "bg-[var(--color-bg)] text-[var(--color-text-muted)] hover:bg-[var(--color-border)]"
@@ -157,7 +157,7 @@ export default function TimelineClient({ timelineEvents }: { timelineEvents: Tim
           </h2>
           <Link
             href="/petition"
-            className="inline-block bg-[var(--color-warm)] hover:brightness-110 text-white font-semibold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
+            className="inline-block min-h-[44px] bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-semibold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
           >
             서명에 참여하기
           </Link>

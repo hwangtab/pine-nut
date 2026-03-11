@@ -145,7 +145,7 @@ function RecentSignatures({ signatures, loading }: { signatures: Signature[]; lo
               >
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-[var(--color-text)]">{sig.name}</span>
-                  <span className="text-sm text-[var(--color-text-muted)]">{formatDate(sig.created_at)}</span>
+                  <time dateTime={sig.created_at} className="text-sm text-[var(--color-text-muted)]">{formatDate(sig.created_at)}</time>
                 </div>
                 {sig.message && (
                   <p className="mt-1 text-[var(--color-text-muted)] text-[15px]">
@@ -545,7 +545,7 @@ export default function PetitionPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full min-h-[52px] rounded-xl bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold text-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full min-h-[52px] rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold text-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {submitting ? (
                     <>

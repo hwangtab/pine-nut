@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, X } from "lucide-react";
+import Image from "next/image";
 import SubHero from "@/components/SubHero";
 
 interface GalleryPhoto {
@@ -155,16 +156,22 @@ function PhotoCard({
       aria-label={`${photo.title} 이미지 크게 보기`}
     >
       <div className="relative aspect-[4/3] rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden hover:scale-[1.02] bg-[var(--color-bg)]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={photo.url}
           alt={photo.description}
-          loading="lazy"
-          className="w-full h-full object-cover"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover"
         />
 
         {/* Gradient overlay with title and credit */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-4 pt-10">
+        <div
+          className="absolute bottom-0 left-0 right-0 p-4 pt-10"
+          style={{
+            background:
+              "linear-gradient(to top, var(--color-overlay-medium) 0%, rgba(0, 0, 0, 0.35) 55%, rgba(0, 0, 0, 0) 100%)",
+          }}
+        >
           <p className="text-white text-sm font-medium leading-snug">
             {photo.title}
           </p>
@@ -248,7 +255,8 @@ function Lightbox({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style={{ backgroundColor: "var(--color-overlay-strong)" }}
         onClick={onClose}
       >
         <motion.div
@@ -268,23 +276,24 @@ function Lightbox({
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+            className="absolute top-4 right-4 z-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-[var(--color-overlay-soft)] hover:bg-[var(--color-overlay-soft-hover)] transition-colors"
             aria-label="닫기"
           >
-            <X className="w-6 h-6 text-white" />
+            <X className="w-6 h-6 text-[var(--color-overlay-text)]" />
           </button>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={photo.url}
             alt={photo.description}
+            width={1600}
+            height={1200}
             className="w-full max-h-[75vh] object-contain rounded-lg"
           />
           <div className="mt-4 text-center">
-            <h3 id="gallery-lightbox-title" className="text-white text-lg font-semibold">
+            <h3 id="gallery-lightbox-title" className="text-[var(--color-overlay-text)] text-lg font-semibold">
               {photo.title}
             </h3>
-            <p id="gallery-lightbox-description" className="text-white/80 text-sm mt-1">{photo.description}</p>
-            <p className="text-white/50 text-xs mt-2">
+            <p id="gallery-lightbox-description" className="text-[var(--color-overlay-text-muted)] text-sm mt-1">{photo.description}</p>
+            <p className="text-[var(--color-overlay-text-subtle)] text-xs mt-2">
               사진: {photo.credit}
             </p>
           </div>
@@ -355,7 +364,7 @@ export default function GalleryPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 via-white to-amber-50/30">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] via-white to-[var(--color-bg-warm)]/30">
       {/* Hero */}
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
@@ -389,7 +398,7 @@ export default function GalleryPage() {
       </div>
 
       {/* CTA */}
-      <section className="py-16 md:py-20 px-4 text-center bg-gradient-to-t from-amber-50 to-transparent">
+      <section className="py-16 md:py-20 px-4 text-center bg-gradient-to-t from-[var(--color-bg-warm)] to-transparent">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -409,7 +418,7 @@ export default function GalleryPage() {
             href="https://campaigns.do"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-[var(--color-warm)] hover:bg-[var(--color-warm)]/90 text-white font-semibold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
+            className="inline-block min-h-[44px] bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-semibold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
           >
             사진 제보하기
           </a>

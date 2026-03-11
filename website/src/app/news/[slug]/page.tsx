@@ -68,13 +68,13 @@ export default async function NewsDetailPage({
       <article className="max-w-3xl mx-auto px-4 pt-10 md:pt-14 pb-20">
         <Link
           href="/news"
-          className="inline-flex items-center text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors mb-8"
+          className="inline-flex items-center min-h-[44px] text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors mb-8"
         >
           ← 소식 목록으로
         </Link>
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--color-text-muted)] font-medium mb-10">
-          <time>{formattedDate}</time>
+          <time dateTime={item.date}>{formattedDate}</time>
           {item.sourceName && (
             <>
               <span aria-hidden="true">·</span>

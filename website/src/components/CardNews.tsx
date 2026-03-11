@@ -411,21 +411,21 @@ function CardWithActions({ card }: { card: CardItem }) {
       <div className="flex items-center gap-2">
         <button
           onClick={handleDownload}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[var(--color-forest,#2D5016)] text-white text-xs font-semibold hover:opacity-90 transition-opacity cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-xl bg-[var(--color-forest,#2D5016)] text-white text-xs font-semibold hover:opacity-90 transition-opacity cursor-pointer"
         >
           <Download size={14} />
           다운로드
         </button>
         <button
           onClick={handleCopyLink}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--color-bg)] text-[var(--color-text-muted)] text-xs font-semibold hover:bg-[var(--color-border)] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-xl bg-[var(--color-bg)] text-[var(--color-text-muted)] text-xs font-semibold hover:bg-[var(--color-border)] transition-colors cursor-pointer"
         >
           <Link size={14} />
           링크 복사
         </button>
         <button
           onClick={handleShare}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--color-bg)] text-[var(--color-text-muted)] text-xs font-semibold hover:bg-[var(--color-border)] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-xl bg-[var(--color-bg)] text-[var(--color-text-muted)] text-xs font-semibold hover:bg-[var(--color-border)] transition-colors cursor-pointer"
         >
           <Share2 size={14} />
           공유
