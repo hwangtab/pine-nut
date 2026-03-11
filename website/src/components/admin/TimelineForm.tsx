@@ -76,7 +76,7 @@ export default function TimelineForm({ action, initialData, submitLabel }: Timel
       </div>
 
       {/* year: server will extract from date text */}
-      <input type="hidden" name="year" value="0" />
+      <input type="hidden" name="year" value={initialData?.year ?? 0} />
 
       {/* sort_order: server will auto-assign for new items */}
       <input type="hidden" name="sort_order" value={initialData?.sortOrder ?? 0} />
@@ -104,6 +104,9 @@ export default function TimelineForm({ action, initialData, submitLabel }: Timel
         <label htmlFor="image_file" className="block font-medium text-base text-[var(--color-admin-text)] mb-2">
           사진 올리기 (선택)
         </label>
+        {initialData?.imageUrl && (
+          <p className="text-sm text-[var(--color-sky)] mb-2">현재 사진이 설정되어 있습니다. 새 사진을 올리면 교체됩니다.</p>
+        )}
         <input
           id="image_file"
           name="image_file"
@@ -129,6 +132,7 @@ export default function TimelineForm({ action, initialData, submitLabel }: Timel
           className="w-full px-4 py-3.5 text-base border border-[var(--color-admin-border)] rounded-xl focus:ring-2 focus:ring-[var(--color-sky)]/40 focus:border-[var(--color-sky)] outline-none"
           placeholder="사진의 인터넷 주소를 붙여넣으세요"
         />
+        <p className="text-sm text-[var(--color-admin-muted)] mt-1.5">위에서 사진을 올리면 이 주소는 무시됩니다.</p>
       </div>
 
       <div className="pt-4">

@@ -46,5 +46,9 @@ export async function uploadImageFromFormData(
     .from("images")
     .getPublicUrl(path);
 
+  if (!publicUrlData?.publicUrl) {
+    return { url: null, error: "사진 주소를 가져오지 못했습니다. 다시 시도해주세요." };
+  }
+
   return { url: publicUrlData.publicUrl, error: null };
 }

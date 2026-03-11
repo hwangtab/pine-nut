@@ -37,8 +37,8 @@ export default function NewsForm({ action, initialData, submitLabel }: NewsFormP
         </div>
       )}
 
-      <input type="hidden" name="slug" value="" />
-      <input type="hidden" name="thumbnail_url" value="" />
+      <input type="hidden" name="slug" value={initialData?.slug ?? ""} />
+      <input type="hidden" name="thumbnail_url" value={initialData?.thumbnailUrl ?? ""} />
 
       <div>
         <label htmlFor="title" className="block font-medium text-base text-[var(--color-admin-text)] mb-2">제목 *</label>
@@ -138,6 +138,9 @@ export default function NewsForm({ action, initialData, submitLabel }: NewsFormP
         <label htmlFor="image_file" className="block font-medium text-base text-[var(--color-admin-text)] mb-2">
           사진 올리기 (선택)
         </label>
+        {initialData?.thumbnailUrl && (
+          <p className="text-sm text-[var(--color-forest)] mb-2">현재 사진이 설정되어 있습니다. 새 사진을 올리면 교체됩니다.</p>
+        )}
         <input
           id="image_file"
           name="image_file"

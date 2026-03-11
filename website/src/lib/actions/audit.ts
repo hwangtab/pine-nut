@@ -11,10 +11,14 @@ export async function logAudit(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user?.email) return;
 
-  await supabase.from("audit_log").insert({
-    table_name: tableName,
-    record_id: recordId,
-    action,
-    user_email: user.email,
-  });
+  try {
+    await supabase.from("audit_log").insert({
+      table_name: tableName,
+      record_id: recordId,
+      action,
+      user_email: user.email,
+    });
+  } catch {
+    // 감사 로그 실패가 본 작업을 중단시키지 않도록 함
+  }
 }
