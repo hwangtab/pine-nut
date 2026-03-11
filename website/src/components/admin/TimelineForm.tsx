@@ -38,19 +38,19 @@ export default function TimelineForm({ action, initialData, submitLabel }: Timel
       )}
 
       <div>
-        <label htmlFor="title" className="block font-medium text-gray-700 mb-2">제목 *</label>
+        <label htmlFor="title" className="block font-medium text-base text-gray-800 mb-2">무슨 일이 있었나요? *</label>
         <input
           id="title"
           name="title"
           required
           defaultValue={initialData?.title}
           className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-          placeholder="이벤트 제목을 입력하세요"
+          placeholder="예: 풍천리 주민 설명회 개최"
         />
       </div>
 
       <div>
-        <label htmlFor="description" className="block font-medium text-gray-700 mb-2">설명 *</label>
+        <label htmlFor="description" className="block font-medium text-base text-gray-800 mb-2">자세한 내용 *</label>
         <textarea
           id="description"
           name="description"
@@ -58,90 +58,57 @@ export default function TimelineForm({ action, initialData, submitLabel }: Timel
           rows={4}
           defaultValue={initialData?.description}
           className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y"
-          placeholder="이벤트에 대한 설명을 작성하세요"
+          placeholder="어떤 일이 있었는지 자세히 적어주세요"
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="date" className="block font-medium text-gray-700 mb-2">날짜 표시 *</label>
-          <input
-            id="date"
-            name="date"
-            required
-            defaultValue={initialData?.date}
-            className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            placeholder="예: 2019년 여름, 2024.03.15"
-          />
-          <p className="text-sm text-gray-400 mt-1">화면에 표시될 날짜 형식입니다.</p>
-        </div>
-
-        <div>
-          <label htmlFor="year" className="block font-medium text-gray-700 mb-2">연도 *</label>
-          <input
-            id="year"
-            name="year"
-            type="number"
-            required
-            min={2000}
-            max={2100}
-            defaultValue={initialData?.year}
-            className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            placeholder="예: 2024"
-          />
-        </div>
+      <div>
+        <label htmlFor="date" className="block font-medium text-base text-gray-800 mb-2">언제 있었던 일인가요? *</label>
+        <input
+          id="date"
+          name="date"
+          required
+          defaultValue={initialData?.date}
+          className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          placeholder="예: 2024년 3월, 2019년 여름"
+        />
+        <p className="text-sm text-gray-500 mt-1.5">화면에 그대로 표시됩니다.</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="category" className="block font-medium text-gray-700 mb-2">카테고리 *</label>
-          <select
-            id="category"
-            name="category"
-            required
-            defaultValue={initialData?.category || "기타"}
-            className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
-          >
-            {CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
-        </div>
+      {/* year: server will extract from date text */}
+      <input type="hidden" name="year" value="0" />
 
-        <div>
-          <label htmlFor="sort_order" className="block font-medium text-gray-700 mb-2">정렬 순서</label>
-          <input
-            id="sort_order"
-            name="sort_order"
-            type="number"
-            defaultValue={initialData?.sortOrder ?? 0}
-            className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            placeholder="0"
-          />
-          <p className="text-sm text-gray-400 mt-1">숫자가 작을수록 위에 표시됩니다.</p>
-        </div>
+      {/* sort_order: server will auto-assign for new items */}
+      <input type="hidden" name="sort_order" value={initialData?.sortOrder ?? 0} />
+
+      {/* image_alt: hidden empty value */}
+      <input type="hidden" name="image_alt" value={initialData?.imageAlt ?? ""} />
+
+      <div>
+        <label htmlFor="category" className="block font-medium text-base text-gray-800 mb-2">카테고리 *</label>
+        <select
+          id="category"
+          name="category"
+          required
+          defaultValue={initialData?.category || ""}
+          className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+        >
+          <option value="">-- 선택하세요 --</option>
+          {CATEGORIES.map((cat) => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
       </div>
 
       <div>
-        <label htmlFor="image_url" className="block font-medium text-gray-700 mb-2">이미지 URL</label>
+        <label htmlFor="image_url" className="block font-medium text-base text-gray-800 mb-2">사진 주소 (선택)</label>
         <input
           id="image_url"
           name="image_url"
           type="url"
           defaultValue={initialData?.imageUrl}
           className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-          placeholder="https://... (이미지 주소)"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="image_alt" className="block font-medium text-gray-700 mb-2">이미지 설명</label>
-        <input
-          id="image_alt"
-          name="image_alt"
-          defaultValue={initialData?.imageAlt}
-          className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-          placeholder="이미지에 대한 설명 (시각장애인 접근성)"
+          placeholder="사진의 인터넷 주소를 붙여넣으세요"
         />
       </div>
 

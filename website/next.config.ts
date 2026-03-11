@@ -1,12 +1,12 @@
 import type { NextConfig } from "next";
+import allowedImageHosts from "./src/lib/allowed-image-hosts.json";
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "ojsfile.ohmynews.com" },
-      { protocol: "https", hostname: "www.pressian.com" },
-      { protocol: "https", hostname: "img1.newsis.com" },
-    ],
+    remotePatterns: allowedImageHosts.map((hostname) => ({
+      protocol: "https",
+      hostname,
+    })),
   },
 };
 

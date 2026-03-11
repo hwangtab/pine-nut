@@ -37,8 +37,11 @@ export default function NewsForm({ action, initialData, submitLabel }: NewsFormP
         </div>
       )}
 
+      <input type="hidden" name="slug" value="" />
+      <input type="hidden" name="thumbnail_url" value="" />
+
       <div>
-        <label htmlFor="title" className="block font-medium text-gray-700 mb-2">제목 *</label>
+        <label htmlFor="title" className="block font-medium text-base text-gray-800 mb-2">제목 *</label>
         <input
           id="title"
           name="title"
@@ -50,20 +53,7 @@ export default function NewsForm({ action, initialData, submitLabel }: NewsFormP
       </div>
 
       <div>
-        <label htmlFor="slug" className="block font-medium text-gray-700 mb-2">슬러그 (URL 주소) *</label>
-        <input
-          id="slug"
-          name="slug"
-          required
-          defaultValue={initialData?.slug}
-          className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
-          placeholder="example-news-slug (영문, 숫자, 하이픈)"
-        />
-        <p className="text-sm text-gray-400 mt-1">웹 주소에 표시됩니다. 영문과 하이픈(-)만 사용하세요.</p>
-      </div>
-
-      <div>
-        <label htmlFor="summary" className="block font-medium text-gray-700 mb-2">요약 *</label>
+        <label htmlFor="summary" className="block font-medium text-base text-gray-800 mb-2">요약 *</label>
         <textarea
           id="summary"
           name="summary"
@@ -76,7 +66,7 @@ export default function NewsForm({ action, initialData, submitLabel }: NewsFormP
       </div>
 
       <div>
-        <label htmlFor="content" className="block font-medium text-gray-700 mb-2">본문 *</label>
+        <label htmlFor="content" className="block font-medium text-base text-gray-800 mb-2">본문 *</label>
         <textarea
           id="content"
           name="content"
@@ -84,13 +74,13 @@ export default function NewsForm({ action, initialData, submitLabel }: NewsFormP
           rows={10}
           defaultValue={initialData?.content}
           className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none resize-y"
-          placeholder="소식 내용을 작성하세요. 문단 구분은 빈 줄로 합니다."
+          placeholder={"소식 내용을 작성하세요.\n줄을 바꾸려면 엔터를 두 번 누르세요."}
         />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="date" className="block font-medium text-gray-700 mb-2">날짜 *</label>
+          <label htmlFor="date" className="block font-medium text-base text-gray-800 mb-2">날짜 *</label>
           <input
             id="date"
             name="date"
@@ -102,14 +92,15 @@ export default function NewsForm({ action, initialData, submitLabel }: NewsFormP
         </div>
 
         <div>
-          <label htmlFor="category" className="block font-medium text-gray-700 mb-2">카테고리 *</label>
+          <label htmlFor="category" className="block font-medium text-base text-gray-800 mb-2">카테고리 *</label>
           <select
             id="category"
             name="category"
             required
-            defaultValue={initialData?.category || "언론보도"}
+            defaultValue={initialData?.category || ""}
             className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white"
           >
+            <option value="">-- 선택하세요 --</option>
             {CATEGORIES.map((cat) => (
               <option key={cat} value={cat}>{cat}</option>
             ))}
@@ -119,39 +110,28 @@ export default function NewsForm({ action, initialData, submitLabel }: NewsFormP
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="source_name" className="block font-medium text-gray-700 mb-2">출처 이름</label>
+          <label htmlFor="source_name" className="block font-medium text-base text-gray-800 mb-2">어디서 나온 기사인가요?</label>
           <input
             id="source_name"
             name="source_name"
             defaultValue={initialData?.sourceName}
             className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
-            placeholder="예: 오마이뉴스"
+            placeholder="예: 오마이뉴스, 프레시안"
           />
         </div>
 
         <div>
-          <label htmlFor="source_url" className="block font-medium text-gray-700 mb-2">출처 URL</label>
+          <label htmlFor="source_url" className="block font-medium text-base text-gray-800 mb-2">기사 원본 주소</label>
           <input
             id="source_url"
             name="source_url"
             type="url"
             defaultValue={initialData?.sourceUrl}
             className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
-            placeholder="https://..."
+            placeholder="기사의 인터넷 주소를 붙여넣으세요"
           />
+          <p className="text-sm text-gray-500 mt-1.5">기사 원본 주소를 입력하면 썸네일 이미지가 자동으로 설정됩니다.</p>
         </div>
-      </div>
-
-      <div>
-        <label htmlFor="thumbnail_url" className="block font-medium text-gray-700 mb-2">썸네일 이미지 URL</label>
-        <input
-          id="thumbnail_url"
-          name="thumbnail_url"
-          type="url"
-          defaultValue={initialData?.thumbnailUrl}
-          className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
-          placeholder="https://... (이미지 주소)"
-        />
       </div>
 
       <div className="pt-4">

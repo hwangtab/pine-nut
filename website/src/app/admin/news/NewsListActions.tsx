@@ -9,7 +9,7 @@ export default function NewsListActions({ id, isDeleted }: { id: number; isDelet
   const [error, setError] = useState<string | null>(null);
 
   async function handleDelete() {
-    if (!confirm("정말 삭제하시겠습니까?")) return;
+    if (!confirm("이 소식을 삭제하시겠습니까?\n(나중에 복원할 수 있습니다)")) return;
     setLoading(true);
     setError(null);
     const result = await deleteNewsAction(id);
@@ -35,7 +35,7 @@ export default function NewsListActions({ id, isDeleted }: { id: number; isDelet
         {!isDeleted && (
           <Link
             href={`/admin/news/${id}/edit`}
-            className="px-4 py-2.5 text-sm font-bold text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
+            className="px-5 py-3 text-base font-bold text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
           >
             수정
           </Link>
@@ -44,7 +44,7 @@ export default function NewsListActions({ id, isDeleted }: { id: number; isDelet
           <button
             onClick={handleRestore}
             disabled={loading}
-            className="px-4 py-2.5 text-sm font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors disabled:opacity-50"
+            className="px-5 py-3 text-base font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors disabled:opacity-50"
           >
             {loading ? "처리 중..." : "복원"}
           </button>
@@ -52,13 +52,13 @@ export default function NewsListActions({ id, isDeleted }: { id: number; isDelet
           <button
             onClick={handleDelete}
             disabled={loading}
-            className="px-4 py-2.5 text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50"
+            className="px-5 py-3 text-base font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50"
           >
             {loading ? "처리 중..." : "삭제"}
           </button>
         )}
       </div>
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-sm text-red-600 font-medium">{error}</p>}
     </div>
   );
 }

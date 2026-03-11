@@ -56,7 +56,7 @@ export default async function AdminNewsPage({ searchParams }: { searchParams: Se
         </p>
       ) : (
         <>
-          <p className="text-sm text-gray-400 mb-4">총 {total}건</p>
+          <p className="text-base text-gray-600 mb-4">총 {total}건</p>
           <div className="space-y-3">
             {allNews.map((item) => (
               <div
@@ -67,17 +67,17 @@ export default async function AdminNewsPage({ searchParams }: { searchParams: Se
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
+                    <span className="text-sm font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
                       {item.category}
                     </span>
                     {item.isDeleted && (
-                      <span className="text-xs font-semibold text-red-500 bg-red-50 px-2 py-0.5 rounded">
+                      <span className="text-sm font-semibold text-red-500 bg-red-50 px-2 py-0.5 rounded">
                         삭제됨
                       </span>
                     )}
                   </div>
-                  <h3 className="font-bold text-gray-800 truncate">{item.title}</h3>
-                  <p className="text-sm text-gray-500">
+                  <h3 className="font-bold text-gray-800">{item.title}</h3>
+                  <p className="text-base text-gray-600">
                     {new Date(item.date).toLocaleDateString("ko-KR")}
                     {item.sourceName && ` · ${item.sourceName}`}
                   </p>
@@ -98,7 +98,7 @@ export default async function AdminNewsPage({ searchParams }: { searchParams: Se
                   ← 이전
                 </Link>
               )}
-              <span className="text-sm text-gray-500">{page} / {totalPages}</span>
+              <span className="text-base text-gray-600">{page} / {totalPages}</span>
               {page < totalPages && (
                 <Link
                   href={`/admin/news?page=${page + 1}${query ? `&q=${encodeURIComponent(query)}` : ""}`}
