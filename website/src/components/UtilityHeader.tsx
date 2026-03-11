@@ -60,7 +60,7 @@ export default function UtilityHeader({
       />
       <div className="relative mx-auto max-w-3xl">
         {eyebrow && (
-          <p className={`mb-4 text-xs md:text-sm font-semibold uppercase tracking-[0.22em] ${styles.eyebrow}`}>
+          <p className={`mx-auto mb-4 w-max max-w-[min(92vw,34rem)] overflow-hidden text-ellipsis whitespace-nowrap text-xs md:text-sm font-semibold uppercase tracking-[0.22em] ${styles.eyebrow}`}>
             {eyebrow}
           </p>
         )}

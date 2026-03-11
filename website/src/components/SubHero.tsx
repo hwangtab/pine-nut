@@ -79,7 +79,7 @@ export default function SubHero({
       <div className={`relative mx-auto max-w-3xl ${titleAnchorClass}`}>
         <div className="relative inline-block">
           {hasEyebrow && (
-            <p className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2 text-xs font-semibold uppercase tracking-[0.26em] text-white/72 md:text-sm">
+            <p className="absolute bottom-full left-1/2 mb-3 w-max max-w-[min(92vw,34rem)] -translate-x-1/2 overflow-hidden text-ellipsis whitespace-nowrap text-xs font-semibold uppercase tracking-[0.26em] text-white/72 md:text-sm">
               {eyebrow}
             </p>
           )}
