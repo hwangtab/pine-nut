@@ -76,17 +76,17 @@ export default function AdminLoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen px-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-lg p-8 md:p-10">
-          <h1 className="text-2xl font-bold text-gray-800 text-center mb-2">
+        <div className="bg-[var(--color-admin-surface)] rounded-2xl shadow-lg p-8 md:p-10">
+          <h1 className="text-2xl font-bold text-[var(--color-admin-text)] text-center mb-2">
             풍천리 관리자
           </h1>
-          <p className="text-gray-500 text-center mb-8">
+          <p className="text-[var(--color-admin-muted)] text-center mb-8">
             로그인하여 웹사이트를 관리하세요
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-base font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-base font-medium text-[var(--color-admin-text)] mb-2">
                 이메일
               </label>
               <input
@@ -95,13 +95,13 @@ export default function AdminLoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-4 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
+                className="w-full px-4 py-4 text-base border border-[var(--color-admin-border)] rounded-xl focus:ring-2 focus:ring-[var(--color-forest)]/40 focus:border-[var(--color-forest)] outline-none transition"
                 placeholder="example@email.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-base font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-base font-medium text-[var(--color-admin-text)] mb-2">
                 비밀번호
               </label>
               <input
@@ -110,13 +110,13 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-4 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
+                className="w-full px-4 py-4 text-base border border-[var(--color-admin-border)] rounded-xl focus:ring-2 focus:ring-[var(--color-forest)]/40 focus:border-[var(--color-forest)] outline-none transition"
                 placeholder="비밀번호를 입력하세요"
               />
             </div>
 
             {error && (
-              <p className="text-red-600 text-base font-medium bg-red-50 px-4 py-3 rounded-xl">
+              <p className="text-[var(--color-danger)] text-base font-medium bg-[var(--color-danger-bg)] border border-[var(--color-danger-border)] px-4 py-3 rounded-xl">
                 {error}
               </p>
             )}
@@ -124,7 +124,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading || countdown > 0}
-              className="w-full py-4 text-lg font-bold text-white bg-green-700 hover:bg-green-800 disabled:bg-gray-400 rounded-xl transition-colors"
+              className="w-full py-4 text-lg font-bold text-white bg-[var(--color-forest)] hover:bg-[var(--color-forest-light)] disabled:bg-[var(--color-admin-muted)] rounded-xl transition-colors"
             >
               {countdown > 0
                 ? `${countdown}초 후 재시도`

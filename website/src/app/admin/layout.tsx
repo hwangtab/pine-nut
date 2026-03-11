@@ -13,7 +13,7 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-gray-50" style={{ fontSize: "18px" }}>
+    <div className="flex min-h-screen bg-[var(--color-admin-bg)]" style={{ fontSize: "18px" }}>
       <AdminSidebar />
       <div className="flex-1 pb-20 md:pb-0">
         {children}
