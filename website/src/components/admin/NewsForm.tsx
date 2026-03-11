@@ -13,7 +13,7 @@ function SubmitButton({ label }: { label: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="w-full sm:w-auto px-8 py-4 text-lg font-bold text-white bg-green-700 hover:bg-green-800 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full sm:w-auto px-8 py-4 text-lg font-bold text-white bg-[var(--color-forest)] hover:bg-[var(--color-forest-light)] rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
     >
       {pending ? "저장 중..." : label}
     </button>
@@ -32,7 +32,7 @@ export default function NewsForm({ action, initialData, submitLabel }: NewsFormP
   return (
     <form action={formAction} className="space-y-6">
       {state?.error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-base font-medium">
+        <div className="bg-[var(--color-danger-bg)] border border-[var(--color-danger-border)] text-[var(--color-danger)] px-4 py-3 rounded-xl text-base font-medium">
           {state.error}
         </div>
       )}
@@ -41,64 +41,64 @@ export default function NewsForm({ action, initialData, submitLabel }: NewsFormP
       <input type="hidden" name="thumbnail_url" value="" />
 
       <div>
-        <label htmlFor="title" className="block font-medium text-base text-gray-800 mb-2">제목 *</label>
+        <label htmlFor="title" className="block font-medium text-base text-[var(--color-admin-text)] mb-2">제목 *</label>
         <input
           id="title"
           name="title"
           required
           defaultValue={initialData?.title}
-          className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+          className="w-full px-4 py-3.5 text-base border border-[var(--color-admin-border)] rounded-xl focus:ring-2 focus:ring-[var(--color-forest)]/40 focus:border-[var(--color-forest)] outline-none"
           placeholder="소식 제목을 입력하세요"
         />
       </div>
 
       <div>
-        <label htmlFor="summary" className="block font-medium text-base text-gray-800 mb-2">요약 *</label>
+        <label htmlFor="summary" className="block font-medium text-base text-[var(--color-admin-text)] mb-2">요약 *</label>
         <textarea
           id="summary"
           name="summary"
           required
           rows={2}
           defaultValue={initialData?.summary}
-          className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none resize-y"
+          className="w-full px-4 py-3.5 text-base border border-[var(--color-admin-border)] rounded-xl focus:ring-2 focus:ring-[var(--color-forest)]/40 focus:border-[var(--color-forest)] outline-none resize-y"
           placeholder="소식을 한두 줄로 요약해주세요"
         />
       </div>
 
       <div>
-        <label htmlFor="content" className="block font-medium text-base text-gray-800 mb-2">본문 *</label>
+        <label htmlFor="content" className="block font-medium text-base text-[var(--color-admin-text)] mb-2">본문 *</label>
         <textarea
           id="content"
           name="content"
           required
           rows={10}
           defaultValue={initialData?.content}
-          className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none resize-y"
+          className="w-full px-4 py-3.5 text-base border border-[var(--color-admin-border)] rounded-xl focus:ring-2 focus:ring-[var(--color-forest)]/40 focus:border-[var(--color-forest)] outline-none resize-y"
           placeholder={"소식 내용을 작성하세요.\n줄을 바꾸려면 엔터를 두 번 누르세요."}
         />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="date" className="block font-medium text-base text-gray-800 mb-2">날짜 *</label>
+          <label htmlFor="date" className="block font-medium text-base text-[var(--color-admin-text)] mb-2">날짜 *</label>
           <input
             id="date"
             name="date"
             type="date"
             required
             defaultValue={initialData?.date}
-            className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+            className="w-full px-4 py-3.5 text-base border border-[var(--color-admin-border)] rounded-xl focus:ring-2 focus:ring-[var(--color-forest)]/40 focus:border-[var(--color-forest)] outline-none"
           />
         </div>
 
         <div>
-          <label htmlFor="category" className="block font-medium text-base text-gray-800 mb-2">카테고리 *</label>
+          <label htmlFor="category" className="block font-medium text-base text-[var(--color-admin-text)] mb-2">카테고리 *</label>
           <select
             id="category"
             name="category"
             required
             defaultValue={initialData?.category || ""}
-            className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white"
+            className="w-full px-4 py-3.5 text-base border border-[var(--color-admin-border)] rounded-xl focus:ring-2 focus:ring-[var(--color-forest)]/40 focus:border-[var(--color-forest)] outline-none bg-[var(--color-admin-surface)]"
           >
             <option value="">-- 선택하세요 --</option>
             {CATEGORIES.map((cat) => (
@@ -110,32 +110,32 @@ export default function NewsForm({ action, initialData, submitLabel }: NewsFormP
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="source_name" className="block font-medium text-base text-gray-800 mb-2">어디서 나온 기사인가요?</label>
+          <label htmlFor="source_name" className="block font-medium text-base text-[var(--color-admin-text)] mb-2">어디서 나온 기사인가요?</label>
           <input
             id="source_name"
             name="source_name"
             defaultValue={initialData?.sourceName}
-            className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+            className="w-full px-4 py-3.5 text-base border border-[var(--color-admin-border)] rounded-xl focus:ring-2 focus:ring-[var(--color-forest)]/40 focus:border-[var(--color-forest)] outline-none"
             placeholder="예: 오마이뉴스, 프레시안"
           />
         </div>
 
         <div>
-          <label htmlFor="source_url" className="block font-medium text-base text-gray-800 mb-2">기사 원본 주소</label>
+          <label htmlFor="source_url" className="block font-medium text-base text-[var(--color-admin-text)] mb-2">기사 원본 주소</label>
           <input
             id="source_url"
             name="source_url"
             type="url"
             defaultValue={initialData?.sourceUrl}
-            className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+            className="w-full px-4 py-3.5 text-base border border-[var(--color-admin-border)] rounded-xl focus:ring-2 focus:ring-[var(--color-forest)]/40 focus:border-[var(--color-forest)] outline-none"
             placeholder="기사의 인터넷 주소를 붙여넣으세요"
           />
-          <p className="text-sm text-gray-500 mt-1.5">기사 원본 주소를 입력하면 썸네일 이미지가 자동으로 설정됩니다.</p>
+          <p className="text-sm text-[var(--color-admin-muted)] mt-1.5">기사 원본 주소를 입력하면 썸네일 이미지가 자동으로 설정됩니다.</p>
         </div>
       </div>
 
       <div>
-        <label htmlFor="image_file" className="block font-medium text-base text-gray-800 mb-2">
+        <label htmlFor="image_file" className="block font-medium text-base text-[var(--color-admin-text)] mb-2">
           사진 올리기 (선택)
         </label>
         <input
@@ -143,12 +143,12 @@ export default function NewsForm({ action, initialData, submitLabel }: NewsFormP
           name="image_file"
           type="file"
           accept="image/jpeg,image/png,image/webp"
-          className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl
+          className="w-full px-4 py-3.5 text-base border border-[var(--color-admin-border)] rounded-xl
                      file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border-0
-                     file:text-base file:font-medium file:bg-green-50 file:text-green-700
-                     hover:file:bg-green-100 file:cursor-pointer"
+                     file:text-base file:font-medium file:bg-[var(--color-forest)]/10 file:text-[var(--color-forest)]
+                     hover:file:bg-[var(--color-forest)]/20 file:cursor-pointer"
         />
-        <p className="text-sm text-gray-500 mt-1.5">
+        <p className="text-sm text-[var(--color-admin-muted)] mt-1.5">
           사진을 올리면 기사 이미지 대신 사용됩니다. JPG, PNG, WebP (5MB 이하)
         </p>
       </div>

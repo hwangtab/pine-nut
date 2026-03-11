@@ -35,7 +35,7 @@ export default function TimelineListActions({ id, isDeleted }: { id: number; isD
         {!isDeleted && (
           <Link
             href={`/admin/timeline/${id}/edit`}
-            className="px-5 py-3 text-base font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+            className="min-h-[44px] px-5 py-3 text-base font-bold text-[var(--color-sky)] bg-[var(--color-sky)]/10 hover:bg-[var(--color-sky)]/20 rounded-lg transition-colors"
           >
             수정
           </Link>
@@ -44,7 +44,7 @@ export default function TimelineListActions({ id, isDeleted }: { id: number; isD
           <button
             onClick={handleRestore}
             disabled={loading}
-            className="px-5 py-3 text-base font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors disabled:opacity-50"
+            className="min-h-[44px] px-5 py-3 text-base font-bold text-[var(--color-sky)] bg-[var(--color-sky)]/10 hover:bg-[var(--color-sky)]/20 rounded-lg transition-colors disabled:opacity-50"
           >
             {loading ? "처리 중..." : "복원"}
           </button>
@@ -52,13 +52,13 @@ export default function TimelineListActions({ id, isDeleted }: { id: number; isD
           <button
             onClick={handleDelete}
             disabled={loading}
-            className="px-5 py-3 text-base font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50"
+            className="min-h-[44px] px-5 py-3 text-base font-bold text-[var(--color-danger)] bg-[var(--color-danger-bg)] hover:bg-[var(--color-danger-border)] rounded-lg transition-colors disabled:opacity-50"
           >
             {loading ? "처리 중..." : "삭제"}
           </button>
         )}
       </div>
-      {error && <p className="text-sm text-red-600 font-medium">{error}</p>}
+      {error && <p className="text-sm text-[var(--color-danger)] font-medium">{error}</p>}
     </div>
   );
 }
