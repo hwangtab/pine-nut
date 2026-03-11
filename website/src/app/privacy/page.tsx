@@ -22,8 +22,8 @@ export default function PrivacyPage() {
         <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 md:p-10 space-y-10">
           {/* 개요 */}
           <p className="text-[var(--color-text)] leading-relaxed">
-            \u201C풍천리를 지켜주세요\u201D 웹사이트(이하
-            \u201C서비스\u201D)는 이용자의 개인정보를 소중히 보호하며,
+            &ldquo;풍천리를 지켜주세요&rdquo; 웹사이트(이하
+            &ldquo;서비스&rdquo;)는 이용자의 개인정보를 소중히 보호하며,
             관련 법령을 준수합니다. 본 방침은 서비스가 수집하는 개인정보의
             항목, 수집 목적, 보유 기간, 이용자의 권리 등을 안내합니다.
           </p>
