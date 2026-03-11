@@ -134,6 +134,25 @@ export default function NewsForm({ action, initialData, submitLabel }: NewsFormP
         </div>
       </div>
 
+      <div>
+        <label htmlFor="image_file" className="block font-medium text-base text-gray-800 mb-2">
+          사진 올리기 (선택)
+        </label>
+        <input
+          id="image_file"
+          name="image_file"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl
+                     file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border-0
+                     file:text-base file:font-medium file:bg-green-50 file:text-green-700
+                     hover:file:bg-green-100 file:cursor-pointer"
+        />
+        <p className="text-sm text-gray-500 mt-1.5">
+          사진을 올리면 기사 이미지 대신 사용됩니다. JPG, PNG, WebP (5MB 이하)
+        </p>
+      </div>
+
       <div className="pt-4">
         <SubmitButton label={submitLabel} />
       </div>

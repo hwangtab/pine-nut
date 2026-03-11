@@ -101,7 +101,26 @@ export default function TimelineForm({ action, initialData, submitLabel }: Timel
       </div>
 
       <div>
-        <label htmlFor="image_url" className="block font-medium text-base text-gray-800 mb-2">사진 주소 (선택)</label>
+        <label htmlFor="image_file" className="block font-medium text-base text-gray-800 mb-2">
+          사진 올리기 (선택)
+        </label>
+        <input
+          id="image_file"
+          name="image_file"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="w-full px-4 py-3.5 text-base border border-gray-300 rounded-xl
+                     file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border-0
+                     file:text-base file:font-medium file:bg-blue-50 file:text-blue-700
+                     hover:file:bg-blue-100 file:cursor-pointer"
+        />
+        <p className="text-sm text-gray-500 mt-1.5">
+          사진을 직접 올릴 수 있습니다. JPG, PNG, WebP (5MB 이하)
+        </p>
+      </div>
+
+      <div>
+        <label htmlFor="image_url" className="block font-medium text-base text-gray-800 mb-2">또는 사진 주소 입력 (선택)</label>
         <input
           id="image_url"
           name="image_url"
