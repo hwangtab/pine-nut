@@ -6,34 +6,34 @@ export default async function AdminSignaturesPage() {
 
   return (
     <div className="p-6 md:p-10 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold text-gray-800 mb-8">서명 현황</h1>
+      <h1 className="text-2xl font-bold text-[var(--color-admin-text)] mb-8">서명 현황</h1>
 
       {/* Total count */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8 text-center">
-        <p className="text-gray-500 mb-2 text-lg">총 서명 수</p>
-        <p className="text-5xl font-bold text-orange-600">
+      <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-8 mb-8 text-center">
+        <p className="text-[var(--color-admin-muted)] mb-2 text-lg">총 서명 수</p>
+        <p className="text-5xl font-bold text-[var(--color-warm)]">
           {stats.totalCount.toLocaleString("ko-KR")}
-          <span className="text-2xl font-normal text-gray-400 ml-2">명</span>
+          <span className="text-2xl font-normal text-[var(--color-admin-muted)]/70 ml-2">명</span>
         </p>
       </div>
 
       {/* Daily chart */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
-        <h2 className="text-lg font-bold text-gray-700 mb-4">최근 14일 서명 추이</h2>
+      <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-6 mb-8">
+        <h2 className="text-lg font-bold text-[var(--color-admin-text)] mb-4">최근 14일 서명 추이</h2>
         <div className="flex items-end gap-1 h-40">
           {stats.dailyCounts.map((day) => {
             const height = maxDaily > 0 ? (day.count / maxDaily) * 100 : 0;
             const dateLabel = day.date.slice(5); // MM-DD
             return (
               <div key={day.date} className="flex-1 flex flex-col items-center gap-1">
-                <span className="text-xs text-gray-500 font-medium">
+                <span className="text-xs text-[var(--color-admin-muted)] font-medium">
                   {day.count > 0 ? day.count : ""}
                 </span>
                 <div
-                  className="w-full bg-orange-400 rounded-t-sm min-h-[2px]"
+                  className="w-full bg-[var(--color-warm)] rounded-t-sm min-h-[2px]"
                   style={{ height: `${Math.max(height, 2)}%` }}
                 />
-                <span className="text-[10px] text-gray-400 rotate-[-45deg] origin-top-left translate-y-2 whitespace-nowrap">
+                <span className="text-[10px] text-[var(--color-admin-muted)]/70 rotate-[-45deg] origin-top-left translate-y-2 whitespace-nowrap">
                   {dateLabel}
                 </span>
               </div>
@@ -43,22 +43,22 @@ export default async function AdminSignaturesPage() {
       </div>
 
       {/* Recent signatures */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-6">
-        <h2 className="text-lg font-bold text-gray-700 mb-4">최근 서명 목록</h2>
+      <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-6">
+        <h2 className="text-lg font-bold text-[var(--color-admin-text)] mb-4">최근 서명 목록</h2>
         {stats.recentSignatures.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">서명 데이터가 없습니다.</p>
+          <p className="text-[var(--color-admin-muted)] text-center py-8">서명 데이터가 없습니다.</p>
         ) : (
           <div className="space-y-3">
             {stats.recentSignatures.map((sig, i) => (
-              <div key={i} className="flex items-start justify-between gap-4 py-3 border-b border-gray-100 last:border-0">
+              <div key={i} className="flex items-start justify-between gap-4 py-3 border-b border-[var(--color-admin-border)] last:border-0">
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium text-gray-800">{sig.name}</p>
-                  <p className="text-sm text-gray-400">{sig.email}</p>
+                  <p className="font-medium text-[var(--color-admin-text)]">{sig.name}</p>
+                  <p className="text-sm text-[var(--color-admin-muted)]/70">{sig.email}</p>
                   {sig.message && (
-                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">{sig.message}</p>
+                    <p className="text-sm text-[var(--color-admin-muted)] mt-1 line-clamp-2">{sig.message}</p>
                   )}
                 </div>
-                <time className="text-xs text-gray-400 shrink-0">
+                <time dateTime={sig.createdAt} className="text-xs text-[var(--color-admin-muted)]/70 shrink-0">
                   {new Date(sig.createdAt).toLocaleDateString("ko-KR")}
                 </time>
               </div>
