@@ -17,6 +17,20 @@ interface NewsRow {
   updated_at: string;
 }
 
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
+
+function sortFallbackNews() {
+  return [...fallbackNews].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
+function fallbackOrThrow<T>(fallbackFactory: () => T, errorMessage: string): T {
+  if (IS_PRODUCTION) {
+    console.error(errorMessage);
+    throw new Error(errorMessage);
+  }
+  return fallbackFactory();
+}
+
 function rowToNewsItem(row: NewsRow): NewsItem {
   return {
     id: row.id,
@@ -34,7 +48,9 @@ function rowToNewsItem(row: NewsRow): NewsItem {
 
 export async function getPublishedNews(): Promise<NewsItem[]> {
   const supabase = await createSupabaseServerClient();
-  if (!supabase) return [...fallbackNews].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  if (!supabase) {
+    return fallbackOrThrow(sortFallbackNews, "Supabase is not configured in production for published news.");
+  }
 
   const { data, error } = await supabase
     .from("news")
@@ -42,13 +58,18 @@ export async function getPublishedNews(): Promise<NewsItem[]> {
     .eq("is_deleted", false)
     .order("date", { ascending: false });
 
-  if (error || !data) return [...fallbackNews].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  if (error || !data) {
+    console.error("Failed to fetch published news:", error);
+    return fallbackOrThrow(sortFallbackNews, "Failed to fetch published news from Supabase.");
+  }
   return data.map(rowToNewsItem);
 }
 
 export async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
   const supabase = await createSupabaseServerClient();
-  if (!supabase) return fallbackNews.find((n) => n.slug === slug) ?? null;
+  if (!supabase) {
+    return fallbackOrThrow(() => fallbackNews.find((n) => n.slug === slug) ?? null, "Supabase is not configured in production for news detail.");
+  }
 
   const { data, error } = await supabase
     .from("news")
@@ -57,7 +78,10 @@ export async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
     .eq("is_deleted", false)
     .single();
 
-  if (error || !data) return fallbackNews.find((n) => n.slug === slug) ?? null;
+  if (error || !data) {
+    console.error(`Failed to fetch news by slug (${slug}):`, error);
+    return fallbackOrThrow(() => fallbackNews.find((n) => n.slug === slug) ?? null, `Failed to fetch news by slug from Supabase: ${slug}`);
+  }
   return rowToNewsItem(data);
 }
 
@@ -70,9 +94,11 @@ export async function getAllNews(options?: { page?: number; perPage?: number; qu
 
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
-    let items = fallbackNews.map((n) => ({ ...n, isDeleted: false }));
-    if (query) items = items.filter((n) => n.title.includes(query));
-    return { items: items.slice(from, to + 1), total: items.length };
+    return fallbackOrThrow(() => {
+      let items = fallbackNews.map((n) => ({ ...n, isDeleted: false }));
+      if (query) items = items.filter((n) => n.title.includes(query));
+      return { items: items.slice(from, to + 1), total: items.length };
+    }, "Supabase is not configured in production for admin news list.");
   }
 
   let countQuery = supabase.from("news").select("*", { count: "exact", head: true });
@@ -86,8 +112,11 @@ export async function getAllNews(options?: { page?: number; perPage?: number; qu
   const [{ count }, { data, error }] = await Promise.all([countQuery, dataQuery]);
 
   if (error || !data) {
-    const items = fallbackNews.map((n) => ({ ...n, isDeleted: false }));
-    return { items: items.slice(from, to + 1), total: items.length };
+    console.error("Failed to fetch admin news list:", error);
+    return fallbackOrThrow(() => {
+      const items = fallbackNews.map((n) => ({ ...n, isDeleted: false }));
+      return { items: items.slice(from, to + 1), total: items.length };
+    }, "Failed to fetch admin news list from Supabase.");
   }
   return {
     items: data.map((row: NewsRow) => ({ ...rowToNewsItem(row), isDeleted: row.is_deleted })),
@@ -97,7 +126,9 @@ export async function getAllNews(options?: { page?: number; perPage?: number; qu
 
 export async function getNewsById(id: number): Promise<NewsItem | null> {
   const supabase = await createSupabaseServerClient();
-  if (!supabase) return fallbackNews.find((n) => n.id === id) ?? null;
+  if (!supabase) {
+    return fallbackOrThrow(() => fallbackNews.find((n) => n.id === id) ?? null, `Supabase is not configured in production for news id: ${id}`);
+  }
 
   const { data, error } = await supabase
     .from("news")
@@ -105,6 +136,9 @@ export async function getNewsById(id: number): Promise<NewsItem | null> {
     .eq("id", id)
     .single();
 
-  if (error || !data) return null;
+  if (error || !data) {
+    console.error(`Failed to fetch news by id (${id}):`, error);
+    return fallbackOrThrow(() => null, `Failed to fetch news by id from Supabase: ${id}`);
+  }
   return rowToNewsItem(data);
 }

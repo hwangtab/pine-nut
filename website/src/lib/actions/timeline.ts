@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { validateOptionalImageUrl } from "@/lib/validation/url";
+import { uploadImageFromFormData } from "@/lib/storage/upload";
 import { logAudit } from "./audit";
 import type { ActionState } from "./news";
 
@@ -89,6 +90,12 @@ export async function createTimelineAction(_prev: ActionState, formData: FormDat
 
   const supabase = await getAuthenticatedClient();
 
+  const imageFile = formData.get("image_file") as File | null;
+  const uploadResult = await uploadImageFromFormData(supabase, imageFile, "timeline");
+  if (uploadResult.error) return { error: uploadResult.error };
+
+  const imageUrl = uploadResult.url ?? validatedForm.imageUrl;
+
   // 정렬 순서가 0이면 현재 최대값+1로 자동 할당 (맨 아래에 추가)
   let sortOrder = validatedForm.sortOrder;
   if (sortOrder === 0) {
@@ -107,7 +114,7 @@ export async function createTimelineAction(_prev: ActionState, formData: FormDat
     title: validatedForm.title,
     description: validatedForm.description,
     category: validatedForm.category,
-    image_url: validatedForm.imageUrl,
+    image_url: imageUrl,
     image_alt: validatedForm.imageAlt,
     sort_order: sortOrder,
   }).select("id").single();
@@ -126,6 +133,12 @@ export async function updateTimelineAction(id: number, _prev: ActionState, formD
 
   const supabase = await getAuthenticatedClient();
 
+  const imageFile = formData.get("image_file") as File | null;
+  const uploadResult = await uploadImageFromFormData(supabase, imageFile, "timeline");
+  if (uploadResult.error) return { error: uploadResult.error };
+
+  const imageUrl = uploadResult.url ?? validatedForm.imageUrl;
+
   const { error } = await supabase
     .from("timeline_events")
     .update({
@@ -134,7 +147,7 @@ export async function updateTimelineAction(id: number, _prev: ActionState, formD
       title: validatedForm.title,
       description: validatedForm.description,
       category: validatedForm.category,
-      image_url: validatedForm.imageUrl,
+      image_url: imageUrl,
       image_alt: validatedForm.imageAlt,
       sort_order: validatedForm.sortOrder,
     })

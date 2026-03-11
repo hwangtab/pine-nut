@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { validateOptionalImageUrl, validateOptionalSourceUrl } from "@/lib/validation/url";
 import { fetchOgImage } from "@/lib/og-image";
+import { uploadImageFromFormData } from "@/lib/storage/upload";
 import { logAudit } from "./audit";
 
 export type ActionState = { error: string } | null;
@@ -111,7 +112,12 @@ export async function createNewsAction(_prev: ActionState, formData: FormData): 
 
   const supabase = await getAuthenticatedClient();
 
-  const thumbnailUrl = await resolveThumbnailUrl(validatedForm.thumbnailUrl, validatedForm.sourceUrl);
+  const imageFile = formData.get("image_file") as File | null;
+  const uploadResult = await uploadImageFromFormData(supabase, imageFile, "news");
+  if (uploadResult.error) return { error: uploadResult.error };
+
+  const thumbnailUrl = uploadResult.url
+    ?? await resolveThumbnailUrl(validatedForm.thumbnailUrl, validatedForm.sourceUrl);
 
   const { data, error } = await supabase.from("news").insert({
     slug: validatedForm.slug,
@@ -139,7 +145,12 @@ export async function updateNewsAction(id: number, _prev: ActionState, formData:
 
   const supabase = await getAuthenticatedClient();
 
-  const thumbnailUrl = await resolveThumbnailUrl(validatedForm.thumbnailUrl, validatedForm.sourceUrl);
+  const imageFile = formData.get("image_file") as File | null;
+  const uploadResult = await uploadImageFromFormData(supabase, imageFile, "news");
+  if (uploadResult.error) return { error: uploadResult.error };
+
+  const thumbnailUrl = uploadResult.url
+    ?? await resolveThumbnailUrl(validatedForm.thumbnailUrl, validatedForm.sourceUrl);
 
   const { error } = await supabase
     .from("news")
