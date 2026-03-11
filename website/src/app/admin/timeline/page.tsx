@@ -1,6 +1,4 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { getAllTimeline } from "@/lib/data/timeline";
 import TimelineListActions from "./TimelineListActions";
 
@@ -9,11 +7,6 @@ const PER_PAGE = 20;
 type SearchParams = Promise<{ page?: string; q?: string }>;
 
 export default async function AdminTimelinePage({ searchParams }: { searchParams: SearchParams }) {
-  const supabase = await createSupabaseServerClient();
-  if (!supabase) return redirect("/admin/login");
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return redirect("/admin/login");
-
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
   const query = params.q ?? "";

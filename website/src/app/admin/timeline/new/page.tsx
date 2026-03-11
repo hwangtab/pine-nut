@@ -1,15 +1,8 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { createTimelineAction } from "@/lib/actions/timeline";
 import TimelineForm from "@/components/admin/TimelineForm";
 
 export default async function AdminTimelineNewPage() {
-  const supabase = await createSupabaseServerClient();
-  if (!supabase) return redirect("/admin/login");
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return redirect("/admin/login");
-
   return (
     <div className="p-6 md:p-10 max-w-3xl mx-auto">
       <Link href="/admin/timeline" className="text-base text-gray-600 font-medium hover:text-gray-700 mb-4 inline-block">

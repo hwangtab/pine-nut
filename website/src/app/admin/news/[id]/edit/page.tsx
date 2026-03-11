@@ -1,6 +1,5 @@
-import { redirect, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { getNewsById } from "@/lib/data/news";
 import { updateNewsAction } from "@/lib/actions/news";
 import NewsForm from "@/components/admin/NewsForm";
@@ -8,11 +7,6 @@ import NewsForm from "@/components/admin/NewsForm";
 type Params = Promise<{ id: string }>;
 
 export default async function AdminNewsEditPage({ params }: { params: Params }) {
-  const supabase = await createSupabaseServerClient();
-  if (!supabase) return redirect("/admin/login");
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return redirect("/admin/login");
-
   const { id } = await params;
   const newsId = parseInt(id, 10);
   const newsItem = await getNewsById(newsId);

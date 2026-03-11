@@ -1,14 +1,12 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { Newspaper, Clock, Users } from "lucide-react";
 
 export default async function AdminDashboard() {
   const supabase = await createSupabaseServerClient();
-  if (!supabase) return redirect("/admin/login");
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return redirect("/admin/login");
+  if (!supabase) {
+    throw new Error("Supabase is not configured for admin dashboard.");
+  }
 
   // Fetch counts
   const { count: newsCount } = await supabase

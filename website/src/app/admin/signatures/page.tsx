@@ -1,13 +1,6 @@
-import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { getSignatureStats } from "@/lib/data/signatures";
 
 export default async function AdminSignaturesPage() {
-  const supabase = await createSupabaseServerClient();
-  if (!supabase) return redirect("/admin/login");
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return redirect("/admin/login");
-
   const stats = await getSignatureStats(14);
   const maxDaily = Math.max(...stats.dailyCounts.map((d) => d.count), 1);
 

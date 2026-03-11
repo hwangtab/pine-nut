@@ -123,7 +123,7 @@ export default function AdminLoginPage() {
 
             <button
               type="submit"
-              disabled={loading || (lockedUntil !== null && Date.now() < lockedUntil)}
+              disabled={loading || countdown > 0}
               className="w-full py-4 text-lg font-bold text-white bg-green-700 hover:bg-green-800 disabled:bg-gray-400 rounded-xl transition-colors"
             >
               {countdown > 0
