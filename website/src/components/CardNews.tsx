@@ -52,22 +52,22 @@ function Card1() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full border border-white/[0.06]" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full border border-white/[0.03]" />
 
-      <div className="relative z-10 flex flex-col items-center px-8 py-10 h-full justify-center">
-        <p className="text-xs tracking-[0.3em] uppercase text-white/50 mb-6 font-medium">
+      <div className="relative z-10 flex flex-col items-center px-8 py-7 h-full justify-center">
+        <p className="text-xs tracking-[0.3em] uppercase text-white/50 mb-4 font-medium">
           강원도 홍천 풍천리
         </p>
 
-        <div className="text-[80px] leading-none font-black text-[#d4a853] mb-2" style={{ fontFeatureSettings: "'tnum'" }}>
+        <div className="text-[72px] leading-none font-black text-[#d4a853] mb-2" style={{ fontFeatureSettings: "'tnum'" }}>
           7년
         </div>
 
-        <div className="w-12 h-[2px] bg-[#d4a853]/60 mx-auto my-4" />
+        <div className="w-12 h-[2px] bg-[#d4a853]/60 mx-auto my-3" />
 
-        <h2 className="text-2xl font-bold tracking-tight mb-6">
+        <h2 className="text-2xl font-bold tracking-tight mb-5">
           680번의 외침
         </h2>
 
-        <div className="grid grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-3 gap-6 mb-6">
           {[
             { num: "680+", label: "집회 횟수" },
             { num: "140+", label: "연대 단체" },
@@ -104,36 +104,36 @@ function Card2() {
     >
       <PatternOverlay />
 
-      <div className="relative z-10 flex flex-col items-center px-7 py-10 h-full w-full">
+      <div className="relative z-10 flex flex-col items-center px-7 py-7 h-full w-full">
         {/* Pine tree silhouette */}
-        <div className="mb-5 opacity-25">
-          <svg viewBox="0 0 80 100" fill="currentColor" className="w-20 h-24 text-white">
+        <div className="mb-3 opacity-25">
+          <svg viewBox="0 0 80 100" fill="currentColor" className="w-16 h-20 text-white">
             <polygon points="40,4 22,30 30,30 16,54 26,54 10,78 70,78 54,54 64,54 50,30 58,30" />
             <rect x="35" y="78" width="10" height="14" rx="1" />
           </svg>
         </div>
 
-        <h2 className="text-3xl font-black leading-tight text-center mb-2">
+        <h2 className="text-2xl font-black leading-tight text-center mb-1">
           11만 그루 잣나무가
         </h2>
-        <h2 className="text-3xl font-black leading-tight text-center mb-5">
+        <h2 className="text-2xl font-black leading-tight text-center mb-4">
           사라집니다
         </h2>
 
-        <div className="flex items-center gap-3 mb-6">
+        <div className="flex items-center gap-3 mb-4">
           <div className="h-[1px] w-8 bg-[#d4a853]/50" />
           <span className="text-[#d4a853] text-sm font-bold tracking-wider">110,000</span>
           <div className="h-[1px] w-8 bg-[#d4a853]/50" />
         </div>
 
-        <ul className="space-y-3 text-left w-full max-w-[280px]">
+        <ul className="space-y-2 text-left w-full max-w-[280px]">
           {[
             { icon: "🌲", text: "산림청 지정 100대 명품숲 파괴" },
             { icon: "📐", text: "1,800ha 국내 최대 잣나무 숲" },
             { icon: "🦌", text: "산양·까막딱따구리·수달 서식지 위협" },
             { icon: "⛏️", text: "153ha 산림 영구 훼손 예정" },
           ].map((item) => (
-            <li key={item.text} className="flex items-start gap-3 bg-white/[0.05] rounded-lg px-4 py-2.5">
+            <li key={item.text} className="flex items-start gap-3 bg-white/[0.05] rounded-lg px-4 py-2">
               <span className="text-sm shrink-0 mt-0.5">{item.icon}</span>
               <span className="text-sm text-white/80 leading-relaxed">{item.text}</span>
             </li>
@@ -160,30 +160,30 @@ function Card3() {
     >
       <PatternOverlay />
 
-      <div className="relative z-10 flex flex-col items-center px-7 py-10 h-full w-full">
+      <div className="relative z-10 flex flex-col items-center px-7 py-7 h-full w-full">
         {/* Large quote mark */}
-        <div className="text-[#d4a853]/30 text-[72px] leading-none font-serif -mb-4">{"\u201C"}</div>
+        <div className="text-[#d4a853]/30 text-[60px] leading-none font-serif -mb-3">{"\u201C"}</div>
 
-        <h2 className="text-[22px] font-black leading-snug text-center mb-5 max-w-[280px]">
+        <h2 className="text-[22px] font-black leading-snug text-center mb-4 max-w-[280px]">
           70대 어르신들이
           <br />
           전과자가 되었습니다
         </h2>
 
-        <div className="w-10 h-[2px] bg-[#d4a853]/50 mx-auto mb-5" />
+        <div className="w-10 h-[2px] bg-[#d4a853]/50 mx-auto mb-4" />
 
-        <p className="text-sm text-white/60 leading-relaxed text-center max-w-[260px] mb-5">
+        <p className="text-sm text-white/60 leading-relaxed text-center max-w-[260px] mb-4">
           2024년 7월, 홍천군청에서 경찰과 대치.
           <br />
           60~80대 주민 7명이 퇴거불응 혐의로 기소.
         </p>
 
         <div
-          className="rounded-xl px-6 py-4 text-center mb-5"
+          className="rounded-xl px-6 py-3 text-center mb-4"
           style={{ background: "rgba(255,255,255,0.08)" }}
         >
           <div className="text-3xl font-black text-[#d4a853]">1,800만원</div>
-          <div className="text-[11px] text-white/40 mt-1.5">벌금 총 구형액</div>
+          <div className="text-[11px] text-white/40 mt-1">벌금 총 구형액</div>
         </div>
 
         <p className="text-[13px] text-white/45 italic text-center max-w-[260px] leading-relaxed">
@@ -218,32 +218,32 @@ function Card4() {
     >
       <PatternOverlay />
 
-      <div className="relative z-10 flex flex-col items-center px-7 py-10 h-full w-full">
-        <p className="text-xs tracking-[0.25em] text-white/50 mb-4 font-medium uppercase">
+      <div className="relative z-10 flex flex-col items-center px-7 py-7 h-full w-full">
+        <p className="text-xs tracking-[0.25em] text-white/50 mb-3 font-medium uppercase">
           Act Now
         </p>
 
-        <h2 className="text-3xl font-black leading-tight text-center mb-2">
+        <h2 className="text-2xl font-black leading-tight text-center mb-1">
           당신도
         </h2>
-        <h2 className="text-3xl font-black leading-tight text-center mb-6">
+        <h2 className="text-2xl font-black leading-tight text-center mb-4">
           함께해주세요
         </h2>
 
-        <p className="text-sm text-white/60 text-center max-w-[260px] mb-7 leading-relaxed">
+        <p className="text-sm text-white/60 text-center max-w-[260px] mb-5 leading-relaxed">
           풍천리 주민들의 싸움은
           <br />
           우리 모두의 싸움입니다.
         </p>
 
-        <div className="space-y-3 w-full max-w-[280px] mb-7">
+        <div className="space-y-2.5 w-full max-w-[280px] mb-5">
           {actions.map((a) => (
             <div
               key={a.num}
-              className="flex items-center gap-4 rounded-xl px-4 py-3"
+              className="flex items-center gap-4 rounded-xl px-4 py-2.5"
               style={{ background: "rgba(255,255,255,0.12)" }}
             >
-              <div className="shrink-0 w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-sm font-black">
+              <div className="shrink-0 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-black">
                 {a.num}
               </div>
               <div>
@@ -255,13 +255,13 @@ function Card4() {
         </div>
 
         <div
-          className="rounded-xl px-5 py-3 text-center"
+          className="rounded-xl px-5 py-2.5 text-center"
           style={{
             background: "rgba(255,255,255,0.10)",
             border: "1px solid rgba(255,255,255,0.15)",
           }}
         >
-          <div className="text-[10px] text-white/40 mb-1">캠페인 사이트</div>
+          <div className="text-[10px] text-white/40 mb-0.5">캠페인 사이트</div>
           <div className="text-sm font-bold tracking-wide">pungcheonri.vercel.app</div>
         </div>
 
@@ -294,12 +294,12 @@ function Card5() {
     >
       <PatternOverlay />
 
-      <div className="relative z-10 flex flex-col items-center px-7 py-10 h-full w-full">
+      <div className="relative z-10 flex flex-col items-center px-7 py-7 h-full w-full">
         <p className="text-xs tracking-[0.25em] text-white/40 mb-3 font-medium uppercase">
           Timeline
         </p>
 
-        <h2 className="text-2xl font-black leading-tight text-center mb-7">
+        <h2 className="text-2xl font-black leading-tight text-center mb-5">
           풍천리 타임라인
         </h2>
 
@@ -308,7 +308,7 @@ function Card5() {
           {/* Vertical line */}
           <div className="absolute left-[42px] top-1 bottom-1 w-[1px] bg-white/10" />
 
-          <div className="space-y-3.5">
+          <div className="space-y-3">
             {events.map((item, i) => (
               <div key={i} className="flex items-start gap-3">
                 <span className="shrink-0 w-[76px] text-right text-xs font-bold text-[#d4a853] mt-0.5 tabular-nums">
