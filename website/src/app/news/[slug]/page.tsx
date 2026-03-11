@@ -1,9 +1,12 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { getNewsBySlug, getPublishedNews } from "@/lib/data/news";
 import ShareButtons from "@/components/ShareButtons";
 import UtilityHeader from "@/components/UtilityHeader";
 import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
 
 type Params = Promise<{ slug: string }>;
 
@@ -24,6 +27,7 @@ export async function generateMetadata({
       description: item.summary,
       type: "article",
       locale: "ko_KR",
+      ...(item.thumbnailUrl ? { images: [item.thumbnailUrl] } : {}),
     },
   };
 }
@@ -89,6 +93,19 @@ export default async function NewsDetailPage({
             </>
           )}
         </div>
+
+        {item.thumbnailUrl && (
+          <div className="relative w-full aspect-[16/9] mb-10 rounded-xl overflow-hidden">
+            <Image
+              src={item.thumbnailUrl}
+              alt={item.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="object-cover"
+              priority
+            />
+          </div>
+        )}
 
         <div className="prose prose-lg max-w-none mb-12">
           {paragraphs.map((paragraph, index) => (
