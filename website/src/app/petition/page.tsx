@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, FormEvent } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
-import { Send, Check, Copy, Loader2 } from "lucide-react";
+import { Send, Check, Copy, Loader2, HeartHandshake, Megaphone } from "lucide-react";
 import SubHero from "@/components/SubHero";
 import { events } from "@/lib/analytics";
 
@@ -315,6 +316,10 @@ export default function PetitionPage() {
     }
   };
 
+  const handleScrollToForm = useCallback(() => {
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       {showConfetti && <Confetti />}
@@ -322,9 +327,9 @@ export default function PetitionPage() {
       {/* ── Header ── */}
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
-        title="서명으로 함께해주세요"
-        subtitle="당신의 이름 하나가 풍천리 주민들에게 큰 힘이 됩니다"
-        eyebrow="서명 운동"
+        title="함께해주세요"
+        subtitle="서명, 후원, 공유 중 지금 할 수 있는 행동으로 풍천리 주민들과 함께해주세요"
+        eyebrow="참여하기"
         variant="emphasis"
         metric={
           <div className="flex flex-col items-center gap-1">
@@ -337,6 +342,50 @@ export default function PetitionPage() {
       />
 
       <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 space-y-16">
+        <section aria-label="함께할 방법">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button
+              type="button"
+              onClick={handleScrollToForm}
+              className="text-left bg-white border border-[var(--color-border)] rounded-2xl p-6 transition-colors hover:bg-[var(--color-bg-warm)] cursor-pointer"
+            >
+              <div className="w-11 h-11 rounded-full bg-[var(--color-warm)]/10 text-[var(--color-warm)] flex items-center justify-center mb-4">
+                <Send className="w-5 h-5" />
+              </div>
+              <h2 className="text-lg font-bold text-[var(--color-text)] mb-2">서명하기</h2>
+              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+                이름을 남겨 주민들의 목소리에 힘을 보태주세요.
+              </p>
+            </button>
+
+            <Link
+              href="/donate"
+              className="bg-white border border-[var(--color-border)] rounded-2xl p-6 transition-colors hover:bg-[var(--color-bg-warm)]"
+            >
+              <div className="w-11 h-11 rounded-full bg-[var(--color-forest)]/10 text-[var(--color-forest)] flex items-center justify-center mb-4">
+                <HeartHandshake className="w-5 h-5" />
+              </div>
+              <h2 className="text-lg font-bold text-[var(--color-text)] mb-2">후원하기</h2>
+              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+                교통비와 법률비용 등 투쟁에 필요한 실질적 힘을 보태주세요.
+              </p>
+            </Link>
+
+            <Link
+              href="/share"
+              className="bg-white border border-[var(--color-border)] rounded-2xl p-6 transition-colors hover:bg-[var(--color-bg-warm)]"
+            >
+              <div className="w-11 h-11 rounded-full bg-[var(--color-sky)]/10 text-[var(--color-sky)] flex items-center justify-center mb-4">
+                <Megaphone className="w-5 h-5" />
+              </div>
+              <h2 className="text-lg font-bold text-[var(--color-text)] mb-2">공유하기</h2>
+              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+                카드뉴스를 저장해 더 많은 사람에게 풍천리 이야기를 알려주세요.
+              </p>
+            </Link>
+          </div>
+        </section>
+
         {/* Emotional prompt */}
         <p className="text-center text-xl font-serif text-[var(--color-text-muted)] mb-6">
           680번의 외침에 당신의 이름을 더해주세요
@@ -351,6 +400,7 @@ export default function PetitionPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
+              id="signature-form"
               aria-label="서명 양식"
             >
               <form
