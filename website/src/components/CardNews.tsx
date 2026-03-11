@@ -400,11 +400,20 @@ function CardWithActions({ card }: { card: CardItem }) {
     <div className="flex flex-col items-center gap-3">
       {/* Card */}
       <div
-        ref={cardRef}
-        className="w-full max-w-[400px] overflow-hidden rounded-2xl shadow-xl"
-        style={{ aspectRatio: "4 / 5" }}
+        className="relative w-full max-w-[400px] overflow-hidden rounded-2xl shadow-xl aspect-[4/5] [container-type:inline-size]"
       >
-        <card.Component />
+        <div
+          className="absolute top-0 left-0 origin-top-left"
+          style={{
+            width: "400px",
+            height: "500px",
+            transform: "scale(calc(100cqw / 400px))",
+          }}
+        >
+          <div ref={cardRef} className="w-[400px] h-[500px]">
+            <card.Component />
+          </div>
+        </div>
       </div>
 
       {/* Actions */}
