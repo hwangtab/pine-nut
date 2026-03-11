@@ -1,6 +1,8 @@
 "use client";
 
 import UtilityHeader from "@/components/UtilityHeader";
+import { SITE_HOST } from "@/lib/site-config";
+import { events } from "@/lib/analytics";
 
 export default function PressReleasePage() {
   return (
@@ -34,7 +36,10 @@ export default function PressReleasePage() {
         {/* Print button */}
         <div className="no-print mb-8 flex items-center gap-4">
           <button
-            onClick={() => window.print()}
+            onClick={() => {
+              events.pressKitDownload("release");
+              window.print();
+            }}
             className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-forest)] text-white font-semibold rounded-xl hover:bg-[var(--color-forest-light)] transition-colors cursor-pointer"
           >
             <svg
@@ -214,7 +219,7 @@ export default function PressReleasePage() {
                 campaigns.do/campaigns/1328
               </a>
               <br />
-              웹사이트: pungcheon.kr
+              웹사이트: {SITE_HOST}
             </p>
           </div>
         </section>
@@ -224,7 +229,7 @@ export default function PressReleasePage() {
           <p className="text-xs text-[var(--color-text-muted)] text-center">
             본 보도자료는 자유롭게 인용 및 배포할 수 있습니다.
             <br />
-            풍천리를 지켜주세요 | pungcheon.kr
+            풍천리를 지켜주세요 | {SITE_HOST}
           </p>
         </footer>
       </div>

@@ -3,6 +3,8 @@
 import { useRef, useCallback } from "react";
 import { toPng } from "html-to-image";
 import { Download, Link, Share2 } from "lucide-react";
+import { events } from "@/lib/analytics";
+import { SITE_HOST, SITE_URL } from "@/lib/site-config";
 
 /* ------------------------------------------------------------------ */
 /*  Shared sub-components                                              */
@@ -262,7 +264,7 @@ function Card4() {
           }}
         >
           <div className="text-[10px] text-white/40 mb-0.5">캠페인 사이트</div>
-          <div className="text-sm font-bold tracking-wide">pungcheonri.vercel.app</div>
+          <div className="text-sm font-bold tracking-wide">{SITE_HOST}</div>
         </div>
 
         <Watermark />
@@ -360,6 +362,7 @@ function CardWithActions({ card }: { card: CardItem }) {
       link.download = `풍천리-카드${card.id}.png`;
       link.href = dataUrl;
       link.click();
+      events.cardNewsDownload(`card_${card.id}`);
     } catch (err) {
       console.error("Download failed:", err);
       alert("이미지 다운로드에 실패했습니다. 카드를 길게 눌러 저장해주세요.");
@@ -368,7 +371,8 @@ function CardWithActions({ card }: { card: CardItem }) {
 
   const handleCopyLink = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText("https://pungcheonri.vercel.app/share");
+      await navigator.clipboard.writeText(`${SITE_URL}/share`);
+      events.shareClick("copy_link");
       alert("링크가 복사되었습니다!");
     } catch {
       alert("링크 복사에 실패했습니다.");
@@ -381,8 +385,9 @@ function CardWithActions({ card }: { card: CardItem }) {
         await navigator.share({
           title: "풍천리를 지켜주세요",
           text: card.title,
-          url: "https://pungcheonri.vercel.app/share",
+          url: `${SITE_URL}/share`,
         });
+        events.shareClick("web_share");
       } catch {
         // user cancelled
       }

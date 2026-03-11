@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { SITE_HOST } from "@/lib/site-config";
 
 export const runtime = "edge";
 export const alt = "풍천리를 지켜주세요";
@@ -106,7 +107,7 @@ export default async function Image() {
               textAlign: "center",
             }}
           >
-            pungcheonri.vercel.app
+            {SITE_HOST}
           </div>
         </div>
       </div>

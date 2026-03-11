@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-
-const BASE_URL = "https://pungcheonri.vercel.app";
+import { SITE_URL } from "@/lib/site-config";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages = [
@@ -18,7 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   return pages.map((page) => ({
-    url: `${BASE_URL}${page.url}`,
+    url: `${SITE_URL}${page.url}`,
     lastModified: new Date(),
     changeFrequency: page.url === "/news" ? "daily" : "weekly",
     priority: page.priority,

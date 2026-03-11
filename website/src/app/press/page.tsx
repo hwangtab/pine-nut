@@ -2,6 +2,7 @@ import { ArrowRight, ExternalLink, FileText } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import SubHero from "@/components/SubHero";
+import { SITE_URL } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "자료실 — 풍천리를 지켜주세요",
@@ -162,7 +163,7 @@ export default function PressPage() {
               <p className="text-sm text-[var(--color-text)] leading-relaxed font-mono">
                 풍천리 주민회. (2026). 풍천리 양수발전소 반대 투쟁 기록.
                 <br />
-                https://pungcheon.kr
+                {SITE_URL}
               </p>
             </div>
             <p className="text-sm text-[var(--color-text-muted)] mt-4 leading-relaxed">
@@ -172,7 +173,7 @@ export default function PressPage() {
               <p className="text-sm text-[var(--color-text)] leading-relaxed font-mono">
                 풍천리 주민회 (2026).{" "}
                 <em>풍천리를 지켜주세요: 양수발전소 건설 반대 투쟁 기록</em>.
-                https://pungcheon.kr
+                {SITE_URL}
               </p>
             </div>
           </div>

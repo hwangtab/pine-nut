@@ -28,14 +28,15 @@ All commands must be run from the `website/` directory.
 
 - `src/app/` — Pages using App Router file-based routing. Each route folder has a `page.tsx`.
 - `src/components/` — Shared components (`SubHero`, `Navigation`, `Footer`, `CardNews`, `ShareButtons`, `Analytics`)
-- `src/lib/` — Supabase client (`supabase.ts`) and GA4 event tracking (`analytics.ts`)
+- `src/lib/` — Supabase clients, GA4 tracking, and server data access (`supabase.ts`, `supabase-server.ts`, `analytics.ts`, `data/*`)
 - `src/data/` — Static data arrays with TypeScript interfaces (`news.ts`, `timeline.ts`)
 - `public/images/` — Static images
 
 ### Data patterns
 
-- **Static content**: News articles and timeline events are defined as typed arrays in `src/data/`. No CMS.
-- **Backend**: Single Supabase-backed API route at `/api/signatures` (GET count + POST new signature). Falls back to demo mode when env vars are missing.
+- **Static content**: `src/data/*` is used as development fallback seed content for news/timeline.
+- **Backend**: Supabase-backed API/data access. `POST /api/signatures` enforces consent + duplicate/rate-limit protections.
+- **Fail behavior**: In production, missing/broken Supabase access fails closed (no demo fallback responses).
 - **State**: Local `useState` hooks only — no global state library.
 
 ### Styling conventions
@@ -59,7 +60,7 @@ Server-side metadata via Next.js Metadata API on each page. Open Graph images, r
 
 ### Image config
 
-`next.config.ts` allows remote images from `ohmynews.com` and `pressian.com`. Use Next.js `<Image>` component for all images.
+`next.config.ts` allows remote images only from hostnames listed in `src/lib/allowed-image-hosts.json` (currently `ojsfile.ohmynews.com`, `www.pressian.com`, `img1.newsis.com`). Use Next.js `<Image>` component for all images.
 
 ## Environment Variables
 
@@ -67,6 +68,7 @@ Server-side metadata via Next.js Metadata API on each page. Open Graph images, r
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
 NEXT_PUBLIC_GA_ID
+NEXT_PUBLIC_SITE_URL
 ```
 
 See `.env.example`.

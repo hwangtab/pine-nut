@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import SubHero from "@/components/SubHero";
+import { SITE_URL } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Save Pungcheon-ri — Stop the Pumped-Storage Power Plant",
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
       "A 7-year fight to protect a village, a forest, and a way of life. Learn how you can help.",
     type: "website",
     locale: "en_US",
-    url: "https://pungcheonri.vercel.app/en",
+    url: `${SITE_URL}/en`,
   },
 };
 

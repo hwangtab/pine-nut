@@ -1,6 +1,8 @@
 "use client";
 
 import UtilityHeader from "@/components/UtilityHeader";
+import { SITE_HOST } from "@/lib/site-config";
+import { events } from "@/lib/analytics";
 
 const factSheetData = [
   { label: "위치", value: "강원도 홍천군 화촌면 풍천리" },
@@ -55,7 +57,10 @@ export default function FactsheetPage() {
         {/* Print button */}
         <div className="no-print mb-8 flex items-center gap-4">
           <button
-            onClick={() => window.print()}
+            onClick={() => {
+              events.pressKitDownload("factsheet");
+              window.print();
+            }}
             className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-forest)] text-white font-semibold rounded-xl hover:bg-[var(--color-forest-light)] transition-colors cursor-pointer"
           >
             <svg
@@ -183,7 +188,7 @@ export default function FactsheetPage() {
                 campaigns.do/campaigns/1328
               </a>
               <br />
-              웹사이트: pungcheon.kr
+              웹사이트: {SITE_HOST}
             </p>
           </div>
         </section>
@@ -191,7 +196,7 @@ export default function FactsheetPage() {
         {/* Footer */}
         <footer className="pt-6 border-t border-[var(--color-border)]">
           <p className="text-xs text-[var(--color-text-muted)] text-center">
-            풍천리를 지켜주세요 | pungcheon.kr | 2026년 3월 발행
+            풍천리를 지켜주세요 | {SITE_HOST} | 2026년 3월 발행
           </p>
         </footer>
       </div>
