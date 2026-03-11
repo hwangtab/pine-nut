@@ -322,6 +322,7 @@ export default function PetitionPage() {
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
         title="서명으로 함께해주세요"
         subtitle="당신의 이름 하나가 풍천리 주민들에게 큰 힘이 됩니다"
+        eyebrow="서명 운동"
         variant="emphasis"
         metric={
           <div className="flex flex-col items-center gap-1">

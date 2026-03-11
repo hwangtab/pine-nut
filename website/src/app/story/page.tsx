@@ -16,6 +16,7 @@ export default function StoryPage() {
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
         title="풍천리 이야기"
         subtitle="잣나무 숲과 마을을 지키려는 7년간의 싸움"
+        eyebrow="마을의 목소리"
       />
 
       {/* ── 풍천리는 어떤 마을인가요 ── */}

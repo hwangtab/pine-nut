@@ -91,6 +91,7 @@ export default function DonatePage() {
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
         title="후원으로 함께해주세요"
         subtitle="주민들의 투쟁을 직접 도울 수 있습니다"
+        eyebrow="후원 안내"
       />
 
       <div className="bg-[var(--color-bg-warm)] py-8 px-4">

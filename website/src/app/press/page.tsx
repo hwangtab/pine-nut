@@ -55,6 +55,7 @@ export default function PressPage() {
         fallbackImageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
         title="자료실"
         subtitle="언론인·활동가를 위한 풍천리 관련 자료"
+        eyebrow="자료 아카이브"
       />
 
       <div className="max-w-4xl mx-auto px-4 pt-12 md:pt-16 pb-20 space-y-16">

@@ -41,6 +41,7 @@ export default function NewsPage() {
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499236_STD.jpg"
         title="소식"
         subtitle="풍천리의 최신 소식을 전합니다"
+        eyebrow="최신 소식"
       />
 
       {/* Emotional context line */}

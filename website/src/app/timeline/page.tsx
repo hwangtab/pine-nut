@@ -112,6 +112,7 @@ export default function TimelinePage() {
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
         title="7년의 기록"
         subtitle="2019년부터 현재까지, 풍천리 주민들의 발자취"
+        eyebrow="투쟁 연대기"
       />
 
       {/* Emotional quote banner */}
