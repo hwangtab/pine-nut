@@ -676,24 +676,38 @@ export default function HomePage() {
               ) : (
                 <form onSubmit={handleInlineSign} className="space-y-3">
                   <div className="flex flex-col sm:flex-row gap-3">
+                    <label htmlFor="inline-name" className="sr-only">
+                      이름
+                    </label>
                     <input
+                      id="inline-name"
                       type="text"
                       placeholder="이름"
+                      autoComplete="name"
                       value={inlineName}
                       onChange={(e) => {
                         setInlineName(e.target.value);
                         setInlineError(null);
                       }}
+                      aria-invalid={Boolean(inlineError)}
+                      aria-describedby={inlineError ? "inline-signature-error" : undefined}
                       className="flex-1 px-5 py-3 rounded-full border border-[var(--color-border)] bg-white text-base outline-none focus:border-[var(--color-warm)] focus:ring-2 focus:ring-[var(--color-warm)]/30 transition-all"
                     />
+                    <label htmlFor="inline-email" className="sr-only">
+                      이메일
+                    </label>
                     <input
+                      id="inline-email"
                       type="email"
                       placeholder="이메일"
+                      autoComplete="email"
                       value={inlineEmail}
                       onChange={(e) => {
                         setInlineEmail(e.target.value);
                         setInlineError(null);
                       }}
+                      aria-invalid={Boolean(inlineError)}
+                      aria-describedby={inlineError ? "inline-signature-error" : undefined}
                       className="flex-1 px-5 py-3 rounded-full border border-[var(--color-border)] bg-white text-base outline-none focus:border-[var(--color-warm)] focus:ring-2 focus:ring-[var(--color-warm)]/30 transition-all"
                     />
                     <button
@@ -705,7 +719,9 @@ export default function HomePage() {
                     </button>
                   </div>
                   {inlineError && (
-                    <p className="text-sm text-red-600 text-center">{inlineError}</p>
+                    <p id="inline-signature-error" className="text-sm text-red-600 text-center">
+                      {inlineError}
+                    </p>
                   )}
                   <p className="text-xs text-[var(--color-text-muted)] text-center">
                     서명 시{" "}

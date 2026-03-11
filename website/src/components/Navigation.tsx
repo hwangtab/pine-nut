@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -25,6 +25,8 @@ export default function Navigation() {
   const [visible, setVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [scrollY, setScrollY] = useState(0);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
 
   const heroPages = ['/', '/story', '/timeline', '/news', '/gallery', '/press', '/share', '/petition', '/donate', '/en'];
   const isHeroPage = heroPages.includes(pathname);
@@ -66,9 +68,71 @@ export default function Navigation() {
     return pathname === href || pathname.startsWith(href + "/");
   };
 
-  const closeMobileMenu = () => {
+  const closeMobileMenu = useCallback(() => {
     setMobileMenuOpen(false);
-  };
+    requestAnimationFrame(() => {
+      mobileMenuButtonRef.current?.focus();
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    const menuElement = mobileMenuRef.current;
+    if (!menuElement) return;
+
+    const getFocusableElements = () =>
+      Array.from(
+        menuElement.querySelectorAll<HTMLElement>(
+          "a[href], button:not([disabled]), [tabindex]:not([tabindex='-1'])"
+        )
+      );
+
+    const focusable = getFocusableElements();
+    focusable[0]?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeMobileMenu();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const currentFocusable = getFocusableElements();
+      if (currentFocusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = currentFocusable[0];
+      const last = currentFocusable[currentFocusable.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+
+      if (!active || !menuElement.contains(active)) {
+        event.preventDefault();
+        first.focus();
+        return;
+      }
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+        return;
+      }
+
+      if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mobileMenuOpen, closeMobileMenu]);
 
   return (
     <>
@@ -125,11 +189,18 @@ export default function Navigation() {
 
           {/* Mobile hamburger */}
           <button
+            ref={mobileMenuButtonRef}
             type="button"
             className={`md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors duration-300 ${
               isTransparent ? "hover:bg-white/10" : "hover:bg-[var(--color-bg)]"
             }`}
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => {
+              if (mobileMenuOpen) {
+                closeMobileMenu();
+                return;
+              }
+              setMobileMenuOpen(true);
+            }}
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-menu"
             aria-label={mobileMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
@@ -147,17 +218,28 @@ export default function Navigation() {
       {mobileMenuOpen && (
         <div
           id="mobile-menu"
+          ref={mobileMenuRef}
           className="fixed inset-0 z-40 bg-white flex flex-col pt-16"
           role="dialog"
           aria-modal="true"
-          aria-label="모바일 메뉴"
+          aria-labelledby="mobile-menu-title"
         >
-          <nav className="flex flex-col px-6 py-8 gap-2" aria-label="모바일 내비게이션">
+          <h2 id="mobile-menu-title" className="sr-only">모바일 메뉴</h2>
+          <div className="px-6 pt-4">
+            <button
+              type="button"
+              onClick={closeMobileMenu}
+              className="min-h-[44px] rounded-lg px-4 py-2 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors"
+            >
+              메뉴 닫기
+            </button>
+          </div>
+          <nav className="flex flex-col px-6 py-4 gap-2" aria-label="모바일 내비게이션">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={closeMobileMenu}
+                onClick={() => closeMobileMenu()}
                 className={`px-4 py-4 rounded-xl text-xl font-medium min-h-[44px] flex items-center transition-colors ${
                   isActive(link.href)
                     ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
@@ -170,7 +252,7 @@ export default function Navigation() {
             ))}
             <Link
               href="/petition"
-              onClick={closeMobileMenu}
+              onClick={() => closeMobileMenu()}
               className="mt-4 px-4 py-4 rounded-xl text-xl font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center justify-center transition-colors"
             >
               함께하기

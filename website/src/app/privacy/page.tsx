@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main className="min-h-screen bg-[var(--color-bg)]">
+    <div className="min-h-screen bg-[var(--color-bg)]">
       <UtilityHeader
         title="개인정보처리방침"
         subtitle="최종 수정일: 2026년 3월 10일"
@@ -44,14 +44,6 @@ export default function PrivacyPage() {
               </div>
               <div className="bg-[var(--color-bg)] rounded-xl p-5">
                 <h3 className="font-semibold text-[var(--color-text)] mb-2">
-                  뉴스레터 구독 시
-                </h3>
-                <p className="text-[var(--color-text-muted)] text-[15px] leading-relaxed">
-                  이메일 주소
-                </p>
-              </div>
-              <div className="bg-[var(--color-bg)] rounded-xl p-5">
-                <h3 className="font-semibold text-[var(--color-text)] mb-2">
                   웹사이트 이용 시 자동 수집
                 </h3>
                 <p className="text-[var(--color-text-muted)] text-[15px] leading-relaxed">
@@ -70,7 +62,6 @@ export default function PrivacyPage() {
             <ul className="space-y-3">
               {[
                 "서명 접수 및 서명 현황 관리",
-                "뉴스레터 및 캠페인 소식 발송",
                 "웹사이트 이용 통계 분석을 통한 서비스 개선",
               ].map((item, i) => (
                 <li
@@ -187,6 +178,6 @@ export default function PrivacyPage() {
           </Link>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

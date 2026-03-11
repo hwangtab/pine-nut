@@ -277,11 +277,11 @@ export default function DonatePage() {
             {/* Transparency note */}
             <div className="bg-[var(--color-bg-warm)] rounded-xl px-5 py-4">
               <p className="text-[15px] text-[var(--color-text)] font-medium">
-                후원금 사용 내역은 매월 이 페이지에 공개됩니다.
+                후원금 사용 내역은 정리 후 이 페이지에 공개됩니다.
               </p>
               <p className="text-sm text-[var(--color-text-muted)] mt-1">
-                주민 여러분의 소중한 후원금이 어디에 쓰이는지 투명하게
-                공개합니다.
+                주민 여러분의 소중한 후원금이 어디에 쓰이는지 확인 가능한
+                형태로 투명하게 안내하겠습니다.
               </p>
             </div>
           </div>

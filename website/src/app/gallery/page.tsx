@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, X } from "lucide-react";
 import SubHero from "@/components/SubHero";
@@ -141,16 +141,18 @@ function PhotoCard({
 }: {
   photo: GalleryPhoto;
   index: number;
-  onOpen: (photo: GalleryPhoto) => void;
+  onOpen: (photo: GalleryPhoto, trigger: HTMLButtonElement) => void;
 }) {
   return (
-    <motion.div
+    <motion.button
+      type="button"
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.4, delay: index * 0.06 }}
-      className="group cursor-pointer"
-      onClick={() => onOpen(photo)}
+      className="group w-full cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-warm)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]"
+      onClick={(event) => onOpen(photo, event.currentTarget)}
+      aria-label={`${photo.title} 이미지 크게 보기`}
     >
       <div className="relative aspect-[4/3] rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden hover:scale-[1.02] bg-[var(--color-bg)]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -171,7 +173,7 @@ function PhotoCard({
           </p>
         </div>
       </div>
-    </motion.div>
+    </motion.button>
   );
 }
 
@@ -182,6 +184,64 @@ function Lightbox({
   photo: GalleryPhoto;
   onClose: () => void;
 }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    closeButtonRef.current?.focus();
+
+    const getFocusableElements = () => {
+      if (!dialogRef.current) return [];
+      return Array.from(
+        dialogRef.current.querySelectorAll<HTMLElement>(
+          "button:not([disabled]), a[href], [tabindex]:not([tabindex='-1'])"
+        )
+      );
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusable = getFocusableElements();
+      if (focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+
+      if (!active || !dialogRef.current?.contains(active)) {
+        event.preventDefault();
+        first.focus();
+        return;
+      }
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+        return;
+      }
+
+      if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
+
   return (
     <AnimatePresence>
       <motion.div
@@ -191,23 +251,28 @@ function Lightbox({
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
         onClick={onClose}
       >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-          aria-label="닫기"
-        >
-          <X className="w-6 h-6 text-white" />
-        </button>
-
         <motion.div
+          ref={dialogRef}
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="max-w-4xl w-full"
+          className="relative max-w-4xl w-full"
           onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="gallery-lightbox-title"
+          aria-describedby="gallery-lightbox-description"
         >
+          <button
+            ref={closeButtonRef}
+            type="button"
+            onClick={onClose}
+            className="absolute top-4 right-4 z-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+            aria-label="닫기"
+          >
+            <X className="w-6 h-6 text-white" />
+          </button>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={photo.url}
@@ -215,10 +280,10 @@ function Lightbox({
             className="w-full max-h-[75vh] object-contain rounded-lg"
           />
           <div className="mt-4 text-center">
-            <h3 className="text-white text-lg font-semibold">
+            <h3 id="gallery-lightbox-title" className="text-white text-lg font-semibold">
               {photo.title}
             </h3>
-            <p className="text-white/80 text-sm mt-1">{photo.description}</p>
+            <p id="gallery-lightbox-description" className="text-white/80 text-sm mt-1">{photo.description}</p>
             <p className="text-white/50 text-xs mt-2">
               사진: {photo.credit}
             </p>
@@ -238,7 +303,7 @@ function GallerySection({
   title: string;
   description: string;
   photos: GalleryPhoto[];
-  onOpenPhoto: (photo: GalleryPhoto) => void;
+  onOpenPhoto: (photo: GalleryPhoto, trigger: HTMLButtonElement) => void;
 }) {
   return (
     <section className="mb-16 md:mb-24">
@@ -275,9 +340,22 @@ export default function GalleryPage() {
   const [lightboxPhoto, setLightboxPhoto] = useState<GalleryPhoto | null>(
     null
   );
+  const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
+
+  const openLightbox = useCallback((photo: GalleryPhoto, trigger: HTMLButtonElement) => {
+    lastTriggerRef.current = trigger;
+    setLightboxPhoto(photo);
+  }, []);
+
+  const closeLightbox = useCallback(() => {
+    setLightboxPhoto(null);
+    requestAnimationFrame(() => {
+      lastTriggerRef.current?.focus();
+    });
+  }, []);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-stone-50 via-white to-amber-50/30">
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 via-white to-amber-50/30">
       {/* Hero */}
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
@@ -292,21 +370,21 @@ export default function GalleryPage() {
           title="풍천리의 아름다움"
           description="100년 넘은 잣나무 군락지와 멸종위기 산양이 살아가는 풍천리의 자연. 이 숲은 주민들의 삶의 터전이자, 지켜야 할 생태계의 보고입니다."
           photos={beautyPhotos}
-          onOpenPhoto={setLightboxPhoto}
+          onOpenPhoto={openLightbox}
         />
 
         <GallerySection
           title="투쟁의 현장"
           description="2019년부터 7년이 넘도록 매주 이어온 정기 집회, 680여 차의 기록. 60~80대 어르신들이 마을을 지키기 위해 걸어온 길입니다."
           photos={strugglePhotos}
-          onOpenPhoto={setLightboxPhoto}
+          onOpenPhoto={openLightbox}
         />
 
         <GallerySection
           title="연대의 순간"
           description="전국 140여 개 단체, 청소년에서 시민까지. 풍천리 주민들과 함께 손을 잡은 연대의 순간들입니다."
           photos={solidarityPhotos}
-          onOpenPhoto={setLightboxPhoto}
+          onOpenPhoto={openLightbox}
         />
       </div>
 
@@ -350,9 +428,9 @@ export default function GalleryPage() {
       {lightboxPhoto && (
         <Lightbox
           photo={lightboxPhoto}
-          onClose={() => setLightboxPhoto(null)}
+          onClose={closeLightbox}
         />
       )}
-    </main>
+    </div>
   );
 }

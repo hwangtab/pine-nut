@@ -1,4 +1,4 @@
-import { FileText, ExternalLink } from "lucide-react";
+import { ArrowRight, ExternalLink, FileText } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import SubHero from "@/components/SubHero";
@@ -49,7 +49,7 @@ const factSheetData = [
 
 export default function PressPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
         fallbackImageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
@@ -71,7 +71,6 @@ export default function PressPage() {
                 <Link
                   key={item.title}
                   href={item.href}
-                  target="_blank"
                   className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-[var(--color-border)] shadow-sm hover:shadow-md hover:border-[var(--color-forest)]/20 transition-all"
                 >
                   <div
@@ -86,8 +85,8 @@ export default function PressPage() {
                     {item.description}
                   </p>
                   <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-forest)] group-hover:text-[var(--color-forest-light)] transition-colors">
-                    다운로드
-                    <ExternalLink className="w-4 h-4" />
+                    열기
+                    <ArrowRight className="w-4 h-4" />
                   </span>
                 </Link>
               );
@@ -179,6 +178,6 @@ export default function PressPage() {
           </div>
         </section>
       </div>
-    </main>
+    </div>
   );
 }
