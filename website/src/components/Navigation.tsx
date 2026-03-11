@@ -50,11 +50,6 @@ export default function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
-  // Close mobile menu on route change
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [pathname]);
-
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (mobileMenuOpen) {
@@ -69,6 +64,10 @@ export default function Navigation() {
 
   const isActive = (href: string): boolean => {
     return pathname === href || pathname.startsWith(href + "/");
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
   };
 
   return (
@@ -158,6 +157,7 @@ export default function Navigation() {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={closeMobileMenu}
                 className={`px-4 py-4 rounded-xl text-xl font-medium min-h-[44px] flex items-center transition-colors ${
                   isActive(link.href)
                     ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
@@ -170,6 +170,7 @@ export default function Navigation() {
             ))}
             <Link
               href="/petition"
+              onClick={closeMobileMenu}
               className="mt-4 px-4 py-4 rounded-xl text-xl font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center justify-center transition-colors"
             >
               함께하기

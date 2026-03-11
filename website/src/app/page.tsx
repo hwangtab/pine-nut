@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useInView, animate, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-// Image import removed — using external URLs with <img> and CSS background-image
+import Image from "next/image";
 import { PenLine, Heart, Share2, ChevronDown } from "lucide-react";
 
 /* ───────────────────────── helpers ───────────────────────── */
@@ -379,11 +379,12 @@ export default function HomePage() {
           {/* Pine forest photo */}
           <FadeIn delay={0.4}>
             <div className="my-10">
-              <img
+              <Image
                 src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499236_STD.jpg"
                 alt="풍천리 잣나무 숲 실제 풍경"
+                width={1200}
+                height={800}
                 className="w-full rounded-2xl shadow-lg"
-                loading="lazy"
               />
               <p className="text-xs text-[var(--color-text-muted)] mt-1">사진: 오마이뉴스</p>
             </div>
@@ -571,11 +572,12 @@ export default function HomePage() {
           {/* Protest photo */}
           <FadeIn delay={0.3}>
             <div className="mt-14">
-              <img
+              <Image
                 src="https://www.pressian.com/_resources/10/2025/11/12/2025111117101271238_l.png"
                 alt="672차 결의대회 사진"
+                width={1200}
+                height={800}
                 className="w-full rounded-2xl shadow-lg"
-                loading="lazy"
               />
               <p className="text-xs text-[var(--color-text-muted)] mt-2">
                 사진: 풍천리양수발전소반대대책위 / 프레시안

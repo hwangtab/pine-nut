@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import SubHero from "@/components/SubHero";
 import { timelineEvents, type TimelineEvent } from "@/data/timeline";
 
@@ -55,11 +56,12 @@ function TimelineCard({ event, index }: { event: TimelineEvent; index: number })
           {/* Event image */}
           {event.imageUrl && (
             <div className="relative w-full">
-              <img
+              <Image
                 src={event.imageUrl}
                 alt={event.imageAlt || event.title}
+                width={800}
+                height={450}
                 className="w-full h-48 md:h-56 object-cover"
-                loading="lazy"
               />
               <span className="absolute bottom-2 right-2 text-[10px] text-white/80 bg-black/40 px-2 py-0.5 rounded">
                 사진 출처: 언론 보도
@@ -105,7 +107,7 @@ export default function TimelinePage() {
       : timelineEvents.filter((e) => e.year === selectedYear);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg-warm)]/60 via-[var(--color-bg)] to-stone-50">
+    <main className="min-h-screen overflow-x-hidden bg-gradient-to-b from-[var(--color-bg-warm)]/60 via-[var(--color-bg)] to-stone-50">
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
         title="7년의 기록"
@@ -122,7 +124,7 @@ export default function TimelinePage() {
       {/* Year filter bar */}
       <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-[var(--color-border)] shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-3">
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 justify-center">
+          <div className="flex w-full gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 justify-start sm:justify-center">
             {YEARS.map((year) => (
               <button
                 key={year}
@@ -137,6 +139,9 @@ export default function TimelinePage() {
               </button>
             ))}
           </div>
+          <p className="mt-2 text-xs text-[var(--color-text-muted)] sm:hidden">
+            좌우로 스크롤해 연도를 확인하세요.
+          </p>
         </div>
       </div>
 

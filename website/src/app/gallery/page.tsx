@@ -283,7 +283,7 @@ export default function GalleryPage() {
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
         title="갤러리"
         subtitle="풍천리의 현장을 담은 사진들"
-        above={<Camera className="w-10 h-10 mx-auto mb-4 text-white/70" />}
+        eyebrow="현장 기록"
       />
 
       {/* Gallery sections */}

@@ -1,5 +1,7 @@
 "use client";
 
+import UtilityHeader from "@/components/UtilityHeader";
+
 export default function PressReleasePage() {
   return (
     <>
@@ -18,6 +20,15 @@ export default function PressReleasePage() {
           }
         }
       `}</style>
+
+      <div className="no-print">
+        <UtilityHeader
+          title="보도자료"
+          subtitle="풍천리 주민, 양수발전소 백지화 촉구"
+          eyebrow="보도자료"
+          tone="slate"
+        />
+      </div>
 
       <div className="print-page max-w-3xl mx-auto px-6 py-12">
         {/* Print button */}

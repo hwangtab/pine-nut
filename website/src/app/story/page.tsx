@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import SubHero from "@/components/SubHero";
 
 export const metadata: Metadata = {
@@ -27,7 +28,7 @@ export default function StoryPage() {
             <p>
               풍천리는 <strong>강원도 홍천군 화촌면</strong>에 자리한 작은 산촌
               마을입니다. 산림청 지정{" "}
-              <strong>'100대 명품숲'</strong> 중 하나인{" "}
+              <strong>&apos;100대 명품숲&apos;</strong> 중 하나인{" "}
               <strong>1,800ha 규모의 국내 최대 잣나무 숲</strong>에 둘러싸인
               곳으로, 100년 된 잣나무들이 자라는{" "}
               <strong>가리산 자락</strong>에 위치해 있습니다.
@@ -193,11 +194,12 @@ export default function StoryPage() {
 
           {/* Evidence photo: construction damage */}
           <div className="mt-12 max-w-3xl mx-auto">
-            <img
+            <Image
               src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535385_STD.jpg"
               alt="이설 공사로 훼손되고 있는 가리산 현장"
+              width={1200}
+              height={800}
               className="w-full rounded-xl shadow-lg my-6"
-              loading="lazy"
             />
             <p className="text-xs text-[var(--color-text-muted)] mt-1">사진: 오마이뉴스</p>
           </div>
@@ -253,20 +255,22 @@ export default function StoryPage() {
           {/* Real protest photos */}
           <div className="mt-12 space-y-8">
             <div>
-              <img
+              <Image
                 src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535381_STD.jpg"
                 alt="풍천리 주민들의 대통령실 앞 기자회견 현장"
+                width={1200}
+                height={800}
                 className="w-full rounded-xl shadow-lg my-6"
-                loading="lazy"
               />
               <p className="text-xs text-[var(--color-text-muted)] mt-1">사진: 오마이뉴스</p>
             </div>
             <div>
-              <img
+              <Image
                 src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535384_STD.jpg"
                 alt="풍천리 마을에 설치된 양수발전소 반대 플래카드"
+                width={1200}
+                height={800}
                 className="w-full rounded-xl shadow-lg my-6"
-                loading="lazy"
               />
               <p className="text-xs text-[var(--color-text-muted)] mt-1">사진: 오마이뉴스</p>
             </div>

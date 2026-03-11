@@ -1,5 +1,7 @@
 "use client";
 
+import UtilityHeader from "@/components/UtilityHeader";
+
 const factSheetData = [
   { label: "위치", value: "강원도 홍천군 화촌면 풍천리" },
   { label: "사업자", value: "한국수력원자력(한수원)" },
@@ -39,6 +41,15 @@ export default function FactsheetPage() {
           }
         }
       `}</style>
+
+      <div className="no-print">
+        <UtilityHeader
+          title="핵심 팩트시트"
+          subtitle="풍천리 양수발전소 반대 투쟁 핵심 요약"
+          eyebrow="팩트시트"
+          tone="slate"
+        />
+      </div>
 
       <div className="print-page max-w-3xl mx-auto px-6 py-12">
         {/* Print button */}

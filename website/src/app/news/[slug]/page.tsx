@@ -2,14 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { newsItems } from "@/data/news";
 import ShareButtons from "@/components/ShareButtons";
+import UtilityHeader from "@/components/UtilityHeader";
 import type { Metadata } from "next";
-
-const categoryTagColors: Record<string, string> = {
-  공지: "bg-[var(--color-sky)]/10 text-[var(--color-sky)]",
-  집회: "bg-[var(--color-warm)]/10 text-[var(--color-warm)]",
-  언론보도: "bg-[var(--color-earth)]/10 text-[var(--color-earth)]",
-  연대: "bg-[var(--color-forest)]/10 text-[var(--color-forest)]",
-};
 
 // Sort by date descending for consistent prev/next ordering
 const sortedItems = [...newsItems].sort(
@@ -56,11 +50,22 @@ export default async function NewsDetailPage({
   const nextItem = currentIndex > 0 ? sortedItems[currentIndex - 1] : null;
 
   const paragraphs = item.content.split("\n\n").filter((p) => p.trim());
+  const formattedDate = new Date(item.date).toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
-      <article className="max-w-3xl mx-auto px-4 pt-32 pb-20 md:pt-40">
-        {/* Back link */}
+      <UtilityHeader
+        title={item.title}
+        subtitle={item.summary}
+        eyebrow={`${item.category} · ${formattedDate}`}
+        tone="slate"
+      />
+
+      <article className="max-w-3xl mx-auto px-4 pt-10 md:pt-14 pb-20">
         <Link
           href="/news"
           className="inline-flex items-center text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors mb-8"
@@ -68,29 +73,8 @@ export default async function NewsDetailPage({
           ← 소식 목록으로
         </Link>
 
-        {/* Category tag */}
-        <span
-          className={`inline-block text-xs font-semibold px-3 py-1 rounded-full mb-4 ${
-            categoryTagColors[item.category] || "bg-[var(--color-bg)] text-[var(--color-text)]"
-          }`}
-        >
-          {item.category}
-        </span>
-
-        {/* Title */}
-        <h1 className="text-2xl md:text-4xl font-extrabold text-[var(--color-text)] mb-4 leading-tight">
-          {item.title}
-        </h1>
-
-        {/* Date & Source */}
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--color-text-muted)] font-medium mb-10">
-          <time>
-            {new Date(item.date).toLocaleDateString("ko-KR", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </time>
+          <time>{formattedDate}</time>
           {item.sourceName && (
             <>
               <span aria-hidden="true">·</span>
@@ -110,7 +94,6 @@ export default async function NewsDetailPage({
           )}
         </div>
 
-        {/* Content */}
         <div className="prose prose-lg max-w-none mb-12">
           {paragraphs.map((paragraph, index) => (
             <p
@@ -122,18 +105,14 @@ export default async function NewsDetailPage({
           ))}
         </div>
 
-        {/* Divider */}
         <hr className="border-[var(--color-border)] mb-8" />
 
-        {/* Share buttons */}
         <div className="mb-12">
           <ShareButtons title={item.title} />
         </div>
 
-        {/* Divider */}
         <hr className="border-[var(--color-border)] mb-8" />
 
-        {/* Previous/Next navigation */}
         <nav className="grid grid-cols-1 sm:grid-cols-2 gap-4" aria-label="이전/다음 소식">
           {prevItem ? (
             <Link

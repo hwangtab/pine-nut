@@ -16,7 +16,7 @@ export default function SharePage() {
         imageUrl="https://www.pressian.com/_resources/10/2025/11/12/2025111117101271238_l.png"
         title="카드뉴스로 함께 알려주세요"
         subtitle="각 카드의 다운로드 버튼을 눌러 이미지를 저장한 뒤, 인스타그램·카카오톡·트위터 등에 공유해주세요."
-        above={<p className="text-xs tracking-[0.3em] uppercase text-white/50 mb-4 font-medium">Share &amp; Spread</p>}
+        eyebrow="Share & Spread"
       />
 
       {/* Cards */}

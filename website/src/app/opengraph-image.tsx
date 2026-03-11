@@ -21,7 +21,6 @@ export default async function Image() {
         }}
       >
         {/* Background drone photo of 풍천리 */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
           alt=""

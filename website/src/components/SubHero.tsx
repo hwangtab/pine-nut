@@ -1,45 +1,90 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useEffect, useState, type ReactNode } from "react";
+import Image from "next/image";
 
 interface SubHeroProps {
   /** Background image URL */
   imageUrl: string;
+  fallbackImageUrl?: string;
   /** Main heading text */
   title: string;
   /** Optional subtitle text */
   subtitle?: string;
-  /** Optional content rendered above the title (e.g. icon, badge) */
-  above?: ReactNode;
-  /** Optional content rendered below the subtitle (e.g. counter, CTA) */
-  below?: ReactNode;
+  eyebrow?: string;
+  metric?: ReactNode;
+  variant?: "standard" | "emphasis";
 }
 
 export default function SubHero({
   imageUrl,
+  fallbackImageUrl,
   title,
   subtitle,
-  above,
-  below,
+  eyebrow,
+  metric,
+  variant = "standard",
 }: SubHeroProps) {
+  const defaultFallbackImageUrl = "/images/forest-aerial.jpg";
+  const [currentImage, setCurrentImage] = useState(imageUrl);
+
+  useEffect(() => {
+    setCurrentImage(imageUrl);
+  }, [imageUrl]);
+
+  const handleImageError = () => {
+    const nextImage = fallbackImageUrl || defaultFallbackImageUrl;
+
+    if (currentImage !== nextImage) {
+      setCurrentImage(nextImage);
+      return;
+    }
+    setCurrentImage("");
+  };
+
   return (
-    <section className="relative text-white pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 text-center overflow-hidden">
-      <img
-        src={imageUrl}
-        alt=""
-        role="presentation"
-        className="absolute inset-0 w-full h-full object-cover"
+    <section
+      className={`relative overflow-hidden px-4 sm:px-6 text-center text-white ${
+        variant === "emphasis"
+          ? "pt-32 md:pt-40 pb-24 md:pb-32"
+          : "pt-32 md:pt-40 pb-20 md:pb-28"
+      }`}
+    >
+      {currentImage && (
+        <Image
+          src={currentImage}
+          alt=""
+          role="presentation"
+          fill
+          sizes="100vw"
+          style={{ objectFit: "cover" }}
+          onError={handleImageError}
+        />
+      )}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 16% 20%, rgba(255, 173, 76, 0.2), transparent 48%), radial-gradient(circle at 82% 16%, rgba(74, 122, 46, 0.22), transparent 52%), linear-gradient(180deg, rgba(12, 20, 18, 0.8), rgba(9, 16, 15, 0.72) 42%, rgba(9, 16, 15, 0.82) 100%)",
+        }}
+        aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-black/55" />
-      <div className="relative max-w-3xl mx-auto">
-        {above}
-        <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
+      <div className="absolute -top-28 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-white/8 blur-3xl" aria-hidden="true" />
+      <div className="relative mx-auto max-w-3xl">
+        {eyebrow && (
+          <p className="mb-5 text-xs font-semibold uppercase tracking-[0.26em] text-white/72 md:text-sm">
+            {eyebrow}
+          </p>
+        )}
+        <h1 className="mb-4 text-3xl font-black tracking-tight text-white md:text-5xl">
           {title}
         </h1>
         {subtitle && (
-          <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto leading-relaxed">
+          <p className="mx-auto max-w-xl text-base leading-relaxed text-white/84 md:text-lg">
             {subtitle}
           </p>
         )}
-        {below}
+        {metric && <div className="mt-8 md:mt-10">{metric}</div>}
       </div>
     </section>
   );

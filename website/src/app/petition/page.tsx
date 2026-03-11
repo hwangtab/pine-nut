@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, FormEvent } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
-import { Send, Check, Copy, X, Loader2 } from "lucide-react";
+import { Send, Check, Copy, Loader2 } from "lucide-react";
 import SubHero from "@/components/SubHero";
 
 /* ──────────────────────── Types ──────────────────────── */
@@ -45,27 +45,32 @@ function AnimatedCounter({ target }: { target: number }) {
 /* ──────────────────────── Confetti ──────────────────────── */
 function Confetti() {
   const colors = ["#C75000", "#FF6B1A", "#2D5016", "#4A7A2E", "#D4A843", "#1B4965"];
+  const confettiPieces = Array.from({ length: 40 }, (_, i) => ({
+    id: i,
+    left: (i * 17.3) % 100,
+    delay: (i % 10) * 0.05,
+    size: 6 + (i % 8),
+    rotation: (i * 37) % 360,
+    borderRadius: i % 2 === 0 ? "50%" : "2px",
+    color: colors[i % colors.length],
+  }));
+
   return (
     <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden" aria-hidden="true">
-      {Array.from({ length: 40 }).map((_, i) => {
-        const left = Math.random() * 100;
-        const delay = Math.random() * 0.5;
-        const size = 6 + Math.random() * 8;
-        const color = colors[i % colors.length];
-        const rotation = Math.random() * 360;
+      {confettiPieces.map((piece) => {
         return (
           <span
-            key={i}
+            key={piece.id}
             className="absolute animate-confetti"
             style={{
-              left: `${left}%`,
+              left: `${piece.left}%`,
               top: "-10px",
-              width: size,
-              height: size,
-              backgroundColor: color,
-              borderRadius: Math.random() > 0.5 ? "50%" : "2px",
-              animationDelay: `${delay}s`,
-              transform: `rotate(${rotation}deg)`,
+              width: piece.size,
+              height: piece.size,
+              backgroundColor: piece.color,
+              borderRadius: piece.borderRadius,
+              animationDelay: `${piece.delay}s`,
+              transform: `rotate(${piece.rotation}deg)`,
             }}
           />
         );
@@ -317,8 +322,9 @@ export default function PetitionPage() {
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
         title="서명으로 함께해주세요"
         subtitle="당신의 이름 하나가 풍천리 주민들에게 큰 힘이 됩니다"
-        below={
-          <div className="flex flex-col items-center gap-1 mt-8">
+        variant="emphasis"
+        metric={
+          <div className="flex flex-col items-center gap-1">
             <AnimatedCounter target={signatureCount} />
             <span className="text-white/80 text-lg mt-1">
               명이 함께하고 있습니다

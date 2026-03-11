@@ -23,7 +23,7 @@ export default function EnglishPage() {
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
         title="Save Pungcheon-ri"
         subtitle="A 7-Year Fight to Protect a Village, a Forest, and a Way of Life"
-        above={<p className="text-sm uppercase tracking-widest text-white/60 mb-4 font-medium">English Summary</p>}
+        eyebrow="English Summary"
       />
 
       {/* ── The Story ── */}
@@ -38,8 +38,8 @@ export default function EnglishPage() {
               <strong>Hongcheon County, Gangwon Province, South Korea</strong>,
               nestled in a{" "}
               <strong>1,800-hectare pine nut forest</strong> — the largest
-              in South Korea and one of the Korea Forest Service's
-              designated "Top 100 Forests." Century-old Korean pine
+              in South Korea and one of the Korea Forest Service&apos;s
+              designated &quot;Top 100 Forests.&quot; Century-old Korean pine
               nut trees grow along the slopes of Mt. Gari, and the forest is
               home to endangered species including the{" "}
               <strong>goral (natural monument), black woodpecker, and otter</strong>.
@@ -112,7 +112,7 @@ export default function EnglishPage() {
       <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-12 text-center">
-            What's at Stake
+            What&apos;s at Stake
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             <div className="bg-white rounded-2xl p-8 border border-[var(--color-border)] shadow-sm">
@@ -136,7 +136,7 @@ export default function EnglishPage() {
               </h3>
               <p className="text-[var(--color-text-muted)] leading-relaxed text-[15px]">
                 ~110,000 pine nut trees slated for felling across 153 hectares.
-                A 1,800-hectare "Top 100 Forest" — home to
+                A 1,800-hectare &quot;Top 100 Forest&quot; — home to
                 the goral (natural monument), black woodpecker, and otter
                 — faces permanent destruction.
               </p>

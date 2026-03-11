@@ -51,7 +51,8 @@ export default function PressPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
       <SubHero
-        imageUrl="https://image.newsis.com/2024/06/21/NISI20240621_0020630006_web.jpg"
+        imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
+        fallbackImageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
         title="자료실"
         subtitle="언론인·활동가를 위한 풍천리 관련 자료"
       />

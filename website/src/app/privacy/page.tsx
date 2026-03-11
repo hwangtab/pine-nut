@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import UtilityHeader from "@/components/UtilityHeader";
 
 export const metadata: Metadata = {
   title: "개인정보처리방침 — 풍천리를 지켜주세요",
@@ -10,17 +11,12 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <main className="min-h-screen bg-[var(--color-bg)]">
-      {/* Header */}
-      <section className="bg-[var(--color-bg-warm)] py-16 md:py-24 px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-3xl md:text-4xl font-black text-[var(--color-text)] mb-3">
-            개인정보처리방침
-          </h1>
-          <p className="text-[var(--color-text-muted)]">
-            최종 수정일: 2026년 3월 10일
-          </p>
-        </div>
-      </section>
+      <UtilityHeader
+        title="개인정보처리방침"
+        subtitle="최종 수정일: 2026년 3월 10일"
+        eyebrow="법적 안내"
+        tone="warm"
+      />
 
       <div className="max-w-3xl mx-auto px-4 py-12 md:py-16">
         <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 md:p-10 space-y-10">
