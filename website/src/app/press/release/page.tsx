@@ -184,9 +184,9 @@ export default function PressReleasePage() {
         <section className="mb-8">
           <blockquote className="border-l-4 border-[var(--color-forest)] pl-5 py-3 bg-[var(--color-bg)] rounded-r-xl">
             <p className="text-base text-[var(--color-text)] leading-relaxed italic">
-              \u201C우리는 이 숲과 함께 태어나 이 숲과 함께 살아왔습니다. 잣나무 11만 그루가
+              &ldquo;우리는 이 숲과 함께 태어나 이 숲과 함께 살아왔습니다. 잣나무 11만 그루가
               베어지는 것은 우리의 삶이 뿌리째 뽑히는 것과 같습니다. 7년 넘게 680번이
-              넘는 집회를 해왔고, 끝까지 싸울 것입니다.\u201D
+              넘는 집회를 해왔고, 끝까지 싸울 것입니다.&rdquo;
             </p>
             <cite className="text-sm text-[var(--color-text-muted)] mt-2 block not-italic">
               -- 풍천리 주민회

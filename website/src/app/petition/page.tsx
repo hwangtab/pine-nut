@@ -148,7 +148,7 @@ function RecentSignatures({ signatures, loading }: { signatures: Signature[]; lo
                 </div>
                 {sig.message && (
                   <p className="mt-1 text-[var(--color-text-muted)] text-[15px]">
-                    \u201C{sig.message}\u201D
+                    &ldquo;{sig.message}&rdquo;
                   </p>
                 )}
               </motion.div>
@@ -686,7 +686,7 @@ export default function PetitionPage() {
                   주민들에게 큰 위안이 됩니다
                 </h3>
                 <p className="text-[var(--color-text-muted)] text-[15px]">
-                  \u201C우리만의 싸움이 아니구나\u201D라는 사실이
+                  &ldquo;우리만의 싸움이 아니구나&rdquo;라는 사실이
                   풍천리 어르신들에게 가장 큰 힘이 됩니다.
                 </p>
               </div>
