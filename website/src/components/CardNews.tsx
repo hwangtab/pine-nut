@@ -185,11 +185,11 @@ function Card3() {
           style={{ background: "rgba(255,255,255,0.08)" }}
         >
           <div className="text-3xl font-black text-[#d4a853]">1,800만원</div>
-          <div className="text-[11px] text-white/40 mt-1">벌금 총 구형액</div>
+          <div className="text-[11px] text-white/40 mt-1">벌금 구형 총액</div>
         </div>
 
         <p className="text-[13px] text-white/45 italic text-center max-w-[260px] leading-relaxed">
-          {"\u201C"}70 평생 남에게 해를 끼친 적 없는 사람이,
+          {"\u201C"}칠십 평생 남에게 해를 끼친 적 없는 사람이,
           <br />
           내 땅을 지키겠다는 이유로.{"\u201D"}
         </p>
@@ -341,7 +341,7 @@ interface CardItem {
 
 const cardList: CardItem[] = [
   { id: 1, title: "7년, 680번의 외침", Component: Card1 },
-  { id: 2, title: "11만 잣나무가 사라집니다", Component: Card2 },
+  { id: 2, title: "11만 그루 잣나무가 사라집니다", Component: Card2 },
   { id: 3, title: "70대 어르신이 전과자가 되었습니다", Component: Card3 },
   { id: 4, title: "당신도 함께해주세요", Component: Card4 },
   { id: 5, title: "풍천리 타임라인", Component: Card5 },
