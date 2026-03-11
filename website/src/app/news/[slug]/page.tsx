@@ -1,14 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { newsItems } from "@/data/news";
+import { getNewsBySlug, getPublishedNews } from "@/lib/data/news";
 import ShareButtons from "@/components/ShareButtons";
 import UtilityHeader from "@/components/UtilityHeader";
 import type { Metadata } from "next";
-
-// Sort by date descending for consistent prev/next ordering
-const sortedItems = [...newsItems].sort(
-  (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-);
 
 type Params = Promise<{ slug: string }>;
 
@@ -18,7 +13,7 @@ export async function generateMetadata({
   params: Params;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const item = newsItems.find((n) => n.slug === slug);
+  const item = await getNewsBySlug(slug);
   if (!item) return { title: "소식을 찾을 수 없습니다" };
 
   return {
@@ -39,15 +34,16 @@ export default async function NewsDetailPage({
   params: Params;
 }) {
   const { slug } = await params;
-  const item = newsItems.find((n) => n.slug === slug);
+  const item = await getNewsBySlug(slug);
 
   if (!item) {
     notFound();
   }
 
-  const currentIndex = sortedItems.findIndex((n) => n.slug === slug);
-  const prevItem = currentIndex < sortedItems.length - 1 ? sortedItems[currentIndex + 1] : null;
-  const nextItem = currentIndex > 0 ? sortedItems[currentIndex - 1] : null;
+  const allNews = await getPublishedNews();
+  const currentIndex = allNews.findIndex((n) => n.slug === slug);
+  const prevItem = currentIndex < allNews.length - 1 ? allNews[currentIndex + 1] : null;
+  const nextItem = currentIndex > 0 ? allNews[currentIndex - 1] : null;
 
   const paragraphs = item.content.split("\n\n").filter((p) => p.trim());
   const formattedDate = new Date(item.date).toLocaleDateString("ko-KR", {
@@ -57,7 +53,7 @@ export default async function NewsDetailPage({
   });
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
       <UtilityHeader
         title={item.title}
         subtitle={item.summary}
@@ -142,6 +138,6 @@ export default async function NewsDetailPage({
           )}
         </nav>
       </article>
-    </main>
+    </div>
   );
 }

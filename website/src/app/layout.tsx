@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
+import PublicShell from "@/components/PublicShell";
 import Analytics from "@/components/Analytics";
 
 export const metadata: Metadata = {
@@ -37,9 +36,7 @@ export default function RootLayout({
     <html lang="ko">
       <body className="antialiased">
         <Analytics />
-        <Navigation />
-        <main>{children}</main>
-        <Footer />
+        <PublicShell>{children}</PublicShell>
       </body>
     </html>
   );
