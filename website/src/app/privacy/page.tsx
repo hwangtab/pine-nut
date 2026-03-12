@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import UtilityHeader from "@/components/UtilityHeader";
-import { EditableText, EditableRichText } from "@/components/editable";
+import { EditableLink, EditableText, EditableRichText } from "@/components/editable";
 import { PrivacyPurposeList, PrivacyRightsList } from "./PrivacySectionsClient";
 
 export const metadata: Metadata = {
@@ -186,14 +186,16 @@ export default function PrivacyPage() {
                     section="section6"
                   />
                 </strong>{" "}
-                <a
-                  href="https://campaigns.do/campaigns/1328"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <EditableLink
+                  contentKey="privacy.section6.campaignHref"
+                  defaultHref="https://campaigns.do/campaigns/1328"
+                  page="privacy"
+                  section="section6"
+                  inline
                   className="text-[var(--color-sky)] underline underline-offset-2 hover:text-[var(--color-sky)]/80 transition-colors"
                 >
                   campaigns.do/campaigns/1328
-                </a>
+                </EditableLink>
               </p>
               <p className="text-[var(--color-text)] text-[15px]">
                 <strong>
@@ -205,8 +207,12 @@ export default function PrivacyPage() {
                     section="section6"
                   />
                 </strong>{" "}
-                <a
-                  href="tel:010-8918-8933"
+                <EditableLink
+                  contentKey="privacy.section6.phoneHref"
+                  defaultHref="tel:010-8918-8933"
+                  page="privacy"
+                  section="section6"
+                  inline
                   className="text-[var(--color-sky)] underline underline-offset-2 hover:text-[var(--color-sky)]/80 transition-colors"
                 >
                   <EditableText
@@ -216,7 +222,7 @@ export default function PrivacyPage() {
                     page="privacy"
                     section="section6"
                   />
-                </a>
+                </EditableLink>
               </p>
             </div>
           </section>

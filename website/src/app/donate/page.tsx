@@ -11,7 +11,7 @@ import {
   Settings,
 } from "lucide-react";
 import SubHero from "@/components/SubHero";
-import { EditableList, EditableText } from "@/components/editable";
+import { EditableLink, EditableList, EditableText } from "@/components/editable";
 
 const BANK_ACCOUNT = "356-1559-4666-63";
 const BANK_ACCOUNT_FULL = "농협 356-1559-4666-63 이창후";
@@ -164,15 +164,16 @@ export default function DonatePage() {
               section="campaign"
               className="text-[15px] text-[var(--color-text)] font-medium mb-4"
             />
-            <a
-              href="https://campaigns.do/campaigns/1328"
-              target="_blank"
-              rel="noopener noreferrer"
+            <EditableLink
+              contentKey="donate.campaign.href"
+              defaultHref="https://campaigns.do/campaigns/1328"
+              page="donate"
+              section="campaign"
               className="inline-flex items-center justify-center gap-2 min-h-[48px] px-8 rounded-xl bg-[var(--color-text)] hover:bg-[var(--color-text)]/90 text-white font-bold text-base transition-colors"
             >
               <ExternalLink className="w-5 h-5" />
               <EditableText contentKey="donate.campaign.link" defaultValue="빠띠 캠페인 페이지 방문" as="span" page="donate" section="campaign" />
-            </a>
+            </EditableLink>
           </div>
         </section>
 
@@ -316,22 +317,26 @@ export default function DonatePage() {
               className="text-[15px] font-semibold text-[var(--color-text)] mb-3"
             />
             <div className="space-y-3">
-              <a
-                href="tel:010-8918-8933"
+              <EditableLink
+                contentKey="donate.contact.phoneHref"
+                defaultHref="tel:010-8918-8933"
+                page="donate"
+                section="contact"
                 className="flex items-center gap-3 text-[15px] text-[var(--color-text)] hover:text-[var(--color-warm)] transition-colors min-h-[44px]"
               >
                 <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.79 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                 010-8918-8933 (이창후 총무)
-              </a>
-              <a
-                href="https://campaigns.do/campaigns/1328"
-                target="_blank"
-                rel="noopener noreferrer"
+              </EditableLink>
+              <EditableLink
+                contentKey="donate.contact.campaignHref"
+                defaultHref="https://campaigns.do/campaigns/1328"
+                page="donate"
+                section="contact"
                 className="flex items-center gap-3 text-[15px] text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors min-h-[44px]"
               >
                 <ExternalLink className="w-4 h-4 shrink-0" />
                 빠띠 캠페인 페이지를 통해 문의해주세요
-              </a>
+              </EditableLink>
             </div>
           </div>
         </section>

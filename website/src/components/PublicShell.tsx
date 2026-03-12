@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import CustomSectionsHost from "@/components/CustomSectionsHost";
 
 export default function PublicShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -15,7 +16,10 @@ export default function PublicShell({ children }: { children: React.ReactNode })
   return (
     <>
       <Navigation />
-      <main>{children}</main>
+      <main>
+        {children}
+        <CustomSectionsHost />
+      </main>
       <Footer />
     </>
   );

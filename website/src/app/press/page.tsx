@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { ArrowRight, ExternalLink, FileText } from "lucide-react";
 import Link from "next/link";
 import SubHero from "@/components/SubHero";
-import { EditableText, EditableRichText, EditableSection } from "@/components/editable";
+import {
+  EditableLink,
+  EditableText,
+  EditableRichText,
+  EditableSection,
+} from "@/components/editable";
 import { SITE_URL } from "@/lib/site-config";
 import { PressFactsSection } from "./PressSectionsClient";
 
@@ -126,10 +131,11 @@ export default function PressPage() {
                       section="contact"
                       className="text-sm font-semibold text-[var(--color-text-muted)] mb-0.5"
                     />
-                    <a
-                      href="https://campaigns.do/campaigns/1328"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <EditableLink
+                      contentKey="press.contact.campaignHref"
+                      defaultHref="https://campaigns.do/campaigns/1328"
+                      page="press"
+                      section="contact"
                       className="text-base font-medium text-[var(--color-text)] hover:text-[var(--color-forest)] transition-colors"
                     >
                       <EditableText
@@ -139,7 +145,7 @@ export default function PressPage() {
                         page="press"
                         section="contact"
                       />
-                    </a>
+                    </EditableLink>
                   </div>
                 </div>
               </div>

@@ -4,23 +4,12 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { EditableText } from "@/components/editable";
-
-interface NavLink {
-  label: string;
-  href: string;
-}
-
-const navLinks: NavLink[] = [
-  { label: "이야기", href: "/story" },
-  { label: "타임라인", href: "/timeline" },
-  { label: "소식", href: "/news" },
-  { label: "갤러리", href: "/gallery" },
-  { label: "자료실", href: "/press" },
-  { label: "카드뉴스", href: "/share" },
-];
+import { EditableLink, EditableText } from "@/components/editable";
+import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
+import { defaultNavLinks, parseBuilderLinks } from "@/lib/custom-sections";
 
 export default function Navigation() {
+  const { getContent } = useAdminEdit();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [visible, setVisible] = useState(true);
@@ -28,6 +17,10 @@ export default function Navigation() {
   const [scrollY, setScrollY] = useState(0);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const navLinks = parseBuilderLinks(
+    getContent("builder.global.navLinks"),
+    defaultNavLinks(),
+  );
 
   const heroPages = ['/', '/story', '/timeline', '/news', '/gallery', '/press', '/share', '/petition', '/donate', '/en'];
   const isHeroPage = heroPages.includes(pathname);
@@ -164,7 +157,7 @@ export default function Navigation() {
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
-                key={link.href}
+                key={link.id}
                 href={link.href}
                 className={`px-4 py-2 rounded-lg text-[15px] font-medium min-h-[44px] flex items-center transition-colors duration-300 ${
                   isTransparent
@@ -177,15 +170,19 @@ export default function Navigation() {
                 }`}
                 aria-current={isActive(link.href) ? "page" : undefined}
               >
-                <EditableText contentKey={`nav.link.${link.href.replace('/', '')}`} defaultValue={link.label} as="span" page="nav" section="links" />
+                {link.label}
               </Link>
             ))}
-            <Link
-              href="/petition"
-              className="ml-3 px-5 py-2 rounded-full text-[15px] font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center transition-colors"
+            <EditableLink
+              contentKey="nav.cta.href"
+              defaultHref="/petition"
+              page="nav"
+              section="header"
+              className="px-5 py-2 rounded-full text-[15px] font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center transition-colors"
+              containerClassName="ml-3"
             >
               <EditableText contentKey="nav.cta" defaultValue="함께하기" as="span" page="nav" section="header" />
-            </Link>
+            </EditableLink>
           </div>
 
           {/* Mobile hamburger */}
@@ -238,7 +235,7 @@ export default function Navigation() {
           <nav className="flex flex-col px-6 py-4 gap-2" aria-label="모바일 내비게이션">
             {navLinks.map((link) => (
               <Link
-                key={link.href}
+                key={link.id}
                 href={link.href}
                 onClick={() => closeMobileMenu()}
                 className={`px-4 py-4 rounded-xl text-xl font-medium min-h-[44px] flex items-center transition-colors ${
@@ -248,16 +245,19 @@ export default function Navigation() {
                 }`}
                 aria-current={isActive(link.href) ? "page" : undefined}
               >
-                <EditableText contentKey={`nav.link.${link.href.replace('/', '')}`} defaultValue={link.label} as="span" page="nav" section="links" />
+                {link.label}
               </Link>
             ))}
-            <Link
-              href="/petition"
-              onClick={() => closeMobileMenu()}
-              className="mt-4 px-4 py-4 rounded-full text-xl font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center justify-center transition-colors"
+            <EditableLink
+              contentKey="nav.cta.href"
+              defaultHref="/petition"
+              page="nav"
+              section="header"
+              className="px-4 py-4 rounded-full text-xl font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center justify-center transition-colors"
+              containerClassName="mt-4"
             >
               <EditableText contentKey="nav.cta" defaultValue="함께하기" as="span" page="nav" section="header" />
-            </Link>
+            </EditableLink>
           </nav>
         </div>
       )}

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
-import { Newspaper, Clock, Users } from "lucide-react";
+import { Newspaper, Clock, Users, Blocks, Images, History } from "lucide-react";
 
 export default async function AdminDashboard() {
   const supabase = await createSupabaseServerClient();
@@ -24,6 +24,30 @@ export default async function AdminDashboard() {
     .select("*", { count: "exact", head: true });
 
   const cards = [
+    {
+      href: "/admin/site-builder",
+      label: "사이트 빌더",
+      value: "링크/섹션",
+      suffix: "",
+      icon: Blocks,
+      color: "bg-[var(--color-sky)]/10 text-[var(--color-sky)]",
+    },
+    {
+      href: "/admin/media",
+      label: "미디어 라이브러리",
+      value: "이미지",
+      suffix: "",
+      icon: Images,
+      color: "bg-[var(--color-warm)]/10 text-[var(--color-warm)]",
+    },
+    {
+      href: "/admin/history",
+      label: "버전 히스토리",
+      value: "로그",
+      suffix: "",
+      icon: History,
+      color: "bg-[var(--color-forest)]/10 text-[var(--color-forest)]",
+    },
     {
       href: "/admin/signatures",
       label: "총 서명 수",
@@ -55,7 +79,7 @@ export default async function AdminDashboard() {
       <h1 className="text-2xl font-bold text-[var(--color-admin-text)] mb-2">관리자 대시보드</h1>
       <p className="text-[var(--color-admin-muted)] mb-8">풍천리 웹사이트를 관리합니다</p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-10">
         {cards.map((card) => (
           <Link
             key={card.href}
@@ -76,6 +100,18 @@ export default async function AdminDashboard() {
 
       <h2 className="text-lg font-bold text-[var(--color-admin-text)] mb-4">빠른 작업</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Link
+          href="/admin/site-builder"
+          className="flex items-center gap-4 bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-5 hover:shadow-md transition-shadow"
+        >
+          <div className="w-12 h-12 rounded-xl bg-[var(--color-sky)]/10 flex items-center justify-center text-[var(--color-sky)]">
+            <Blocks size={24} />
+          </div>
+          <div>
+            <div className="font-bold text-[var(--color-admin-text)]">사이트 빌더</div>
+            <div className="text-sm text-[var(--color-admin-muted)]">링크와 커스텀 섹션을 관리합니다</div>
+          </div>
+        </Link>
         <Link
           href="/admin/news/new"
           className="flex items-center gap-4 bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-5 hover:shadow-md transition-shadow"
@@ -98,6 +134,18 @@ export default async function AdminDashboard() {
           <div>
             <div className="font-bold text-[var(--color-admin-text)]">타임라인 추가</div>
             <div className="text-sm text-[var(--color-admin-muted)]">새로운 이벤트를 기록합니다</div>
+          </div>
+        </Link>
+        <Link
+          href="/admin/media"
+          className="flex items-center gap-4 bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-5 hover:shadow-md transition-shadow"
+        >
+          <div className="w-12 h-12 rounded-xl bg-[var(--color-warm)]/10 flex items-center justify-center text-[var(--color-warm)]">
+            <Images size={24} />
+          </div>
+          <div>
+            <div className="font-bold text-[var(--color-admin-text)]">미디어 라이브러리</div>
+            <div className="text-sm text-[var(--color-admin-muted)]">업로드한 이미지를 재사용합니다</div>
           </div>
         </Link>
       </div>

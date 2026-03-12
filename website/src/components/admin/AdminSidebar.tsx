@@ -3,11 +3,23 @@
 import { useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Newspaper, Clock, Users, LogOut } from "lucide-react";
+import {
+  Home,
+  Newspaper,
+  Clock,
+  Users,
+  LogOut,
+  Blocks,
+  Images,
+  History,
+} from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 const navItems = [
   { href: "/admin", label: "홈", icon: Home },
+  { href: "/admin/site-builder", label: "사이트 빌더", icon: Blocks },
+  { href: "/admin/media", label: "미디어", icon: Images },
+  { href: "/admin/history", label: "히스토리", icon: History },
   { href: "/admin/news", label: "소식 관리", icon: Newspaper },
   { href: "/admin/timeline", label: "타임라인 관리", icon: Clock },
   { href: "/admin/signatures", label: "서명 현황", icon: Users },

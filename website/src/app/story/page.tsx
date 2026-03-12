@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import SubHero from "@/components/SubHero";
 import {
+  EditableLink,
   EditableText,
   EditableRichText,
   EditableSection,
@@ -177,8 +177,11 @@ export default function StoryPage() {
               className="text-white/80 text-lg md:text-xl mb-10 leading-relaxed"
             />
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                href="/petition"
+              <EditableLink
+                contentKey="story.cta.signButton.href"
+                defaultHref="/petition"
+                page="story"
+                section="cta"
                 className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-xl bg-white text-[var(--color-forest)] font-bold text-lg hover:bg-white/90 transition-colors min-h-[52px]"
               >
                 <EditableText
@@ -188,9 +191,12 @@ export default function StoryPage() {
                   page="story"
                   section="cta"
                 />
-              </Link>
-              <Link
-                href="/donate"
+              </EditableLink>
+              <EditableLink
+                contentKey="story.cta.donateButton.href"
+                defaultHref="/donate"
+                page="story"
+                section="cta"
                 className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-xl bg-white/15 border-2 border-white/30 text-white font-bold text-lg hover:bg-white/25 transition-colors min-h-[52px]"
               >
                 <EditableText
@@ -200,7 +206,7 @@ export default function StoryPage() {
                   page="story"
                   section="cta"
                 />
-              </Link>
+              </EditableLink>
             </div>
           </div>
         </section>

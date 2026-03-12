@@ -2,18 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { EditableText, EditableRichText, EditableList } from "@/components/editable";
-
-const quickLinks = [
-  { label: "이야기", href: "/story" },
-  { label: "타임라인", href: "/timeline" },
-  { label: "소식", href: "/news" },
-  { label: "갤러리", href: "/gallery" },
-  { label: "자료실", href: "/press" },
-  { label: "카드뉴스", href: "/share" },
-  { label: "서명하기", href: "/petition" },
-  { label: "후원하기", href: "/donate" },
-];
+import {
+  EditableText,
+  EditableRichText,
+  EditableList,
+  EditableLink,
+} from "@/components/editable";
+import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
+import { defaultFooterLinks, parseBuilderLinks } from "@/lib/custom-sections";
 
 const privacyItems = [
   { label: "수집 항목", value: "이름, 이메일" },
@@ -22,7 +18,12 @@ const privacyItems = [
 ];
 
 export default function Footer() {
+  const { getContent } = useAdminEdit();
   const [showPrivacy, setShowPrivacy] = useState(false);
+  const quickLinks = parseBuilderLinks(
+    getContent("builder.global.footerLinks"),
+    defaultFooterLinks(),
+  );
 
   return (
     <footer className="bg-[var(--color-forest)] text-white" role="contentinfo">
@@ -58,7 +59,7 @@ export default function Footer() {
             <h3 className="text-base font-bold mb-4">바로가기</h3>
             <ul className="space-y-2">
               {quickLinks.map((link) => (
-                <li key={link.href}>
+                <li key={link.id}>
                   <Link
                     href={link.href}
                     className="inline-flex items-center min-h-[44px] text-white/70 hover:text-white text-sm transition-colors"
@@ -122,10 +123,11 @@ export default function Footer() {
                   section="contact"
                   className="block text-white/50 text-xs mb-0.5"
                 />
-                <a
-                  href="https://campaigns.do/campaigns/1328"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <EditableLink
+                  contentKey="footer.contact.campaignHref"
+                  defaultHref="https://campaigns.do/campaigns/1328"
+                  page="footer"
+                  section="contact"
                   className="inline-flex items-center min-h-[44px] hover:text-white transition-colors"
                 >
                   <EditableText
@@ -135,7 +137,7 @@ export default function Footer() {
                     page="footer"
                     section="contact"
                   />
-                </a>
+                </EditableLink>
               </li>
             </ul>
           </div>
@@ -152,14 +154,15 @@ export default function Footer() {
             >
               개인정보처리방침
             </button>
-            <a
-              href="https://campaigns.do/campaigns/1328"
-              target="_blank"
-              rel="noopener noreferrer"
+            <EditableLink
+              contentKey="footer.bottom.campaignHref"
+              defaultHref="https://campaigns.do/campaigns/1328"
+              page="footer"
+              section="bottom"
               className="min-h-[44px] inline-flex items-center hover:text-white transition-colors"
             >
               빠띠 캠페인
-            </a>
+            </EditableLink>
             <Link href="/en" className="min-h-[44px] inline-flex items-center hover:text-white transition-colors">
               English
             </Link>
