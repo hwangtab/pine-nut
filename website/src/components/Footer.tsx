@@ -10,6 +10,31 @@ import {
 } from "@/components/editable";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 import { defaultFooterLinks, parseBuilderLinks } from "@/lib/custom-sections";
+import {
+  isExternalEditableHref,
+  isInternalEditableHref,
+} from "@/lib/validation/editable-link";
+
+function renderFooterLink(href: string, className: string, label: string) {
+  if (isInternalEditableHref(href)) {
+    return (
+      <Link href={href} className={className}>
+        {label}
+      </Link>
+    );
+  }
+
+  return (
+    <a
+      href={href}
+      className={className}
+      target={isExternalEditableHref(href) ? "_blank" : undefined}
+      rel={isExternalEditableHref(href) ? "noopener noreferrer" : undefined}
+    >
+      {label}
+    </a>
+  );
+}
 
 const privacyItems = [
   { label: "수집 항목", value: "이름, 이메일" },
@@ -31,7 +56,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
           {/* Branding & info */}
           <div>
-            <Link href="/" className="text-xl font-bold block mb-3">
+            <EditableLink
+              contentKey="footer.brand.href"
+              defaultHref="/"
+              page="footer"
+              section="brand"
+              className="mb-3 block text-xl font-bold"
+            >
               <EditableText
                 contentKey="footer.brand.name"
                 defaultValue="풍천리를 지켜주세요"
@@ -39,7 +70,7 @@ export default function Footer() {
                 page="footer"
                 section="brand"
               />
-            </Link>
+            </EditableLink>
             <EditableRichText
               contentKey="footer.brand.description"
               defaultValue="풍천리양수발전소건설반대위원회는 마을과 자연을 지키기 위해 양수발전소 건설에 반대하는 주민들의 모임입니다."
@@ -60,12 +91,11 @@ export default function Footer() {
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.id}>
-                  <Link
-                    href={link.href}
-                    className="inline-flex items-center min-h-[44px] text-white/70 hover:text-white text-sm transition-colors"
-                  >
-                    {link.label}
-                  </Link>
+                  {renderFooterLink(
+                    link.href,
+                    "inline-flex items-center min-h-[44px] text-white/70 hover:text-white text-sm transition-colors",
+                    link.label,
+                  )}
                 </li>
               ))}
             </ul>
@@ -84,9 +114,12 @@ export default function Footer() {
                   section="contact"
                   className="block text-white/50 text-xs mb-0.5"
                 />
-                <a
-                  href="tel:010-8918-8933"
-                  className="inline-flex items-center min-h-[44px] hover:text-white transition-colors"
+                <EditableLink
+                  contentKey="footer.contact.phoneHref"
+                  defaultHref="tel:010-8918-8933"
+                  page="footer"
+                  section="contact"
+                  className="inline-flex min-h-[44px] items-center transition-colors hover:text-white"
                 >
                   <EditableText
                     contentKey="footer.contact.phone"
@@ -95,7 +128,7 @@ export default function Footer() {
                     page="footer"
                     section="contact"
                   />
-                </a>
+                </EditableLink>
               </li>
               <li>
                 <EditableText
@@ -163,9 +196,21 @@ export default function Footer() {
             >
               빠띠 캠페인
             </EditableLink>
-            <Link href="/en" className="min-h-[44px] inline-flex items-center hover:text-white transition-colors">
-              English
-            </Link>
+            <EditableLink
+              contentKey="footer.bottom.englishHref"
+              defaultHref="/en"
+              page="footer"
+              section="bottom"
+              className="min-h-[44px] inline-flex items-center hover:text-white transition-colors"
+            >
+              <EditableText
+                contentKey="footer.bottom.englishLabel"
+                defaultValue="English"
+                as="span"
+                page="footer"
+                section="bottom"
+              />
+            </EditableLink>
           </div>
         </div>
 

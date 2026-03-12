@@ -27,6 +27,7 @@ const CONTENT_TYPES = new Set([
 
 const PUBLIC_PAGE_PATHS = [
   "/",
+  "/_not-found",
   "/story",
   "/timeline",
   "/news",
@@ -53,6 +54,7 @@ const PAGE_PATHS: Record<string, readonly string[]> = {
   donate: ["/donate"],
   privacy: ["/privacy"],
   en: ["/en"],
+  "not-found": ["/_not-found"],
   nav: PUBLIC_PAGE_PATHS,
   footer: PUBLIC_PAGE_PATHS,
 };

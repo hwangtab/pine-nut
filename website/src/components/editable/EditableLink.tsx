@@ -18,6 +18,7 @@ interface EditableLinkProps {
   className?: string;
   containerClassName?: string;
   inline?: boolean;
+  onNavigate?: () => void;
   children: React.ReactNode;
 }
 
@@ -56,6 +57,7 @@ export default function EditableLink({
   className = "",
   containerClassName = "",
   inline = false,
+  onNavigate,
   children,
 }: EditableLinkProps) {
   const { isEditMode, getContent, stageChange } = useAdminEdit();
@@ -92,7 +94,7 @@ export default function EditableLink({
   const Container = (inline ? "span" : "div") as ElementType;
 
   if (!isEditMode) {
-    return renderEditableHref(href, className, undefined, children);
+    return renderEditableHref(href, className, () => onNavigate?.(), children);
   }
 
   return (

@@ -7,6 +7,44 @@ import { Menu, X } from "lucide-react";
 import { EditableLink, EditableText } from "@/components/editable";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 import { defaultNavLinks, parseBuilderLinks } from "@/lib/custom-sections";
+import {
+  isExternalEditableHref,
+  isInternalEditableHref,
+} from "@/lib/validation/editable-link";
+
+function renderNavLink(
+  href: string,
+  className: string,
+  label: string,
+  onClick?: () => void,
+  ariaCurrent?: "page",
+) {
+  if (isInternalEditableHref(href)) {
+    return (
+      <Link
+        href={href}
+        onClick={onClick}
+        className={className}
+        aria-current={ariaCurrent}
+      >
+        {label}
+      </Link>
+    );
+  }
+
+  return (
+    <a
+      href={href}
+      onClick={onClick}
+      className={className}
+      aria-current={ariaCurrent}
+      target={isExternalEditableHref(href) ? "_blank" : undefined}
+      rel={isExternalEditableHref(href) ? "noopener noreferrer" : undefined}
+    >
+      {label}
+    </a>
+  );
+}
 
 export default function Navigation() {
   const { getContent } = useAdminEdit();
@@ -67,6 +105,10 @@ export default function Navigation() {
     requestAnimationFrame(() => {
       mobileMenuButtonRef.current?.focus();
     });
+  }, []);
+
+  const dismissMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false);
   }, []);
 
   useEffect(() => {
@@ -144,34 +186,40 @@ export default function Navigation() {
           aria-label="주요 내비게이션"
         >
           {/* Logo */}
-          <Link
-            href="/"
+          <EditableLink
+            contentKey="nav.logoHref"
+            defaultHref="/"
+            page="nav"
+            section="header"
             className={`text-lg font-bold shrink-0 min-h-[44px] flex items-center transition-colors duration-300 ${
               isTransparent ? "text-white" : "text-[var(--color-forest)]"
             }`}
           >
             <EditableText contentKey="nav.logo" defaultValue="풍천리를 지켜주세요" as="span" page="nav" section="header" />
-          </Link>
+          </EditableLink>
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
-              <Link
+              <span
                 key={link.id}
-                href={link.href}
-                className={`px-4 py-2 rounded-lg text-[15px] font-medium min-h-[44px] flex items-center transition-colors duration-300 ${
-                  isTransparent
-                    ? isActive(link.href)
-                      ? "text-white bg-white/20"
-                      : "text-white/80 hover:text-white hover:bg-white/10"
-                    : isActive(link.href)
-                      ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
-                      : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]"
-                }`}
-                aria-current={isActive(link.href) ? "page" : undefined}
               >
-                {link.label}
-              </Link>
+                {renderNavLink(
+                  link.href,
+                  `px-4 py-2 rounded-lg text-[15px] font-medium min-h-[44px] flex items-center transition-colors duration-300 ${
+                    isTransparent
+                      ? isActive(link.href)
+                        ? "text-white bg-white/20"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
+                      : isActive(link.href)
+                        ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
+                        : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]"
+                  }`,
+                  link.label,
+                  undefined,
+                  isActive(link.href) ? "page" : undefined,
+                )}
+              </span>
             ))}
             <EditableLink
               contentKey="nav.cta.href"
@@ -234,19 +282,21 @@ export default function Navigation() {
           </div>
           <nav className="flex flex-col px-6 py-4 gap-2" aria-label="모바일 내비게이션">
             {navLinks.map((link) => (
-              <Link
+              <span
                 key={link.id}
-                href={link.href}
-                onClick={() => closeMobileMenu()}
-                className={`px-4 py-4 rounded-xl text-xl font-medium min-h-[44px] flex items-center transition-colors ${
-                  isActive(link.href)
-                    ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
-                    : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]"
-                }`}
-                aria-current={isActive(link.href) ? "page" : undefined}
               >
-                {link.label}
-              </Link>
+                {renderNavLink(
+                  link.href,
+                  `px-4 py-4 rounded-xl text-xl font-medium min-h-[44px] flex items-center transition-colors ${
+                    isActive(link.href)
+                      ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
+                      : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]"
+                  }`,
+                  link.label,
+                  dismissMobileMenu,
+                  isActive(link.href) ? "page" : undefined,
+                )}
+              </span>
             ))}
             <EditableLink
               contentKey="nav.cta.href"
@@ -255,6 +305,7 @@ export default function Navigation() {
               section="header"
               className="px-4 py-4 rounded-full text-xl font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center justify-center transition-colors"
               containerClassName="mt-4"
+              onNavigate={dismissMobileMenu}
             >
               <EditableText contentKey="nav.cta" defaultValue="함께하기" as="span" page="nav" section="header" />
             </EditableLink>
