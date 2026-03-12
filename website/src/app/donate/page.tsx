@@ -1,13 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   Bus,
   Check,
   Copy,
   ExternalLink,
-  HeartHandshake,
-  Loader2,
   Megaphone,
   Scale,
   Settings,
@@ -17,8 +15,6 @@ import { EditableList, EditableText } from "@/components/editable";
 
 const BANK_ACCOUNT = "356-1559-4666-63";
 const BANK_ACCOUNT_FULL = "농협 356-1559-4666-63 이창후";
-const TOSS_CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY?.trim() || "";
-const DONATION_PRESETS = [10000, 30000, 50000, 100000] as const;
 
 function Toast({ message, visible }: { message: string; visible: boolean }) {
   return (
@@ -39,36 +35,9 @@ function Toast({ message, visible }: { message: string; visible: boolean }) {
   );
 }
 
-function getDonationCustomerKey() {
-  const storageKey = "pungcheonri_donation_customer_key";
-  const existing = window.localStorage.getItem(storageKey);
-  if (existing) return existing;
-
-  const nextValue = `anon_${crypto.randomUUID()}`;
-  window.localStorage.setItem(storageKey, nextValue);
-  return nextValue;
-}
-
-function normalizeAmountInput(value: string) {
-  return value.replace(/[^\d]/g, "");
-}
-
 export default function DonatePage() {
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [selectedAmount, setSelectedAmount] = useState<number | "custom">(30000);
-  const [customAmount, setCustomAmount] = useState("");
-  const [donorName, setDonorName] = useState("");
-  const [donorEmail, setDonorEmail] = useState("");
-  const [paymentError, setPaymentError] = useState("");
-  const [isPaying, setIsPaying] = useState(false);
-
-  const resolvedAmount = useMemo(() => {
-    if (selectedAmount === "custom") {
-      return Number(customAmount || 0);
-    }
-    return selectedAmount;
-  }, [customAmount, selectedAmount]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -85,88 +54,6 @@ export default function DonatePage() {
     }
   };
 
-  const handleStartTossPayment = async () => {
-    setPaymentError("");
-
-    if (!TOSS_CLIENT_KEY) {
-      setPaymentError("토스 결제 키가 아직 설정되지 않았습니다. 환경 변수를 확인해주세요.");
-      return;
-    }
-
-    if (!Number.isInteger(resolvedAmount) || resolvedAmount < 1000) {
-      setPaymentError("후원 금액은 최소 1,000원부터 입력해주세요.");
-      return;
-    }
-
-    if (resolvedAmount > 500000) {
-      setPaymentError("후원 금액은 최대 500,000원까지 가능합니다.");
-      return;
-    }
-
-    if (!donorName.trim()) {
-      setPaymentError("이름을 입력해주세요.");
-      return;
-    }
-
-    if (
-      donorEmail.trim() &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorEmail.trim())
-    ) {
-      setPaymentError("이메일 형식이 올바르지 않습니다.");
-      return;
-    }
-
-    setIsPaying(true);
-
-    try {
-      const prepareResponse = await fetch("/api/donations/prepare", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: resolvedAmount }),
-      });
-      const prepareData = await prepareResponse.json();
-
-      if (!prepareResponse.ok) {
-        throw new Error(prepareData.error || "후원 주문 생성에 실패했습니다.");
-      }
-
-      const { loadTossPayments } = await import("@tosspayments/tosspayments-sdk");
-      const tossPayments = await loadTossPayments(TOSS_CLIENT_KEY);
-      const payment = tossPayments.payment({
-        customerKey: getDonationCustomerKey(),
-      });
-      const origin = window.location.origin;
-
-      await payment.requestPayment({
-        method: "CARD",
-        amount: {
-          currency: "KRW",
-          value: resolvedAmount,
-        },
-        orderId: prepareData.orderId,
-        orderName: prepareData.orderName,
-        successUrl: `${origin}/donate/success?orderToken=${encodeURIComponent(prepareData.orderToken)}`,
-        failUrl: `${origin}/donate/fail`,
-        customerEmail: donorEmail.trim() || undefined,
-        customerName: donorName.trim(),
-        card: {
-          easyPay: "TOSSPAY",
-          flowMode: "DIRECT",
-        },
-      });
-    } catch (error) {
-      setPaymentError(
-        error instanceof Error
-          ? error.message
-          : "결제창을 열지 못했습니다. 잠시 후 다시 시도해주세요."
-      );
-      setIsPaying(false);
-      return;
-    }
-
-    setIsPaying(false);
-  };
-
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       <Toast message={toastMessage} visible={toastVisible} />
@@ -174,7 +61,7 @@ export default function DonatePage() {
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
         title={<EditableText contentKey="donate.hero.title" defaultValue="후원으로 함께해주세요" as="span" page="donate" section="hero" />}
-        subtitle={<EditableText contentKey="donate.hero.subtitle" defaultValue="토스페이 또는 계좌이체로 주민들의 투쟁을 직접 도울 수 있습니다" as="span" page="donate" section="hero" />}
+        subtitle={<EditableText contentKey="donate.hero.subtitle" defaultValue="계좌이체와 캠페인 페이지를 통해 주민들의 투쟁을 직접 도울 수 있습니다" as="span" page="donate" section="hero" />}
         eyebrow="후원 안내"
       />
 
@@ -200,210 +87,6 @@ export default function DonatePage() {
       </div>
 
       <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 space-y-12">
-        <section aria-label="토스페이 온라인 후원">
-          <EditableText
-            contentKey="donate.online.heading"
-            defaultValue="온라인으로 바로 후원하기"
-            as="h2"
-            page="donate"
-            section="online"
-            className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)] text-center"
-          />
-
-          <div className="bg-white border-2 border-[#0064FF] rounded-2xl p-6 sm:p-8 shadow-sm">
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#0064FF]/10 mb-3 text-[#0064FF]">
-                <HeartHandshake className="w-7 h-7" />
-              </div>
-              <EditableText
-                contentKey="donate.online.label"
-                defaultValue="토스페이 결제"
-                as="p"
-                page="donate"
-                section="online"
-                className="text-sm text-[var(--color-text-muted)] font-medium"
-              />
-            </div>
-
-            <div className="space-y-6">
-              <div>
-                <EditableText
-                  contentKey="donate.online.amountLabel"
-                  defaultValue="후원 금액"
-                  as="p"
-                  page="donate"
-                  section="online"
-                  className="text-[15px] font-semibold text-[var(--color-text)] mb-3"
-                />
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
-                  {DONATION_PRESETS.map((amount) => (
-                    <button
-                      key={amount}
-                      type="button"
-                      onClick={() => {
-                        setSelectedAmount(amount);
-                        setPaymentError("");
-                      }}
-                      className={`min-h-[48px] rounded-xl border text-sm font-semibold transition-colors ${
-                        selectedAmount === amount
-                          ? "border-[#0064FF] bg-[#0064FF] text-white"
-                          : "border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
-                      }`}
-                    >
-                      {amount.toLocaleString("ko-KR")}원
-                    </button>
-                  ))}
-                </div>
-
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedAmount("custom");
-                      setPaymentError("");
-                    }}
-                    className={`min-h-[48px] px-4 rounded-xl border text-sm font-semibold transition-colors ${
-                      selectedAmount === "custom"
-                        ? "border-[#0064FF] bg-[#0064FF] text-white"
-                        : "border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
-                    }`}
-                  >
-                    <EditableText
-                      contentKey="donate.online.customButton"
-                      defaultValue="직접 입력"
-                      as="span"
-                      page="donate"
-                      section="online"
-                    />
-                  </button>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={customAmount}
-                    onChange={(event) => {
-                      setCustomAmount(normalizeAmountInput(event.target.value));
-                      setSelectedAmount("custom");
-                      setPaymentError("");
-                    }}
-                    placeholder="1000"
-                    className="flex-1 min-h-[48px] px-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
-                  />
-                </div>
-                <EditableText
-                  contentKey="donate.online.amountHelp"
-                  defaultValue="최소 1,000원부터, 최대 500,000원까지 후원할 수 있습니다."
-                  as="p"
-                  page="donate"
-                  section="online"
-                  className="mt-2 text-sm text-[var(--color-text-muted)]"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label
-                    htmlFor="donor-name"
-                    className="block text-[15px] font-semibold mb-2 text-[var(--color-text)]"
-                  >
-                    <EditableText
-                      contentKey="donate.online.nameLabel"
-                      defaultValue="이름"
-                      as="span"
-                      page="donate"
-                      section="online"
-                    />
-                  </label>
-                  <input
-                    id="donor-name"
-                    type="text"
-                    value={donorName}
-                    onChange={(event) => {
-                      setDonorName(event.target.value);
-                      setPaymentError("");
-                    }}
-                    placeholder="홍길동"
-                    className="w-full min-h-[48px] px-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="donor-email"
-                    className="block text-[15px] font-semibold mb-2 text-[var(--color-text)]"
-                  >
-                    <EditableText
-                      contentKey="donate.online.emailLabel"
-                      defaultValue="이메일"
-                      as="span"
-                      page="donate"
-                      section="online"
-                    />{" "}
-                    <span className="text-[var(--color-text-muted)] font-normal">(선택)</span>
-                  </label>
-                  <input
-                    id="donor-email"
-                    type="email"
-                    value={donorEmail}
-                    onChange={(event) => {
-                      setDonorEmail(event.target.value);
-                      setPaymentError("");
-                    }}
-                    placeholder="example@email.com"
-                    className="w-full min-h-[48px] px-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
-                  />
-                </div>
-              </div>
-
-              <div className="bg-[var(--color-bg)] rounded-xl px-5 py-4">
-                <EditableText
-                  contentKey="donate.online.summaryLabel"
-                  defaultValue="결제 예정 금액"
-                  as="p"
-                  page="donate"
-                  section="online"
-                  className="text-sm text-[var(--color-text-muted)] mb-1"
-                />
-                <p className="text-3xl font-black text-[var(--color-text)]">
-                  {resolvedAmount > 0 ? `${resolvedAmount.toLocaleString("ko-KR")}원` : "금액을 입력해주세요"}
-                </p>
-              </div>
-
-              {paymentError ? (
-                <p className="text-sm text-red-600" role="alert">
-                  {paymentError}
-                </p>
-              ) : null}
-
-              {!TOSS_CLIENT_KEY ? (
-                <div className="rounded-xl bg-[var(--color-bg-warm)] px-5 py-4 text-sm text-[var(--color-text-muted)]">
-                  `NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY`가 설정되면 토스페이 결제가 활성화됩니다.
-                </div>
-              ) : null}
-
-              <button
-                type="button"
-                onClick={handleStartTossPayment}
-                disabled={isPaying || !TOSS_CLIENT_KEY}
-                className="w-full min-h-[56px] rounded-xl bg-[#0064FF] hover:brightness-110 text-white font-bold text-lg flex items-center justify-center gap-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {isPaying ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    결제창 여는 중...
-                  </>
-                ) : (
-                  <EditableText
-                    contentKey="donate.online.cta"
-                    defaultValue="토스페이로 후원하기"
-                    as="span"
-                    page="donate"
-                    section="online"
-                  />
-                )}
-              </button>
-            </div>
-          </div>
-        </section>
-
         <section aria-label="계좌 이체로 후원하기">
           <EditableText
             contentKey="donate.bank.heading"

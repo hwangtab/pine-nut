@@ -9,6 +9,7 @@ interface EditableRichTextProps {
   page: string;
   section?: string;
   className?: string;
+  renderMode?: "paragraphs" | "paragraph" | "lines";
   /** Render function for display mode */
   children?: (value: string) => React.ReactNode;
 }
@@ -24,6 +25,7 @@ export default function EditableRichText({
   page,
   section,
   className = "",
+  renderMode = "paragraphs",
   children,
 }: EditableRichTextProps) {
   const { isEditMode, getContent, stageChange } = useAdminEdit();
@@ -79,16 +81,41 @@ export default function EditableRichText({
     setEditing(false);
   }, [value, setLocalValue]);
 
+  const renderValue = useCallback(
+    (nextValue: string) => {
+      if (children) return children(nextValue);
+
+      if (renderMode === "paragraph") {
+        return <p className={className}>{nextValue}</p>;
+      }
+
+      if (renderMode === "lines") {
+        return (
+          <p className={className}>
+            {nextValue.split("\n").map((line, index) => (
+              <span key={index}>
+                {index > 0 && <br />}
+                {line}
+              </span>
+            ))}
+          </p>
+        );
+      }
+
+      return (
+        <div className={className}>
+          {nextValue.split("\n\n").map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
+          ))}
+        </div>
+      );
+    },
+    [children, className, renderMode]
+  );
+
   // Display mode
   if (!isEditMode) {
-    if (children) return <>{children(value)}</>;
-    return (
-      <div className={className}>
-        {value.split("\n").map((p, i) => (
-          <p key={i}>{p}</p>
-        ))}
-      </div>
-    );
+    return <>{renderValue(value)}</>;
   }
 
   return (
@@ -105,13 +132,7 @@ export default function EditableRichText({
           if (e.key === "Enter" || e.key === " ") handleOpen();
         }}
       >
-        {children ? children(value) : (
-          <>
-            {value.split("\n").map((p, i) => (
-              <p key={i}>{p}</p>
-            ))}
-          </>
-        )}
+        {renderValue(value)}
         <div className="absolute top-1 right-1 px-2 py-0.5 bg-blue-600 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
           클릭하여 편집
         </div>

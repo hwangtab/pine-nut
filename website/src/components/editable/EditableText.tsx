@@ -51,6 +51,7 @@ export default function EditableText({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      e.stopPropagation();
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         ref.current?.blur();
@@ -62,6 +63,16 @@ export default function EditableText({
     },
     [value]
   );
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+  }, []);
+
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    ref.current?.focus();
+  }, []);
 
   const Tag = tag as ElementType;
 
@@ -77,6 +88,8 @@ export default function EditableText({
       suppressContentEditableWarning
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
       data-editable-key={contentKey}
       role="textbox"
       aria-label={`편집: ${contentKey}`}
