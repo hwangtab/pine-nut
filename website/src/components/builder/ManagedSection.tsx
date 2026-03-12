@@ -23,6 +23,7 @@ interface ManagedSectionProps {
   sectionId: string;
   visibilityContentKey: string;
   section?: string;
+  htmlId?: string;
   defaultClassName: string;
   children: React.ReactNode;
 }
@@ -32,6 +33,7 @@ export default function ManagedSection({
   sectionId,
   visibilityContentKey,
   section,
+  htmlId,
   defaultClassName,
   children,
 }: ManagedSectionProps) {
@@ -58,7 +60,9 @@ export default function ManagedSection({
       page={page}
       section={section}
     >
-      <section className={className}>{children}</section>
+      <section id={htmlId} className={className}>
+        {children}
+      </section>
     </EditableSection>
   );
 }
