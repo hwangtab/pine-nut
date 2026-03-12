@@ -3,9 +3,10 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useInView, animate, AnimatePresence } from "framer-motion";
 import { PenLine, Heart, Share2, ChevronDown } from "lucide-react";
-import { EditableText, EditableImage, EditableList, EditableLink } from "@/components/editable";
+import { EditableText, EditableImage, EditableList, EditableLink, EditableValue } from "@/components/editable";
 import ManagedSection from "@/components/builder/ManagedSection";
 import OrderedSectionGroup from "@/components/builder/OrderedSectionGroup";
+import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 
 /* ───────────────────────── helpers ───────────────────────── */
 
@@ -130,6 +131,7 @@ const HOME_SECTION_ORDER = [
 /* ═══════════════════════════════════════════════════════════ */
 
 export default function HomePage() {
+  const { getContent, isEditMode } = useAdminEdit();
   const storyRef = useRef<HTMLDivElement>(null);
   const [signatureCount, setSignatureCount] = useState<number | null>(null);
   const [inlineName, setInlineName] = useState("");
@@ -143,6 +145,22 @@ export default function HomePage() {
   const [toastName, setToastName] = useState<string | null>(null);
   const [toastVisible, setToastVisible] = useState(false);
   const toastCountRef = useRef(0);
+
+  const homeShareTitle = getContent("home.share.title") ?? "풍천리를 지켜주세요";
+  const homeShareText =
+    getContent("home.share.text") ?? "강원도 홍천 풍천리 주민들의 이야기를 들어주세요.";
+  const homeShareCopyAlert =
+    getContent("home.share.copyAlert") ?? "링크가 복사되었습니다.";
+  const inlineNamePlaceholder = getContent("home.cta.inlineNamePlaceholder") ?? "이름";
+  const inlineEmailPlaceholder = getContent("home.cta.inlineEmailPlaceholder") ?? "이메일";
+  const inlineNameError =
+    getContent("home.cta.inlineErrorName") ?? "이름을 입력해주세요.";
+  const inlineEmailError =
+    getContent("home.cta.inlineErrorEmail") ?? "올바른 이메일 주소를 입력해주세요.";
+  const inlineSubmitError =
+    getContent("home.cta.inlineErrorSubmit") ?? "서명에 실패했습니다. 다시 시도해주세요.";
+  const toastPrefix = getContent("home.toast.prefix") ?? "방금";
+  const toastSuffix = getContent("home.toast.suffix") ?? "님이 서명했습니다";
 
   useEffect(() => {
     fetch("/api/signatures")
@@ -208,8 +226,8 @@ export default function HomePage() {
 
   const handleShare = useCallback(async () => {
     const shareData = {
-      title: "풍천리를 지켜주세요",
-      text: "강원도 홍천 풍천리 주민들의 이야기를 들어주세요.",
+      title: homeShareTitle,
+      text: homeShareText,
       url: window.location.href,
     };
     try {
@@ -217,12 +235,12 @@ export default function HomePage() {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        alert("링크가 복사되었습니다.");
+        alert(homeShareCopyAlert);
       }
     } catch {
       /* user cancelled */
     }
-  }, []);
+  }, [homeShareCopyAlert, homeShareText, homeShareTitle]);
 
   const handleInlineSign = useCallback(
     async (e: React.FormEvent) => {
@@ -233,11 +251,11 @@ export default function HomePage() {
       const trimmedEmail = inlineEmail.trim();
 
       if (!trimmedName) {
-        setInlineError("이름을 입력해주세요.");
+        setInlineError(inlineNameError);
         return;
       }
       if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
-        setInlineError("올바른 이메일 주소를 입력해주세요.");
+        setInlineError(inlineEmailError);
         return;
       }
 
@@ -255,7 +273,7 @@ export default function HomePage() {
         });
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
-          throw new Error(data.error || "서명에 실패했습니다. 다시 시도해주세요.");
+          throw new Error(data.error || inlineSubmitError);
         }
         setInlineSuccess(true);
         setInlineName("");
@@ -263,13 +281,13 @@ export default function HomePage() {
         setSignatureCount((prev) => (prev !== null ? prev + 1 : prev));
       } catch (err) {
         setInlineError(
-          err instanceof Error ? err.message : "서명에 실패했습니다. 다시 시도해주세요."
+          err instanceof Error ? err.message : inlineSubmitError
         );
       } finally {
         setInlineSubmitting(false);
       }
     },
-    [inlineName, inlineEmail]
+    [inlineEmail, inlineEmailError, inlineName, inlineNameError, inlineSubmitError]
   );
 
   return (
@@ -832,11 +850,25 @@ export default function HomePage() {
 
             {signatureCount !== null && (
               <FadeIn className="text-center mb-12">
-                <p className="text-lg text-[var(--color-text-muted)] mb-2">현재</p>
+                <EditableText
+                  contentKey="home.cta.countPrefix"
+                  defaultValue="현재"
+                  as="p"
+                  page="home"
+                  section="cta"
+                  className="text-lg text-[var(--color-text-muted)] mb-2"
+                />
                 <p className="text-5xl sm:text-6xl md:text-7xl font-black text-[var(--color-warm)]">
                   <AnimatedCounter target={signatureCount} suffix="명" />
                 </p>
-                <p className="text-lg text-[var(--color-text-muted)] mt-2">이 함께하고 있습니다</p>
+                <EditableText
+                  contentKey="home.cta.countSuffix"
+                  defaultValue="이 함께하고 있습니다"
+                  as="p"
+                  page="home"
+                  section="cta"
+                  className="text-lg text-[var(--color-text-muted)] mt-2"
+                />
               </FadeIn>
             )}
 
@@ -845,9 +877,14 @@ export default function HomePage() {
               <div className="max-w-2xl mx-auto">
                 {inlineSuccess ? (
                   <div className="text-center py-6">
-                    <p className="text-xl font-bold text-[var(--color-forest)]">
-                      감사합니다! 서명이 완료되었습니다 🎉
-                    </p>
+                    <EditableText
+                      contentKey="home.cta.inlineSuccess"
+                      defaultValue="감사합니다! 서명이 완료되었습니다 🎉"
+                      as="p"
+                      page="home"
+                      section="cta"
+                      className="text-xl font-bold text-[var(--color-forest)]"
+                    />
                   </div>
                 ) : (
                   <form onSubmit={handleInlineSign} className="space-y-3">
@@ -858,7 +895,7 @@ export default function HomePage() {
                       <input
                         id="inline-name"
                         type="text"
-                        placeholder="이름"
+                        placeholder={inlineNamePlaceholder}
                         autoComplete="name"
                         value={inlineName}
                         onChange={(e) => {
@@ -875,7 +912,7 @@ export default function HomePage() {
                       <input
                         id="inline-email"
                         type="email"
-                        placeholder="이메일"
+                        placeholder={inlineEmailPlaceholder}
                         autoComplete="email"
                         value={inlineEmail}
                         onChange={(e) => {
@@ -891,7 +928,13 @@ export default function HomePage() {
                         disabled={inlineSubmitting}
                          className="min-h-[48px] px-8 py-3 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold text-base transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
                       >
-                        {inlineSubmitting ? "서명 중…" : "서명하기"}
+                        <EditableText
+                          contentKey={inlineSubmitting ? "home.cta.inlineSubmitting" : "home.cta.inlineSubmit"}
+                          defaultValue={inlineSubmitting ? "서명 중…" : "서명하기"}
+                          as="span"
+                          page="home"
+                          section="cta"
+                        />
                       </button>
                     </div>
                     {inlineError && (
@@ -900,7 +943,13 @@ export default function HomePage() {
                       </p>
                     )}
                     <p className="text-xs text-[var(--color-text-muted)] text-center">
-                      서명 시{" "}
+                      <EditableText
+                        contentKey="home.cta.privacyPrefix"
+                        defaultValue="서명 시"
+                        as="span"
+                        page="home"
+                        section="cta"
+                      />{" "}
                       <EditableLink
                         contentKey="home.cta.privacyHref"
                         defaultHref="/privacy"
@@ -911,8 +960,73 @@ export default function HomePage() {
                       >
                         개인정보처리방침
                       </EditableLink>
-                      에 동의합니다
+                      <EditableText
+                        contentKey="home.cta.privacySuffix"
+                        defaultValue="에 동의합니다"
+                        as="span"
+                        page="home"
+                        section="cta"
+                      />
                     </p>
+                    {isEditMode && (
+                      <div className="flex flex-wrap justify-center gap-2 pt-2">
+                        <EditableValue
+                          contentKey="home.cta.inlineNamePlaceholder"
+                          defaultValue="이름"
+                          page="home"
+                          section="cta"
+                          buttonLabel="이름 힌트"
+                          wrapperClassName="relative"
+                          buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                        >
+                          {(value, editButton) => editButton ?? <span>{value}</span>}
+                        </EditableValue>
+                        <EditableValue
+                          contentKey="home.cta.inlineEmailPlaceholder"
+                          defaultValue="이메일"
+                          page="home"
+                          section="cta"
+                          buttonLabel="이메일 힌트"
+                          wrapperClassName="relative"
+                          buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                        >
+                          {(value, editButton) => editButton ?? <span>{value}</span>}
+                        </EditableValue>
+                        <EditableValue
+                          contentKey="home.cta.inlineErrorName"
+                          defaultValue="이름을 입력해주세요."
+                          page="home"
+                          section="cta"
+                          buttonLabel="이름 오류"
+                          wrapperClassName="relative"
+                          buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                        >
+                          {(value, editButton) => editButton ?? <span>{value}</span>}
+                        </EditableValue>
+                        <EditableValue
+                          contentKey="home.cta.inlineErrorEmail"
+                          defaultValue="올바른 이메일 주소를 입력해주세요."
+                          page="home"
+                          section="cta"
+                          buttonLabel="이메일 오류"
+                          wrapperClassName="relative"
+                          buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                        >
+                          {(value, editButton) => editButton ?? <span>{value}</span>}
+                        </EditableValue>
+                        <EditableValue
+                          contentKey="home.cta.inlineErrorSubmit"
+                          defaultValue="서명에 실패했습니다. 다시 시도해주세요."
+                          page="home"
+                          section="cta"
+                          buttonLabel="제출 오류"
+                          wrapperClassName="relative"
+                          buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                        >
+                          {(value, editButton) => editButton ?? <span>{value}</span>}
+                        </EditableValue>
+                      </div>
+                    )}
                   </form>
                 )}
               </div>
@@ -1043,10 +1157,71 @@ export default function HomePage() {
             className="fixed bottom-20 left-4 z-40 max-w-xs px-4 py-3 rounded-lg bg-[var(--color-text)]/90 backdrop-blur text-white text-sm shadow-lg pointer-events-none"
           >
             <span aria-hidden="true" className="mr-1.5">🎉</span>
-            방금 {toastName}님이 서명했습니다
+            {toastPrefix} {toastName}{toastSuffix}
           </motion.div>
         )}
       </AnimatePresence>
+
+      {isEditMode && (
+        <div className="fixed bottom-4 left-4 z-40 flex flex-wrap gap-2 rounded-2xl border border-blue-200 bg-white/95 p-3 shadow-xl backdrop-blur">
+          <EditableValue
+            contentKey="home.share.title"
+            defaultValue="풍천리를 지켜주세요"
+            page="home"
+            section="hero"
+            buttonLabel="공유 제목"
+            wrapperClassName="relative"
+            buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+          >
+            {(value, editButton) => editButton ?? <span>{value}</span>}
+          </EditableValue>
+          <EditableValue
+            contentKey="home.share.text"
+            defaultValue="강원도 홍천 풍천리 주민들의 이야기를 들어주세요."
+            page="home"
+            section="hero"
+            multiline
+            buttonLabel="공유 설명"
+            wrapperClassName="relative"
+            buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+          >
+            {(value, editButton) => editButton ?? <span>{value}</span>}
+          </EditableValue>
+          <EditableValue
+            contentKey="home.share.copyAlert"
+            defaultValue="링크가 복사되었습니다."
+            page="home"
+            section="hero"
+            buttonLabel="복사 알림"
+            wrapperClassName="relative"
+            buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+          >
+            {(value, editButton) => editButton ?? <span>{value}</span>}
+          </EditableValue>
+          <EditableValue
+            contentKey="home.toast.prefix"
+            defaultValue="방금"
+            page="home"
+            section="cta"
+            buttonLabel="토스트 앞문구"
+            wrapperClassName="relative"
+            buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+          >
+            {(value, editButton) => editButton ?? <span>{value}</span>}
+          </EditableValue>
+          <EditableValue
+            contentKey="home.toast.suffix"
+            defaultValue="님이 서명했습니다"
+            page="home"
+            section="cta"
+            buttonLabel="토스트 뒷문구"
+            wrapperClassName="relative"
+            buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+          >
+            {(value, editButton) => editButton ?? <span>{value}</span>}
+          </EditableValue>
+        </div>
+      )}
     </OrderedSectionGroup>
   );
 }

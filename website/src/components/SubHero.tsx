@@ -2,16 +2,21 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
+import { EditableImage } from "@/components/editable";
 
 interface SubHeroProps {
   /** Background image URL */
   imageUrl: string;
   fallbackImageUrl?: string;
+  imageContentKey?: string;
+  imagePage?: string;
+  imageSection?: string;
+  imageAlt?: string;
   /** Main heading text */
   title: ReactNode;
   /** Optional subtitle text */
   subtitle?: ReactNode;
-  eyebrow?: string;
+  eyebrow?: ReactNode;
   metric?: ReactNode;
   variant?: "standard" | "emphasis";
 }
@@ -19,6 +24,10 @@ interface SubHeroProps {
 export default function SubHero({
   imageUrl,
   fallbackImageUrl,
+  imageContentKey,
+  imagePage,
+  imageSection,
+  imageAlt = "",
   title,
   subtitle,
   eyebrow,
@@ -27,7 +36,7 @@ export default function SubHero({
 }: SubHeroProps) {
   const defaultFallbackImageUrl = "/images/forest-aerial.jpg";
   const [currentImage, setCurrentImage] = useState(imageUrl);
-  const hasEyebrow = Boolean(eyebrow?.trim());
+  const hasEyebrow = Boolean(eyebrow);
   const sectionSpacingClass =
     variant === "emphasis"
       ? "pt-32 md:pt-40 pb-24 md:pb-32"
@@ -56,16 +65,29 @@ export default function SubHero({
     <section
       className={`relative overflow-hidden px-4 sm:px-6 text-center text-white ${sectionSpacingClass}`}
     >
-      {currentImage && (
-        <Image
-          src={currentImage}
-          alt=""
-          role="presentation"
+      {imageContentKey && imagePage ? (
+        <EditableImage
+          contentKey={imageContentKey}
+          defaultSrc={imageUrl}
+          alt={imageAlt}
+          page={imagePage}
+          section={imageSection}
           fill
           sizes="100vw"
-          style={{ objectFit: "cover" }}
-          onError={handleImageError}
+          className="object-cover"
         />
+      ) : (
+        currentImage && (
+          <Image
+            src={currentImage}
+            alt=""
+            role="presentation"
+            fill
+            sizes="100vw"
+            style={{ objectFit: "cover" }}
+            onError={handleImageError}
+          />
+        )
       )}
       <div
         className="absolute inset-0"

@@ -138,20 +138,20 @@ export function EnglishHelpCards() {
           description:
             "Add your name to the growing list of people demanding the cancellation of this project.",
           linkText: "Go to petition →",
-          linkUrl: "/petition",
+          linkUrl: "/en/petition",
         },
         {
           title: "Share This Story",
           description:
             "Spread the word on social media. The more people know about Pungcheon-ri, the harder it is to ignore.",
-          linkText: "Share the link to this page",
-          linkUrl: "",
+          linkText: "Open English share cards →",
+          linkUrl: "/en/share",
         },
         {
           title: "Media Inquiries",
           description:
             "Are you a journalist or researcher? We welcome international media coverage of this story.",
-          linkText: "Contact via campaign page",
+          linkText: "Contact via campaign page →",
           linkUrl: "https://campaigns.do/campaigns/1328",
         },
       ]}
@@ -192,9 +192,7 @@ export function EnglishHelpCards() {
                   {card.linkText}
                 </Link>
               ) : (
-                <p className="text-sm font-medium text-white/50">
-                  {card.linkText}
-                </p>
+                <p className="text-sm font-medium text-white/50">{card.linkText}</p>
               )}
             </div>
           ))}

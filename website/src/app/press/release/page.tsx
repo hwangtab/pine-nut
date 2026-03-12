@@ -3,7 +3,7 @@
 import UtilityHeader from "@/components/UtilityHeader";
 import { SITE_HOST } from "@/lib/site-config";
 import { events } from "@/lib/analytics";
-import { EditableText, EditableRichText, EditableList, EditableSection } from "@/components/editable";
+import { EditableText, EditableRichText, EditableList, EditableSection, EditableLink } from "@/components/editable";
 
 const damageItems = [
   { label: "산림 파괴", description: "산림청이 '100대 명품숲'으로 지정한 1,800ha 잣나무 숲이 훼손되며, 약 11만 그루의 잣나무가 벌채될 예정" },
@@ -43,7 +43,7 @@ export default function PressReleasePage() {
         <UtilityHeader
           title={<EditableText contentKey="press.release.header.title" defaultValue="보도자료" as="span" page="press" section="release" />}
           subtitle={<EditableText contentKey="press.release.header.subtitle" defaultValue="풍천리 주민, 양수발전소 백지화 촉구" as="span" page="press" section="release" />}
-          eyebrow="보도자료"
+          eyebrow={<EditableText contentKey="press.release.header.eyebrow" defaultValue="보도자료" as="span" page="press" section="release" />}
           tone="slate"
         />
       </div>
@@ -75,12 +75,15 @@ export default function PressReleasePage() {
             </svg>
             <EditableText contentKey="press.release.pdf" defaultValue="PDF로 저장" as="span" page="press" section="release" />
           </button>
-          <a
-            href="/press"
+          <EditableLink
+            contentKey="press.release.backHref"
+            defaultHref="/press"
+            page="press"
+            section="release"
             className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-forest)] transition-colors"
           >
             <EditableText contentKey="press.release.back" defaultValue="자료실로 돌아가기" as="span" page="press" section="release" />
-          </a>
+          </EditableLink>
         </div>
 
         {/* Document header */}

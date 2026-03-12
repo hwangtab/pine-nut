@@ -42,9 +42,12 @@ export default function PressPage() {
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
         fallbackImageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+        imageContentKey="press.hero.image"
+        imagePage="press"
+        imageSection="hero"
         title={<EditableText contentKey="press.hero.title" defaultValue="자료실" as="span" page="press" section="hero" />}
         subtitle={<EditableText contentKey="press.hero.subtitle" defaultValue="언론인·활동가를 위한 풍천리 관련 자료" as="span" page="press" section="hero" />}
-        eyebrow="자료 아카이브"
+        eyebrow={<EditableText contentKey="press.hero.eyebrow" defaultValue="자료 아카이브" as="span" page="press" section="hero" />}
       />
 
       <div className="max-w-4xl mx-auto px-4 pt-12 md:pt-16 pb-20 space-y-16">
@@ -80,12 +83,22 @@ export default function PressPage() {
                     <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 ${item.color}`}>
                       <Icon className="w-6 h-6" />
                     </div>
-                    <h3 className="text-base font-bold text-[var(--color-text)] mb-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-[var(--color-text-muted)] mb-4 leading-relaxed">
-                      {item.description}
-                    </p>
+                    <EditableText
+                      contentKey={`press.kit.item.${index}.title`}
+                      defaultValue={item.title}
+                      as="h3"
+                      page="press"
+                      section="kit"
+                      className="text-base font-bold text-[var(--color-text)] mb-1"
+                    />
+                    <EditableText
+                      contentKey={`press.kit.item.${index}.description`}
+                      defaultValue={item.description}
+                      as="p"
+                      page="press"
+                      section="kit"
+                      className="text-sm text-[var(--color-text-muted)] mb-4 leading-relaxed"
+                    />
                     <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-forest)] group-hover:text-[var(--color-forest-light)] transition-colors">
                       <EditableText contentKey="press.kit.open" defaultValue="열기" as="span" page="press" section="kit" />
                       <ArrowRight className="w-4 h-4" />

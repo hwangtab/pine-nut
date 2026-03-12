@@ -23,7 +23,7 @@ export default function NotFound() {
             section="header"
           />
         }
-        eyebrow="오류 안내"
+        eyebrow={<EditableText contentKey="notfound.header.eyebrow" defaultValue="오류 안내" as="span" page="not-found" section="header" />}
         tone="forest"
       />
 

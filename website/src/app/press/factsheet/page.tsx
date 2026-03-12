@@ -3,7 +3,7 @@
 import UtilityHeader from "@/components/UtilityHeader";
 import { SITE_HOST } from "@/lib/site-config";
 import { events } from "@/lib/analytics";
-import { EditableText, EditableRichText, EditableList, EditableSection } from "@/components/editable";
+import { EditableText, EditableRichText, EditableList, EditableSection, EditableLink } from "@/components/editable";
 
 const factSheetData = [
   { label: "위치", value: "강원도 홍천군 화촌면 풍천리" },
@@ -56,7 +56,7 @@ export default function FactsheetPage() {
         <UtilityHeader
           title={<EditableText contentKey="press.factsheet.header.title" defaultValue="핵심 팩트시트" as="span" page="press" section="factsheet" />}
           subtitle={<EditableText contentKey="press.factsheet.header.subtitle" defaultValue="풍천리 양수발전소 반대 투쟁 핵심 요약" as="span" page="press" section="factsheet" />}
-          eyebrow="팩트시트"
+          eyebrow={<EditableText contentKey="press.factsheet.header.eyebrow" defaultValue="팩트시트" as="span" page="press" section="factsheet" />}
           tone="slate"
         />
       </div>
@@ -88,12 +88,15 @@ export default function FactsheetPage() {
             </svg>
             <EditableText contentKey="press.factsheet.pdf" defaultValue="PDF로 저장" as="span" page="press" section="factsheet" />
           </button>
-          <a
-            href="/press"
+          <EditableLink
+            contentKey="press.factsheet.backHref"
+            defaultHref="/press"
+            page="press"
+            section="factsheet"
             className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-forest)] transition-colors"
           >
             <EditableText contentKey="press.factsheet.back" defaultValue="자료실로 돌아가기" as="span" page="press" section="factsheet" />
-          </a>
+          </EditableLink>
         </div>
 
         {/* Document header */}

@@ -353,9 +353,12 @@ export default function GalleryPage() {
       {/* Hero */}
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+        imageContentKey="gallery.hero.image"
+        imagePage="gallery"
+        imageSection="hero"
         title={<EditableText contentKey="gallery.hero.title" defaultValue="갤러리" as="span" page="gallery" section="hero" />}
         subtitle={<EditableText contentKey="gallery.hero.subtitle" defaultValue="풍천리의 현장을 담은 사진들" as="span" page="gallery" section="hero" />}
-        eyebrow="현장 기록"
+        eyebrow={<EditableText contentKey="gallery.hero.eyebrow" defaultValue="현장 기록" as="span" page="gallery" section="hero" />}
       />
 
       <div className="pt-12 md:pt-16">

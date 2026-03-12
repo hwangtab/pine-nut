@@ -15,9 +15,12 @@ export default function SharePage() {
       {/* Hero */}
       <SubHero
         imageUrl="https://www.pressian.com/_resources/10/2025/11/12/2025111117101271238_l.png"
+        imageContentKey="share.hero.image"
+        imagePage="share"
+        imageSection="hero"
         title={<EditableText contentKey="share.hero.title" defaultValue="카드뉴스로 함께 알려주세요" as="span" page="share" section="hero" />}
         subtitle={<EditableText contentKey="share.hero.subtitle" defaultValue="각 카드의 다운로드 버튼을 눌러 이미지를 저장한 뒤, 인스타그램·카카오톡·트위터 등에 공유해주세요." as="span" page="share" section="hero" />}
-        eyebrow="Share & Spread"
+        eyebrow={<EditableText contentKey="share.hero.eyebrow" defaultValue="Share & Spread" as="span" page="share" section="hero" />}
       />
 
       {/* Cards */}

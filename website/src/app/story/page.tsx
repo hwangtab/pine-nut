@@ -46,9 +46,12 @@ export default function StoryPage() {
       >
         <SubHero
           imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+          imageContentKey="story.hero.image"
+          imagePage="story"
+          imageSection="hero"
           title={<EditableText contentKey="story.hero.title" defaultValue="풍천리 이야기" as="span" page="story" section="hero" />}
           subtitle={<EditableText contentKey="story.hero.subtitle" defaultValue="잣나무 숲과 마을을 지키려는 7년간의 싸움" as="span" page="story" section="hero" />}
-          eyebrow="마을의 목소리"
+          eyebrow={<EditableText contentKey="story.hero.eyebrow" defaultValue="마을의 목소리" as="span" page="story" section="hero" />}
         />
       </ManagedSection>
 

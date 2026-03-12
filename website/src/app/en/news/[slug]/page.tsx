@@ -1,11 +1,15 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { getNewsBySlug, getPublishedNews } from "@/lib/data/news";
+import type { Metadata } from "next";
 import ShareButtons from "@/components/ShareButtons";
 import UtilityHeader from "@/components/UtilityHeader";
-import type { Metadata } from "next";
 import { EditableLink, EditableText } from "@/components/editable";
+import { getNewsBySlug, getPublishedNews } from "@/lib/data/news";
+import {
+  translateNewsItemToEnglish,
+  translateNewsItemsToEnglish,
+} from "@/lib/i18n/news-en";
 
 export const dynamic = "force-dynamic";
 
@@ -18,22 +22,34 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const item = await getNewsBySlug(slug);
-  if (!item) return { title: "소식을 찾을 수 없습니다" };
+
+  if (!item) {
+    return { title: "Article Not Found" };
+  }
+
+  const translated = translateNewsItemToEnglish(item);
 
   return {
-    title: `${item.title} — 풍천리를 지켜주세요`,
-    description: item.summary,
+    title: `${translated.title} — Save Pungcheon-ri`,
+    description: translated.summary,
+    alternates: {
+      canonical: `/en/news/${slug}`,
+      languages: {
+        en: `/en/news/${slug}`,
+        ko: `/news/${slug}`,
+      },
+    },
     openGraph: {
-      title: item.title,
-      description: item.summary,
+      title: translated.title,
+      description: translated.summary,
       type: "article",
-      locale: "ko_KR",
-      ...(item.thumbnailUrl ? { images: [item.thumbnailUrl] } : {}),
+      locale: "en_US",
+      ...(translated.thumbnailUrl ? { images: [translated.thumbnailUrl] } : {}),
     },
   };
 }
 
-export default async function NewsDetailPage({
+export default async function EnglishNewsDetailPage({
   params,
 }: {
   params: Params;
@@ -45,77 +61,84 @@ export default async function NewsDetailPage({
     notFound();
   }
 
-  const allNews = await getPublishedNews();
-  const currentIndex = allNews.findIndex((n) => n.slug === slug);
-  const prevItem = currentIndex < allNews.length - 1 ? allNews[currentIndex + 1] : null;
+  const translatedItem = translateNewsItemToEnglish(item);
+  const allNews = translateNewsItemsToEnglish(await getPublishedNews());
+  const currentIndex = allNews.findIndex((newsItem) => newsItem.slug === slug);
+  const prevItem =
+    currentIndex < allNews.length - 1 ? allNews[currentIndex + 1] : null;
   const nextItem = currentIndex > 0 ? allNews[currentIndex - 1] : null;
 
-  const paragraphs = item.content.split("\n\n").filter((p) => p.trim());
-  const formattedDate = new Date(item.date).toLocaleDateString("ko-KR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const paragraphs = translatedItem.content
+    .split("\n\n")
+    .filter((paragraph) => paragraph.trim());
+  const formattedDate = new Date(translatedItem.date).toLocaleDateString(
+    "en-US",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    },
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
       <UtilityHeader
-        title={item.title}
-        subtitle={item.summary}
-        eyebrow={`${item.category} · ${formattedDate}`}
+        title={translatedItem.title}
+        subtitle={translatedItem.summary}
+        eyebrow={`${translatedItem.category} · ${formattedDate}`}
         tone="slate"
       />
 
       <article className="max-w-3xl mx-auto px-4 pt-10 md:pt-14 pb-20">
         <EditableLink
-          contentKey="news.detail.backHref"
-          defaultHref="/news"
-          page="news"
+          contentKey="en.news.detail.backHref"
+          defaultHref="/en/news"
+          page="en/news"
           section="detail"
           className="inline-flex items-center min-h-[44px] text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors mb-8"
         >
           <EditableText
-            contentKey="news.detail.backLabel"
-            defaultValue="← 소식 목록으로"
+            contentKey="en.news.detail.backLabel"
+            defaultValue="< Back to News"
             as="span"
-            page="news"
+            page="en/news"
             section="detail"
           />
         </EditableLink>
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--color-text-muted)] font-medium mb-10">
-          <time dateTime={item.date}>{formattedDate}</time>
-          {item.sourceName && (
+          <time dateTime={translatedItem.date}>{formattedDate}</time>
+          {translatedItem.sourceName && (
             <>
               <span aria-hidden="true">·</span>
-              {item.sourceUrl ? (
+              {translatedItem.sourceUrl ? (
                 <a
-                  href={item.sourceUrl}
+                  href={translatedItem.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[var(--color-forest)] hover:underline"
                 >
-                  {item.sourceName}{" "}
                   <EditableText
-                    contentKey="news.detail.sourceSuffix"
-                    defaultValue="원문 보기 ↗"
+                    contentKey="en.news.detail.sourcePrefix"
+                    defaultValue="Read original at"
                     as="span"
-                    page="news"
+                    page="en/news"
                     section="detail"
-                  />
+                  />{" "}
+                  {translatedItem.sourceName} ↗
                 </a>
               ) : (
-                <span>{item.sourceName}</span>
+                <span>{translatedItem.sourceName}</span>
               )}
             </>
           )}
         </div>
 
-        {item.thumbnailUrl && (
+        {translatedItem.thumbnailUrl && (
           <div className="relative w-full aspect-[16/9] mb-10 rounded-xl overflow-hidden">
             <Image
-              src={item.thumbnailUrl}
-              alt={item.title}
+              src={translatedItem.thumbnailUrl}
+              alt={translatedItem.title}
               fill
               sizes="(max-width: 768px) 100vw, 768px"
               className="object-cover"
@@ -139,26 +162,26 @@ export default async function NewsDetailPage({
 
         <div className="mb-12">
           <ShareButtons
-            title={item.title}
-            page="news"
+            title={translatedItem.title}
+            page="en/news"
             section="detail"
-            contentPrefix="news.detail.share"
+            contentPrefix="en.news.detail.share"
           />
         </div>
 
         <hr className="border-[var(--color-border)] mb-8" />
 
-        <nav className="grid grid-cols-1 sm:grid-cols-2 gap-4" aria-label="이전/다음 소식">
+        <nav className="grid grid-cols-1 sm:grid-cols-2 gap-4" aria-label="Previous and next news">
           {prevItem ? (
             <Link
-              href={`/news/${prevItem.slug}`}
+              href={`/en/news/${prevItem.slug}`}
               className="group flex flex-col p-5 rounded-xl border border-[var(--color-border)] hover:border-[var(--color-forest)] hover:shadow-md transition-all"
             >
               <EditableText
-                contentKey="news.detail.prevLabel"
-                defaultValue="← 이전 소식"
+                contentKey="en.news.detail.prevLabel"
+                defaultValue="← Previous"
                 as="span"
-                page="news"
+                page="en/news"
                 section="detail"
                 className="text-xs text-[var(--color-text-muted)] mb-1"
               />
@@ -171,14 +194,14 @@ export default async function NewsDetailPage({
           )}
           {nextItem ? (
             <Link
-              href={`/news/${nextItem.slug}`}
+              href={`/en/news/${nextItem.slug}`}
               className="group flex flex-col items-end text-right p-5 rounded-xl border border-[var(--color-border)] hover:border-[var(--color-forest)] hover:shadow-md transition-all"
             >
               <EditableText
-                contentKey="news.detail.nextLabel"
-                defaultValue="다음 소식 →"
+                contentKey="en.news.detail.nextLabel"
+                defaultValue="Next →"
                 as="span"
-                page="news"
+                page="en/news"
                 section="detail"
                 className="text-xs text-[var(--color-text-muted)] mb-1"
               />

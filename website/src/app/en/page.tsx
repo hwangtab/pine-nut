@@ -38,18 +38,22 @@ export default function EnglishPage() {
     <article>
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+        imageContentKey="en.hero.image"
+        imagePage="en"
+        imageSection="hero"
         title={<EditableText contentKey="en.hero.title" defaultValue="Save Pungcheon-ri" as="span" page="en" section="hero" />}
         subtitle={<EditableText contentKey="en.hero.subtitle" defaultValue="A 7-Year Fight to Protect a Village, a Forest, and a Way of Life" as="span" page="en" section="hero" />}
-        eyebrow="English Summary"
+        eyebrow={<EditableText contentKey="en.hero.eyebrow" defaultValue="English Summary" as="span" page="en" section="hero" />}
       />
 
       <OrderedSectionGroup page="en" defaultOrder={[...EN_SECTION_ORDER]}>
       <ManagedSection
         page="en"
         sectionId="story"
+        htmlId="story"
         visibilityContentKey="en.story.visibility"
         section="story"
-        defaultClassName="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]"
+        defaultClassName="scroll-mt-24 py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]"
       >
           <div className="max-w-3xl mx-auto">
             <EditableText
@@ -80,9 +84,10 @@ The villagers voted unanimously to oppose the project. Since then, they have hel
       <ManagedSection
         page="en"
         sectionId="numbers"
+        htmlId="numbers"
         visibilityContentKey="en.numbers.visibility"
         section="numbers"
-        defaultClassName="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg-warm)]"
+        defaultClassName="scroll-mt-24 py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg-warm)]"
       >
           <div className="max-w-4xl mx-auto">
             <EditableText
@@ -100,9 +105,10 @@ The villagers voted unanimously to oppose the project. Since then, they have hel
       <ManagedSection
         page="en"
         sectionId="stake"
+        htmlId="stake"
         visibilityContentKey="en.stake.visibility"
         section="stake"
-        defaultClassName="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]"
+        defaultClassName="scroll-mt-24 py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]"
       >
           <div className="max-w-4xl mx-auto">
             <EditableText
@@ -120,9 +126,10 @@ The villagers voted unanimously to oppose the project. Since then, they have hel
       <ManagedSection
         page="en"
         sectionId="help"
+        htmlId="help"
         visibilityContentKey="en.help.visibility"
         section="help"
-        defaultClassName="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-forest)] text-white"
+        defaultClassName="scroll-mt-24 py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-forest)] text-white"
       >
           <div className="max-w-3xl mx-auto text-center">
             <EditableText
@@ -144,7 +151,7 @@ The villagers voted unanimously to oppose the project. Since then, they have hel
             <EnglishHelpCards />
             <EditableLink
               contentKey="en.cta.href"
-              defaultHref="/petition"
+              defaultHref="/en/petition"
               page="en"
               section="help"
               className="inline-flex items-center justify-center px-10 py-4 rounded-xl bg-white text-[var(--color-forest)] font-bold text-lg hover:bg-white/90 transition-colors min-h-[52px]"

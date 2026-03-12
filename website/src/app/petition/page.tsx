@@ -4,8 +4,9 @@ import { useState, useEffect, useRef, useCallback, type FormEvent, type ReactNod
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { Send, Check, Copy, Loader2, HeartHandshake, Megaphone } from "lucide-react";
 import SubHero from "@/components/SubHero";
-import { EditableLink, EditableText, EditableList } from "@/components/editable";
+import { EditableLink, EditableText, EditableList, EditableValue } from "@/components/editable";
 import { events } from "@/lib/analytics";
+import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 
 /* ──────────────────────── Types ──────────────────────── */
 interface Signature {
@@ -120,18 +121,34 @@ function RecentSignatures({ signatures, loading }: { signatures: Signature[]; lo
 
   return (
     <section className="w-full" aria-label="최근 서명">
-      <h2 className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]">
-        최근 서명
-      </h2>
+      <EditableText
+        contentKey="petition.recent.heading"
+        defaultValue="최근 서명"
+        as="h2"
+        page="petition"
+        section="recent"
+        className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]"
+      />
       {loading ? (
         <div className="flex items-center justify-center py-12 text-[var(--color-text-muted)]">
           <Loader2 className="w-5 h-5 animate-spin mr-2" />
-          불러오는 중...
+          <EditableText
+            contentKey="petition.recent.loading"
+            defaultValue="불러오는 중..."
+            as="span"
+            page="petition"
+            section="recent"
+          />
         </div>
       ) : signatures.length === 0 ? (
-        <p className="text-center py-8 text-[var(--color-text-muted)]">
-          아직 서명이 없습니다. 첫 번째로 서명해주세요!
-        </p>
+        <EditableText
+          contentKey="petition.recent.empty"
+          defaultValue="아직 서명이 없습니다. 첫 번째로 서명해주세요!"
+          as="p"
+          page="petition"
+          section="recent"
+          className="text-center py-8 text-[var(--color-text-muted)]"
+        />
       ) : (
         <div className="space-y-3 overflow-hidden max-h-[320px]">
           <AnimatePresence mode="popLayout">
@@ -164,6 +181,7 @@ function RecentSignatures({ signatures, loading }: { signatures: Signature[]; lo
 
 /* ──────────────────────── Main Page ──────────────────────── */
 export default function PetitionPage() {
+  const { getContent, isEditMode } = useAdminEdit();
   const [signatureCount, setSignatureCount] = useState(0);
   const [signatures, setSignatures] = useState<Signature[]>([]);
   const [loadingSignatures, setLoadingSignatures] = useState(true);
@@ -183,6 +201,29 @@ export default function PetitionPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [signatureStartedTracked, setSignatureStartedTracked] = useState(false);
+
+  const shareTitle = getContent("petition.share.title") ?? "풍천리를 지켜주세요";
+  const shareText =
+    getContent("petition.share.text") ?? "풍천리 주민들의 양수발전소 건설 반대 서명에 함께해주세요!";
+  const shareCopyFallback =
+    getContent("petition.share.copyFallback") ?? "링크가 복사되었습니다.";
+  const formNamePlaceholder = getContent("petition.form.namePlaceholder") ?? "홍길동";
+  const formEmailPlaceholder =
+    getContent("petition.form.emailPlaceholder") ?? "example@email.com";
+  const formMessagePlaceholder =
+    getContent("petition.form.messagePlaceholder") ?? "주민분들께 응원의 말씀을 남겨주세요";
+  const formNameError =
+    getContent("petition.form.errorName") ?? "이름을 입력해주세요.";
+  const formEmailRequiredError =
+    getContent("petition.form.errorEmailRequired") ?? "이메일을 입력해주세요.";
+  const formEmailInvalidError =
+    getContent("petition.form.errorEmailInvalid") ?? "올바른 이메일 형식을 입력해주세요.";
+  const formPrivacyError =
+    getContent("petition.form.errorPrivacy") ?? "개인정보 수집·이용에 동의해주세요.";
+  const formAgeError =
+    getContent("petition.form.errorAge") ?? "만 14세 이상 확인이 필요합니다.";
+  const formSubmitFallbackError =
+    getContent("petition.form.errorSubmit") ?? "서명 제출에 실패했습니다. 다시 시도해주세요.";
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -204,27 +245,27 @@ export default function PetitionPage() {
     fetchSignatures();
   }, [fetchSignatures]);
 
-  const validate = (): boolean => {
+  const validate = useCallback((): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (!name.trim()) {
-      newErrors.name = "이름을 입력해주세요.";
+      newErrors.name = formNameError;
     }
     if (!email.trim()) {
-      newErrors.email = "이메일을 입력해주세요.";
+      newErrors.email = formEmailRequiredError;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "올바른 이메일 형식을 입력해주세요.";
+      newErrors.email = formEmailInvalidError;
     }
     if (!agreePrivacy) {
-      newErrors.agreePrivacy = "개인정보 수집·이용에 동의해주세요.";
+      newErrors.agreePrivacy = formPrivacyError;
     }
     if (!agreeAge) {
-      newErrors.agreeAge = "만 14세 이상 확인이 필요합니다.";
+      newErrors.agreeAge = formAgeError;
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [agreeAge, agreePrivacy, email, formAgeError, formEmailInvalidError, formEmailRequiredError, formNameError, formPrivacyError, name]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -249,7 +290,7 @@ export default function PetitionPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "서명 제출에 실패했습니다.");
+        throw new Error(data.error || formSubmitFallbackError);
       }
 
       setSignatureCount(data.count);
@@ -265,7 +306,7 @@ export default function PetitionPage() {
       setTimeout(() => setShowConfetti(false), 3000);
     } catch (err) {
       setSubmitError(
-        err instanceof Error ? err.message : "서명 제출에 실패했습니다. 다시 시도해주세요."
+        err instanceof Error ? err.message : formSubmitFallbackError
       );
     } finally {
       setSubmitting(false);
@@ -283,21 +324,19 @@ export default function PetitionPage() {
     }
   };
 
-  const handleShareTwitter = () => {
-    const text = encodeURIComponent(
-      "풍천리 주민들의 양수발전소 건설 반대 서명에 함께해주세요!"
-    );
+  const handleShareTwitter = useCallback(() => {
+    const text = encodeURIComponent(shareText);
     const url = encodeURIComponent(window.location.href);
     events.shareClick("twitter");
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
-  };
+  }, [shareText]);
 
-  const handleShareKakao = async () => {
+  const handleShareKakao = useCallback(async () => {
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
-          title: "풍천리를 지켜주세요",
-          text: "풍천리 주민들의 양수발전소 건설 반대 서명에 함께해주세요!",
+          title: shareTitle,
+          text: shareText,
           url: window.location.href,
         });
         events.shareClick("web_share");
@@ -307,6 +346,7 @@ export default function PetitionPage() {
     } else {
       try {
         await navigator.clipboard.writeText(window.location.href);
+        alert(shareCopyFallback);
         events.shareClick("clipboard_share");
         setUrlCopied(true);
         setTimeout(() => setUrlCopied(false), 2000);
@@ -314,7 +354,7 @@ export default function PetitionPage() {
         /* fallback: do nothing */
       }
     }
-  };
+  }, [shareCopyFallback, shareText, shareTitle]);
 
   const handleScrollToForm = useCallback(() => {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -327,16 +367,24 @@ export default function PetitionPage() {
       {/* ── Header ── */}
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
+        imageContentKey="petition.hero.image"
+        imagePage="petition"
+        imageSection="hero"
         title={<EditableText contentKey="petition.hero.title" defaultValue="함께해주세요" as="span" page="petition" section="hero" />}
         subtitle={<EditableText contentKey="petition.hero.subtitle" defaultValue="서명, 후원, 공유 중 지금 할 수 있는 행동으로 풍천리 주민들과 함께해주세요" as="span" page="petition" section="hero" />}
-        eyebrow="참여하기"
+        eyebrow={<EditableText contentKey="petition.hero.eyebrow" defaultValue="참여하기" as="span" page="petition" section="hero" />}
         variant="emphasis"
         metric={
           <div className="flex flex-col items-center gap-1">
             <AnimatedCounter target={signatureCount} />
-            <span className="text-white/80 text-lg mt-1">
-              명이 함께하고 있습니다
-            </span>
+            <EditableText
+              contentKey="petition.hero.metricLabel"
+              defaultValue="명이 함께하고 있습니다"
+              as="span"
+              page="petition"
+              section="hero"
+              className="text-white/80 text-lg mt-1"
+            />
           </div>
         }
       />
@@ -455,7 +503,13 @@ export default function PetitionPage() {
                     htmlFor="sig-name"
                     className="block text-[15px] font-semibold mb-2 text-[var(--color-text)]"
                   >
-                    이름 <span className="text-[var(--color-warm)]">*</span>
+                    <EditableText
+                      contentKey="petition.form.nameLabel"
+                      defaultValue="이름"
+                      as="span"
+                      page="petition"
+                      section="form"
+                    /> <span className="text-[var(--color-warm)]">*</span>
                   </label>
                   <input
                     id="sig-name"
@@ -468,7 +522,7 @@ export default function PetitionPage() {
                     }}
                     aria-invalid={!!errors.name}
                     aria-describedby={errors.name ? "sig-name-error" : undefined}
-                    placeholder="홍길동"
+                    placeholder={formNamePlaceholder}
                     className="w-full min-h-[48px] px-4 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-warm)] transition"
                   />
                   {errors.name && (
@@ -484,7 +538,13 @@ export default function PetitionPage() {
                     htmlFor="sig-email"
                     className="block text-[15px] font-semibold mb-2 text-[var(--color-text)]"
                   >
-                    이메일 <span className="text-[var(--color-warm)]">*</span>
+                    <EditableText
+                      contentKey="petition.form.emailLabel"
+                      defaultValue="이메일"
+                      as="span"
+                      page="petition"
+                      section="form"
+                    /> <span className="text-[var(--color-warm)]">*</span>
                   </label>
                   <input
                     id="sig-email"
@@ -497,7 +557,7 @@ export default function PetitionPage() {
                     }}
                     aria-invalid={!!errors.email}
                     aria-describedby={errors.email ? "sig-email-error" : undefined}
-                    placeholder="example@email.com"
+                    placeholder={formEmailPlaceholder}
                     className="w-full min-h-[48px] px-4 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-warm)] transition"
                   />
                   {errors.email && (
@@ -513,8 +573,21 @@ export default function PetitionPage() {
                     htmlFor="sig-message"
                     className="block text-[15px] font-semibold mb-2 text-[var(--color-text)]"
                   >
-                    응원 메시지{" "}
-                    <span className="font-normal text-[var(--color-text-muted)]">(선택)</span>
+                    <EditableText
+                      contentKey="petition.form.messageLabel"
+                      defaultValue="응원 메시지"
+                      as="span"
+                      page="petition"
+                      section="form"
+                    />{" "}
+                    <EditableText
+                      contentKey="petition.form.messageOptional"
+                      defaultValue="(선택)"
+                      as="span"
+                      page="petition"
+                      section="form"
+                      className="font-normal text-[var(--color-text-muted)]"
+                    />
                   </label>
                   <textarea
                     id="sig-message"
@@ -524,7 +597,7 @@ export default function PetitionPage() {
                     }}
                     maxLength={100}
                     rows={3}
-                    placeholder="주민분들께 응원의 말씀을 남겨주세요"
+                    placeholder={formMessagePlaceholder}
                     aria-describedby="sig-message-count"
                     className="w-full px-4 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-warm)] resize-none transition"
                   />
@@ -561,18 +634,57 @@ export default function PetitionPage() {
                           className="underline text-[var(--color-sky)] hover:text-[var(--color-sky)]/80"
                           onClick={() => setShowPrivacy(!showPrivacy)}
                         >
-                          개인정보 수집·이용
+                          <EditableText
+                            contentKey="petition.form.privacyToggle"
+                            defaultValue="개인정보 수집·이용"
+                            as="span"
+                            page="petition"
+                            section="form"
+                          />
                         </button>
-                        에 동의합니다.{" "}
+                        <EditableText
+                          contentKey="petition.form.privacyConsentSuffix"
+                          defaultValue="에 동의합니다."
+                          as="span"
+                          page="petition"
+                          section="form"
+                        />{" "}
                         <span className="text-[var(--color-warm)]">*</span>
                       </span>
                     </label>
                     {showPrivacy && (
                       <div className="ml-8 mt-2 p-4 bg-[var(--color-bg-warm)] rounded-xl text-sm text-[var(--color-text-muted)] leading-relaxed">
-                        <p className="mb-1"><strong>수집 항목:</strong> 이름, 이메일</p>
-                        <p className="mb-1"><strong>수집 목적:</strong> 서명 확인 및 캠페인 안내</p>
-                        <p className="mb-1"><strong>보유 기간:</strong> 캠페인 종료 후 즉시 파기</p>
-                        <p>동의를 거부할 수 있으며, 거부 시 서명 참여가 제한됩니다.</p>
+                        <EditableText
+                          contentKey="petition.form.privacyLine1"
+                          defaultValue="수집 항목: 이름, 이메일"
+                          as="p"
+                          page="petition"
+                          section="form"
+                          className="mb-1"
+                        />
+                        <EditableText
+                          contentKey="petition.form.privacyLine2"
+                          defaultValue="수집 목적: 서명 확인 및 캠페인 안내"
+                          as="p"
+                          page="petition"
+                          section="form"
+                          className="mb-1"
+                        />
+                        <EditableText
+                          contentKey="petition.form.privacyLine3"
+                          defaultValue="보유 기간: 캠페인 종료 후 즉시 파기"
+                          as="p"
+                          page="petition"
+                          section="form"
+                          className="mb-1"
+                        />
+                        <EditableText
+                          contentKey="petition.form.privacyLine4"
+                          defaultValue="동의를 거부할 수 있으며, 거부 시 서명 참여가 제한됩니다."
+                          as="p"
+                          page="petition"
+                          section="form"
+                        />
                       </div>
                     )}
                     {errors.agreePrivacy && (
@@ -602,7 +714,13 @@ export default function PetitionPage() {
                         className="mt-1 w-5 h-5 shrink-0 accent-[var(--color-warm)] cursor-pointer"
                       />
                       <span className="text-[15px] text-[var(--color-text)]">
-                        만 14세 이상입니다.{" "}
+                        <EditableText
+                          contentKey="petition.form.ageLabel"
+                          defaultValue="만 14세 이상입니다."
+                          as="span"
+                          page="petition"
+                          section="form"
+                        />{" "}
                         <span className="text-[var(--color-warm)]">*</span>
                       </span>
                     </label>
@@ -634,16 +752,132 @@ export default function PetitionPage() {
                   {submitting ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      서명 중...
+                      <EditableText
+                        contentKey="petition.form.submitting"
+                        defaultValue="서명 중..."
+                        as="span"
+                        page="petition"
+                        section="form"
+                      />
                     </>
                   ) : (
                     <>
                       <Send className="w-5 h-5" />
-                      서명하기
+                      <EditableText
+                        contentKey="petition.form.submit"
+                        defaultValue="서명하기"
+                        as="span"
+                        page="petition"
+                        section="form"
+                      />
                     </>
                   )}
                 </button>
               </form>
+              {isEditMode && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <EditableValue
+                    contentKey="petition.form.namePlaceholder"
+                    defaultValue="홍길동"
+                    page="petition"
+                    section="form"
+                    buttonLabel="이름 힌트"
+                    wrapperClassName="relative"
+                    buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                  >
+                    {(value, editButton) => editButton ?? <span>{value}</span>}
+                  </EditableValue>
+                  <EditableValue
+                    contentKey="petition.form.emailPlaceholder"
+                    defaultValue="example@email.com"
+                    page="petition"
+                    section="form"
+                    buttonLabel="이메일 힌트"
+                    wrapperClassName="relative"
+                    buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                  >
+                    {(value, editButton) => editButton ?? <span>{value}</span>}
+                  </EditableValue>
+                  <EditableValue
+                    contentKey="petition.form.messagePlaceholder"
+                    defaultValue="주민분들께 응원의 말씀을 남겨주세요"
+                    page="petition"
+                    section="form"
+                    multiline
+                    buttonLabel="메시지 힌트"
+                    wrapperClassName="relative"
+                    buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                  >
+                    {(value, editButton) => editButton ?? <span>{value}</span>}
+                  </EditableValue>
+                  <EditableValue
+                    contentKey="petition.form.errorName"
+                    defaultValue="이름을 입력해주세요."
+                    page="petition"
+                    section="form"
+                    buttonLabel="이름 오류"
+                    wrapperClassName="relative"
+                    buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                  >
+                    {(value, editButton) => editButton ?? <span>{value}</span>}
+                  </EditableValue>
+                  <EditableValue
+                    contentKey="petition.form.errorEmailRequired"
+                    defaultValue="이메일을 입력해주세요."
+                    page="petition"
+                    section="form"
+                    buttonLabel="이메일 필수"
+                    wrapperClassName="relative"
+                    buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                  >
+                    {(value, editButton) => editButton ?? <span>{value}</span>}
+                  </EditableValue>
+                  <EditableValue
+                    contentKey="petition.form.errorEmailInvalid"
+                    defaultValue="올바른 이메일 형식을 입력해주세요."
+                    page="petition"
+                    section="form"
+                    buttonLabel="이메일 형식"
+                    wrapperClassName="relative"
+                    buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                  >
+                    {(value, editButton) => editButton ?? <span>{value}</span>}
+                  </EditableValue>
+                  <EditableValue
+                    contentKey="petition.form.errorPrivacy"
+                    defaultValue="개인정보 수집·이용에 동의해주세요."
+                    page="petition"
+                    section="form"
+                    buttonLabel="개인정보 오류"
+                    wrapperClassName="relative"
+                    buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                  >
+                    {(value, editButton) => editButton ?? <span>{value}</span>}
+                  </EditableValue>
+                  <EditableValue
+                    contentKey="petition.form.errorAge"
+                    defaultValue="만 14세 이상 확인이 필요합니다."
+                    page="petition"
+                    section="form"
+                    buttonLabel="연령 오류"
+                    wrapperClassName="relative"
+                    buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                  >
+                    {(value, editButton) => editButton ?? <span>{value}</span>}
+                  </EditableValue>
+                  <EditableValue
+                    contentKey="petition.form.errorSubmit"
+                    defaultValue="서명 제출에 실패했습니다. 다시 시도해주세요."
+                    page="petition"
+                    section="form"
+                    buttonLabel="제출 오류"
+                    wrapperClassName="relative"
+                    buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                  >
+                    {(value, editButton) => editButton ?? <span>{value}</span>}
+                  </EditableValue>
+                </div>
+              )}
             </motion.section>
           ) : (
             <motion.section
@@ -658,32 +892,70 @@ export default function PetitionPage() {
                 <Check className="w-8 h-8 text-[var(--color-forest)]" />
               </div>
               <h2 className="text-2xl sm:text-3xl font-black text-[var(--color-text)] mb-2">
-                감사합니다, {submittedName}님!
+                <EditableText
+                  contentKey="petition.success.titlePrefix"
+                  defaultValue="감사합니다,"
+                  as="span"
+                  page="petition"
+                  section="success"
+                />{" "}
+                {submittedName}
+                <EditableText
+                  contentKey="petition.success.titleSuffix"
+                  defaultValue="님!"
+                  as="span"
+                  page="petition"
+                  section="success"
+                />
               </h2>
               <p className="text-lg text-[var(--color-text-muted)] mb-8">
                 <span className="font-bold text-[var(--color-warm)]">
                   {signatureCount.toLocaleString("ko-KR")}
                 </span>
-                번째로 함께해주셨습니다.
+                <EditableText
+                  contentKey="petition.success.countSuffix"
+                  defaultValue="번째로 함께해주셨습니다."
+                  as="span"
+                  page="petition"
+                  section="success"
+                />
               </p>
 
               {/* Share buttons */}
               <div className="space-y-3">
                 <p className="text-[15px] font-semibold text-[var(--color-text)] mb-4">
-                  더 많은 사람에게 알려주세요
+                  <EditableText
+                    contentKey="petition.success.sharePrompt"
+                    defaultValue="더 많은 사람에게 알려주세요"
+                    as="span"
+                    page="petition"
+                    section="success"
+                  />
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <button
                     onClick={handleShareKakao}
                     className="min-h-[48px] px-6 py-3 rounded-xl bg-[#FEE500] text-[#191919] font-semibold flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
                   >
-                    카카오톡 공유
+                    <EditableText
+                      contentKey="petition.success.shareKakao"
+                      defaultValue="카카오톡 공유"
+                      as="span"
+                      page="petition"
+                      section="success"
+                    />
                   </button>
                   <button
                     onClick={handleShareTwitter}
                     className="min-h-[48px] px-6 py-3 rounded-xl bg-[#1DA1F2] text-white font-semibold flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
                   >
-                    트위터 공유
+                    <EditableText
+                      contentKey="petition.success.shareTwitter"
+                      defaultValue="트위터 공유"
+                      as="span"
+                      page="petition"
+                      section="success"
+                    />
                   </button>
                   <button
                     onClick={handleCopyUrl}
@@ -692,12 +964,24 @@ export default function PetitionPage() {
                     {urlCopied ? (
                       <>
                         <Check className="w-4 h-4" />
-                        복사됨!
+                        <EditableText
+                          contentKey="petition.success.copied"
+                          defaultValue="복사됨!"
+                          as="span"
+                          page="petition"
+                          section="success"
+                        />
                       </>
                     ) : (
                       <>
                         <Copy className="w-4 h-4" />
-                        URL 복사
+                        <EditableText
+                          contentKey="petition.success.copy"
+                          defaultValue="URL 복사"
+                          as="span"
+                          page="petition"
+                          section="success"
+                        />
                       </>
                     )}
                   </button>
@@ -717,7 +1001,13 @@ export default function PetitionPage() {
                 }}
                 className="mt-8 text-[var(--color-text-muted)] underline text-sm hover:text-[var(--color-text)] transition-colors min-h-[44px]"
               >
-                다른 사람도 서명하기
+                <EditableText
+                  contentKey="petition.success.reset"
+                  defaultValue="다른 사람도 서명하기"
+                  as="span"
+                  page="petition"
+                  section="success"
+                />
               </button>
             </motion.section>
           )}
@@ -775,6 +1065,45 @@ export default function PetitionPage() {
           </EditableList>
         </section>
       </div>
+
+      {isEditMode && (
+        <div className="fixed bottom-4 left-4 z-40 flex flex-wrap gap-2 rounded-2xl border border-blue-200 bg-white/95 p-3 shadow-xl backdrop-blur">
+          <EditableValue
+            contentKey="petition.share.title"
+            defaultValue="풍천리를 지켜주세요"
+            page="petition"
+            section="share"
+            buttonLabel="공유 제목"
+            wrapperClassName="relative"
+            buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+          >
+            {(value, editButton) => editButton ?? <span>{value}</span>}
+          </EditableValue>
+          <EditableValue
+            contentKey="petition.share.text"
+            defaultValue="풍천리 주민들의 양수발전소 건설 반대 서명에 함께해주세요!"
+            page="petition"
+            section="share"
+            multiline
+            buttonLabel="공유 설명"
+            wrapperClassName="relative"
+            buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+          >
+            {(value, editButton) => editButton ?? <span>{value}</span>}
+          </EditableValue>
+          <EditableValue
+            contentKey="petition.share.copyFallback"
+            defaultValue="링크가 복사되었습니다."
+            page="petition"
+            section="share"
+            buttonLabel="복사 알림"
+            wrapperClassName="relative"
+            buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+          >
+            {(value, editButton) => editButton ?? <span>{value}</span>}
+          </EditableValue>
+        </div>
+      )}
     </div>
   );
 }

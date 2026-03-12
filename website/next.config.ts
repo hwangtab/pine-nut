@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "node:path";
 import allowedImageHosts from "./src/lib/allowed-image-hosts.json";
 
 let supabaseHostname: string | null = null;
@@ -10,6 +11,9 @@ try {
 }
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
   images: {
     remotePatterns: [
       ...allowedImageHosts.map((hostname) => ({

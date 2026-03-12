@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 interface UtilityHeaderProps {
   title: ReactNode;
   subtitle?: ReactNode;
-  eyebrow?: string;
+  eyebrow?: ReactNode;
   tone?: "warm" | "forest" | "slate";
 }
 

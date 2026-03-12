@@ -3,46 +3,53 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import type { NewsItem } from "@/data/news";
 import SubHero from "@/components/SubHero";
 import { EditableText } from "@/components/editable";
+import type { EnglishNewsCategory, EnglishNewsItem } from "@/lib/i18n/news-en";
 
-type Category = "전체" | NewsItem["category"];
+type Category = "All" | EnglishNewsCategory;
 
-const categoryFilterStyles: Record<NewsItem["category"], { color: string; activeColor: string }> = {
-  공지: {
+const categoryFilterStyles: Record<
+  EnglishNewsCategory,
+  { color: string; activeColor: string }
+> = {
+  Notice: {
     color: "bg-[var(--color-sky)]/10 text-[var(--color-sky)]",
     activeColor: "bg-[var(--color-sky)] text-white",
   },
-  집회: {
+  Protest: {
     color: "bg-[var(--color-warm)]/10 text-[var(--color-warm)]",
     activeColor: "bg-[var(--color-warm)] text-white",
   },
-  언론보도: {
+  "Press Coverage": {
     color: "bg-[var(--color-earth)]/10 text-[var(--color-earth)]",
     activeColor: "bg-[var(--color-earth)] text-white",
   },
-  연대: {
+  Solidarity: {
     color: "bg-[var(--color-forest)]/10 text-[var(--color-forest)]",
     activeColor: "bg-[var(--color-forest)] text-white",
   },
 };
 
-const categoryTagColors: Record<NewsItem["category"], string> = {
-  공지: "bg-[var(--color-sky)]/10 text-[var(--color-sky)]",
-  집회: "bg-[var(--color-warm)]/10 text-[var(--color-warm)]",
-  언론보도: "bg-[var(--color-earth)]/10 text-[var(--color-earth)]",
-  연대: "bg-[var(--color-forest)]/10 text-[var(--color-forest)]",
+const categoryTagColors: Record<EnglishNewsCategory, string> = {
+  Notice: "bg-[var(--color-sky)]/10 text-[var(--color-sky)]",
+  Protest: "bg-[var(--color-warm)]/10 text-[var(--color-warm)]",
+  "Press Coverage": "bg-[var(--color-earth)]/10 text-[var(--color-earth)]",
+  Solidarity: "bg-[var(--color-forest)]/10 text-[var(--color-forest)]",
 };
 
-export default function NewsListClient({ newsItems }: { newsItems: NewsItem[] }) {
-  const [activeCategory, setActiveCategory] = useState<Category>("전체");
+export default function EnglishNewsListClient({
+  newsItems,
+}: {
+  newsItems: EnglishNewsItem[];
+}) {
+  const [activeCategory, setActiveCategory] = useState<Category>("All");
   const availableCategories = (
-    ["공지", "집회", "언론보도", "연대"] as const
+    ["Notice", "Protest", "Press Coverage", "Solidarity"] as const
   ).filter((category) => newsItems.some((item) => item.category === category));
   const categories: { label: Category; color: string; activeColor: string }[] = [
     {
-      label: "전체",
+      label: "All",
       color: "bg-[var(--color-bg)] text-[var(--color-text-muted)]",
       activeColor: "bg-[var(--color-text)] text-white",
     },
@@ -54,7 +61,7 @@ export default function NewsListClient({ newsItems }: { newsItems: NewsItem[] })
   ];
 
   const filteredItems =
-    activeCategory === "전체"
+    activeCategory === "All"
       ? newsItems
       : newsItems.filter((item) => item.category === activeCategory);
 
@@ -62,19 +69,19 @@ export default function NewsListClient({ newsItems }: { newsItems: NewsItem[] })
     <div className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499236_STD.jpg"
-        imageContentKey="news.hero.image"
-        imagePage="news"
+        imageContentKey="en.news.hero.image"
+        imagePage="en/news"
         imageSection="hero"
-        title={<EditableText contentKey="news.hero.title" defaultValue="소식" as="span" page="news" section="hero" />}
-        subtitle={<EditableText contentKey="news.hero.subtitle" defaultValue="풍천리의 최신 소식을 전합니다" as="span" page="news" section="hero" />}
-        eyebrow={<EditableText contentKey="news.hero.eyebrow" defaultValue="최신 소식" as="span" page="news" section="hero" />}
+        title={<EditableText contentKey="en.news.hero.title" defaultValue="News" as="span" page="en/news" section="hero" />}
+        subtitle={<EditableText contentKey="en.news.hero.subtitle" defaultValue="Updates and coverage from the ongoing struggle in Pungcheon-ri" as="span" page="en/news" section="hero" />}
+        eyebrow={<EditableText contentKey="en.news.hero.eyebrow" defaultValue="Latest Updates" as="span" page="en/news" section="hero" />}
       />
 
       <EditableText
-        contentKey="news.intro.text"
-        defaultValue="풍천리의 이야기는 계속되고 있습니다. 언론이 주목하는 7년의 기록."
+        contentKey="en.news.intro.text"
+        defaultValue="The story of Pungcheon-ri is still unfolding. These are the reports, statements, and field updates shaping the record."
         as="p"
-        page="news"
+        page="en/news"
         section="intro"
         className="text-center text-[var(--color-text-muted)] pt-12 md:pt-16 mb-8 px-4"
       />
@@ -101,7 +108,7 @@ export default function NewsListClient({ newsItems }: { newsItems: NewsItem[] })
             {filteredItems.map((item) => (
               <Link
                 key={item.id}
-                href={`/news/${item.slug}`}
+                href={`/en/news/${item.slug}`}
                 className="group block min-h-[44px] bg-white rounded-2xl border border-[var(--color-border)] shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 overflow-hidden"
               >
                 <div className="relative w-full h-48 bg-[var(--color-bg)]">
@@ -148,7 +155,7 @@ export default function NewsListClient({ newsItems }: { newsItems: NewsItem[] })
                   </p>
                   <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)] font-medium">
                     <time dateTime={item.date}>
-                      {new Date(item.date).toLocaleDateString("ko-KR", {
+                      {new Date(item.date).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
@@ -169,10 +176,10 @@ export default function NewsListClient({ newsItems }: { newsItems: NewsItem[] })
           <div className="text-center py-20">
             <p className="text-[var(--color-text-muted)] text-lg">
               <EditableText
-                contentKey="news.empty.text"
-                defaultValue="해당 카테고리의 소식이 없습니다."
+                contentKey="en.news.empty.text"
+                defaultValue="No updates are available in this category."
                 as="span"
-                page="news"
+                page="en/news"
                 section="empty"
               />
             </p>

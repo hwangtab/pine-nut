@@ -5,19 +5,48 @@ import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import SubHero from "@/components/SubHero";
 import { EditableLink, EditableText } from "@/components/editable";
-import type { TimelineEvent } from "@/data/timeline";
+import type { EnglishTimelineEvent } from "@/lib/i18n/timeline-en";
 
-const YEARS = ["전체", 2019, 2021, 2022, 2023, 2024, 2025, 2026] as const;
+const YEARS = ["All", 2019, 2021, 2022, 2023, 2024, 2025, 2026] as const;
 
-const categoryColors: Record<TimelineEvent["category"], { dot: string; pill: string; pillText: string }> = {
-  회의: { dot: "bg-[var(--color-forest)]", pill: "bg-[var(--color-forest)]/10", pillText: "text-[var(--color-forest)]" },
-  집회: { dot: "bg-[var(--color-warm)]", pill: "bg-[var(--color-warm)]/10", pillText: "text-[var(--color-warm)]" },
-  법률: { dot: "bg-red-500", pill: "bg-red-100", pillText: "text-red-800" },
-  연대: { dot: "bg-[var(--color-sky)]", pill: "bg-[var(--color-sky)]/10", pillText: "text-[var(--color-sky)]" },
-  기타: { dot: "bg-[var(--color-earth)]", pill: "bg-[var(--color-earth)]/10", pillText: "text-[var(--color-earth)]" },
+const categoryColors: Record<
+  EnglishTimelineEvent["category"],
+  { dot: string; pill: string; pillText: string }
+> = {
+  Meetings: {
+    dot: "bg-[var(--color-forest)]",
+    pill: "bg-[var(--color-forest)]/10",
+    pillText: "text-[var(--color-forest)]",
+  },
+  Protest: {
+    dot: "bg-[var(--color-warm)]",
+    pill: "bg-[var(--color-warm)]/10",
+    pillText: "text-[var(--color-warm)]",
+  },
+  Legal: {
+    dot: "bg-red-500",
+    pill: "bg-red-100",
+    pillText: "text-red-800",
+  },
+  Solidarity: {
+    dot: "bg-[var(--color-sky)]",
+    pill: "bg-[var(--color-sky)]/10",
+    pillText: "text-[var(--color-sky)]",
+  },
+  Other: {
+    dot: "bg-[var(--color-earth)]",
+    pill: "bg-[var(--color-earth)]/10",
+    pillText: "text-[var(--color-earth)]",
+  },
 };
 
-function TimelineCard({ event, index }: { event: TimelineEvent; index: number }) {
+function TimelineCard({
+  event,
+  index,
+}: {
+  event: EnglishTimelineEvent;
+  index: number;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const isLeft = index % 2 === 0;
@@ -57,7 +86,7 @@ function TimelineCard({ event, index }: { event: TimelineEvent; index: number })
                 className="w-full h-48 md:h-56 object-cover"
               />
               <span className="absolute bottom-2 right-2 text-[10px] text-white/80 bg-black/40 px-2 py-0.5 rounded">
-                사진 출처: 언론 보도
+                Photo source: media report
               </span>
             </div>
           )}
@@ -84,32 +113,36 @@ function TimelineCard({ event, index }: { event: TimelineEvent; index: number })
   );
 }
 
-export default function TimelineClient({ timelineEvents }: { timelineEvents: TimelineEvent[] }) {
-  const [selectedYear, setSelectedYear] = useState<(typeof YEARS)[number]>("전체");
+export default function EnglishTimelineClient({
+  timelineEvents,
+}: {
+  timelineEvents: EnglishTimelineEvent[];
+}) {
+  const [selectedYear, setSelectedYear] = useState<(typeof YEARS)[number]>("All");
 
   const filteredEvents =
-    selectedYear === "전체"
+    selectedYear === "All"
       ? timelineEvents
-      : timelineEvents.filter((e) => e.year === selectedYear);
+      : timelineEvents.filter((event) => event.year === selectedYear);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-[var(--color-bg-warm)]/60 via-[var(--color-bg)] to-stone-50">
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
-        imageContentKey="timeline.hero.image"
-        imagePage="timeline"
+        imageContentKey="en.timeline.hero.image"
+        imagePage="en/timeline"
         imageSection="hero"
-        title={<EditableText contentKey="timeline.hero.title" defaultValue="7년의 기록" as="span" page="timeline" section="hero" />}
-        subtitle={<EditableText contentKey="timeline.hero.subtitle" defaultValue="2019년부터 현재까지, 풍천리 주민들의 발자취" as="span" page="timeline" section="hero" />}
-        eyebrow={<EditableText contentKey="timeline.hero.eyebrow" defaultValue="투쟁 연대기" as="span" page="timeline" section="hero" />}
+        title={<EditableText contentKey="en.timeline.hero.title" defaultValue="Seven Years of Resistance" as="span" page="en/timeline" section="hero" />}
+        subtitle={<EditableText contentKey="en.timeline.hero.subtitle" defaultValue="A timeline of the Pungcheon-ri residents' struggle from 2019 to the present" as="span" page="en/timeline" section="hero" />}
+        eyebrow={<EditableText contentKey="en.timeline.hero.eyebrow" defaultValue="Chronology" as="span" page="en/timeline" section="hero" />}
       />
 
       <div className="border-t border-b border-white/10 bg-[var(--color-bg-warm)] py-6 px-4">
         <EditableText
-          contentKey="timeline.quote.text"
-          defaultValue={`“2019년부터 오늘까지, 단 하루도 쉬지 않았습니다”`}
+          contentKey="en.timeline.quote.text"
+          defaultValue="“Not a single week has been skipped since 2019.”"
           as="p"
-          page="timeline"
+          page="en/timeline"
           section="quote"
           className="text-center text-lg italic text-[var(--color-text-muted)] max-w-2xl mx-auto"
         />
@@ -128,15 +161,15 @@ export default function TimelineClient({ timelineEvents }: { timelineEvents: Tim
                     : "bg-[var(--color-bg)] text-[var(--color-text-muted)] hover:bg-[var(--color-border)]"
                 }`}
               >
-                {year === "전체" ? "전체" : `${year}년`}
+                {year === "All" ? "All" : year}
               </button>
             ))}
           </div>
           <EditableText
-            contentKey="timeline.filter.hint"
-            defaultValue="좌우로 스크롤해 연도를 확인하세요."
+            contentKey="en.timeline.filter.hint"
+            defaultValue="Scroll sideways to browse the years."
             as="p"
-            page="timeline"
+            page="en/timeline"
             section="filter"
             className="mt-2 text-xs text-[var(--color-text-muted)] sm:hidden"
           />
@@ -154,10 +187,10 @@ export default function TimelineClient({ timelineEvents }: { timelineEvents: Tim
         ) : (
           <p className="text-center text-[var(--color-text-muted)] py-20 text-lg">
             <EditableText
-              contentKey="timeline.empty.text"
-              defaultValue="해당 연도의 기록이 없습니다."
+              contentKey="en.timeline.empty.text"
+              defaultValue="No events are available for this year."
               as="span"
-              page="timeline"
+              page="en/timeline"
               section="empty"
             />
           </p>
@@ -172,25 +205,25 @@ export default function TimelineClient({ timelineEvents }: { timelineEvents: Tim
           transition={{ duration: 0.6 }}
         >
           <EditableText
-            contentKey="timeline.cta.title"
-            defaultValue="이 투쟁에 함께해주세요"
+            contentKey="en.timeline.cta.title"
+            defaultValue="Stand with the residents"
             as="h2"
-            page="timeline"
+            page="en/timeline"
             section="cta"
             className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-6"
           />
           <EditableLink
-            contentKey="timeline.cta.href"
-            defaultHref="/petition"
-            page="timeline"
+            contentKey="en.timeline.cta.href"
+            defaultHref="/en/petition"
+            page="en/timeline"
             section="cta"
             className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[var(--color-warm)] px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all duration-200 hover:bg-[var(--color-warm-light)] hover:shadow-xl"
           >
             <EditableText
-              contentKey="timeline.cta.button"
-              defaultValue="서명에 참여하기"
+              contentKey="en.timeline.cta.button"
+              defaultValue="Sign the petition"
               as="span"
-              page="timeline"
+              page="en/timeline"
               section="cta"
             />
           </EditableLink>

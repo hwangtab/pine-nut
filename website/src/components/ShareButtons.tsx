@@ -2,13 +2,23 @@
 
 import { useState } from "react";
 import { MessageCircle, Twitter, Facebook, Link } from "lucide-react";
+import { EditableText } from "@/components/editable";
 
 interface ShareButtonsProps {
   title: string;
   url?: string;
+  page?: string;
+  section?: string;
+  contentPrefix?: string;
 }
 
-export default function ShareButtons({ title, url }: ShareButtonsProps) {
+export default function ShareButtons({
+  title,
+  url,
+  page,
+  section = "share",
+  contentPrefix = "share",
+}: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
 
   const getUrl = () => {
@@ -64,9 +74,28 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
   const buttonBase =
     "inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 min-h-[44px]";
 
+  const editable = page
+    ? {
+        page,
+        section,
+        prefix: contentPrefix,
+      }
+    : null;
+
   return (
     <div className="relative">
-      <p className="text-sm font-semibold text-[var(--color-text-muted)] mb-3">공유하기</p>
+      {editable ? (
+        <EditableText
+          contentKey={`${editable.prefix}.label`}
+          defaultValue="공유하기"
+          as="p"
+          page={editable.page}
+          section={editable.section}
+          className="text-sm font-semibold text-[var(--color-text-muted)] mb-3"
+        />
+      ) : (
+        <p className="text-sm font-semibold text-[var(--color-text-muted)] mb-3">공유하기</p>
+      )}
       <div className="flex flex-wrap gap-2">
         <button
           onClick={handleKakao}
@@ -74,7 +103,17 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
           aria-label="카카오톡으로 공유"
         >
           <MessageCircle className="w-4 h-4" />
-          카카오톡
+          {editable ? (
+            <EditableText
+              contentKey={`${editable.prefix}.kakao`}
+              defaultValue="카카오톡"
+              as="span"
+              page={editable.page}
+              section={editable.section}
+            />
+          ) : (
+            "카카오톡"
+          )}
         </button>
         <button
           onClick={handleTwitter}
@@ -82,7 +121,17 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
           aria-label="트위터(X)로 공유"
         >
           <Twitter className="w-4 h-4" />
-          트위터(X)
+          {editable ? (
+            <EditableText
+              contentKey={`${editable.prefix}.twitter`}
+              defaultValue="트위터(X)"
+              as="span"
+              page={editable.page}
+              section={editable.section}
+            />
+          ) : (
+            "트위터(X)"
+          )}
         </button>
         <button
           onClick={handleFacebook}
@@ -90,7 +139,17 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
           aria-label="페이스북으로 공유"
         >
           <Facebook className="w-4 h-4" />
-          페이스북
+          {editable ? (
+            <EditableText
+              contentKey={`${editable.prefix}.facebook`}
+              defaultValue="페이스북"
+              as="span"
+              page={editable.page}
+              section={editable.section}
+            />
+          ) : (
+            "페이스북"
+          )}
         </button>
         <button
           onClick={handleCopyUrl}
@@ -98,14 +157,34 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
           aria-label="URL 복사"
         >
           <Link className="w-4 h-4" />
-          URL 복사
+          {editable ? (
+            <EditableText
+              contentKey={`${editable.prefix}.copy`}
+              defaultValue="URL 복사"
+              as="span"
+              page={editable.page}
+              section={editable.section}
+            />
+          ) : (
+            "URL 복사"
+          )}
         </button>
       </div>
 
       {/* Toast */}
       {copied && (
         <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[var(--color-text)] text-white text-sm px-4 py-2 rounded-lg shadow-lg animate-fade-in">
-          복사되었습니다!
+          {editable ? (
+            <EditableText
+              contentKey={`${editable.prefix}.copied`}
+              defaultValue="복사되었습니다!"
+              as="span"
+              page={editable.page}
+              section={editable.section}
+            />
+          ) : (
+            "복사되었습니다!"
+          )}
         </div>
       )}
     </div>

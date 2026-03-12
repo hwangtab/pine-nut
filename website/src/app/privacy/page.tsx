@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import UtilityHeader from "@/components/UtilityHeader";
 import { EditableLink, EditableText, EditableRichText } from "@/components/editable";
 import { PrivacyPurposeList, PrivacyRightsList } from "./PrivacySectionsClient";
@@ -16,7 +15,7 @@ export default function PrivacyPage() {
       <UtilityHeader
         title={<EditableText contentKey="privacy.header.title" defaultValue="개인정보처리방침" as="span" page="privacy" section="header" />}
         subtitle={<EditableText contentKey="privacy.header.subtitle" defaultValue="최종 수정일: 2026년 3월 10일" as="span" page="privacy" section="header" />}
-        eyebrow="법적 안내"
+        eyebrow={<EditableText contentKey="privacy.header.eyebrow" defaultValue="법적 안내" as="span" page="privacy" section="header" />}
         tone="warm"
       />
 
@@ -229,12 +228,15 @@ export default function PrivacyPage() {
         </div>
 
         <div className="mt-8 text-center">
-          <Link
-            href="/"
+          <EditableLink
+            contentKey="privacy.backHref"
+            defaultHref="/"
+            page="privacy"
+            section="footer"
             className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] text-[15px] underline underline-offset-4 transition-colors"
           >
             <EditableText contentKey="privacy.back" defaultValue="홈으로 돌아가기" as="span" page="privacy" section="footer" />
-          </Link>
+          </EditableLink>
         </div>
       </div>
     </div>
