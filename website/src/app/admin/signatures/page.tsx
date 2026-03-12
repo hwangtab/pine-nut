@@ -8,6 +8,13 @@ export default async function AdminSignaturesPage() {
     <div className="p-6 md:p-10 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold text-[var(--color-admin-text)] mb-8">서명 현황</h1>
 
+      {stats.warning && (
+        <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-relaxed text-amber-800">
+          {stats.warning}
+          {stats.usingFallback && " 현재 수치는 fallback 상태 기준이며 실제 운영 데이터가 아닐 수 있습니다."}
+        </div>
+      )}
+
       {/* Total count */}
       <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-8 mb-8 text-center">
         <p className="text-[var(--color-admin-muted)] mb-2 text-lg">총 서명 수</p>

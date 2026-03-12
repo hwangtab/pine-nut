@@ -3,6 +3,7 @@ import path from "node:path";
 import allowedImageHosts from "./src/lib/allowed-image-hosts.json";
 
 let supabaseHostname: string | null = null;
+const workspaceRoot = path.resolve(__dirname, "..");
 try {
   const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (raw) supabaseHostname = new URL(raw).hostname;
@@ -11,8 +12,9 @@ try {
 }
 
 const nextConfig: NextConfig = {
+  outputFileTracingRoot: workspaceRoot,
   turbopack: {
-    root: path.resolve(__dirname),
+    root: workspaceRoot,
   },
   images: {
     remotePatterns: [

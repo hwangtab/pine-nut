@@ -1,6 +1,7 @@
 import { createHash } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { isMissingSupabaseRelationError } from "@/lib/supabase-errors";
 
 const RATE_LIMIT_WINDOW = 60 * 1000;
 const RATE_LIMIT_MAX = 5;
@@ -88,6 +89,17 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Failed to fetch signatures:", error);
+    if (isMissingSupabaseRelationError(error)) {
+      return NextResponse.json(
+        {
+          count: 0,
+          signatures: [],
+          demo: false,
+          unavailable: true,
+        },
+        { status: 200 }
+      );
+    }
     return NextResponse.json(
       { error: "Failed to fetch signatures" },
       { status: 500 }
@@ -203,6 +215,12 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Failed to submit signature:", error);
+    if (isMissingSupabaseRelationError(error)) {
+      return NextResponse.json(
+        { error: SERVICE_UNAVAILABLE_MESSAGE },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       { error: "Failed to submit signature" },
       { status: 500 }

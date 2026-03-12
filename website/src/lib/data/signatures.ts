@@ -1,9 +1,15 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
+import {
+  formatSupabaseRelationWarning,
+  isMissingSupabaseRelationError,
+} from "@/lib/supabase-errors";
 
 export interface SignatureStats {
   totalCount: number;
   recentSignatures: { name: string; email: string; message: string | null; createdAt: string }[];
   dailyCounts: { date: string; count: number }[];
+  usingFallback: boolean;
+  warning: string | null;
 }
 
 export async function getSignatureStats(days = 14): Promise<SignatureStats> {
@@ -14,30 +20,45 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
     totalCount: 0,
     recentSignatures: [],
     dailyCounts: [],
+    usingFallback: true,
+    warning: formatSupabaseRelationWarning("signatures", "서명"),
   };
 
   if (!supabase) return fallback;
 
-  // Total count
-  const { count } = await supabase
-    .from("signatures")
-    .select("*", { count: "exact", head: true });
-
-  // Recent 20
-  const { data: recent } = await supabase
-    .from("signatures")
-    .select("name, email, message, created_at")
-    .order("created_at", { ascending: false })
-    .limit(20);
-
   // Daily counts for chart
   const sinceDate = new Date();
   sinceDate.setDate(sinceDate.getDate() - (periodDays - 1));
-  const { data: dailyRaw } = await supabase
-    .from("signatures")
-    .select("created_at")
-    .gte("created_at", sinceDate.toISOString())
-    .order("created_at", { ascending: true });
+  const [countResult, recentResult, dailyResult] = await Promise.all([
+    supabase.from("signatures").select("*", { count: "exact", head: true }),
+    supabase
+      .from("signatures")
+      .select("name, email, message, created_at")
+      .order("created_at", { ascending: false })
+      .limit(20),
+    supabase
+      .from("signatures")
+      .select("created_at")
+      .gte("created_at", sinceDate.toISOString())
+      .order("created_at", { ascending: true }),
+  ]);
+
+  const signatureError =
+    countResult.error ?? recentResult.error ?? dailyResult.error;
+
+  if (signatureError) {
+    console.error("Failed to fetch signature stats:", signatureError);
+    return {
+      ...fallback,
+      warning: isMissingSupabaseRelationError(signatureError)
+        ? formatSupabaseRelationWarning("signatures", "서명")
+        : "서명 데이터를 불러오지 못했습니다. Supabase 연결 상태를 확인하세요.",
+    };
+  }
+
+  const count = countResult.count;
+  const recent = recentResult.data;
+  const dailyRaw = dailyResult.data;
 
   const dailyMap = new Map<string, number>();
   for (let i = periodDays - 1; i >= 0; i--) {
@@ -62,5 +83,7 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
       date,
       count: cnt,
     })),
+    usingFallback: false,
+    warning: null,
   };
 }

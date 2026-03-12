@@ -1,5 +1,9 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { timelineEvents as fallbackTimeline, type TimelineEvent } from "@/data/timeline";
+import {
+  formatSupabaseRelationWarning,
+  isMissingSupabaseRelationError,
+} from "@/lib/supabase-errors";
 
 interface TimelineRow {
   id: number;
@@ -16,14 +20,34 @@ interface TimelineRow {
   updated_at: string;
 }
 
-const IS_PRODUCTION = process.env.NODE_ENV === "production";
+export interface AdminTimelineListResult {
+  items: (TimelineEvent & { sortOrder: number; isDeleted: boolean })[];
+  total: number;
+  usingFallback: boolean;
+  warning: string | null;
+}
 
-function fallbackOrThrow<T>(fallbackFactory: () => T, errorMessage: string): T {
-  if (IS_PRODUCTION) {
-    console.error(errorMessage);
-    throw new Error(errorMessage);
+function buildFallbackTimelineResult(
+  from: number,
+  to: number,
+  query?: string,
+): AdminTimelineListResult {
+  let items = fallbackTimeline.map((event, index) => ({
+    ...event,
+    sortOrder: index,
+    isDeleted: false,
+  }));
+
+  if (query) {
+    items = items.filter((event) => event.title.includes(query));
   }
-  return fallbackFactory();
+
+  return {
+    items: items.slice(from, to + 1),
+    total: items.length,
+    usingFallback: true,
+    warning: formatSupabaseRelationWarning("timeline_events", "타임라인"),
+  };
 }
 
 function rowToTimelineEvent(row: TimelineRow): TimelineEvent & { sortOrder: number } {
@@ -43,7 +67,7 @@ function rowToTimelineEvent(row: TimelineRow): TimelineEvent & { sortOrder: numb
 export async function getPublishedTimeline(): Promise<TimelineEvent[]> {
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
-    return fallbackOrThrow(() => fallbackTimeline, "Supabase is not configured in production for published timeline.");
+    return fallbackTimeline;
   }
 
   const { data, error } = await supabase
@@ -54,12 +78,14 @@ export async function getPublishedTimeline(): Promise<TimelineEvent[]> {
 
   if (error || !data) {
     console.error("Failed to fetch published timeline:", error);
-    return fallbackOrThrow(() => fallbackTimeline, "Failed to fetch published timeline from Supabase.");
+    return fallbackTimeline;
   }
   return data.map(rowToTimelineEvent);
 }
 
-export async function getAllTimeline(options?: { page?: number; perPage?: number; query?: string }): Promise<{ items: (TimelineEvent & { sortOrder: number; isDeleted: boolean })[]; total: number }> {
+export async function getAllTimeline(
+  options?: { page?: number; perPage?: number; query?: string },
+): Promise<AdminTimelineListResult> {
   const page = options?.page ?? 1;
   const perPage = options?.perPage ?? 20;
   const query = options?.query?.trim();
@@ -68,11 +94,7 @@ export async function getAllTimeline(options?: { page?: number; perPage?: number
 
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
-    return fallbackOrThrow(() => {
-      let items = fallbackTimeline.map((t, i) => ({ ...t, sortOrder: i, isDeleted: false }));
-      if (query) items = items.filter((t) => t.title.includes(query));
-      return { items: items.slice(from, to + 1), total: items.length };
-    }, "Supabase is not configured in production for admin timeline list.");
+    return buildFallbackTimelineResult(from, to, query);
   }
 
   let countQuery = supabase.from("timeline_events").select("*", { count: "exact", head: true });
@@ -87,25 +109,26 @@ export async function getAllTimeline(options?: { page?: number; perPage?: number
 
   if (error || !data) {
     console.error("Failed to fetch admin timeline list:", error);
-    return fallbackOrThrow(() => {
-      const items = fallbackTimeline.map((t, i) => ({ ...t, sortOrder: i, isDeleted: false }));
-      return { items: items.slice(from, to + 1), total: items.length };
-    }, "Failed to fetch admin timeline list from Supabase.");
+    const fallback = buildFallbackTimelineResult(from, to, query);
+    return {
+      ...fallback,
+      warning: isMissingSupabaseRelationError(error)
+        ? formatSupabaseRelationWarning("timeline_events", "타임라인")
+        : "타임라인 데이터를 불러오지 못해 임시 데이터를 표시하고 있습니다.",
+    };
   }
   return {
     items: data.map((row: TimelineRow) => ({ ...rowToTimelineEvent(row), isDeleted: row.is_deleted })),
     total: count ?? 0,
+    usingFallback: false,
+    warning: null,
   };
 }
 
 export async function getTimelineById(id: number): Promise<(TimelineEvent & { sortOrder: number }) | null> {
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
-    return fallbackOrThrow(() => {
-      const idx = fallbackTimeline.findIndex((t) => t.id === id);
-      if (idx === -1) return null;
-      return { ...fallbackTimeline[idx], sortOrder: idx };
-    }, `Supabase is not configured in production for timeline id: ${id}`);
+    return null;
   }
 
   const { data, error } = await supabase
@@ -116,7 +139,7 @@ export async function getTimelineById(id: number): Promise<(TimelineEvent & { so
 
   if (error || !data) {
     console.error(`Failed to fetch timeline by id (${id}):`, error);
-    return fallbackOrThrow(() => null, `Failed to fetch timeline by id from Supabase: ${id}`);
+    return null;
   }
   return rowToTimelineEvent(data);
 }

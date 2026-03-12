@@ -1,6 +1,44 @@
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { Newspaper, Clock, Users, Blocks, Images, History } from "lucide-react";
+import {
+  formatSupabaseRelationWarning,
+  isMissingSupabaseRelationError,
+} from "@/lib/supabase-errors";
+
+async function getTableCountStatus(
+  supabase: NonNullable<Awaited<ReturnType<typeof createSupabaseServerClient>>>,
+  table: string,
+  label: string,
+  filterDeleted = false,
+): Promise<{ value: string; warning: string | null }> {
+  let countQuery = supabase
+    .from(table)
+    .select("id", { count: "exact", head: true });
+  let checkQuery = supabase.from(table).select("id").limit(1);
+
+  if (filterDeleted) {
+    countQuery = countQuery.eq("is_deleted", false);
+    checkQuery = checkQuery.eq("is_deleted", false);
+  }
+
+  const [countResult, checkResult] = await Promise.all([countQuery, checkQuery]);
+  const error = countResult.error ?? checkResult.error;
+
+  if (error) {
+    return {
+      value: "확인 필요",
+      warning: isMissingSupabaseRelationError(error)
+        ? formatSupabaseRelationWarning(table, label)
+        : `${label} 데이터를 불러오지 못했습니다. Supabase 연결 상태를 확인하세요.`,
+    };
+  }
+
+  return {
+    value: (countResult.count ?? 0).toLocaleString("ko-KR"),
+    warning: null,
+  };
+}
 
 export default async function AdminDashboard() {
   const supabase = await createSupabaseServerClient();
@@ -8,20 +46,17 @@ export default async function AdminDashboard() {
     throw new Error("Supabase is not configured for admin dashboard.");
   }
 
-  // Fetch counts
-  const { count: newsCount } = await supabase
-    .from("news")
-    .select("*", { count: "exact", head: true })
-    .eq("is_deleted", false);
+  const [newsStatus, timelineStatus, signatureStatus] = await Promise.all([
+    getTableCountStatus(supabase, "news", "소식", true),
+    getTableCountStatus(supabase, "timeline_events", "타임라인", true),
+    getTableCountStatus(supabase, "signatures", "서명"),
+  ]);
 
-  const { count: timelineCount } = await supabase
-    .from("timeline_events")
-    .select("*", { count: "exact", head: true })
-    .eq("is_deleted", false);
-
-  const { count: signatureCount } = await supabase
-    .from("signatures")
-    .select("*", { count: "exact", head: true });
+  const warnings = [
+    newsStatus.warning,
+    timelineStatus.warning,
+    signatureStatus.warning,
+  ].filter((warning): warning is string => Boolean(warning));
 
   const cards = [
     {
@@ -51,24 +86,24 @@ export default async function AdminDashboard() {
     {
       href: "/admin/signatures",
       label: "총 서명 수",
-      value: (signatureCount ?? 0).toLocaleString("ko-KR"),
-      suffix: "명",
+      value: signatureStatus.value,
+      suffix: signatureStatus.warning ? "" : "명",
       icon: Users,
       color: "bg-[var(--color-warm)]/10 text-[var(--color-warm)]",
     },
     {
       href: "/admin/news",
       label: "게시된 소식",
-      value: (newsCount ?? 0).toString(),
-      suffix: "건",
+      value: newsStatus.value,
+      suffix: newsStatus.warning ? "" : "건",
       icon: Newspaper,
       color: "bg-[var(--color-forest)]/10 text-[var(--color-forest)]",
     },
     {
       href: "/admin/timeline",
       label: "타임라인 이벤트",
-      value: (timelineCount ?? 0).toString(),
-      suffix: "건",
+      value: timelineStatus.value,
+      suffix: timelineStatus.warning ? "" : "건",
       icon: Clock,
       color: "bg-[var(--color-sky)]/10 text-[var(--color-sky)]",
     },
@@ -78,6 +113,17 @@ export default async function AdminDashboard() {
     <div className="p-6 md:p-10 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold text-[var(--color-admin-text)] mb-2">관리자 대시보드</h1>
       <p className="text-[var(--color-admin-muted)] mb-8">풍천리 웹사이트를 관리합니다</p>
+
+      {warnings.length > 0 && (
+        <section className="mb-8 rounded-3xl border border-amber-200 bg-amber-50 p-6 text-sm leading-relaxed text-amber-800">
+          <h2 className="text-base font-bold">데이터 연결 경고</h2>
+          <div className="mt-3 space-y-2">
+            {warnings.map((warning) => (
+              <p key={warning}>{warning}</p>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mb-8 rounded-3xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-6">
         <h2 className="text-lg font-bold text-[var(--color-admin-text)]">빠른 가이드</h2>
