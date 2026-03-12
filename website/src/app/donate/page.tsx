@@ -1,22 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
-  Check,
-  ExternalLink,
-  Copy,
   Bus,
-  Scale,
+  Check,
+  Copy,
+  ExternalLink,
+  HeartHandshake,
+  Loader2,
   Megaphone,
+  Scale,
   Settings,
 } from "lucide-react";
 import SubHero from "@/components/SubHero";
-import { EditableText, EditableList } from "@/components/editable";
+import { EditableList, EditableText } from "@/components/editable";
 
 const BANK_ACCOUNT = "356-1559-4666-63";
 const BANK_ACCOUNT_FULL = "농협 356-1559-4666-63 이창후";
+const TOSS_CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY?.trim() || "";
+const DONATION_PRESETS = [10000, 30000, 50000, 100000] as const;
 
-/* ──────────────────────── Toast Notification ──────────────────────── */
 function Toast({ message, visible }: { message: string; visible: boolean }) {
   return (
     <div
@@ -36,10 +39,36 @@ function Toast({ message, visible }: { message: string; visible: boolean }) {
   );
 }
 
-/* ──────────────────────── Main Page ──────────────────────── */
+function getDonationCustomerKey() {
+  const storageKey = "pungcheonri_donation_customer_key";
+  const existing = window.localStorage.getItem(storageKey);
+  if (existing) return existing;
+
+  const nextValue = `anon_${crypto.randomUUID()}`;
+  window.localStorage.setItem(storageKey, nextValue);
+  return nextValue;
+}
+
+function normalizeAmountInput(value: string) {
+  return value.replace(/[^\d]/g, "");
+}
+
 export default function DonatePage() {
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [selectedAmount, setSelectedAmount] = useState<number | "custom">(30000);
+  const [customAmount, setCustomAmount] = useState("");
+  const [donorName, setDonorName] = useState("");
+  const [donorEmail, setDonorEmail] = useState("");
+  const [paymentError, setPaymentError] = useState("");
+  const [isPaying, setIsPaying] = useState(false);
+
+  const resolvedAmount = useMemo(() => {
+    if (selectedAmount === "custom") {
+      return Number(customAmount || 0);
+    }
+    return selectedAmount;
+  }, [customAmount, selectedAmount]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -56,6 +85,88 @@ export default function DonatePage() {
     }
   };
 
+  const handleStartTossPayment = async () => {
+    setPaymentError("");
+
+    if (!TOSS_CLIENT_KEY) {
+      setPaymentError("토스 결제 키가 아직 설정되지 않았습니다. 환경 변수를 확인해주세요.");
+      return;
+    }
+
+    if (!Number.isInteger(resolvedAmount) || resolvedAmount < 1000) {
+      setPaymentError("후원 금액은 최소 1,000원부터 입력해주세요.");
+      return;
+    }
+
+    if (resolvedAmount > 500000) {
+      setPaymentError("후원 금액은 최대 500,000원까지 가능합니다.");
+      return;
+    }
+
+    if (!donorName.trim()) {
+      setPaymentError("이름을 입력해주세요.");
+      return;
+    }
+
+    if (
+      donorEmail.trim() &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorEmail.trim())
+    ) {
+      setPaymentError("이메일 형식이 올바르지 않습니다.");
+      return;
+    }
+
+    setIsPaying(true);
+
+    try {
+      const prepareResponse = await fetch("/api/donations/prepare", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: resolvedAmount }),
+      });
+      const prepareData = await prepareResponse.json();
+
+      if (!prepareResponse.ok) {
+        throw new Error(prepareData.error || "후원 주문 생성에 실패했습니다.");
+      }
+
+      const { loadTossPayments } = await import("@tosspayments/tosspayments-sdk");
+      const tossPayments = await loadTossPayments(TOSS_CLIENT_KEY);
+      const payment = tossPayments.payment({
+        customerKey: getDonationCustomerKey(),
+      });
+      const origin = window.location.origin;
+
+      await payment.requestPayment({
+        method: "CARD",
+        amount: {
+          currency: "KRW",
+          value: resolvedAmount,
+        },
+        orderId: prepareData.orderId,
+        orderName: prepareData.orderName,
+        successUrl: `${origin}/donate/success?orderToken=${encodeURIComponent(prepareData.orderToken)}`,
+        failUrl: `${origin}/donate/fail`,
+        customerEmail: donorEmail.trim() || undefined,
+        customerName: donorName.trim(),
+        card: {
+          easyPay: "TOSSPAY",
+          flowMode: "DIRECT",
+        },
+      });
+    } catch (error) {
+      setPaymentError(
+        error instanceof Error
+          ? error.message
+          : "결제창을 열지 못했습니다. 잠시 후 다시 시도해주세요."
+      );
+      setIsPaying(false);
+      return;
+    }
+
+    setIsPaying(false);
+  };
+
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       <Toast message={toastMessage} visible={toastVisible} />
@@ -63,7 +174,7 @@ export default function DonatePage() {
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
         title={<EditableText contentKey="donate.hero.title" defaultValue="후원으로 함께해주세요" as="span" page="donate" section="hero" />}
-        subtitle={<EditableText contentKey="donate.hero.subtitle" defaultValue="주민들의 투쟁을 직접 도울 수 있습니다" as="span" page="donate" section="hero" />}
+        subtitle={<EditableText contentKey="donate.hero.subtitle" defaultValue="토스페이 또는 계좌이체로 주민들의 투쟁을 직접 도울 수 있습니다" as="span" page="donate" section="hero" />}
         eyebrow="후원 안내"
       />
 
@@ -89,18 +200,166 @@ export default function DonatePage() {
       </div>
 
       <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 space-y-12">
-        {/* ── Primary CTA: Bank Transfer ── */}
+        <section aria-label="토스페이 온라인 후원">
+          <h2 className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)] text-center">
+            온라인으로 바로 후원하기
+          </h2>
+
+          <div className="bg-white border-2 border-[#0064FF] rounded-2xl p-6 sm:p-8 shadow-sm">
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#0064FF]/10 mb-3 text-[#0064FF]">
+                <HeartHandshake className="w-7 h-7" />
+              </div>
+              <p className="text-sm text-[var(--color-text-muted)] font-medium">
+                토스페이 결제
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <p className="text-[15px] font-semibold text-[var(--color-text)] mb-3">후원 금액</p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+                  {DONATION_PRESETS.map((amount) => (
+                    <button
+                      key={amount}
+                      type="button"
+                      onClick={() => {
+                        setSelectedAmount(amount);
+                        setPaymentError("");
+                      }}
+                      className={`min-h-[48px] rounded-xl border text-sm font-semibold transition-colors ${
+                        selectedAmount === amount
+                          ? "border-[#0064FF] bg-[#0064FF] text-white"
+                          : "border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+                      }`}
+                    >
+                      {amount.toLocaleString("ko-KR")}원
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedAmount("custom");
+                      setPaymentError("");
+                    }}
+                    className={`min-h-[48px] px-4 rounded-xl border text-sm font-semibold transition-colors ${
+                      selectedAmount === "custom"
+                        ? "border-[#0064FF] bg-[#0064FF] text-white"
+                        : "border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+                    }`}
+                  >
+                    직접 입력
+                  </button>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={customAmount}
+                    onChange={(event) => {
+                      setCustomAmount(normalizeAmountInput(event.target.value));
+                      setSelectedAmount("custom");
+                      setPaymentError("");
+                    }}
+                    placeholder="1000"
+                    className="flex-1 min-h-[48px] px-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+                  />
+                </div>
+                <p className="mt-2 text-sm text-[var(--color-text-muted)]">
+                  최소 1,000원부터, 최대 500,000원까지 후원할 수 있습니다.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    htmlFor="donor-name"
+                    className="block text-[15px] font-semibold mb-2 text-[var(--color-text)]"
+                  >
+                    이름
+                  </label>
+                  <input
+                    id="donor-name"
+                    type="text"
+                    value={donorName}
+                    onChange={(event) => {
+                      setDonorName(event.target.value);
+                      setPaymentError("");
+                    }}
+                    placeholder="홍길동"
+                    className="w-full min-h-[48px] px-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="donor-email"
+                    className="block text-[15px] font-semibold mb-2 text-[var(--color-text)]"
+                  >
+                    이메일 <span className="text-[var(--color-text-muted)] font-normal">(선택)</span>
+                  </label>
+                  <input
+                    id="donor-email"
+                    type="email"
+                    value={donorEmail}
+                    onChange={(event) => {
+                      setDonorEmail(event.target.value);
+                      setPaymentError("");
+                    }}
+                    placeholder="example@email.com"
+                    className="w-full min-h-[48px] px-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
+                  />
+                </div>
+              </div>
+
+              <div className="bg-[var(--color-bg)] rounded-xl px-5 py-4">
+                <p className="text-sm text-[var(--color-text-muted)] mb-1">결제 예정 금액</p>
+                <p className="text-3xl font-black text-[var(--color-text)]">
+                  {resolvedAmount > 0 ? `${resolvedAmount.toLocaleString("ko-KR")}원` : "금액을 입력해주세요"}
+                </p>
+              </div>
+
+              {paymentError ? (
+                <p className="text-sm text-red-600" role="alert">
+                  {paymentError}
+                </p>
+              ) : null}
+
+              {!TOSS_CLIENT_KEY ? (
+                <div className="rounded-xl bg-[var(--color-bg-warm)] px-5 py-4 text-sm text-[var(--color-text-muted)]">
+                  `NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY`가 설정되면 토스페이 결제가 활성화됩니다.
+                </div>
+              ) : null}
+
+              <button
+                type="button"
+                onClick={handleStartTossPayment}
+                disabled={isPaying || !TOSS_CLIENT_KEY}
+                className="w-full min-h-[56px] rounded-xl bg-[#0064FF] hover:brightness-110 text-white font-bold text-lg flex items-center justify-center gap-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isPaying ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    결제창 여는 중...
+                  </>
+                ) : (
+                  "토스페이로 후원하기"
+                )}
+              </button>
+            </div>
+          </div>
+        </section>
+
         <section aria-label="계좌 이체로 후원하기">
           <EditableText
             contentKey="donate.bank.heading"
-            defaultValue="지금 바로 후원하기"
+            defaultValue="계좌이체로 후원하기"
             as="h2"
             page="donate"
             section="bank"
             className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)] text-center"
           />
-          <div className="bg-white border-2 border-[var(--color-warm)] rounded-2xl p-6 sm:p-8 shadow-sm">
-            {/* Bank icon + label */}
+          <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 shadow-sm">
             <div className="text-center mb-5">
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[var(--color-bg-warm)] mb-3">
                 <svg
@@ -122,7 +381,7 @@ export default function DonatePage() {
               </div>
               <EditableText
                 contentKey="donate.bank.label"
-                defaultValue="계좌 이체"
+                defaultValue="농협 | 이창후"
                 as="p"
                 page="donate"
                 section="bank"
@@ -130,11 +389,10 @@ export default function DonatePage() {
               />
             </div>
 
-            {/* Account display */}
             <div className="bg-[var(--color-bg)] rounded-xl px-5 py-4 mb-4 text-center">
               <EditableText
                 contentKey="donate.bank.accountLabel"
-                defaultValue="농협 | 이창후"
+                defaultValue="후원 계좌"
                 as="p"
                 page="donate"
                 section="bank"
@@ -145,7 +403,6 @@ export default function DonatePage() {
               </p>
             </div>
 
-            {/* Copy button */}
             <button
               onClick={copyAccount}
               className="w-full min-h-[56px] rounded-xl bg-[var(--color-warm)] hover:brightness-110 active:scale-[0.98] text-white font-bold text-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
@@ -160,59 +417,7 @@ export default function DonatePage() {
           </div>
         </section>
 
-        {/* ── Quick Payment Links ── */}
-        <section aria-label="간편 결제">
-          <EditableText
-            contentKey="donate.quick.heading"
-            defaultValue="간편하게 후원하기"
-            as="h2"
-            page="donate"
-            section="quick"
-            className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)] text-center"
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* 카카오페이 */}
-            <a
-              href="https://campaigns.do/campaigns/1328"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-3 min-h-[56px] rounded-xl font-bold text-lg transition-all hover:brightness-95 active:scale-[0.98]"
-              style={{ backgroundColor: "#FEE500", color: "#191919" }}
-            >
-              <span className="text-xl" aria-hidden="true">
-                💬
-              </span>
-              카카오페이 송금
-              <ExternalLink className="w-4 h-4 opacity-50" />
-            </a>
-
-            {/* 토스 */}
-            <a
-              href="https://campaigns.do/campaigns/1328"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-3 min-h-[56px] rounded-xl font-bold text-lg transition-all hover:brightness-110 active:scale-[0.98]"
-              style={{ backgroundColor: "#0064FF", color: "#FFFFFF" }}
-            >
-              <span className="text-xl" aria-hidden="true">
-                💙
-              </span>
-              토스 송금
-              <ExternalLink className="w-4 h-4 opacity-50" />
-            </a>
-          </div>
-          <EditableText
-            contentKey="donate.quick.note"
-            defaultValue="현재 빠띠 캠페인 페이지를 통해 후원하실 수 있습니다"
-            as="p"
-            page="donate"
-            section="quick"
-            className="text-center text-xs text-[var(--color-text-muted)] mt-3"
-          />
-        </section>
-
-        {/* ── Campaign Page Link ── */}
-        <section aria-label="빠띠 캠페인">
+        <section aria-label="다른 후원 경로">
           <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 text-center">
             <EditableText
               contentKey="donate.campaign.text"
@@ -234,7 +439,6 @@ export default function DonatePage() {
           </div>
         </section>
 
-        {/* ── How Funds Are Used ── */}
         <section aria-label="후원금 사용 계획">
           <EditableText
             contentKey="donate.funds.heading"
@@ -253,7 +457,6 @@ export default function DonatePage() {
               section="funds"
               className="text-sm text-[var(--color-text-muted)] mb-6"
             />
-            {/* Visual bar breakdown */}
             <EditableList
               contentKey="donate.funds.items"
               defaultItems={[
@@ -310,7 +513,6 @@ export default function DonatePage() {
               }}
             </EditableList>
 
-            {/* Transparency note */}
             <div className="bg-[var(--color-bg-warm)] rounded-xl px-5 py-4">
               <EditableText
                 contentKey="donate.funds.transparencyTitle"
@@ -332,7 +534,6 @@ export default function DonatePage() {
           </div>
         </section>
 
-        {/* ── Transparency Table (placeholder) ── */}
         <section aria-label="월별 후원금 내역">
           <EditableText
             contentKey="donate.monthly.heading"
@@ -364,7 +565,6 @@ export default function DonatePage() {
           </div>
         </section>
 
-        {/* ── Bottom Notes ── */}
         <section
           className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 space-y-6"
           aria-label="안내사항"
@@ -383,7 +583,7 @@ export default function DonatePage() {
                 href="tel:010-8918-8933"
                 className="flex items-center gap-3 text-[15px] text-[var(--color-text)] hover:text-[var(--color-warm)] transition-colors min-h-[44px]"
               >
-                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.79 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                 010-8918-8933 (이창후 총무)
               </a>
               <a
