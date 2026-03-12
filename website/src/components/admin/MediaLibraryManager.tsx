@@ -93,6 +93,10 @@ export default function MediaLibraryManager({
         </p>
       </div>
 
+      <section className="rounded-3xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-5 text-sm leading-relaxed text-[var(--color-admin-muted)]">
+        권장 흐름: `업로드` → `URL 복사` → 공개 페이지 인라인 편집 또는 사이트 빌더에 붙여넣기. 현재 지원 형식은 JPG, PNG, WebP입니다.
+      </section>
+
       {(message || error) && (
         <div
           className={`rounded-2xl border px-5 py-4 text-sm font-medium ${

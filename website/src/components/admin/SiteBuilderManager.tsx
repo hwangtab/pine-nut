@@ -2,6 +2,7 @@
 
 import type { Dispatch, SetStateAction } from "react";
 import { useMemo, useState, useTransition } from "react";
+import Link from "next/link";
 import { savePageContentAction } from "@/lib/actions/page-content";
 import {
   BUILDER_PAGES,
@@ -25,6 +26,20 @@ import {
   type CustomSection,
   type ExistingSectionStyle,
 } from "@/lib/custom-sections";
+
+const PAGE_PREVIEW_PATHS: Partial<Record<BuilderPageId, string>> = {
+  home: "/",
+  story: "/story",
+  timeline: "/timeline",
+  news: "/news",
+  press: "/press",
+  petition: "/petition",
+  donate: "/donate",
+  share: "/share",
+  gallery: "/gallery",
+  privacy: "/privacy",
+  en: "/en",
+};
 
 interface SiteBuilderManagerProps {
   initialValues: Record<string, string | undefined>;
@@ -99,9 +114,11 @@ export default function SiteBuilderManager({
     () => sectionsByPage[selectedPage] ?? [],
     [sectionsByPage, selectedPage],
   );
+  const selectedPageMeta = BUILDER_PAGES.find((page) => page.id === selectedPage);
   const existingSections = EXISTING_PAGE_SECTIONS[selectedPage] ?? [];
   const currentSectionOrder = sectionOrdersByPage[selectedPage] ?? [];
   const currentSectionStyles = sectionStylesByPage[selectedPage] ?? {};
+  const previewPath = PAGE_PREVIEW_PATHS[selectedPage];
 
   const saveGlobalLinks = () => {
     setSaveMessage(null);
@@ -321,6 +338,64 @@ export default function SiteBuilderManager({
         </p>
       </div>
 
+      <section className="grid gap-4 xl:grid-cols-[1.3fr_1fr]">
+        <div className="rounded-3xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-6">
+          <h2 className="text-lg font-bold text-[var(--color-admin-text)]">무엇을 여기서 편집하나요?</h2>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            <div className="rounded-2xl bg-[var(--color-bg)] p-4">
+              <div className="text-sm font-bold text-[var(--color-admin-text)]">글로벌 링크</div>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--color-admin-muted)]">
+                내비게이션과 푸터 링크 세트를 관리합니다.
+              </p>
+            </div>
+            <div className="rounded-2xl bg-[var(--color-bg)] p-4">
+              <div className="text-sm font-bold text-[var(--color-admin-text)]">커스텀 섹션</div>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--color-admin-muted)]">
+                페이지 하단 배너형 섹션을 추가, 복제, 삭제합니다.
+              </p>
+            </div>
+            <div className="rounded-2xl bg-[var(--color-bg)] p-4">
+              <div className="text-sm font-bold text-[var(--color-admin-text)]">기존 섹션 정리</div>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--color-admin-muted)]">
+                일부 주요 페이지의 기존 섹션 순서와 배경/간격을 바꿉니다.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-3xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-6">
+          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-admin-muted)]">
+            현재 편집 페이지
+          </div>
+          <h2 className="mt-2 text-xl font-bold text-[var(--color-admin-text)]">
+            {selectedPageMeta?.label}
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-[var(--color-admin-muted)]">
+            세부 문구, 이미지, 링크 자체는 공개 페이지에서 인라인 편집 모드로 수정하고, 여기서는 구조와 링크 세트를 관리합니다.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            {previewPath ? (
+              <Link
+                href={previewPath}
+                className="rounded-xl bg-[var(--color-forest)] px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-[var(--color-forest-light)]"
+              >
+                공개 페이지 열기
+              </Link>
+            ) : (
+              <div className="rounded-xl bg-[var(--color-bg)] px-4 py-3 text-sm text-[var(--color-admin-muted)]">
+                특수 페이지는 직접 주소에서 인라인 편집하세요.
+              </div>
+            )}
+            <Link
+              href="/admin/history"
+              className="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-bg)]"
+            >
+              변경 히스토리 보기
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {(saveMessage || saveError) && (
         <div
           className={`rounded-2xl border px-5 py-4 text-sm font-medium ${
@@ -348,6 +423,10 @@ export default function SiteBuilderManager({
           {isPending ? "저장 중..." : "글로벌 링크 저장"}
         </button>
       </div>
+
+      <section className="rounded-3xl border border-dashed border-[var(--color-admin-border)] px-6 py-5 text-sm leading-relaxed text-[var(--color-admin-muted)]">
+        `404 페이지`, 뉴스 상세, 보도자료 상세처럼 사이트 빌더 목록에 없는 특수 화면은 해당 공개 화면으로 가서 인라인 편집 모드로 수정합니다.
+      </section>
 
       <section className="rounded-3xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-6">
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">

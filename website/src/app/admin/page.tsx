@@ -79,6 +79,33 @@ export default async function AdminDashboard() {
       <h1 className="text-2xl font-bold text-[var(--color-admin-text)] mb-2">관리자 대시보드</h1>
       <p className="text-[var(--color-admin-muted)] mb-8">풍천리 웹사이트를 관리합니다</p>
 
+      <section className="mb-8 rounded-3xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-6">
+        <h2 className="text-lg font-bold text-[var(--color-admin-text)]">빠른 가이드</h2>
+        <div className="mt-4 grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl bg-[var(--color-bg)] p-4">
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-admin-muted)]">1</div>
+            <div className="mt-2 text-base font-bold text-[var(--color-admin-text)]">인라인 편집</div>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--color-admin-muted)]">
+              공개 페이지에서 문구, 이미지, 링크, 섹션 표시 여부를 바로 수정합니다.
+            </p>
+          </div>
+          <div className="rounded-2xl bg-[var(--color-bg)] p-4">
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-admin-muted)]">2</div>
+            <div className="mt-2 text-base font-bold text-[var(--color-admin-text)]">사이트 빌더</div>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--color-admin-muted)]">
+              내비/푸터 링크, 커스텀 섹션, 기존 섹션 순서와 배경/간격을 관리합니다.
+            </p>
+          </div>
+          <div className="rounded-2xl bg-[var(--color-bg)] p-4">
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-admin-muted)]">3</div>
+            <div className="mt-2 text-base font-bold text-[var(--color-admin-text)]">히스토리 복원</div>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--color-admin-muted)]">
+              저장 후 문제가 생기면 히스토리에서 페이지 콘텐츠, 소식, 타임라인을 이전 상태로 되돌립니다.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-10">
         {cards.map((card) => (
           <Link
@@ -149,6 +176,10 @@ export default async function AdminDashboard() {
           </div>
         </Link>
       </div>
+
+      <section className="mt-10 rounded-3xl border border-dashed border-[var(--color-admin-border)] px-6 py-5 text-sm leading-relaxed text-[var(--color-admin-muted)]">
+        `404 페이지`와 세부 문구처럼 사이트 빌더에 없는 특수 화면은 공개 페이지에서 인라인 편집 모드로 수정합니다. 저장 후에는 새 탭에서 공개 화면을 한 번 확인하는 흐름을 권장합니다.
+      </section>
     </div>
   );
 }

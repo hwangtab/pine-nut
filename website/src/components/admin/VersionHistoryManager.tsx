@@ -58,9 +58,14 @@ export default function VersionHistoryManager({
   entries,
 }: VersionHistoryManagerProps) {
   const router = useRouter();
+  const [filter, setFilter] = useState<"all" | "page_content" | "news" | "timeline_events">("all");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const filteredEntries =
+    filter === "all"
+      ? entries
+      : entries.filter((entry) => entry.table_name === filter);
 
   return (
     <div className="mx-auto max-w-6xl space-y-8 p-6 md:p-10">
@@ -70,6 +75,35 @@ export default function VersionHistoryManager({
           최근 변경 내역을 확인하고 페이지 콘텐츠, 소식, 타임라인 변경을 이전 상태로 복원할 수 있습니다.
         </p>
       </div>
+
+      <section className="rounded-3xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-5">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <p className="text-sm leading-relaxed text-[var(--color-admin-muted)]">
+            `page_content`는 인라인 편집과 사이트 빌더 저장을 포함합니다. 복원 전에 공개 페이지를 새 탭에서 한 번 확인하는 흐름을 권장합니다.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {[
+              ["all", "전체"],
+              ["page_content", "페이지"],
+              ["news", "소식"],
+              ["timeline_events", "타임라인"],
+            ].map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setFilter(value as typeof filter)}
+                className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                  filter === value
+                    ? "bg-[var(--color-forest)] text-white"
+                    : "bg-[var(--color-bg)] text-[var(--color-admin-muted)] hover:bg-[var(--color-admin-border)]"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {(message || error) && (
         <div
@@ -84,7 +118,7 @@ export default function VersionHistoryManager({
       )}
 
       <div className="space-y-4">
-        {entries.map((entry) => {
+        {filteredEntries.map((entry) => {
           const isRestorable =
             ["page_content", "news", "timeline_events"].includes(entry.table_name) &&
             !!entry.payload?.before;
@@ -160,7 +194,7 @@ export default function VersionHistoryManager({
           );
         })}
 
-        {entries.length === 0 && (
+        {filteredEntries.length === 0 && (
           <div className="rounded-3xl border border-dashed border-[var(--color-admin-border)] px-6 py-16 text-center text-[var(--color-admin-muted)]">
             아직 기록된 변경 내역이 없습니다.
           </div>

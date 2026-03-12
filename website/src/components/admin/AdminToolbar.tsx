@@ -93,6 +93,11 @@ export default function AdminToolbar() {
                 {changeCount}개 변경
               </span>
             )}
+            {!hasChanges && (
+              <span className="hidden lg:block text-xs text-white/55">
+                요소를 클릭해 선택하고 저장하세요
+              </span>
+            )}
 
             <button
               type="button"
@@ -137,6 +142,21 @@ export default function AdminToolbar() {
                 </button>
               </>
             )}
+
+            <div className="hidden xl:flex items-center gap-2">
+              <a
+                href="/admin/site-builder"
+                className="px-3 py-2 rounded-xl text-sm font-semibold bg-white/10 hover:bg-white/20 transition-colors"
+              >
+                사이트 빌더
+              </a>
+              <a
+                href="/admin/history"
+                className="px-3 py-2 rounded-xl text-sm font-semibold bg-white/10 hover:bg-white/20 transition-colors"
+              >
+                히스토리
+              </a>
+            </div>
           </>
         )}
 
@@ -149,6 +169,12 @@ export default function AdminToolbar() {
           관리자
         </a>
       </div>
+
+      {isEditMode && (
+        <div className="fixed bottom-24 left-1/2 z-[9989] w-[min(92vw,38rem)] -translate-x-1/2 rounded-2xl border border-white/10 bg-gray-900/90 px-4 py-3 text-xs text-white/70 shadow-2xl backdrop-blur-xl">
+          인라인 편집은 문구, 이미지, 링크, 섹션 표시 여부를 다룹니다. 내비/푸터 링크 세트, 기존 섹션 순서, 커스텀 섹션은 `사이트 빌더`, 이전 상태 복원은 `히스토리`에서 관리합니다.
+        </div>
+      )}
 
       {/* Save error toast */}
       {saveError && (

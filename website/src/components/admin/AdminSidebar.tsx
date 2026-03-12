@@ -63,6 +63,9 @@ export default function AdminSidebar() {
           <Link href="/admin" className="text-xl font-bold text-[var(--color-admin-text)]">
             풍천리 관리자
           </Link>
+          <p className="mt-2 text-sm leading-relaxed text-[var(--color-admin-muted)]">
+            인라인 편집, 사이트 빌더, 히스토리 복원을 한곳에서 관리합니다.
+          </p>
         </div>
 
         <nav className="flex-1 space-y-2">
@@ -98,8 +101,9 @@ export default function AdminSidebar() {
       </aside>
 
       {/* Mobile bottom tab bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-admin-surface)] border-t border-[var(--color-admin-border)] flex">
-        {navItems.map((item) => {
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--color-admin-border)] bg-[var(--color-admin-surface)]">
+        <div className="flex overflow-x-auto px-2 py-2">
+          {navItems.map((item) => {
           const isActive =
             item.href === "/admin"
               ? pathname === "/admin"
@@ -108,15 +112,18 @@ export default function AdminSidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex-1 min-h-[44px] flex flex-col items-center justify-center gap-1 py-3 text-xs font-medium transition-colors ${
-                isActive ? "text-[var(--color-forest)]" : "text-[var(--color-admin-muted)]/70"
+              className={`min-w-[88px] min-h-[44px] flex shrink-0 flex-col items-center justify-center gap-1 rounded-2xl px-3 py-3 text-xs font-medium transition-colors ${
+                isActive
+                  ? "bg-[var(--color-forest)]/10 text-[var(--color-forest)]"
+                  : "text-[var(--color-admin-muted)]/70"
               }`}
             >
               <item.icon size={24} />
               {item.label}
             </Link>
           );
-        })}
+          })}
+        </div>
       </nav>
     </>
   );
