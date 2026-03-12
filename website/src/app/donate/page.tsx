@@ -201,23 +201,40 @@ export default function DonatePage() {
 
       <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 space-y-12">
         <section aria-label="토스페이 온라인 후원">
-          <h2 className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)] text-center">
-            온라인으로 바로 후원하기
-          </h2>
+          <EditableText
+            contentKey="donate.online.heading"
+            defaultValue="온라인으로 바로 후원하기"
+            as="h2"
+            page="donate"
+            section="online"
+            className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)] text-center"
+          />
 
           <div className="bg-white border-2 border-[#0064FF] rounded-2xl p-6 sm:p-8 shadow-sm">
             <div className="text-center mb-6">
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#0064FF]/10 mb-3 text-[#0064FF]">
                 <HeartHandshake className="w-7 h-7" />
               </div>
-              <p className="text-sm text-[var(--color-text-muted)] font-medium">
-                토스페이 결제
-              </p>
+              <EditableText
+                contentKey="donate.online.label"
+                defaultValue="토스페이 결제"
+                as="p"
+                page="donate"
+                section="online"
+                className="text-sm text-[var(--color-text-muted)] font-medium"
+              />
             </div>
 
             <div className="space-y-6">
               <div>
-                <p className="text-[15px] font-semibold text-[var(--color-text)] mb-3">후원 금액</p>
+                <EditableText
+                  contentKey="donate.online.amountLabel"
+                  defaultValue="후원 금액"
+                  as="p"
+                  page="donate"
+                  section="online"
+                  className="text-[15px] font-semibold text-[var(--color-text)] mb-3"
+                />
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
                   {DONATION_PRESETS.map((amount) => (
                     <button
@@ -251,7 +268,13 @@ export default function DonatePage() {
                         : "border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
                     }`}
                   >
-                    직접 입력
+                    <EditableText
+                      contentKey="donate.online.customButton"
+                      defaultValue="직접 입력"
+                      as="span"
+                      page="donate"
+                      section="online"
+                    />
                   </button>
                   <input
                     type="text"
@@ -266,9 +289,14 @@ export default function DonatePage() {
                     className="flex-1 min-h-[48px] px-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]"
                   />
                 </div>
-                <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-                  최소 1,000원부터, 최대 500,000원까지 후원할 수 있습니다.
-                </p>
+                <EditableText
+                  contentKey="donate.online.amountHelp"
+                  defaultValue="최소 1,000원부터, 최대 500,000원까지 후원할 수 있습니다."
+                  as="p"
+                  page="donate"
+                  section="online"
+                  className="mt-2 text-sm text-[var(--color-text-muted)]"
+                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -277,7 +305,13 @@ export default function DonatePage() {
                     htmlFor="donor-name"
                     className="block text-[15px] font-semibold mb-2 text-[var(--color-text)]"
                   >
-                    이름
+                    <EditableText
+                      contentKey="donate.online.nameLabel"
+                      defaultValue="이름"
+                      as="span"
+                      page="donate"
+                      section="online"
+                    />
                   </label>
                   <input
                     id="donor-name"
@@ -296,7 +330,14 @@ export default function DonatePage() {
                     htmlFor="donor-email"
                     className="block text-[15px] font-semibold mb-2 text-[var(--color-text)]"
                   >
-                    이메일 <span className="text-[var(--color-text-muted)] font-normal">(선택)</span>
+                    <EditableText
+                      contentKey="donate.online.emailLabel"
+                      defaultValue="이메일"
+                      as="span"
+                      page="donate"
+                      section="online"
+                    />{" "}
+                    <span className="text-[var(--color-text-muted)] font-normal">(선택)</span>
                   </label>
                   <input
                     id="donor-email"
@@ -313,7 +354,14 @@ export default function DonatePage() {
               </div>
 
               <div className="bg-[var(--color-bg)] rounded-xl px-5 py-4">
-                <p className="text-sm text-[var(--color-text-muted)] mb-1">결제 예정 금액</p>
+                <EditableText
+                  contentKey="donate.online.summaryLabel"
+                  defaultValue="결제 예정 금액"
+                  as="p"
+                  page="donate"
+                  section="online"
+                  className="text-sm text-[var(--color-text-muted)] mb-1"
+                />
                 <p className="text-3xl font-black text-[var(--color-text)]">
                   {resolvedAmount > 0 ? `${resolvedAmount.toLocaleString("ko-KR")}원` : "금액을 입력해주세요"}
                 </p>
@@ -343,7 +391,13 @@ export default function DonatePage() {
                     결제창 여는 중...
                   </>
                 ) : (
-                  "토스페이로 후원하기"
+                  <EditableText
+                    contentKey="donate.online.cta"
+                    defaultValue="토스페이로 후원하기"
+                    as="span"
+                    page="donate"
+                    section="online"
+                  />
                 )}
               </button>
             </div>
