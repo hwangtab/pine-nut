@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { ArrowRight, ExternalLink, FileText } from "lucide-react";
-import Link from "next/link";
 import SubHero from "@/components/SubHero";
 import {
   EditableLink,
   EditableText,
   EditableRichText,
-  EditableSection,
 } from "@/components/editable";
+import ManagedSection from "@/components/builder/ManagedSection";
+import OrderedSectionGroup from "@/components/builder/OrderedSectionGroup";
 import { SITE_URL } from "@/lib/site-config";
 import { PressFactsSection } from "./PressSectionsClient";
 
@@ -34,6 +34,8 @@ export const metadata: Metadata = {
     "언론인, 연구자, 활동가를 위한 풍천리 양수발전소 반대 투쟁 관련 자료 모음. 보도자료, 팩트시트, 사진 자료를 다운로드하세요.",
 };
 
+const PRESS_SECTION_ORDER = ["kit", "facts", "contact", "cite"] as const;
+
 export default function PressPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
@@ -46,8 +48,14 @@ export default function PressPage() {
       />
 
       <div className="max-w-4xl mx-auto px-4 pt-12 md:pt-16 pb-20 space-y-16">
-        <EditableSection contentKey="press.kit.visibility" page="press" section="kit">
-          <section>
+        <OrderedSectionGroup page="press" defaultOrder={[...PRESS_SECTION_ORDER]}>
+        <ManagedSection
+          page="press"
+          sectionId="kit"
+          visibilityContentKey="press.kit.visibility"
+          section="kit"
+          defaultClassName=""
+        >
             <EditableText
               contentKey="press.kit.title"
               defaultValue="보도 키트"
@@ -57,13 +65,16 @@ export default function PressPage() {
               className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {pressKitItems.map((item) => {
+              {pressKitItems.map((item, index) => {
                 const Icon = item.icon;
 
                 return (
-                  <Link
+                  <EditableLink
                     key={item.title}
-                    href={item.href}
+                    contentKey={`press.kit.item.${index}.href`}
+                    defaultHref={item.href}
+                    page="press"
+                    section="kit"
                     className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-[var(--color-border)] shadow-sm hover:shadow-md hover:border-[var(--color-forest)]/20 transition-all"
                   >
                     <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 ${item.color}`}>
@@ -79,15 +90,19 @@ export default function PressPage() {
                       <EditableText contentKey="press.kit.open" defaultValue="열기" as="span" page="press" section="kit" />
                       <ArrowRight className="w-4 h-4" />
                     </span>
-                  </Link>
+                  </EditableLink>
                 );
               })}
             </div>
-          </section>
-        </EditableSection>
+        </ManagedSection>
 
-        <EditableSection contentKey="press.facts.visibility" page="press" section="facts">
-          <section>
+        <ManagedSection
+          page="press"
+          sectionId="facts"
+          visibilityContentKey="press.facts.visibility"
+          section="facts"
+          defaultClassName=""
+        >
             <EditableText
               contentKey="press.facts.title"
               defaultValue="핵심 팩트시트"
@@ -97,11 +112,15 @@ export default function PressPage() {
               className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
             />
             <PressFactsSection />
-          </section>
-        </EditableSection>
+        </ManagedSection>
 
-        <EditableSection contentKey="press.contact.visibility" page="press" section="contact">
-          <section>
+        <ManagedSection
+          page="press"
+          sectionId="contact"
+          visibilityContentKey="press.contact.visibility"
+          section="contact"
+          defaultClassName=""
+        >
             <EditableText
               contentKey="press.contact.title"
               defaultValue="언론 연락처"
@@ -150,11 +169,15 @@ export default function PressPage() {
                 </div>
               </div>
             </div>
-          </section>
-        </EditableSection>
+        </ManagedSection>
 
-        <EditableSection contentKey="press.cite.visibility" page="press" section="cite">
-          <section>
+        <ManagedSection
+          page="press"
+          sectionId="cite"
+          visibilityContentKey="press.cite.visibility"
+          section="cite"
+          defaultClassName=""
+        >
             <EditableText
               contentKey="press.cite.title"
               defaultValue="인용 안내"
@@ -201,8 +224,8 @@ export default function PressPage() {
                 />
               </div>
             </div>
-          </section>
-        </EditableSection>
+        </ManagedSection>
+        </OrderedSectionGroup>
       </div>
     </div>
   );

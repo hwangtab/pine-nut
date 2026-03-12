@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import SubHero from "@/components/SubHero";
-import { EditableText, EditableRichText, EditableSection } from "@/components/editable";
+import { EditableLink, EditableText, EditableRichText } from "@/components/editable";
+import ManagedSection from "@/components/builder/ManagedSection";
+import OrderedSectionGroup from "@/components/builder/OrderedSectionGroup";
 import { SITE_URL } from "@/lib/site-config";
 import {
   EnglishHelpCards,
@@ -30,6 +31,8 @@ export const metadata: Metadata = {
   },
 };
 
+const EN_SECTION_ORDER = ["story", "numbers", "stake", "help"] as const;
+
 export default function EnglishPage() {
   return (
     <article>
@@ -40,8 +43,14 @@ export default function EnglishPage() {
         eyebrow="English Summary"
       />
 
-      <EditableSection contentKey="en.story.visibility" page="en" section="story">
-        <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]">
+      <OrderedSectionGroup page="en" defaultOrder={[...EN_SECTION_ORDER]}>
+      <ManagedSection
+        page="en"
+        sectionId="story"
+        visibilityContentKey="en.story.visibility"
+        section="story"
+        defaultClassName="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]"
+      >
           <div className="max-w-3xl mx-auto">
             <EditableText
               contentKey="en.story.title"
@@ -66,11 +75,15 @@ The villagers voted unanimously to oppose the project. Since then, they have hel
               className="space-y-6 text-[var(--color-text)] leading-relaxed text-base md:text-lg"
             />
           </div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
 
-      <EditableSection contentKey="en.numbers.visibility" page="en" section="numbers">
-        <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg-warm)]">
+      <ManagedSection
+        page="en"
+        sectionId="numbers"
+        visibilityContentKey="en.numbers.visibility"
+        section="numbers"
+        defaultClassName="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg-warm)]"
+      >
           <div className="max-w-4xl mx-auto">
             <EditableText
               contentKey="en.numbers.title"
@@ -82,11 +95,15 @@ The villagers voted unanimously to oppose the project. Since then, they have hel
             />
             <EnglishNumbersSection />
           </div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
 
-      <EditableSection contentKey="en.stake.visibility" page="en" section="stake">
-        <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]">
+      <ManagedSection
+        page="en"
+        sectionId="stake"
+        visibilityContentKey="en.stake.visibility"
+        section="stake"
+        defaultClassName="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]"
+      >
           <div className="max-w-4xl mx-auto">
             <EditableText
               contentKey="en.stake.title"
@@ -98,11 +115,15 @@ The villagers voted unanimously to oppose the project. Since then, they have hel
             />
             <EnglishStakeSection />
           </div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
 
-      <EditableSection contentKey="en.help.visibility" page="en" section="help">
-        <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-forest)] text-white">
+      <ManagedSection
+        page="en"
+        sectionId="help"
+        visibilityContentKey="en.help.visibility"
+        section="help"
+        defaultClassName="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-forest)] text-white"
+      >
           <div className="max-w-3xl mx-auto text-center">
             <EditableText
               contentKey="en.help.title"
@@ -121,15 +142,18 @@ The villagers voted unanimously to oppose the project. Since then, they have hel
               className="text-white/80 text-lg md:text-xl mb-12 leading-relaxed max-w-2xl mx-auto"
             />
             <EnglishHelpCards />
-            <Link
-              href="/petition"
+            <EditableLink
+              contentKey="en.cta.href"
+              defaultHref="/petition"
+              page="en"
+              section="help"
               className="inline-flex items-center justify-center px-10 py-4 rounded-xl bg-white text-[var(--color-forest)] font-bold text-lg hover:bg-white/90 transition-colors min-h-[52px]"
             >
               <EditableText contentKey="en.cta.button" defaultValue="Sign the Petition" as="span" page="en" section="help" />
-            </Link>
+            </EditableLink>
           </div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
+      </OrderedSectionGroup>
     </article>
   );
 }

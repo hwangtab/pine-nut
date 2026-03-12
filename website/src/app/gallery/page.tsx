@@ -5,7 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Camera, X } from "lucide-react";
 import Image from "next/image";
 import SubHero from "@/components/SubHero";
-import { EditableText, EditableList, EditableSection } from "@/components/editable";
+import { EditableLink, EditableText, EditableList } from "@/components/editable";
+import ManagedSection from "@/components/builder/ManagedSection";
+import OrderedSectionGroup from "@/components/builder/OrderedSectionGroup";
 
 interface GalleryPhoto {
   id: number;
@@ -14,6 +16,13 @@ interface GalleryPhoto {
   credit: string;
   description: string;
 }
+
+const GALLERY_SECTION_ORDER = [
+  "beauty",
+  "struggle",
+  "solidarity",
+  "cta",
+] as const;
 
 const defaultBeautyPhotos = [
   {
@@ -349,200 +358,229 @@ export default function GalleryPage() {
         eyebrow="현장 기록"
       />
 
-      {/* Gallery sections */}
-      <div className="max-w-5xl mx-auto px-4 pt-12 md:pt-16 pb-8 md:pb-12">
-        {/* Beauty section */}
-        <EditableSection contentKey="gallery.beauty.visibility" page="gallery" section="beauty">
-          <section className="mb-16 md:mb-24">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="mb-8"
-            >
-              <EditableText
-                contentKey="gallery.beauty.title"
-                defaultValue="풍천리의 아름다움"
-                as="h2"
-                page="gallery"
-                section="beauty"
-                className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3"
-              />
-              <EditableText
-                contentKey="gallery.beauty.description"
-                defaultValue="100년 넘은 잣나무 군락지와 멸종위기 산양이 살아가는 풍천리의 자연. 이 숲은 주민들의 삶의 터전이자, 지켜야 할 생태계의 보고입니다."
-                as="p"
-                page="gallery"
-                section="beauty"
-                className="text-[var(--color-text-muted)] text-base md:text-lg leading-relaxed max-w-2xl"
-              />
-            </motion.div>
-
-            <EditableList
-              contentKey="gallery.beauty.photos"
-              defaultItems={defaultBeautyPhotos}
-              page="gallery"
-              section="beauty"
-              fields={photoFields}
-            >
-              {(items) => (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                  {items.map((item, index) => (
-                    <PhotoCard
-                      key={item.id || index}
-                      photo={toGalleryPhoto(item, index)}
-                      index={index}
-                      onOpen={openLightbox}
-                    />
-                  ))}
-                </div>
-              )}
-            </EditableList>
-          </section>
-        </EditableSection>
-
-        {/* Struggle section */}
-        <EditableSection contentKey="gallery.struggle.visibility" page="gallery" section="struggle">
-          <section className="mb-16 md:mb-24">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="mb-8"
-            >
-              <EditableText
-                contentKey="gallery.struggle.title"
-                defaultValue="투쟁의 현장"
-                as="h2"
-                page="gallery"
-                section="struggle"
-                className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3"
-              />
-              <EditableText
-                contentKey="gallery.struggle.description"
-                defaultValue="2019년부터 7년이 넘도록 매주 이어온 정기 집회, 680여 차의 기록. 60~80대 어르신들이 마을을 지키기 위해 걸어온 길입니다."
-                as="p"
-                page="gallery"
-                section="struggle"
-                className="text-[var(--color-text-muted)] text-base md:text-lg leading-relaxed max-w-2xl"
-              />
-            </motion.div>
-
-            <EditableList
-              contentKey="gallery.struggle.photos"
-              defaultItems={defaultStrugglePhotos}
-              page="gallery"
-              section="struggle"
-              fields={photoFields}
-            >
-              {(items) => (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                  {items.map((item, index) => (
-                    <PhotoCard
-                      key={item.id || index}
-                      photo={toGalleryPhoto(item, index + defaultBeautyPhotos.length)}
-                      index={index}
-                      onOpen={openLightbox}
-                    />
-                  ))}
-                </div>
-              )}
-            </EditableList>
-          </section>
-        </EditableSection>
-
-        {/* Solidarity section */}
-        <EditableSection contentKey="gallery.solidarity.visibility" page="gallery" section="solidarity">
-          <section className="mb-16 md:mb-24">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="mb-8"
-            >
-              <EditableText
-                contentKey="gallery.solidarity.title"
-                defaultValue="연대의 순간"
-                as="h2"
-                page="gallery"
-                section="solidarity"
-                className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3"
-              />
-              <EditableText
-                contentKey="gallery.solidarity.description"
-                defaultValue="전국 140여 개 단체, 청소년에서 시민까지. 풍천리 주민들과 함께 손을 잡은 연대의 순간들입니다."
-                as="p"
-                page="gallery"
-                section="solidarity"
-                className="text-[var(--color-text-muted)] text-base md:text-lg leading-relaxed max-w-2xl"
-              />
-            </motion.div>
-
-            <EditableList
-              contentKey="gallery.solidarity.photos"
-              defaultItems={defaultSolidarityPhotos}
-              page="gallery"
-              section="solidarity"
-              fields={photoFields}
-            >
-              {(items) => (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                  {items.map((item, index) => (
-                    <PhotoCard
-                      key={item.id || index}
-                      photo={toGalleryPhoto(item, index + defaultBeautyPhotos.length + defaultStrugglePhotos.length)}
-                      index={index}
-                      onOpen={openLightbox}
-                    />
-                  ))}
-                </div>
-              )}
-            </EditableList>
-          </section>
-        </EditableSection>
-      </div>
-
-      {/* CTA */}
-      <EditableSection contentKey="gallery.cta.visibility" page="gallery" section="cta">
-        <section className="py-16 md:py-20 px-4 text-center bg-gradient-to-t from-[var(--color-bg-warm)] to-transparent">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="max-w-lg mx-auto"
+      <div className="pt-12 md:pt-16">
+        <OrderedSectionGroup page="gallery" defaultOrder={[...GALLERY_SECTION_ORDER]}>
+          <ManagedSection
+            page="gallery"
+            sectionId="beauty"
+            visibilityContentKey="gallery.beauty.visibility"
+            section="beauty"
+            defaultClassName="px-4"
           >
-            <Camera className="w-10 h-10 text-[var(--color-warm)] mx-auto mb-4" />
-            <EditableText
-              contentKey="gallery.cta.title"
-              defaultValue="사진을 제보해주세요"
-              as="h2"
-              page="gallery"
-              section="cta"
-              className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3"
-            />
-            <EditableText
-              contentKey="gallery.cta.description"
-              defaultValue="풍천리의 아름다운 자연, 투쟁의 현장, 연대의 순간을 담은 사진이 있으시다면 제보해주세요. 함께 기록을 남깁니다."
-              as="p"
-              page="gallery"
-              section="cta"
-              className="text-[var(--color-text-muted)] mb-6 leading-relaxed"
-            />
-            <a
-              href="https://campaigns.do"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block min-h-[44px] bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-semibold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
+            <div className="max-w-5xl mx-auto mb-16 md:mb-24">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="mb-8"
+              >
+                <EditableText
+                  contentKey="gallery.beauty.title"
+                  defaultValue="풍천리의 아름다움"
+                  as="h2"
+                  page="gallery"
+                  section="beauty"
+                  className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3"
+                />
+                <EditableText
+                  contentKey="gallery.beauty.description"
+                  defaultValue="100년 넘은 잣나무 군락지와 멸종위기 산양이 살아가는 풍천리의 자연. 이 숲은 주민들의 삶의 터전이자, 지켜야 할 생태계의 보고입니다."
+                  as="p"
+                  page="gallery"
+                  section="beauty"
+                  className="text-[var(--color-text-muted)] text-base md:text-lg leading-relaxed max-w-2xl"
+                />
+              </motion.div>
+
+              <EditableList
+                contentKey="gallery.beauty.photos"
+                defaultItems={defaultBeautyPhotos}
+                page="gallery"
+                section="beauty"
+                fields={photoFields}
+              >
+                {(items) => (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                    {items.map((item, index) => (
+                      <PhotoCard
+                        key={item.id || index}
+                        photo={toGalleryPhoto(item, index)}
+                        index={index}
+                        onOpen={openLightbox}
+                      />
+                    ))}
+                  </div>
+                )}
+              </EditableList>
+            </div>
+          </ManagedSection>
+
+          <ManagedSection
+            page="gallery"
+            sectionId="struggle"
+            visibilityContentKey="gallery.struggle.visibility"
+            section="struggle"
+            defaultClassName="px-4"
+          >
+            <div className="max-w-5xl mx-auto mb-16 md:mb-24">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="mb-8"
+              >
+                <EditableText
+                  contentKey="gallery.struggle.title"
+                  defaultValue="투쟁의 현장"
+                  as="h2"
+                  page="gallery"
+                  section="struggle"
+                  className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3"
+                />
+                <EditableText
+                  contentKey="gallery.struggle.description"
+                  defaultValue="2019년부터 7년이 넘도록 매주 이어온 정기 집회, 680여 차의 기록. 60~80대 어르신들이 마을을 지키기 위해 걸어온 길입니다."
+                  as="p"
+                  page="gallery"
+                  section="struggle"
+                  className="text-[var(--color-text-muted)] text-base md:text-lg leading-relaxed max-w-2xl"
+                />
+              </motion.div>
+
+              <EditableList
+                contentKey="gallery.struggle.photos"
+                defaultItems={defaultStrugglePhotos}
+                page="gallery"
+                section="struggle"
+                fields={photoFields}
+              >
+                {(items) => (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                    {items.map((item, index) => (
+                      <PhotoCard
+                        key={item.id || index}
+                        photo={toGalleryPhoto(item, index + defaultBeautyPhotos.length)}
+                        index={index}
+                        onOpen={openLightbox}
+                      />
+                    ))}
+                  </div>
+                )}
+              </EditableList>
+            </div>
+          </ManagedSection>
+
+          <ManagedSection
+            page="gallery"
+            sectionId="solidarity"
+            visibilityContentKey="gallery.solidarity.visibility"
+            section="solidarity"
+            defaultClassName="px-4"
+          >
+            <div className="max-w-5xl mx-auto mb-16 md:mb-24">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="mb-8"
+              >
+                <EditableText
+                  contentKey="gallery.solidarity.title"
+                  defaultValue="연대의 순간"
+                  as="h2"
+                  page="gallery"
+                  section="solidarity"
+                  className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3"
+                />
+                <EditableText
+                  contentKey="gallery.solidarity.description"
+                  defaultValue="전국 140여 개 단체, 청소년에서 시민까지. 풍천리 주민들과 함께 손을 잡은 연대의 순간들입니다."
+                  as="p"
+                  page="gallery"
+                  section="solidarity"
+                  className="text-[var(--color-text-muted)] text-base md:text-lg leading-relaxed max-w-2xl"
+                />
+              </motion.div>
+
+              <EditableList
+                contentKey="gallery.solidarity.photos"
+                defaultItems={defaultSolidarityPhotos}
+                page="gallery"
+                section="solidarity"
+                fields={photoFields}
+              >
+                {(items) => (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                    {items.map((item, index) => (
+                      <PhotoCard
+                        key={item.id || index}
+                        photo={toGalleryPhoto(
+                          item,
+                          index + defaultBeautyPhotos.length + defaultStrugglePhotos.length,
+                        )}
+                        index={index}
+                        onOpen={openLightbox}
+                      />
+                    ))}
+                  </div>
+                )}
+              </EditableList>
+            </div>
+          </ManagedSection>
+
+          <ManagedSection
+            page="gallery"
+            sectionId="cta"
+            visibilityContentKey="gallery.cta.visibility"
+            section="cta"
+            defaultClassName="py-16 md:py-20 px-4 text-center bg-gradient-to-t from-[var(--color-bg-warm)] to-transparent"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="max-w-lg mx-auto"
             >
-              <EditableText contentKey="gallery.cta.submit" defaultValue="사진 제보하기" as="span" page="gallery" section="cta" />
-            </a>
-          </motion.div>
-        </section>
-      </EditableSection>
+              <Camera className="w-10 h-10 text-[var(--color-warm)] mx-auto mb-4" />
+              <EditableText
+                contentKey="gallery.cta.title"
+                defaultValue="사진을 제보해주세요"
+                as="h2"
+                page="gallery"
+                section="cta"
+                className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3"
+              />
+              <EditableText
+                contentKey="gallery.cta.description"
+                defaultValue="풍천리의 아름다운 자연, 투쟁의 현장, 연대의 순간을 담은 사진이 있으시다면 제보해주세요. 함께 기록을 남깁니다."
+                as="p"
+                page="gallery"
+                section="cta"
+                className="text-[var(--color-text-muted)] mb-6 leading-relaxed"
+              />
+              <EditableLink
+                contentKey="gallery.cta.href"
+                defaultHref="https://campaigns.do"
+                page="gallery"
+                section="cta"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[var(--color-warm)] px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all duration-200 hover:bg-[var(--color-warm-light)] hover:shadow-xl"
+              >
+                <EditableText
+                  contentKey="gallery.cta.submit"
+                  defaultValue="사진 제보하기"
+                  as="span"
+                  page="gallery"
+                  section="cta"
+                />
+              </EditableLink>
+            </motion.div>
+          </ManagedSection>
+        </OrderedSectionGroup>
+      </div>
 
       {/* Copyright notice */}
       <div className="max-w-5xl mx-auto px-4 pb-8 text-center">

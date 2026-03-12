@@ -21,6 +21,19 @@ interface ValidatedTimelineForm {
   sortOrder: number;
 }
 
+interface TimelineAuditRow {
+  id: number;
+  date: string;
+  year: number;
+  title: string;
+  description: string;
+  category: string;
+  image_url: string | null;
+  image_alt: string | null;
+  sort_order: number;
+  is_deleted: boolean;
+}
+
 async function getAuthenticatedClient() {
   const supabase = await createSupabaseServerClient();
   if (!supabase) throw new Error("Supabase not configured");
@@ -84,6 +97,48 @@ function friendlyError(message: string): string {
   return "저장 중 오류가 발생했습니다. 다시 시도해주세요.";
 }
 
+function revalidateTimelinePaths() {
+  revalidatePath("/timeline");
+  revalidatePath("/admin/timeline");
+  revalidatePath("/admin/history");
+}
+
+async function getTimelineAuditRow(
+  supabase: Awaited<ReturnType<typeof getAuthenticatedClient>>,
+  id: number,
+): Promise<TimelineAuditRow | null> {
+  const { data } = await supabase
+    .from("timeline_events")
+    .select(
+      "id, date, year, title, description, category, image_url, image_alt, sort_order, is_deleted",
+    )
+    .eq("id", id)
+    .maybeSingle();
+
+  return data ?? null;
+}
+
+function parseTimelineAuditRow(
+  payload: Record<string, unknown> | null | undefined,
+): TimelineAuditRow | null {
+  const raw = payload?.before;
+  if (!raw || typeof raw !== "object") return null;
+  const row = raw as Record<string, unknown>;
+
+  return {
+    id: typeof row.id === "number" ? row.id : 0,
+    date: typeof row.date === "string" ? row.date : "",
+    year: typeof row.year === "number" ? row.year : 0,
+    title: typeof row.title === "string" ? row.title : "",
+    description: typeof row.description === "string" ? row.description : "",
+    category: typeof row.category === "string" ? row.category : "",
+    image_url: typeof row.image_url === "string" ? row.image_url : null,
+    image_alt: typeof row.image_alt === "string" ? row.image_alt : null,
+    sort_order: typeof row.sort_order === "number" ? row.sort_order : 0,
+    is_deleted: row.is_deleted === true,
+  };
+}
+
 export async function createTimelineAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const { data: validatedForm, error: validationError } = validateTimelineForm(formData);
   if (validationError || !validatedForm) return { error: validationError ?? "입력값이 올바르지 않습니다." };
@@ -108,22 +163,34 @@ export async function createTimelineAction(_prev: ActionState, formData: FormDat
     sortOrder = (maxRow?.sort_order ?? 0) + 1;
   }
 
-  const { data, error } = await supabase.from("timeline_events").insert({
-    date: validatedForm.date,
-    year: validatedForm.year,
-    title: validatedForm.title,
-    description: validatedForm.description,
-    category: validatedForm.category,
-    image_url: imageUrl,
-    image_alt: validatedForm.imageAlt,
-    sort_order: sortOrder,
-  }).select("id").single();
+  const { data, error } = await supabase
+    .from("timeline_events")
+    .insert({
+      date: validatedForm.date,
+      year: validatedForm.year,
+      title: validatedForm.title,
+      description: validatedForm.description,
+      category: validatedForm.category,
+      image_url: imageUrl,
+      image_alt: validatedForm.imageAlt,
+      sort_order: sortOrder,
+    })
+    .select(
+      "id, date, year, title, description, category, image_url, image_alt, sort_order, is_deleted",
+    )
+    .single();
 
   if (error) return { error: friendlyError(error.message) };
-  if (data) await logAudit(supabase, "timeline_events", data.id, "create");
+  if (data) {
+    await logAudit(supabase, "timeline_events", data.id, "create", {
+      entityKey: data.title,
+      payload: {
+        after: data,
+      },
+    });
+  }
 
-  revalidatePath("/timeline");
-  revalidatePath("/admin/timeline");
+  revalidateTimelinePaths();
   redirect("/admin/timeline");
 }
 
@@ -139,7 +206,9 @@ export async function updateTimelineAction(id: number, _prev: ActionState, formD
 
   const imageUrl = uploadResult.url ?? validatedForm.imageUrl;
 
-  const { error } = await supabase
+  const beforeRow = await getTimelineAuditRow(supabase, id);
+
+  const { data: afterRow, error } = await supabase
     .from("timeline_events")
     .update({
       date: validatedForm.date,
@@ -151,24 +220,46 @@ export async function updateTimelineAction(id: number, _prev: ActionState, formD
       image_alt: validatedForm.imageAlt,
       sort_order: validatedForm.sortOrder,
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select(
+      "id, date, year, title, description, category, image_url, image_alt, sort_order, is_deleted",
+    )
+    .single();
 
   if (error) return { error: friendlyError(error.message) };
-  await logAudit(supabase, "timeline_events", id, "update");
+  await logAudit(supabase, "timeline_events", id, "update", {
+    entityKey: afterRow?.title ?? beforeRow?.title ?? undefined,
+    payload: {
+      before: beforeRow,
+      after: afterRow,
+    },
+  });
 
-  revalidatePath("/timeline");
-  revalidatePath("/admin/timeline");
+  revalidateTimelinePaths();
   redirect("/admin/timeline");
 }
 
 export async function deleteTimelineAction(id: number): Promise<ActionState> {
   try {
     const supabase = await getAuthenticatedClient();
-    const { error } = await supabase.from("timeline_events").update({ is_deleted: true }).eq("id", id);
+    const beforeRow = await getTimelineAuditRow(supabase, id);
+    const { data: afterRow, error } = await supabase
+      .from("timeline_events")
+      .update({ is_deleted: true })
+      .eq("id", id)
+      .select(
+        "id, date, year, title, description, category, image_url, image_alt, sort_order, is_deleted",
+      )
+      .single();
     if (error) return { error: "삭제에 실패했습니다. 다시 시도해주세요." };
-    await logAudit(supabase, "timeline_events", id, "delete");
-    revalidatePath("/timeline");
-    revalidatePath("/admin/timeline");
+    await logAudit(supabase, "timeline_events", id, "delete", {
+      entityKey: beforeRow?.title ?? afterRow?.title ?? undefined,
+      payload: {
+        before: beforeRow,
+        after: afterRow,
+      },
+    });
+    revalidateTimelinePaths();
     return null;
   } catch {
     return { error: "삭제에 실패했습니다. 다시 시도해주세요." };
@@ -178,11 +269,70 @@ export async function deleteTimelineAction(id: number): Promise<ActionState> {
 export async function restoreTimelineAction(id: number): Promise<ActionState> {
   try {
     const supabase = await getAuthenticatedClient();
-    const { error } = await supabase.from("timeline_events").update({ is_deleted: false }).eq("id", id);
+    const beforeRow = await getTimelineAuditRow(supabase, id);
+    const { data: afterRow, error } = await supabase
+      .from("timeline_events")
+      .update({ is_deleted: false })
+      .eq("id", id)
+      .select(
+        "id, date, year, title, description, category, image_url, image_alt, sort_order, is_deleted",
+      )
+      .single();
     if (error) return { error: "복원에 실패했습니다. 다시 시도해주세요." };
-    await logAudit(supabase, "timeline_events", id, "restore");
-    revalidatePath("/timeline");
-    revalidatePath("/admin/timeline");
+    await logAudit(supabase, "timeline_events", id, "restore", {
+      entityKey: afterRow?.title ?? beforeRow?.title ?? undefined,
+      payload: {
+        before: beforeRow,
+        after: afterRow,
+      },
+    });
+    revalidateTimelinePaths();
+    return null;
+  } catch {
+    return { error: "복원에 실패했습니다. 다시 시도해주세요." };
+  }
+}
+
+export async function restoreTimelineVersionAction(
+  payload: Record<string, unknown> | null | undefined,
+): Promise<ActionState> {
+  const row = parseTimelineAuditRow(payload);
+  if (!row || !row.id || !row.title || !row.date || !row.year || !row.category) {
+    return { error: "복원 가능한 타임라인 데이터가 없습니다." };
+  }
+
+  try {
+    const supabase = await getAuthenticatedClient();
+    const currentRow = await getTimelineAuditRow(supabase, row.id);
+    const { error } = await supabase.from("timeline_events").upsert(
+      {
+        id: row.id,
+        date: row.date,
+        year: row.year,
+        title: row.title,
+        description: row.description,
+        category: row.category,
+        image_url: row.image_url,
+        image_alt: row.image_alt,
+        sort_order: row.sort_order,
+        is_deleted: row.is_deleted,
+      },
+      { onConflict: "id" },
+    );
+
+    if (error) {
+      return { error: friendlyError(error.message) };
+    }
+
+    await logAudit(supabase, "timeline_events", row.id, "restore", {
+      entityKey: row.title,
+      payload: {
+        before: currentRow,
+        after: row,
+      },
+    });
+
+    revalidateTimelinePaths();
     return null;
   } catch {
     return { error: "복원에 실패했습니다. 다시 시도해주세요." };

@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import type { AuditEntry } from "@/lib/data/audit";
 import { restorePageContentVersionAction } from "@/lib/actions/page-content";
+import { restoreNewsVersionAction } from "@/lib/actions/news";
+import { restoreTimelineVersionAction } from "@/lib/actions/timeline";
 
 interface VersionHistoryManagerProps {
   entries: AuditEntry[];
@@ -29,12 +32,32 @@ function summarizePayload(entry: AuditEntry): string {
     }
   }
 
+  const label =
+    entry.table_name === "news"
+      ? typeof entry.payload?.after === "object" && entry.payload?.after && "title" in entry.payload.after
+        ? (entry.payload.after.title as string)
+        : typeof entry.payload?.before === "object" && entry.payload?.before && "title" in entry.payload.before
+          ? (entry.payload.before.title as string)
+          : "소식 항목"
+      : entry.table_name === "timeline_events"
+        ? typeof entry.payload?.after === "object" && entry.payload?.after && "title" in entry.payload.after
+          ? (entry.payload.after.title as string)
+          : typeof entry.payload?.before === "object" && entry.payload?.before && "title" in entry.payload.before
+            ? (entry.payload.before.title as string)
+            : "타임라인 항목"
+        : null;
+
+  if (label) {
+    return `${label} · ${entry.action}`;
+  }
+
   return `${entry.table_name} ${entry.action}`;
 }
 
 export default function VersionHistoryManager({
   entries,
 }: VersionHistoryManagerProps) {
+  const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -44,7 +67,7 @@ export default function VersionHistoryManager({
       <div>
         <h1 className="text-2xl font-bold text-[var(--color-admin-text)]">버전 히스토리</h1>
         <p className="mt-2 text-[var(--color-admin-muted)]">
-          최근 변경 내역을 확인하고 페이지 콘텐츠 변경은 이전 상태로 복원할 수 있습니다.
+          최근 변경 내역을 확인하고 페이지 콘텐츠, 소식, 타임라인 변경을 이전 상태로 복원할 수 있습니다.
         </p>
       </div>
 
@@ -63,8 +86,7 @@ export default function VersionHistoryManager({
       <div className="space-y-4">
         {entries.map((entry) => {
           const isRestorable =
-            entry.table_name === "page_content" &&
-            (entry.action === "bulk_update" || entry.action === "delete") &&
+            ["page_content", "news", "timeline_events"].includes(entry.table_name) &&
             !!entry.payload?.before;
 
           return (
@@ -112,16 +134,20 @@ export default function VersionHistoryManager({
                       setMessage(null);
 
                       startTransition(async () => {
-                        const result = await restorePageContentVersionAction(
-                          entry.payload,
-                        );
+                        const result =
+                          entry.table_name === "page_content"
+                            ? await restorePageContentVersionAction(entry.payload)
+                            : entry.table_name === "news"
+                              ? await restoreNewsVersionAction(entry.payload)
+                              : await restoreTimelineVersionAction(entry.payload);
 
-                        if (result.error) {
+                        if (result?.error) {
                           setError(result.error);
                           return;
                         }
 
                         setMessage("선택한 버전으로 복원했습니다.");
+                        router.refresh();
                       });
                     }}
                     className="rounded-xl bg-[var(--color-forest)] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[var(--color-forest-light)] disabled:opacity-40"

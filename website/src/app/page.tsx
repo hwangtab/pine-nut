@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useInView, animate, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 import { PenLine, Heart, Share2, ChevronDown } from "lucide-react";
-import { EditableText, EditableImage, EditableList, EditableSection } from "@/components/editable";
+import { EditableText, EditableImage, EditableList, EditableLink } from "@/components/editable";
+import ManagedSection from "@/components/builder/ManagedSection";
+import OrderedSectionGroup from "@/components/builder/OrderedSectionGroup";
 
 /* ───────────────────────── helpers ───────────────────────── */
 
@@ -112,6 +113,16 @@ function MountainSilhouette() {
     </div>
   );
 }
+
+const HOME_SECTION_ORDER = [
+  "hero",
+  "about",
+  "impact",
+  "hope",
+  "quotes",
+  "cta",
+  "stats",
+] as const;
 
 
 /* ═══════════════════════════════════════════════════════════ */
@@ -262,10 +273,15 @@ export default function HomePage() {
   );
 
   return (
-    <>
+    <OrderedSectionGroup page="home" defaultOrder={[...HOME_SECTION_ORDER]}>
       {/* ════════════════ SECTION 1 — HERO ════════════════ */}
-      <EditableSection contentKey="home.hero.visibility" page="home" section="hero">
-        <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden text-white px-6 text-center">
+      <ManagedSection
+        page="home"
+        sectionId="hero"
+        visibilityContentKey="home.hero.visibility"
+        section="hero"
+        defaultClassName="relative min-h-screen flex flex-col items-center justify-center overflow-hidden text-white px-6 text-center"
+      >
           {/* Background photo */}
           <EditableImage
             contentKey="home.hero.bgImage"
@@ -386,15 +402,17 @@ export default function HomePage() {
           >
             <ChevronDown className="w-8 h-8 text-white/40" />
           </motion.div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
 
       {/* ════════ SECTION 2 — 풍천리를 아시나요? ════════ */}
-      <EditableSection contentKey="home.about.visibility" page="home" section="about">
-        <section
-          ref={storyRef}
-          className="py-24 md:py-36 px-6 bg-[var(--color-bg-warm)]"
-        >
+      <ManagedSection
+        page="home"
+        sectionId="about"
+        visibilityContentKey="home.about.visibility"
+        section="about"
+        defaultClassName="py-24 md:py-36 px-6 bg-[var(--color-bg-warm)]"
+      >
+        <div ref={storyRef}>
           <div className="max-w-3xl mx-auto text-center">
             <FadeIn>
               <PineTreeIcon className="w-16 h-16 mx-auto mb-8 text-[var(--color-forest)]" />
@@ -466,12 +484,17 @@ export default function HomePage() {
               </div>
             </FadeIn>
           </div>
-        </section>
-      </EditableSection>
+        </div>
+      </ManagedSection>
 
       {/* ════════ SECTION 3 — 무엇이 위협하고 있나요? ════════ */}
-      <EditableSection contentKey="home.impact.visibility" page="home" section="impact">
-        <section className="py-24 md:py-36 px-6 bg-[var(--color-bg)]">
+      <ManagedSection
+        page="home"
+        sectionId="impact"
+        visibilityContentKey="home.impact.visibility"
+        section="impact"
+        defaultClassName="py-24 md:py-36 px-6 bg-[var(--color-bg)]"
+      >
           <div className="max-w-5xl mx-auto">
             <FadeIn className="text-center mb-16">
               <EditableText
@@ -576,12 +599,16 @@ export default function HomePage() {
               }}
             </EditableList>
           </div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
 
       {/* ════════ SECTION 3.5 — 희망/연대 ════════ */}
-      <EditableSection contentKey="home.hope.visibility" page="home" section="hope">
-        <section className="py-24 md:py-36 px-6 bg-[var(--color-bg-warm)]">
+      <ManagedSection
+        page="home"
+        sectionId="hope"
+        visibilityContentKey="home.hope.visibility"
+        section="hope"
+        defaultClassName="py-24 md:py-36 px-6 bg-[var(--color-bg-warm)]"
+      >
           <div className="max-w-5xl mx-auto">
             <FadeIn className="text-center mb-6">
               <EditableText
@@ -695,12 +722,16 @@ export default function HomePage() {
               </div>
             </FadeIn>
           </div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
 
       {/* ════════ SECTION 4 — 주민들의 목소리 ════════ */}
-      <EditableSection contentKey="home.quotes.visibility" page="home" section="quotes">
-        <section className="py-24 md:py-36 px-6 bg-[var(--color-sky)] text-white">
+      <ManagedSection
+        page="home"
+        sectionId="quotes"
+        visibilityContentKey="home.quotes.visibility"
+        section="quotes"
+        defaultClassName="py-24 md:py-36 px-6 bg-[var(--color-sky)] text-white"
+      >
           <div className="max-w-4xl mx-auto">
             <FadeIn className="text-center mb-16">
               <EditableText
@@ -769,12 +800,16 @@ export default function HomePage() {
               )}
             </EditableList>
           </div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
 
       {/* ════════ SECTION 5 — 함께해주세요 ════════ */}
-      <EditableSection contentKey="home.cta.visibility" page="home" section="cta">
-        <section className="py-24 md:py-36 px-6 bg-[var(--color-bg-warm)]">
+      <ManagedSection
+        page="home"
+        sectionId="cta"
+        visibilityContentKey="home.cta.visibility"
+        section="cta"
+        defaultClassName="py-24 md:py-36 px-6 bg-[var(--color-bg-warm)]"
+      >
           <div className="max-w-5xl mx-auto">
             <FadeIn className="text-center mb-16">
               <EditableText
@@ -866,9 +901,16 @@ export default function HomePage() {
                     )}
                     <p className="text-xs text-[var(--color-text-muted)] text-center">
                       서명 시{" "}
-                      <Link href="/privacy" className="underline hover:text-[var(--color-warm)]">
+                      <EditableLink
+                        contentKey="home.cta.privacyHref"
+                        defaultHref="/privacy"
+                        page="home"
+                        section="cta"
+                        inline
+                        className="underline hover:text-[var(--color-warm)]"
+                      >
                         개인정보처리방침
-                      </Link>
+                      </EditableLink>
                       에 동의합니다
                     </p>
                   </form>
@@ -925,12 +967,15 @@ export default function HomePage() {
                                 {card.title}
                               </button>
                             ) : (
-                              <Link
-                                href={card.href}
+                              <EditableLink
+                                contentKey={`home.cta.cardLink.${i}`}
+                                defaultHref={card.href}
+                                page="home"
+                                section="cta"
                                 className="inline-flex items-center justify-center min-h-[44px] px-6 py-3 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold transition-colors"
                               >
                                 {card.title}
-                              </Link>
+                              </EditableLink>
                             )}
                           </div>
                         </FadeIn>
@@ -941,12 +986,16 @@ export default function HomePage() {
               }}
             </EditableList>
           </div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
 
       {/* ════════ SECTION 6 — Key Numbers Bar ════════ */}
-      <EditableSection contentKey="home.stats.visibility" page="home" section="stats">
-        <section className="py-16 md:py-20 px-6 bg-[#0a0a0a] text-white">
+      <ManagedSection
+        page="home"
+        sectionId="stats"
+        visibilityContentKey="home.stats.visibility"
+        section="stats"
+        defaultClassName="py-16 md:py-20 px-6 bg-[#0a0a0a] text-white"
+      >
           <div className="max-w-6xl mx-auto">
             <EditableList
               contentKey="home.stats.items"
@@ -981,8 +1030,7 @@ export default function HomePage() {
               )}
             </EditableList>
           </div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
 
       {/* ════════ Social Proof Toast ════════ */}
       <AnimatePresence>
@@ -999,6 +1047,6 @@ export default function HomePage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </OrderedSectionGroup>
   );
 }

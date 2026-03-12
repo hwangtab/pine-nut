@@ -2,9 +2,9 @@
 
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import Link from "next/link";
 import Image from "next/image";
 import SubHero from "@/components/SubHero";
+import { EditableLink, EditableText } from "@/components/editable";
 import type { TimelineEvent } from "@/data/timeline";
 
 const YEARS = ["전체", 2019, 2021, 2022, 2023, 2024, 2025, 2026] as const;
@@ -152,15 +152,29 @@ export default function TimelineClient({ timelineEvents }: { timelineEvents: Tim
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-6">
-            이 투쟁에 함께해주세요
-          </h2>
-          <Link
-            href="/petition"
-            className="inline-block min-h-[44px] bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-semibold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
+          <EditableText
+            contentKey="timeline.cta.title"
+            defaultValue="이 투쟁에 함께해주세요"
+            as="h2"
+            page="timeline"
+            section="cta"
+            className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-6"
+          />
+          <EditableLink
+            contentKey="timeline.cta.href"
+            defaultHref="/petition"
+            page="timeline"
+            section="cta"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[var(--color-warm)] px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all duration-200 hover:bg-[var(--color-warm-light)] hover:shadow-xl"
           >
-            서명에 참여하기
-          </Link>
+            <EditableText
+              contentKey="timeline.cta.button"
+              defaultValue="서명에 참여하기"
+              as="span"
+              page="timeline"
+              section="cta"
+            />
+          </EditableLink>
         </motion.div>
       </section>
     </div>

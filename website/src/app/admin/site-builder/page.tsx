@@ -1,5 +1,9 @@
 import SiteBuilderManager from "@/components/admin/SiteBuilderManager";
-import { BUILDER_PAGES, GLOBAL_LINK_SETS } from "@/lib/custom-sections";
+import {
+  BUILDER_PAGES,
+  EXISTING_PAGE_SECTIONS,
+  GLOBAL_LINK_SETS,
+} from "@/lib/custom-sections";
 import { getAllPageContent } from "@/lib/data/page-content";
 
 export default async function SiteBuilderPage() {
@@ -11,6 +15,16 @@ export default async function SiteBuilderPage() {
     ...BUILDER_PAGES.map((page) => [
       `builder.${page.id}.customSections`,
       allContent[`builder.${page.id}.customSections`]?.value,
+    ]),
+    ...Object.keys(EXISTING_PAGE_SECTIONS).flatMap((pageId) => [
+      [
+        `builder.${pageId}.sectionOrder`,
+        allContent[`builder.${pageId}.sectionOrder`]?.value,
+      ],
+      [
+        `builder.${pageId}.sectionStyles`,
+        allContent[`builder.${pageId}.sectionStyles`]?.value,
+      ],
     ]),
   ]) as Record<string, string | undefined>;
 

@@ -5,18 +5,25 @@ import { useMemo, useState, useTransition } from "react";
 import { savePageContentAction } from "@/lib/actions/page-content";
 import {
   BUILDER_PAGES,
+  EXISTING_PAGE_SECTIONS,
+  SECTION_SPACING_OPTIONS,
+  SECTION_THEME_OPTIONS,
   GLOBAL_LINK_SETS,
   createEmptyBuilderLink,
   createEmptyCustomSection,
   defaultFooterLinks,
   defaultNavLinks,
+  parseExistingSectionOrder,
+  parseExistingSectionStyles,
   parseBuilderLinks,
   parseCustomSections,
+  serializeExistingSectionStyles,
   validateBuilderLinks,
   validateCustomSections,
   type BuilderLinkItem,
   type BuilderPageId,
   type CustomSection,
+  type ExistingSectionStyle,
 } from "@/lib/custom-sections";
 
 interface SiteBuilderManagerProps {
@@ -58,11 +65,43 @@ export default function SiteBuilderManager({
       ]),
     ) as Record<BuilderPageId, CustomSection[]>,
   );
+  const [sectionOrdersByPage, setSectionOrdersByPage] = useState<
+    Record<BuilderPageId, string[]>
+  >(() =>
+    Object.fromEntries(
+      BUILDER_PAGES.map((page) => {
+        const defaultOrder =
+          EXISTING_PAGE_SECTIONS[page.id]?.map((section) => section.id) ?? [];
+        return [
+          page.id,
+          parseExistingSectionOrder(
+            initialValues[`builder.${page.id}.sectionOrder`],
+            defaultOrder,
+          ),
+        ];
+      }),
+    ) as Record<BuilderPageId, string[]>,
+  );
+  const [sectionStylesByPage, setSectionStylesByPage] = useState<
+    Record<BuilderPageId, Record<string, ExistingSectionStyle>>
+  >(() =>
+    Object.fromEntries(
+      BUILDER_PAGES.map((page) => [
+        page.id,
+        parseExistingSectionStyles(
+          initialValues[`builder.${page.id}.sectionStyles`],
+        ),
+      ]),
+    ) as Record<BuilderPageId, Record<string, ExistingSectionStyle>>,
+  );
 
   const sections = useMemo(
     () => sectionsByPage[selectedPage] ?? [],
     [sectionsByPage, selectedPage],
   );
+  const existingSections = EXISTING_PAGE_SECTIONS[selectedPage] ?? [];
+  const currentSectionOrder = sectionOrdersByPage[selectedPage] ?? [];
+  const currentSectionStyles = sectionStylesByPage[selectedPage] ?? {};
 
   const saveGlobalLinks = () => {
     setSaveMessage(null);
@@ -131,6 +170,40 @@ export default function SiteBuilderManager({
         setSaveError(result.error);
       } else {
         setSaveMessage("커스텀 섹션을 저장했습니다.");
+      }
+    });
+  };
+
+  const saveExistingSections = () => {
+    setSaveMessage(null);
+    setSaveError(null);
+
+    const sectionIds = existingSections.map((section) => section.id);
+
+    startTransition(async () => {
+      const result = await savePageContentAction([
+        {
+          content_key: `builder.${selectedPage}.sectionOrder`,
+          content_type: "list",
+          value: JSON.stringify(currentSectionOrder),
+          page: selectedPage,
+          section: "builder",
+        },
+        {
+          content_key: `builder.${selectedPage}.sectionStyles`,
+          content_type: "list",
+          value: JSON.stringify(
+            serializeExistingSectionStyles(currentSectionStyles, sectionIds),
+          ),
+          page: selectedPage,
+          section: "builder",
+        },
+      ]);
+
+      if (result.error) {
+        setSaveError(result.error);
+      } else {
+        setSaveMessage("기존 섹션 설정을 저장했습니다.");
       }
     });
   };
@@ -652,6 +725,133 @@ export default function SiteBuilderManager({
           </button>
         </div>
       </section>
+
+      {existingSections.length > 0 && (
+        <section className="rounded-3xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-6">
+          <div className="mb-6">
+            <h2 className="text-lg font-bold text-[var(--color-admin-text)]">
+              기존 섹션 순서와 스타일
+            </h2>
+            <p className="mt-1 text-sm text-[var(--color-admin-muted)]">
+              페이지에 이미 있는 섹션의 노출 순서와 배경/간격을 조정합니다.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {currentSectionOrder.map((sectionId, index) => {
+              const sectionMeta = existingSections.find(
+                (section) => section.id === sectionId,
+              );
+              if (!sectionMeta) return null;
+
+              const style = currentSectionStyles[sectionId] ?? {
+                id: sectionId,
+                theme: "default",
+                spacing: "normal",
+              };
+
+              return (
+                <div
+                  key={sectionId}
+                  className="grid gap-4 rounded-2xl border border-[var(--color-admin-border)] bg-[var(--color-bg)] p-4 md:grid-cols-[1.4fr_180px_180px_auto]"
+                >
+                  <div>
+                    <div className="text-sm font-semibold text-[var(--color-admin-muted)]">
+                      #{index + 1}
+                    </div>
+                    <div className="mt-1 text-base font-bold text-[var(--color-admin-text)]">
+                      {sectionMeta.label}
+                    </div>
+                  </div>
+                  <select
+                    value={style.theme}
+                    onChange={(event) =>
+                      setSectionStylesByPage((prev) => ({
+                        ...prev,
+                        [selectedPage]: {
+                          ...prev[selectedPage],
+                          [sectionId]: {
+                            ...style,
+                            theme: event.target.value as ExistingSectionStyle["theme"],
+                          },
+                        },
+                      }))
+                    }
+                    className="rounded-xl border border-[var(--color-admin-border)] bg-white px-4 py-3 text-base text-[var(--color-admin-text)] outline-none focus:border-[var(--color-forest)]"
+                  >
+                    {SECTION_THEME_OPTIONS.map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={style.spacing}
+                    onChange={(event) =>
+                      setSectionStylesByPage((prev) => ({
+                        ...prev,
+                        [selectedPage]: {
+                          ...prev[selectedPage],
+                          [sectionId]: {
+                            ...style,
+                            spacing: event.target.value as ExistingSectionStyle["spacing"],
+                          },
+                        },
+                      }))
+                    }
+                    className="rounded-xl border border-[var(--color-admin-border)] bg-white px-4 py-3 text-base text-[var(--color-admin-text)] outline-none focus:border-[var(--color-forest)]"
+                  >
+                    {SECTION_SPACING_OPTIONS.map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSectionOrdersByPage((prev) => ({
+                          ...prev,
+                          [selectedPage]: moveItem(prev[selectedPage] ?? [], index, -1),
+                        }))
+                      }
+                      disabled={index === 0}
+                      className="rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)] disabled:opacity-30"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSectionOrdersByPage((prev) => ({
+                          ...prev,
+                          [selectedPage]: moveItem(prev[selectedPage] ?? [], index, 1),
+                        }))
+                      }
+                      disabled={index === currentSectionOrder.length - 1}
+                      className="rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)] disabled:opacity-30"
+                    >
+                      ↓
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-6 flex justify-end">
+            <button
+              type="button"
+              onClick={saveExistingSections}
+              disabled={isPending}
+              className="rounded-xl bg-[var(--color-forest)] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[var(--color-forest-light)] disabled:opacity-40"
+            >
+              {isPending ? "저장 중..." : "기존 섹션 저장"}
+            </button>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

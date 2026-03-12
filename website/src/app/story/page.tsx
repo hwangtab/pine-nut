@@ -6,6 +6,8 @@ import {
   EditableRichText,
   EditableSection,
 } from "@/components/editable";
+import ManagedSection from "@/components/builder/ManagedSection";
+import OrderedSectionGroup from "@/components/builder/OrderedSectionGroup";
 import {
   StoryBattleSection,
   StoryDemandsSection,
@@ -19,20 +21,44 @@ export const metadata: Metadata = {
     "강원도 홍천군 풍천리 주민들이 양수발전소 건설에 맞서 마을과 자연을 지켜온 이야기를 전합니다.",
 };
 
+const STORY_SECTION_ORDER = [
+  "hero",
+  "village",
+  "plant",
+  "reasons",
+  "battle",
+  "demands",
+  "video",
+  "location",
+  "cta",
+] as const;
+
 export default function StoryPage() {
   return (
     <article>
-      <EditableSection contentKey="story.hero.visibility" page="story" section="hero">
+      <OrderedSectionGroup page="story" defaultOrder={[...STORY_SECTION_ORDER]}>
+      <ManagedSection
+        page="story"
+        sectionId="hero"
+        visibilityContentKey="story.hero.visibility"
+        section="hero"
+        defaultClassName=""
+      >
         <SubHero
           imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
           title={<EditableText contentKey="story.hero.title" defaultValue="풍천리 이야기" as="span" page="story" section="hero" />}
           subtitle={<EditableText contentKey="story.hero.subtitle" defaultValue="잣나무 숲과 마을을 지키려는 7년간의 싸움" as="span" page="story" section="hero" />}
           eyebrow="마을의 목소리"
         />
-      </EditableSection>
+      </ManagedSection>
 
-      <EditableSection contentKey="story.village.visibility" page="story" section="village">
-        <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]">
+      <ManagedSection
+        page="story"
+        sectionId="village"
+        visibilityContentKey="story.village.visibility"
+        section="village"
+        defaultClassName="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]"
+      >
           <div className="max-w-3xl mx-auto">
             <EditableText
               contentKey="story.village.heading"
@@ -51,11 +77,15 @@ export default function StoryPage() {
               className="space-y-5 text-[var(--color-text)] leading-relaxed text-base md:text-lg"
             />
           </div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
 
-      <EditableSection contentKey="story.plant.visibility" page="story" section="plant">
-        <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg-warm)]">
+      <ManagedSection
+        page="story"
+        sectionId="plant"
+        visibilityContentKey="story.plant.visibility"
+        section="plant"
+        defaultClassName="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg-warm)]"
+      >
           <div className="max-w-3xl mx-auto">
             <EditableText
               contentKey="story.plant.heading"
@@ -74,23 +104,45 @@ export default function StoryPage() {
               className="space-y-5 text-[var(--color-text)] leading-relaxed text-base md:text-lg"
             />
           </div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
 
-      <EditableSection contentKey="story.reasons.visibility" page="story" section="reasons">
+      <ManagedSection
+        page="story"
+        sectionId="reasons"
+        visibilityContentKey="story.reasons.visibility"
+        section="reasons"
+        defaultClassName=""
+      >
         <StoryReasonsSection />
-      </EditableSection>
+      </ManagedSection>
 
-      <EditableSection contentKey="story.battle.visibility" page="story" section="battle">
+      <ManagedSection
+        page="story"
+        sectionId="battle"
+        visibilityContentKey="story.battle.visibility"
+        section="battle"
+        defaultClassName=""
+      >
         <StoryBattleSection />
-      </EditableSection>
+      </ManagedSection>
 
-      <EditableSection contentKey="story.demands.visibility" page="story" section="demands">
+      <ManagedSection
+        page="story"
+        sectionId="demands"
+        visibilityContentKey="story.demands.visibility"
+        section="demands"
+        defaultClassName=""
+      >
         <StoryDemandsSection />
-      </EditableSection>
+      </ManagedSection>
 
-      <EditableSection contentKey="story.video.visibility" page="story" section="video">
-        <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]">
+      <ManagedSection
+        page="story"
+        sectionId="video"
+        visibilityContentKey="story.video.visibility"
+        section="video"
+        defaultClassName="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg)]"
+      >
           <div className="max-w-3xl mx-auto">
             <EditableText
               contentKey="story.video.heading"
@@ -119,11 +171,15 @@ export default function StoryPage() {
               />
             </div>
           </div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
 
-      <EditableSection contentKey="story.location.visibility" page="story" section="location">
-        <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg-warm)]">
+      <ManagedSection
+        page="story"
+        sectionId="location"
+        visibilityContentKey="story.location.visibility"
+        section="location"
+        defaultClassName="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-bg-warm)]"
+      >
           <div className="max-w-3xl mx-auto">
             <EditableText
               contentKey="story.location.heading"
@@ -154,11 +210,15 @@ export default function StoryPage() {
               <StoryTransportSection />
             </EditableSection>
           </div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
 
-      <EditableSection contentKey="story.cta.visibility" page="story" section="cta">
-        <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-forest)] text-white text-center">
+      <ManagedSection
+        page="story"
+        sectionId="cta"
+        visibilityContentKey="story.cta.visibility"
+        section="cta"
+        defaultClassName="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-forest)] text-white text-center"
+      >
           <div className="max-w-2xl mx-auto">
             <EditableText
               contentKey="story.cta.heading"
@@ -209,8 +269,8 @@ export default function StoryPage() {
               </EditableLink>
             </div>
           </div>
-        </section>
-      </EditableSection>
+      </ManagedSection>
+      </OrderedSectionGroup>
     </article>
   );
 }

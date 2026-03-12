@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, FormEvent } from "react";
-import Link from "next/link";
+import { useState, useEffect, useRef, useCallback, type FormEvent, type ReactNode } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { Send, Check, Copy, Loader2, HeartHandshake, Megaphone } from "lucide-react";
 import SubHero from "@/components/SubHero";
-import { EditableText, EditableList } from "@/components/editable";
+import { EditableLink, EditableText, EditableList } from "@/components/editable";
 import { events } from "@/lib/analytics";
 
 /* ──────────────────────── Types ──────────────────────── */
@@ -365,20 +364,34 @@ export default function PetitionPage() {
                 { Icon: Megaphone, colorClass: "bg-[var(--color-sky)]/10 text-[var(--color-sky)]" },
               ];
               const wrappers = [
-                (children: React.ReactNode) => (
+                (children: ReactNode) => (
                   <button key="cta-0" type="button" onClick={handleScrollToForm} className="text-left bg-white border border-[var(--color-border)] rounded-2xl p-6 transition-colors hover:bg-[var(--color-bg-warm)] cursor-pointer">
                     {children}
                   </button>
                 ),
-                (children: React.ReactNode) => (
-                  <Link key="cta-1" href="/donate" className="bg-white border border-[var(--color-border)] rounded-2xl p-6 transition-colors hover:bg-[var(--color-bg-warm)]">
+                (children: ReactNode) => (
+                  <EditableLink
+                    key="cta-1"
+                    contentKey="petition.cta.cards.1.href"
+                    defaultHref="/donate"
+                    page="petition"
+                    section="cta"
+                    className="block rounded-2xl border border-[var(--color-border)] bg-white p-6 transition-colors hover:bg-[var(--color-bg-warm)]"
+                  >
                     {children}
-                  </Link>
+                  </EditableLink>
                 ),
-                (children: React.ReactNode) => (
-                  <Link key="cta-2" href="/share" className="bg-white border border-[var(--color-border)] rounded-2xl p-6 transition-colors hover:bg-[var(--color-bg-warm)]">
+                (children: ReactNode) => (
+                  <EditableLink
+                    key="cta-2"
+                    contentKey="petition.cta.cards.2.href"
+                    defaultHref="/share"
+                    page="petition"
+                    section="cta"
+                    className="block rounded-2xl border border-[var(--color-border)] bg-white p-6 transition-colors hover:bg-[var(--color-bg-warm)]"
+                  >
                     {children}
-                  </Link>
+                  </EditableLink>
                 ),
               ];
               return (

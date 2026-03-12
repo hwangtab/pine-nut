@@ -24,6 +24,20 @@ interface ValidatedNewsForm {
   thumbnailUrl: string | null;
 }
 
+interface NewsAuditRow {
+  id: number;
+  slug: string;
+  title: string;
+  summary: string;
+  content: string;
+  date: string;
+  category: string;
+  source_url: string;
+  source_name: string;
+  thumbnail_url: string | null;
+  is_deleted: boolean;
+}
+
 async function getAuthenticatedClient() {
   const supabase = await createSupabaseServerClient();
   if (!supabase) throw new Error("Supabase not configured");
@@ -88,6 +102,53 @@ function friendlyError(message: string): string {
   return "저장 중 오류가 발생했습니다. 다시 시도해주세요.";
 }
 
+function revalidateNewsPaths(...slugs: Array<string | null | undefined>) {
+  revalidatePath("/news");
+  [...new Set(slugs.filter((slug): slug is string => !!slug))].forEach((slug) => {
+    revalidatePath(`/news/${slug}`);
+  });
+  revalidatePath("/admin/news");
+  revalidatePath("/admin/history");
+}
+
+async function getNewsAuditRow(
+  supabase: Awaited<ReturnType<typeof getAuthenticatedClient>>,
+  id: number,
+): Promise<NewsAuditRow | null> {
+  const { data } = await supabase
+    .from("news")
+    .select(
+      "id, slug, title, summary, content, date, category, source_url, source_name, thumbnail_url, is_deleted",
+    )
+    .eq("id", id)
+    .maybeSingle();
+
+  return data ?? null;
+}
+
+function parseNewsAuditRow(
+  payload: Record<string, unknown> | null | undefined,
+): NewsAuditRow | null {
+  const raw = payload?.before;
+  if (!raw || typeof raw !== "object") return null;
+  const row = raw as Record<string, unknown>;
+
+  return {
+    id: typeof row.id === "number" ? row.id : 0,
+    slug: typeof row.slug === "string" ? row.slug : "",
+    title: typeof row.title === "string" ? row.title : "",
+    summary: typeof row.summary === "string" ? row.summary : "",
+    content: typeof row.content === "string" ? row.content : "",
+    date: typeof row.date === "string" ? row.date : "",
+    category: typeof row.category === "string" ? row.category : "",
+    source_url: typeof row.source_url === "string" ? row.source_url : "",
+    source_name: typeof row.source_name === "string" ? row.source_name : "",
+    thumbnail_url:
+      typeof row.thumbnail_url === "string" ? row.thumbnail_url : null,
+    is_deleted: row.is_deleted === true,
+  };
+}
+
 async function resolveThumbnailUrl(thumbnailUrl: string | null, sourceUrl: string): Promise<string | null> {
   if (thumbnailUrl || !sourceUrl) {
     return thumbnailUrl;
@@ -119,23 +180,35 @@ export async function createNewsAction(_prev: ActionState, formData: FormData): 
   const thumbnailUrl = uploadResult.url
     ?? await resolveThumbnailUrl(validatedForm.thumbnailUrl, validatedForm.sourceUrl);
 
-  const { data, error } = await supabase.from("news").insert({
-    slug: validatedForm.slug,
-    title: validatedForm.title,
-    summary: validatedForm.summary,
-    content: validatedForm.content,
-    date: validatedForm.date,
-    category: validatedForm.category,
-    source_url: validatedForm.sourceUrl,
-    source_name: validatedForm.sourceName,
-    thumbnail_url: thumbnailUrl,
-  }).select("id").single();
+  const { data, error } = await supabase
+    .from("news")
+    .insert({
+      slug: validatedForm.slug,
+      title: validatedForm.title,
+      summary: validatedForm.summary,
+      content: validatedForm.content,
+      date: validatedForm.date,
+      category: validatedForm.category,
+      source_url: validatedForm.sourceUrl,
+      source_name: validatedForm.sourceName,
+      thumbnail_url: thumbnailUrl,
+    })
+    .select(
+      "id, slug, title, summary, content, date, category, source_url, source_name, thumbnail_url, is_deleted",
+    )
+    .single();
 
   if (error) return { error: friendlyError(error.message) };
-  if (data) await logAudit(supabase, "news", data.id, "create");
+  if (data) {
+    await logAudit(supabase, "news", data.id, "create", {
+      entityKey: data.slug,
+      payload: {
+        after: data,
+      },
+    });
+  }
 
-  revalidatePath("/news");
-  revalidatePath("/admin/news");
+  revalidateNewsPaths(data?.slug);
   redirect("/admin/news");
 }
 
@@ -152,7 +225,9 @@ export async function updateNewsAction(id: number, _prev: ActionState, formData:
   const thumbnailUrl = uploadResult.url
     ?? await resolveThumbnailUrl(validatedForm.thumbnailUrl, validatedForm.sourceUrl);
 
-  const { error } = await supabase
+  const beforeRow = await getNewsAuditRow(supabase, id);
+
+  const { data: afterRow, error } = await supabase
     .from("news")
     .update({
       slug: validatedForm.slug,
@@ -165,24 +240,46 @@ export async function updateNewsAction(id: number, _prev: ActionState, formData:
       source_name: validatedForm.sourceName,
       thumbnail_url: thumbnailUrl,
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select(
+      "id, slug, title, summary, content, date, category, source_url, source_name, thumbnail_url, is_deleted",
+    )
+    .single();
 
   if (error) return { error: friendlyError(error.message) };
-  await logAudit(supabase, "news", id, "update");
+  await logAudit(supabase, "news", id, "update", {
+    entityKey: afterRow?.slug ?? beforeRow?.slug ?? undefined,
+    payload: {
+      before: beforeRow,
+      after: afterRow,
+    },
+  });
 
-  revalidatePath("/news");
-  revalidatePath("/admin/news");
+  revalidateNewsPaths(beforeRow?.slug, afterRow?.slug);
   redirect("/admin/news");
 }
 
 export async function deleteNewsAction(id: number): Promise<ActionState> {
   try {
     const supabase = await getAuthenticatedClient();
-    const { error } = await supabase.from("news").update({ is_deleted: true }).eq("id", id);
+    const beforeRow = await getNewsAuditRow(supabase, id);
+    const { data: afterRow, error } = await supabase
+      .from("news")
+      .update({ is_deleted: true })
+      .eq("id", id)
+      .select(
+        "id, slug, title, summary, content, date, category, source_url, source_name, thumbnail_url, is_deleted",
+      )
+      .single();
     if (error) return { error: "삭제에 실패했습니다. 다시 시도해주세요." };
-    await logAudit(supabase, "news", id, "delete");
-    revalidatePath("/news");
-    revalidatePath("/admin/news");
+    await logAudit(supabase, "news", id, "delete", {
+      entityKey: beforeRow?.slug ?? afterRow?.slug ?? undefined,
+      payload: {
+        before: beforeRow,
+        after: afterRow,
+      },
+    });
+    revalidateNewsPaths(beforeRow?.slug, afterRow?.slug);
     return null;
   } catch {
     return { error: "삭제에 실패했습니다. 다시 시도해주세요." };
@@ -192,11 +289,71 @@ export async function deleteNewsAction(id: number): Promise<ActionState> {
 export async function restoreNewsAction(id: number): Promise<ActionState> {
   try {
     const supabase = await getAuthenticatedClient();
-    const { error } = await supabase.from("news").update({ is_deleted: false }).eq("id", id);
+    const beforeRow = await getNewsAuditRow(supabase, id);
+    const { data: afterRow, error } = await supabase
+      .from("news")
+      .update({ is_deleted: false })
+      .eq("id", id)
+      .select(
+        "id, slug, title, summary, content, date, category, source_url, source_name, thumbnail_url, is_deleted",
+      )
+      .single();
     if (error) return { error: "복원에 실패했습니다. 다시 시도해주세요." };
-    await logAudit(supabase, "news", id, "restore");
-    revalidatePath("/news");
-    revalidatePath("/admin/news");
+    await logAudit(supabase, "news", id, "restore", {
+      entityKey: afterRow?.slug ?? beforeRow?.slug ?? undefined,
+      payload: {
+        before: beforeRow,
+        after: afterRow,
+      },
+    });
+    revalidateNewsPaths(beforeRow?.slug, afterRow?.slug);
+    return null;
+  } catch {
+    return { error: "복원에 실패했습니다. 다시 시도해주세요." };
+  }
+}
+
+export async function restoreNewsVersionAction(
+  payload: Record<string, unknown> | null | undefined,
+): Promise<ActionState> {
+  const row = parseNewsAuditRow(payload);
+  if (!row || !row.id || !row.slug || !row.title || !row.date || !row.category) {
+    return { error: "복원 가능한 소식 데이터가 없습니다." };
+  }
+
+  try {
+    const supabase = await getAuthenticatedClient();
+    const currentRow = await getNewsAuditRow(supabase, row.id);
+    const { error } = await supabase.from("news").upsert(
+      {
+        id: row.id,
+        slug: row.slug,
+        title: row.title,
+        summary: row.summary,
+        content: row.content,
+        date: row.date,
+        category: row.category,
+        source_url: row.source_url,
+        source_name: row.source_name,
+        thumbnail_url: row.thumbnail_url,
+        is_deleted: row.is_deleted,
+      },
+      { onConflict: "id" },
+    );
+
+    if (error) {
+      return { error: friendlyError(error.message) };
+    }
+
+    await logAudit(supabase, "news", row.id, "restore", {
+      entityKey: row.slug,
+      payload: {
+        before: currentRow,
+        after: row,
+      },
+    });
+
+    revalidateNewsPaths(row.slug);
     return null;
   } catch {
     return { error: "복원에 실패했습니다. 다시 시도해주세요." };
