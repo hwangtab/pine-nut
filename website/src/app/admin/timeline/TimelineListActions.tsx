@@ -30,12 +30,12 @@ export default function TimelineListActions({ id, isDeleted }: { id: number; isD
   }
 
   return (
-    <div className="flex flex-col items-end gap-1 shrink-0">
-      <div className="flex items-center gap-2">
+    <div className="flex w-full shrink-0 flex-col gap-1 sm:w-auto sm:items-end">
+      <div className="flex flex-wrap items-center gap-2 sm:justify-end">
         {!isDeleted && (
           <Link
             href={`/admin/timeline/${id}/edit`}
-            className="min-h-[44px] px-5 py-3 text-base font-bold text-[var(--color-sky)] bg-[var(--color-sky)]/10 hover:bg-[var(--color-sky)]/20 rounded-lg transition-colors"
+            className="min-h-[44px] rounded-lg bg-[var(--color-sky)]/10 px-5 py-3 text-base font-bold text-[var(--color-sky)] transition-colors hover:bg-[var(--color-sky)]/20"
           >
             수정
           </Link>
@@ -44,7 +44,7 @@ export default function TimelineListActions({ id, isDeleted }: { id: number; isD
           <button
             onClick={handleRestore}
             disabled={loading}
-            className="min-h-[44px] px-5 py-3 text-base font-bold text-[var(--color-sky)] bg-[var(--color-sky)]/10 hover:bg-[var(--color-sky)]/20 rounded-lg transition-colors disabled:opacity-50"
+            className="min-h-[44px] rounded-lg bg-[var(--color-sky)]/10 px-5 py-3 text-base font-bold text-[var(--color-sky)] transition-colors hover:bg-[var(--color-sky)]/20 disabled:opacity-50"
           >
             {loading ? "처리 중..." : "복원"}
           </button>
@@ -52,7 +52,7 @@ export default function TimelineListActions({ id, isDeleted }: { id: number; isD
           <button
             onClick={handleDelete}
             disabled={loading}
-            className="min-h-[44px] px-5 py-3 text-base font-bold text-[var(--color-danger)] bg-[var(--color-danger-bg)] hover:bg-[var(--color-danger-border)] rounded-lg transition-colors disabled:opacity-50"
+            className="min-h-[44px] rounded-lg bg-[var(--color-danger-bg)] px-5 py-3 text-base font-bold text-[var(--color-danger)] transition-colors hover:bg-[var(--color-danger-border)] disabled:opacity-50"
           >
             {loading ? "처리 중..." : "삭제"}
           </button>

@@ -115,7 +115,7 @@ export default function MediaLibraryManager({
           <select
             value={folder}
             onChange={(event) => setFolder(event.target.value)}
-            className="rounded-xl border border-[var(--color-admin-border)] bg-white px-4 py-3 text-base text-[var(--color-admin-text)] outline-none focus:border-[var(--color-forest)]"
+            className="min-w-0 rounded-xl border border-[var(--color-admin-border)] bg-white px-4 py-3 text-base text-[var(--color-admin-text)] outline-none focus:border-[var(--color-forest)]"
           >
             <option value="library">library</option>
             <option value="page-content">page-content</option>
@@ -126,13 +126,13 @@ export default function MediaLibraryManager({
             ref={fileInputRef}
             type="file"
             accept="image/jpeg,image/png,image/webp"
-            className="rounded-xl border border-[var(--color-admin-border)] bg-white px-4 py-3 text-base text-[var(--color-admin-text)]"
+            className="min-w-0 w-full rounded-xl border border-[var(--color-admin-border)] bg-white px-4 py-3 text-base text-[var(--color-admin-text)]"
           />
           <button
             type="button"
             onClick={handleUpload}
             disabled={isPending}
-            className="rounded-xl bg-[var(--color-forest)] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[var(--color-forest-light)] disabled:opacity-40"
+            className="w-full rounded-xl bg-[var(--color-forest)] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-[var(--color-forest-light)] disabled:opacity-40 md:w-auto"
           >
             {isPending ? "처리 중..." : "업로드"}
           </button>
@@ -140,7 +140,7 @@ export default function MediaLibraryManager({
       </section>
 
       <section className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-lg font-bold text-[var(--color-admin-text)]">저장된 이미지</h2>
           <p className="text-sm text-[var(--color-admin-muted)]">{items.length}개</p>
         </div>

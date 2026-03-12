@@ -15,7 +15,7 @@ export default async function AdminNewsPage({ searchParams }: { searchParams: Se
 
   return (
     <div className="p-6 md:p-10 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-[var(--color-admin-text)]">소식 관리</h1>
         <Link
           href="/admin/news/new"
@@ -26,7 +26,7 @@ export default async function AdminNewsPage({ searchParams }: { searchParams: Se
       </div>
 
       <form method="get" className="mb-6">
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <input
             name="q"
             type="text"
@@ -54,7 +54,7 @@ export default async function AdminNewsPage({ searchParams }: { searchParams: Se
             {allNews.map((item) => (
               <div
                 key={item.id}
-                className={`bg-[var(--color-admin-surface)] rounded-xl border border-[var(--color-admin-border)] p-5 flex items-center justify-between gap-4 ${
+                className={`bg-[var(--color-admin-surface)] rounded-xl border border-[var(--color-admin-border)] p-5 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between ${
                   item.isDeleted ? "opacity-50" : ""
                 }`}
               >

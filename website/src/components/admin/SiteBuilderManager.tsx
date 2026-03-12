@@ -231,7 +231,7 @@ export default function SiteBuilderManager({
     setItems: Dispatch<SetStateAction<BuilderLinkItem[]>>,
   ) => (
     <div className="rounded-2xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-6">
-      <div className="mb-5 flex items-center justify-between gap-4">
+      <div className="mb-5 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h2 className="text-lg font-bold text-[var(--color-admin-text)]">{title}</h2>
           <p className="mt-1 text-sm text-[var(--color-admin-muted)]">
@@ -253,7 +253,7 @@ export default function SiteBuilderManager({
             key={item.id}
             className="rounded-2xl border border-[var(--color-admin-border)] bg-[var(--color-bg)] p-4"
           >
-            <div className="grid gap-4 md:grid-cols-[1fr_1.6fr_auto]">
+            <div className="grid gap-3 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)]">
               <input
                 value={item.label}
                 onChange={(event) =>
@@ -282,7 +282,12 @@ export default function SiteBuilderManager({
                 className="rounded-xl border border-[var(--color-admin-border)] bg-white px-4 py-3 text-base text-[var(--color-admin-text)] outline-none focus:border-[var(--color-forest)]"
                 placeholder="/story 또는 https://..."
               />
-              <div className="flex items-center gap-2">
+            </div>
+            <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
+              <div className="mr-auto text-xs text-[var(--color-admin-muted)]">
+                {index + 1}번째 링크
+              </div>
+              <div className="flex flex-wrap items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() =>
@@ -292,7 +297,7 @@ export default function SiteBuilderManager({
                       return [...prev, { ...current, id: createEmptyBuilderLink().id }];
                     })
                   }
-                  className="rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)]"
+                  className="min-h-[40px] rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)]"
                 >
                   복제
                 </button>
@@ -300,7 +305,8 @@ export default function SiteBuilderManager({
                   type="button"
                   onClick={() => setItems((prev) => moveItem(prev, index, -1))}
                   disabled={index === 0}
-                  className="rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)] disabled:opacity-30"
+                  className="min-h-[40px] min-w-[40px] rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)] disabled:opacity-30"
+                  aria-label={`${item.label || "링크"} 위로 이동`}
                 >
                   ↑
                 </button>
@@ -308,7 +314,8 @@ export default function SiteBuilderManager({
                   type="button"
                   onClick={() => setItems((prev) => moveItem(prev, index, 1))}
                   disabled={index === items.length - 1}
-                  className="rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)] disabled:opacity-30"
+                  className="min-h-[40px] min-w-[40px] rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)] disabled:opacity-30"
+                  aria-label={`${item.label || "링크"} 아래로 이동`}
                 >
                   ↓
                 </button>
@@ -317,7 +324,7 @@ export default function SiteBuilderManager({
                   onClick={() =>
                     setItems((prev) => prev.filter((prevItem) => prevItem.id !== item.id))
                   }
-                  className="rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100"
+                  className="min-h-[40px] rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100"
                 >
                   삭제
                 </button>
