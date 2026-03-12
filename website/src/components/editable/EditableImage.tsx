@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 import { uploadEditableImageAction } from "@/lib/actions/page-content";
+import { validateOptionalImageUrl } from "@/lib/validation/url";
 
 interface EditableImageProps {
   contentKey: string;
@@ -84,16 +85,17 @@ export default function EditableImage({
   const handleUrlSubmit = useCallback(() => {
     const trimmed = urlValue.trim();
     if (!trimmed) return;
-    try {
-      new URL(trimmed);
-    } catch {
-      alert("올바른 URL 형식이 아닙니다.");
+
+    const validation = validateOptionalImageUrl(trimmed, "이미지 URL");
+    if (validation.error || !validation.value) {
+      alert(validation.error ?? "이미지 URL이 올바르지 않습니다.");
       return;
     }
+
     stageChange({
       content_key: contentKey,
       content_type: "image",
-      value: trimmed,
+      value: validation.value,
       page,
       section,
     });

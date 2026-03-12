@@ -14,6 +14,9 @@ export default function AdminToolbar() {
     discardChanges,
     saving,
     saveError,
+    selectedKey,
+    hasOverride,
+    revertKey,
   } = useAdminEdit();
 
   const [showConfirmDiscard, setShowConfirmDiscard] = useState(false);
@@ -23,7 +26,10 @@ export default function AdminToolbar() {
   return (
     <>
       {/* Main toolbar */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9990] flex items-center gap-3 px-5 py-3 bg-gray-900/95 backdrop-blur-xl text-white rounded-2xl shadow-2xl border border-white/10">
+      <div
+        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9990] flex items-center gap-3 px-5 py-3 bg-gray-900/95 backdrop-blur-xl text-white rounded-2xl shadow-2xl border border-white/10"
+        data-admin-toolbar
+      >
         {/* Edit mode toggle */}
         <button
           type="button"
@@ -105,6 +111,32 @@ export default function AdminToolbar() {
             >
               {saving ? "저장 중..." : "저장"}
             </button>
+
+            {selectedKey && (
+              <>
+                <div className="w-px h-6 bg-white/20" />
+                <span
+                  className="hidden md:block max-w-[220px] truncate text-xs text-white/60 font-mono"
+                  title={selectedKey}
+                >
+                  {selectedKey}
+                </span>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (!hasOverride(selectedKey) || saving) return;
+                    if (!window.confirm("선택한 요소를 하드코딩 기본값으로 복원하시겠습니까?")) {
+                      return;
+                    }
+                    await revertKey(selectedKey);
+                  }}
+                  disabled={!hasOverride(selectedKey) || saving}
+                  className="px-3 py-2 rounded-xl text-sm font-semibold bg-amber-500/90 hover:bg-amber-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  기본값 복원
+                </button>
+              </>
+            )}
           </>
         )}
 
@@ -147,15 +179,12 @@ export default function AdminToolbar() {
                 type="button"
                 disabled={saving}
                 onClick={async () => {
-                  try {
-                    await saveChanges();
-                    // Give transition time to complete
+                  const didSave = await saveChanges();
+                  if (didSave) {
                     setTimeout(() => {
                       setShowConfirmDiscard(false);
                       toggleEditMode();
                     }, 100);
-                  } catch {
-                    // Error will be shown via saveError state
                   }
                 }}
                 className="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"

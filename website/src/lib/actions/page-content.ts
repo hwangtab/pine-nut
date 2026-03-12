@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
+import { validateOptionalImageUrl } from "@/lib/validation/url";
 import { logAudit } from "./audit";
 
 interface ContentChange {
@@ -14,6 +15,46 @@ interface ContentChange {
   section?: string;
 }
 
+const CONTENT_TYPES = new Set([
+  "text",
+  "richtext",
+  "image",
+  "list",
+  "section",
+]);
+
+const PUBLIC_PAGE_PATHS = [
+  "/",
+  "/story",
+  "/timeline",
+  "/news",
+  "/gallery",
+  "/press",
+  "/press/release",
+  "/press/factsheet",
+  "/share",
+  "/petition",
+  "/donate",
+  "/privacy",
+  "/en",
+] as const;
+
+const PAGE_PATHS: Record<string, readonly string[]> = {
+  home: ["/"],
+  story: ["/story"],
+  timeline: ["/timeline"],
+  news: ["/news"],
+  gallery: ["/gallery"],
+  press: ["/press", "/press/release", "/press/factsheet"],
+  share: ["/share"],
+  petition: ["/petition"],
+  donate: ["/donate"],
+  privacy: ["/privacy"],
+  en: ["/en"],
+  nav: PUBLIC_PAGE_PATHS,
+  footer: PUBLIC_PAGE_PATHS,
+};
+
 async function getAuthenticatedClient() {
   const supabase = await createSupabaseServerClient();
   if (!supabase) throw new Error("Supabase not configured");
@@ -22,6 +63,87 @@ async function getAuthenticatedClient() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/admin/login");
   return { supabase, user };
+}
+
+function normalizeChange(change: ContentChange): { row: ContentChange; error: string | null } {
+  if (!CONTENT_TYPES.has(change.content_type)) {
+    return {
+      row: change,
+      error: `지원하지 않는 content_type: ${change.content_type}`,
+    };
+  }
+
+  if (!change.page.trim()) {
+    return {
+      row: change,
+      error: `page 값이 비어 있습니다: ${change.content_key}`,
+    };
+  }
+
+  if (change.content_type === "image") {
+    const validation = validateOptionalImageUrl(change.value, "이미지 URL");
+    if (validation.error || !validation.value) {
+      return {
+        row: change,
+        error: validation.error ?? `잘못된 이미지 URL: ${change.content_key}`,
+      };
+    }
+
+    return {
+      row: {
+        ...change,
+        value: validation.value,
+      },
+      error: null,
+    };
+  }
+
+  if (change.content_type === "list") {
+    try {
+      const parsed = JSON.parse(change.value);
+      if (!Array.isArray(parsed)) {
+        return {
+          row: change,
+          error: `리스트 값은 배열 JSON이어야 합니다: ${change.content_key}`,
+        };
+      }
+    } catch {
+      return {
+        row: change,
+        error: `리스트 값 JSON이 올바르지 않습니다: ${change.content_key}`,
+      };
+    }
+  }
+
+  if (
+    change.content_type === "section" &&
+    change.value !== "hidden" &&
+    change.value !== "visible"
+  ) {
+    return {
+      row: change,
+      error: `섹션 값은 hidden 또는 visible 이어야 합니다: ${change.content_key}`,
+    };
+  }
+
+  return { row: change, error: null };
+}
+
+function revalidatePageContentPages(pages: Iterable<string>) {
+  const paths = new Set<string>();
+
+  for (const page of pages) {
+    const mappedPaths = PAGE_PATHS[page];
+    if (mappedPaths) {
+      mappedPaths.forEach((path) => paths.add(path));
+      continue;
+    }
+
+    paths.add(page === "home" ? "/" : `/${page}`);
+  }
+
+  revalidatePath("/", "layout");
+  paths.forEach((path) => revalidatePath(path));
 }
 
 /**
@@ -40,9 +162,18 @@ export async function savePageContentAction(
     }
   }
 
+  const normalizedChanges: ContentChange[] = [];
+  for (const change of changes) {
+    const normalized = normalizeChange(change);
+    if (normalized.error) {
+      return { error: normalized.error };
+    }
+    normalizedChanges.push(normalized.row);
+  }
+
   const { supabase, user } = await getAuthenticatedClient();
 
-  const rows = changes.map((c) => ({
+  const rows = normalizedChanges.map((c) => ({
     content_key: c.content_key,
     content_type: c.content_type,
     value: c.value,
@@ -63,13 +194,7 @@ export async function savePageContentAction(
 
   await logAudit(supabase, "page_content", 0, "bulk_update");
 
-  // Revalidate all public pages
-  const pages = [...new Set(changes.map((c) => c.page))];
-  for (const page of pages) {
-    const path = page === "home" ? "/" : `/${page}`;
-    revalidatePath(path);
-  }
-  revalidatePath("/");
+  revalidatePageContentPages(new Set(normalizedChanges.map((c) => c.page)));
 
   return { error: null };
 }
@@ -95,10 +220,10 @@ export async function deletePageContentAction(
   await logAudit(supabase, "page_content", 0, "delete");
 
   if (page) {
-    const path = page === "home" ? "/" : `/${page}`;
-    revalidatePath(path);
+    revalidatePageContentPages([page]);
+  } else {
+    revalidatePageContentPages(["home"]);
   }
-  revalidatePath("/");
   return { error: null };
 }
 

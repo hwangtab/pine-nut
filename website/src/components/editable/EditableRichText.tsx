@@ -64,7 +64,7 @@ export default function EditableRichText({
 
   const handleSave = useCallback(() => {
     const trimmed = localValue.trim();
-    if (trimmed && trimmed !== value) {
+    if (trimmed !== value) {
       stageChange({
         content_key: contentKey,
         content_type: "richtext",

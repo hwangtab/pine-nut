@@ -38,7 +38,7 @@ export default function EditableText({
 
   const handleBlur = useCallback(() => {
     const newValue = ref.current?.textContent?.trim() ?? "";
-    if (newValue && newValue !== value) {
+    if (newValue !== value) {
       stageChange({
         content_key: contentKey,
         content_type: "text",

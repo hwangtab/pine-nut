@@ -4,11 +4,15 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
 import type { PageContent } from "@/lib/data/page-content";
-import { savePageContentAction } from "@/lib/actions/page-content";
+import {
+  deletePageContentAction,
+  savePageContentAction,
+} from "@/lib/actions/page-content";
 
 /* ───────────────────── Types ───────────────────── */
 
@@ -39,15 +43,19 @@ interface AdminEditContextType {
   /** Number of staged changes */
   changeCount: number;
   /** Persist all staged changes to Supabase */
-  saveChanges: () => Promise<void>;
+  saveChanges: () => Promise<boolean>;
   /** Discard all staged changes */
   discardChanges: () => void;
   /** Whether a save is in progress */
   saving: boolean;
   /** Last save error, if any */
   saveError: string | null;
+  /** Last selected editable key */
+  selectedKey: string | null;
+  /** Whether a key currently has an override or staged change */
+  hasOverride: (key: string) => boolean;
   /** Revert a single key to its default (delete override) */
-  revertKey: (key: string) => void;
+  revertKey: (key: string) => Promise<void>;
 }
 
 const AdminEditContext = createContext<AdminEditContextType>({
@@ -59,11 +67,13 @@ const AdminEditContext = createContext<AdminEditContextType>({
   stageChange: () => {},
   hasChanges: false,
   changeCount: 0,
-  saveChanges: async () => {},
+  saveChanges: async () => false,
   discardChanges: () => {},
   saving: false,
   saveError: null,
-  revertKey: () => {},
+  selectedKey: null,
+  hasOverride: () => false,
+  revertKey: async () => {},
 });
 
 export function useAdminEdit() {
@@ -91,6 +101,32 @@ export function AdminEditProvider({
     useState<Record<string, PageContent>>(initialContent);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isEditMode) {
+      setSelectedKey(null);
+      return;
+    }
+
+    const updateSelectedKey = (event: Event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const editable = target.closest<HTMLElement>("[data-editable-key]");
+      const key = editable?.dataset.editableKey;
+      if (key) {
+        setSelectedKey(key);
+      }
+    };
+
+    document.addEventListener("pointerdown", updateSelectedKey, true);
+    document.addEventListener("focusin", updateSelectedKey);
+
+    return () => {
+      document.removeEventListener("pointerdown", updateSelectedKey, true);
+      document.removeEventListener("focusin", updateSelectedKey);
+    };
+  }, [isEditMode]);
 
   const toggleEditMode = useCallback(() => {
     setIsEditMode((prev) => {
@@ -144,16 +180,57 @@ export function AdminEditProvider({
     setSaveError(null);
   }, []);
 
-  const revertKey = useCallback((key: string) => {
-    setStagedChanges((prev) => {
-      const next = new Map(prev);
-      next.delete(key);
-      return next;
-    });
-  }, []);
+  const hasOverride = useCallback(
+    (key: string) => stagedChanges.has(key) || key in dbContent,
+    [stagedChanges, dbContent]
+  );
+
+  const revertKey = useCallback(
+    async (key: string) => {
+      const dbRow = dbContent[key];
+
+      if (!dbRow) {
+        setStagedChanges((prev) => {
+          if (!prev.has(key)) return prev;
+          const next = new Map(prev);
+          next.delete(key);
+          return next;
+        });
+        setSaveError(null);
+        return;
+      }
+
+      setSaving(true);
+      try {
+        const result = await deletePageContentAction(key, dbRow.page);
+        if (result.error) {
+          setSaveError(result.error);
+          return;
+        }
+
+        setDbContent((prev) => {
+          const next = { ...prev };
+          delete next[key];
+          return next;
+        });
+        setStagedChanges((prev) => {
+          if (!prev.has(key)) return prev;
+          const next = new Map(prev);
+          next.delete(key);
+          return next;
+        });
+        setSaveError(null);
+      } catch (err) {
+        setSaveError(err instanceof Error ? err.message : "복원 중 오류 발생");
+      } finally {
+        setSaving(false);
+      }
+    },
+    [dbContent]
+  );
 
   const saveChanges = useCallback(async () => {
-    if (stagedChanges.size === 0) return;
+    if (stagedChanges.size === 0) return true;
 
     const changes = Array.from(stagedChanges.values());
 
@@ -162,6 +239,7 @@ export function AdminEditProvider({
       const result = await savePageContentAction(changes);
       if (result.error) {
         setSaveError(result.error);
+        return false;
       } else {
         // Merge staged changes into dbContent
         setDbContent((prev) => {
@@ -183,9 +261,11 @@ export function AdminEditProvider({
         });
         setStagedChanges(new Map());
         setSaveError(null);
+        return true;
       }
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : "저장 중 오류 발생");
+      return false;
     } finally {
       setSaving(false);
     }
@@ -205,6 +285,8 @@ export function AdminEditProvider({
       discardChanges,
       saving,
       saveError,
+      selectedKey,
+      hasOverride,
       revertKey,
     }),
     [
@@ -219,6 +301,8 @@ export function AdminEditProvider({
       discardChanges,
       saving,
       saveError,
+      selectedKey,
+      hasOverride,
       revertKey,
     ]
   );
