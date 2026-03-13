@@ -7,6 +7,8 @@ import { validateOptionalImageUrl } from "@/lib/validation/url";
 import { validateEditableHref } from "@/lib/validation/editable-link";
 import { logAudit } from "./audit";
 
+const KEY_PATTERN = /^[a-zA-Z0-9._-]+$/;
+
 interface ContentChange {
   content_key: string;
   content_type: string;
@@ -177,7 +179,6 @@ export async function savePageContentAction(
 ): Promise<{ error: string | null }> {
   if (changes.length === 0) return { error: null };
 
-  const KEY_PATTERN = /^[a-zA-Z0-9._-]+$/;
   for (const c of changes) {
     if (!KEY_PATTERN.test(c.content_key)) {
       return { error: `잘못된 content_key: ${c.content_key}` };
@@ -216,7 +217,8 @@ export async function savePageContentAction(
     .upsert(rows, { onConflict: "content_key" });
 
   if (error) {
-    return { error: `저장 실패: ${error.message}` };
+    console.error("page_content upsert error:", error.message);
+    return { error: "저장 중 오류가 발생했습니다. 다시 시도해주세요." };
   }
 
   await logAudit(supabase, "page_content", 0, "bulk_update", {
@@ -238,6 +240,10 @@ export async function deletePageContentAction(
   contentKey: string,
   page?: string
 ): Promise<{ error: string | null }> {
+  if (!KEY_PATTERN.test(contentKey)) {
+    return { error: "잘못된 content_key 형식입니다." };
+  }
+
   const { supabase } = await getAuthenticatedClient();
   const { data: beforeRow } = await supabase
     .from("page_content")
@@ -251,7 +257,8 @@ export async function deletePageContentAction(
     .eq("content_key", contentKey);
 
   if (error) {
-    return { error: `삭제 실패: ${error.message}` };
+    console.error("page_content delete error:", error.message);
+    return { error: "삭제 중 오류가 발생했습니다. 다시 시도해주세요." };
   }
 
   await logAudit(supabase, "page_content", 0, "delete", {
@@ -346,7 +353,8 @@ export async function uploadEditableImageAction(
     .upload(path, file);
 
   if (uploadError) {
-    return { url: null, error: `업로드 실패: ${uploadError.message}` };
+    console.error("page_content upload error:", uploadError.message);
+    return { url: null, error: "이미지 업로드에 실패했습니다. 다시 시도해주세요." };
   }
 
   const {

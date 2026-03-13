@@ -1,7 +1,12 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
+
+let globalId = 0;
+function nextId() {
+  return ++globalId;
+}
 
 interface EditableListItem {
   [key: string]: string;
@@ -39,7 +44,14 @@ export default function EditableList<T extends EditableListItem>({
     items = defaultItems;
   }
 
-  const [localItems, setLocalItems] = useState<T[]>(items);
+  type ItemWithId = T & { _uid: number };
+
+  const toKeyed = useCallback(
+    (arr: T[]): ItemWithId[] => arr.map((item) => ({ ...item, _uid: nextId() })),
+    []
+  );
+
+  const [localItems, setLocalItems] = useState<ItemWithId[]>(() => toKeyed(items));
 
   useEffect(() => {
     if (editing) {
@@ -49,32 +61,37 @@ export default function EditableList<T extends EditableListItem>({
   }, [editing]);
 
   const handleOpen = useCallback(() => {
-    // Re-parse in case context changed
     const current = getContent(contentKey);
     try {
-      setLocalItems(current ? JSON.parse(current) : defaultItems);
+      setLocalItems(toKeyed(current ? JSON.parse(current) : defaultItems));
     } catch {
       console.warn(`[EditableList] Failed to parse stored content for key "${contentKey}"`);
-      setLocalItems(defaultItems);
+      setLocalItems(toKeyed(defaultItems));
     }
     setEditing(true);
-  }, [contentKey, defaultItems, getContent]);
+  }, [contentKey, defaultItems, getContent, toKeyed]);
+
+  const stripUid = useCallback(
+    (arr: ItemWithId[]): T[] =>
+      arr.map(({ _uid, ...rest }) => rest as unknown as T),
+    []
+  );
 
   const handleSave = useCallback(() => {
     stageChange({
       content_key: contentKey,
       content_type: "list",
-      value: JSON.stringify(localItems),
+      value: JSON.stringify(stripUid(localItems)),
       page,
       section,
     });
     setEditing(false);
-  }, [contentKey, localItems, page, section, stageChange]);
+  }, [contentKey, localItems, page, section, stageChange, stripUid]);
 
   const handleCancel = useCallback(() => {
-    setLocalItems(items);
+    setLocalItems(toKeyed(items));
     setEditing(false);
-  }, [items]);
+  }, [items, toKeyed]);
 
   const updateItem = useCallback((index: number, key: keyof T, val: string) => {
     setLocalItems((prev) => {
@@ -85,7 +102,7 @@ export default function EditableList<T extends EditableListItem>({
   }, []);
 
   const addItem = useCallback(() => {
-    const empty = {} as T;
+    const empty = { _uid: nextId() } as ItemWithId;
     for (const f of fields) {
       (empty as Record<string, string>)[f.key as string] = "";
     }
@@ -149,7 +166,7 @@ export default function EditableList<T extends EditableListItem>({
             <div className="flex-1 p-6 overflow-auto space-y-4">
               {localItems.map((item, idx) => (
                 <div
-                  key={idx}
+                  key={item._uid}
                   className="border border-gray-200 rounded-xl p-4 space-y-3 bg-gray-50"
                 >
                   <div className="flex items-center justify-between mb-2">

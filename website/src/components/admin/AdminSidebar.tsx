@@ -25,10 +25,9 @@ const navItems = [
   { href: "/admin/signatures", label: "서명 현황", icon: Users },
 ];
 
-const SESSION_CHECK_INTERVAL = 60 * 60 * 1000; // 1시간마다 체크
-
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const isLoginPage = pathname === "/admin/login";
 
   const handleLogout = useCallback(async () => {
     const supabase = createSupabaseBrowserClient();
@@ -38,22 +37,23 @@ export default function AdminSidebar() {
     window.location.href = "/admin/login";
   }, []);
 
-  // 세션 만료 자동 체크
+  // onAuthStateChange로 세션 만료 즉시 감지
   useEffect(() => {
-    if (pathname === "/admin/login") return;
+    if (isLoginPage) return;
 
-    const checkSession = async () => {
-      const supabase = createSupabaseBrowserClient();
-      if (!supabase) return;
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+    const supabase = createSupabaseBrowserClient();
+    if (!supabase) return;
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
         window.location.href = "/admin/login";
       }
-    };
+    });
 
-    const interval = setInterval(checkSession, SESSION_CHECK_INTERVAL);
-    return () => clearInterval(interval);
-  }, [pathname]);
+    return () => subscription.unsubscribe();
+  }, [isLoginPage]);
+
+  if (isLoginPage) return null;
 
   return (
     <>
@@ -123,6 +123,13 @@ export default function AdminSidebar() {
             </Link>
           );
           })}
+          <button
+            onClick={handleLogout}
+            className="min-w-[88px] min-h-[44px] flex shrink-0 flex-col items-center justify-center gap-1 rounded-2xl px-3 py-3 text-xs font-medium text-[var(--color-admin-muted)]/70 transition-colors"
+          >
+            <LogOut size={24} />
+            로그아웃
+          </button>
         </div>
       </nav>
     </>

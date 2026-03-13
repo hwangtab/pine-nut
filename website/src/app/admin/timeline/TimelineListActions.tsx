@@ -3,18 +3,23 @@
 import { useState } from "react";
 import Link from "next/link";
 import { deleteTimelineAction, restoreTimelineAction } from "@/lib/actions/timeline";
+import ConfirmModal from "@/components/admin/ConfirmModal";
 
 export default function TimelineListActions({ id, isDeleted }: { id: number; isDeleted: boolean }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-  async function handleDelete() {
-    if (!confirm("이 타임라인을 삭제하시겠습니까?\n(나중에 복원할 수 있습니다)")) return;
+  async function doDelete() {
+    setShowConfirm(false);
     setLoading(true);
     setError(null);
-    const result = await deleteTimelineAction(id);
-    if (result?.error) {
-      setError(result.error);
+    try {
+      const result = await deleteTimelineAction(id);
+      if (result?.error) {
+        setError(result.error);
+      }
+    } finally {
       setLoading(false);
     }
   }
@@ -22,9 +27,12 @@ export default function TimelineListActions({ id, isDeleted }: { id: number; isD
   async function handleRestore() {
     setLoading(true);
     setError(null);
-    const result = await restoreTimelineAction(id);
-    if (result?.error) {
-      setError(result.error);
+    try {
+      const result = await restoreTimelineAction(id);
+      if (result?.error) {
+        setError(result.error);
+      }
+    } finally {
       setLoading(false);
     }
   }
@@ -50,7 +58,7 @@ export default function TimelineListActions({ id, isDeleted }: { id: number; isD
           </button>
         ) : (
           <button
-            onClick={handleDelete}
+            onClick={() => setShowConfirm(true)}
             disabled={loading}
             className="min-h-[44px] rounded-lg bg-[var(--color-danger-bg)] px-5 py-3 text-base font-bold text-[var(--color-danger)] transition-colors hover:bg-[var(--color-danger-border)] disabled:opacity-50"
           >
@@ -59,6 +67,14 @@ export default function TimelineListActions({ id, isDeleted }: { id: number; isD
         )}
       </div>
       {error && <p className="text-sm text-[var(--color-danger)] font-medium">{error}</p>}
+      <ConfirmModal
+        open={showConfirm}
+        title="타임라인 삭제"
+        message="이 타임라인을 삭제하시겠습니까?\n나중에 복원할 수 있습니다."
+        confirmLabel="삭제"
+        onConfirm={doDelete}
+        onCancel={() => setShowConfirm(false)}
+      />
     </div>
   );
 }

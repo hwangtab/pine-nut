@@ -139,7 +139,15 @@ export default function NewsForm({ action, initialData, submitLabel }: NewsFormP
           사진 올리기 (선택)
         </label>
         {initialData?.thumbnailUrl && (
-          <p className="text-sm text-[var(--color-forest)] mb-2">현재 사진이 설정되어 있습니다. 새 사진을 올리면 교체됩니다.</p>
+          <div className="mb-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={initialData.thumbnailUrl}
+              alt="현재 썸네일"
+              className="w-32 h-20 object-cover rounded-lg border border-[var(--color-admin-border)]"
+            />
+            <p className="text-sm text-[var(--color-forest)] mt-1.5">현재 사진이 설정되어 있습니다. 새 사진을 올리면 교체됩니다.</p>
+          </div>
         )}
         <input
           id="image_file"
