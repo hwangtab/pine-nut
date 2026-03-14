@@ -256,7 +256,7 @@ export function StoryBattleSection() {
                       {item.year}
                     </span>
                   </div>
-                  <p className="text-[var(--color-text)] leading-relaxed text-base md:text-lg pt-0.5">
+                  <p className="text-[var(--color-text)] leading-relaxed text-base md:text-lg pt-0.5 [overflow-wrap:anywhere]">
                     {item.text}
                   </p>
                 </div>

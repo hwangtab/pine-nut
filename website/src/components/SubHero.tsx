@@ -74,6 +74,7 @@ export default function SubHero({
           section={imageSection}
           fill
           sizes="100vw"
+          priority
           className="object-cover"
         />
       ) : (
@@ -84,6 +85,7 @@ export default function SubHero({
             role="presentation"
             fill
             sizes="100vw"
+            priority
             style={{ objectFit: "cover" }}
             onError={handleImageError}
           />
