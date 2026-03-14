@@ -25,7 +25,7 @@ export function EnglishNumbersSection() {
           {items.map((stat, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl p-6 md:p-8 text-center shadow-sm border border-[var(--color-border)]"
+              className="bg-white rounded-2xl p-4 md:p-6 lg:p-8 text-center shadow-sm border border-[var(--color-border)]"
             >
               <p className="text-3xl md:text-4xl font-black text-[var(--color-forest)] mb-2">
                 {stat.number}
@@ -94,7 +94,7 @@ export function EnglishStakeSection() {
             return (
               <div
                 key={index}
-                className="bg-white rounded-2xl p-8 border border-[var(--color-border)] shadow-sm"
+                className="bg-white rounded-2xl p-5 md:p-8 border border-[var(--color-border)] shadow-sm"
               >
                 <div
                   className={`w-12 h-12 rounded-xl ${icon.bgClass} flex items-center justify-center mb-5`}

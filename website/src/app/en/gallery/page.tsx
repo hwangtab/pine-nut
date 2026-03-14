@@ -154,7 +154,7 @@ function Lightbox({ photo, onClose }: { photo: GalleryPhoto; onClose: () => void
           </button>
           <Image src={photo.url} alt={photo.description} width={1600} height={1200} className="w-full max-h-[75vh] object-contain rounded-lg" />
           <div className="mt-4 text-center">
-            <h3 id="gallery-lightbox-title" className="text-[var(--color-overlay-text)] text-lg font-semibold">{photo.title}</h3>
+            <h3 id="gallery-lightbox-title" className="text-[var(--color-overlay-text)] text-lg font-semibold break-words">{photo.title}</h3>
             <p id="gallery-lightbox-description" className="text-[var(--color-overlay-text-muted)] text-sm mt-1">{photo.description}</p>
             <p className="text-[var(--color-overlay-text-subtle)] text-xs mt-2">Photo: {photo.credit}</p>
           </div>

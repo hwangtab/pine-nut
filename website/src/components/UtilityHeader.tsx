@@ -66,7 +66,7 @@ export default function UtilityHeader({
             {eyebrow}
           </p>
         )}
-        <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-4">
+        <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-4 break-words">
           {title}
         </h1>
         {subtitle && (

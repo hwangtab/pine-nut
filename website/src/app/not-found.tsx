@@ -33,7 +33,7 @@ export default function NotFound() {
           defaultHref="/"
           page="not-found"
           section="primary"
-          className="inline-block bg-[var(--color-warm)] text-white font-semibold px-8 py-3 rounded-lg hover:opacity-90 transition-opacity"
+          className="inline-flex items-center justify-center bg-[var(--color-warm)] text-white font-semibold px-8 py-3 rounded-lg hover:opacity-90 transition-opacity min-h-[44px]"
         >
           <EditableText
             contentKey="notfound.primary.label"
@@ -59,7 +59,7 @@ export default function NotFound() {
               defaultHref="/story"
               page="not-found"
               section="links"
-              className="px-5 py-2 border border-[var(--color-forest)]/20 rounded-lg text-[var(--color-text)] hover:bg-[var(--color-forest)]/5 transition-colors"
+              className="inline-flex items-center justify-center min-h-[44px] px-5 py-2 border border-[var(--color-forest)]/20 rounded-lg text-[var(--color-text)] hover:bg-[var(--color-forest)]/5 transition-colors"
             >
               <EditableText
                 contentKey="notfound.links.storyLabel"
@@ -74,7 +74,7 @@ export default function NotFound() {
               defaultHref="/petition"
               page="not-found"
               section="links"
-              className="px-5 py-2 border border-[var(--color-forest)]/20 rounded-lg text-[var(--color-text)] hover:bg-[var(--color-forest)]/5 transition-colors"
+              className="inline-flex items-center justify-center min-h-[44px] px-5 py-2 border border-[var(--color-forest)]/20 rounded-lg text-[var(--color-text)] hover:bg-[var(--color-forest)]/5 transition-colors"
             >
               <EditableText
                 contentKey="notfound.links.petitionLabel"
@@ -89,7 +89,7 @@ export default function NotFound() {
               defaultHref="/donate"
               page="not-found"
               section="links"
-              className="px-5 py-2 border border-[var(--color-forest)]/20 rounded-lg text-[var(--color-text)] hover:bg-[var(--color-forest)]/5 transition-colors"
+              className="inline-flex items-center justify-center min-h-[44px] px-5 py-2 border border-[var(--color-forest)]/20 rounded-lg text-[var(--color-text)] hover:bg-[var(--color-forest)]/5 transition-colors"
             >
               <EditableText
                 contentKey="notfound.links.donateLabel"

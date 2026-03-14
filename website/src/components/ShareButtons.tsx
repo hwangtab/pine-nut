@@ -173,7 +173,7 @@ export default function ShareButtons({
 
       {/* Toast */}
       {copied && (
-        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[var(--color-text)] text-white text-sm px-4 py-2 rounded-lg shadow-lg animate-fade-in">
+        <div className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap bg-[var(--color-text)] text-white text-sm px-4 py-2 rounded-lg shadow-lg animate-fade-in">
           {editable ? (
             <EditableText
               contentKey={`${editable.prefix}.copied`}

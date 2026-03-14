@@ -155,11 +155,11 @@ export default function EditableList<T extends EditableListItem>({
           }}
         >
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[85vh] flex flex-col">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-bold text-gray-900">
+            <div className="flex items-start justify-between gap-2 px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-bold text-gray-900 shrink-0">
                 리스트 편집 ({localItems.length}개 항목)
               </h3>
-              <span className="text-xs text-gray-400 font-mono">
+              <span className="text-xs text-gray-400 font-mono text-right break-all min-w-0">
                 {contentKey}
               </span>
             </div>

@@ -100,7 +100,7 @@ export default function CustomSectionsHost() {
                     {section.eyebrow}
                   </p>
                 )}
-                <h2 className="text-3xl font-black leading-tight md:text-4xl">
+                <h2 className="text-3xl font-black leading-tight md:text-4xl break-words">
                   {section.title}
                 </h2>
                 {section.body && (

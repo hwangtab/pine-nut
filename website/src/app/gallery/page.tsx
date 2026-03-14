@@ -306,7 +306,7 @@ function Lightbox({
             className="w-full max-h-[75vh] object-contain rounded-lg"
           />
           <div className="mt-4 text-center">
-            <h3 id="gallery-lightbox-title" className="text-[var(--color-overlay-text)] text-lg font-semibold">
+            <h3 id="gallery-lightbox-title" className="text-[var(--color-overlay-text)] text-lg font-semibold break-words">
               {photo.title}
             </h3>
             <p id="gallery-lightbox-description" className="text-[var(--color-overlay-text-muted)] text-sm mt-1">{photo.description}</p>

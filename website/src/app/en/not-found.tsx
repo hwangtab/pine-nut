@@ -12,7 +12,7 @@ export default function EnglishNotFound() {
       />
 
       <section className="max-w-2xl mx-auto px-6 py-14 md:py-16 text-center">
-        <EditableLink contentKey="en.notfound.primary.href" defaultHref="/en" page="en" section="not-found" className="inline-block bg-[var(--color-warm)] text-white font-semibold px-8 py-3 rounded-lg hover:opacity-90 transition-opacity">
+        <EditableLink contentKey="en.notfound.primary.href" defaultHref="/en" page="en" section="not-found" className="inline-flex items-center justify-center bg-[var(--color-warm)] text-white font-semibold px-8 py-3 rounded-lg hover:opacity-90 transition-opacity min-h-[44px]">
           <EditableText contentKey="en.notfound.primary.label" defaultValue="Back to English home" as="span" page="en" section="not-found" />
         </EditableLink>
       </section>

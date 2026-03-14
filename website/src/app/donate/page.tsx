@@ -224,12 +224,12 @@ export default function DonatePage() {
                       const percent = parseInt(item.percent, 10) || 0;
                       return (
                         <div key={i}>
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="flex items-center gap-2 text-[15px] font-medium text-[var(--color-text)]">
+                          <div className="flex items-center justify-between gap-2 mb-2">
+                            <span className="flex items-center gap-2 min-w-0 flex-1 text-[15px] font-medium text-[var(--color-text)]">
                               <Icon className="w-4 h-4 shrink-0" style={{ color }} />
-                              {item.label}
+                              <span className="truncate">{item.label}</span>
                             </span>
-                            <span className="text-[15px] font-bold" style={{ color }}>
+                            <span className="shrink-0 text-[15px] font-bold" style={{ color }}>
                               {percent}%
                             </span>
                           </div>
