@@ -20,7 +20,7 @@ export default async function AdminTimelineEditPage({ params }: { params: Params
       <Link href="/admin/timeline" className="min-h-[44px] inline-flex items-center text-base text-[var(--color-admin-muted)] font-medium hover:text-[var(--color-admin-text)] mb-4">
         ← 타임라인 목록으로
       </Link>
-      <h1 className="text-2xl font-bold text-[var(--color-admin-text)] mb-8">타임라인 수정: {event.title}</h1>
+      <h1 className="text-2xl font-bold text-[var(--color-admin-text)] mb-8 break-words">타임라인 수정: {event.title}</h1>
       <TimelineForm action={boundAction} initialData={event} submitLabel="저장하기" />
     </div>
   );

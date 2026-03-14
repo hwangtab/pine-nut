@@ -147,9 +147,9 @@ export default function EditableRichText({
           }}
         >
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-bold text-gray-900">텍스트 편집</h3>
-              <span className="text-xs text-gray-400 font-mono">
+            <div className="flex items-start justify-between gap-2 px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-bold text-gray-900 shrink-0">텍스트 편집</h3>
+              <span className="text-xs text-gray-400 font-mono text-right break-all min-w-0">
                 {contentKey}
               </span>
             </div>

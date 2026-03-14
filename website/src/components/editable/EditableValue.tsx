@@ -73,9 +73,9 @@ export default function EditableValue({
           }}
         >
           <div className="w-full max-w-xl rounded-2xl bg-white p-6 shadow-2xl">
-            <div className="mb-4 flex items-center justify-between gap-4">
-              <h3 className="text-lg font-bold text-gray-900">문구 편집</h3>
-              <span className="text-xs font-mono text-gray-400">{contentKey}</span>
+            <div className="mb-4 flex items-start justify-between gap-2">
+              <h3 className="text-lg font-bold text-gray-900 shrink-0">문구 편집</h3>
+              <span className="text-xs font-mono text-gray-400 text-right break-all min-w-0">{contentKey}</span>
             </div>
             {multiline ? (
               <textarea
