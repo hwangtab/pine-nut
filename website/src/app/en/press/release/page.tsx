@@ -64,7 +64,7 @@ export default function EnglishPressReleasePage() {
             </svg>
             <EditableText contentKey="en.press.release.pdf" defaultValue="Save as PDF" as="span" page="en/press" section="release" />
           </button>
-          <EditableLink contentKey="en.press.release.backHref" defaultHref="/en/press" page="en/press" section="release" className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-forest)] transition-colors">
+          <EditableLink contentKey="en.press.release.backHref" defaultHref="/en/press" page="en/press" section="release" className="inline-flex items-center min-h-[44px] text-sm text-[var(--color-text-muted)] hover:text-[var(--color-forest)] transition-colors">
             <EditableText contentKey="en.press.release.back" defaultValue="Back to press kit" as="span" page="en/press" section="release" />
           </EditableLink>
         </div>

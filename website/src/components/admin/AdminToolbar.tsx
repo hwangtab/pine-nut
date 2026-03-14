@@ -158,10 +158,10 @@ export default function AdminToolbar() {
             </button>
 
             {selectedKey && (
-              <>
+              <div className="hidden md:contents">
                 <div className="w-px h-6 bg-white/20" />
                 <span
-                  className="hidden md:block max-w-[220px] truncate text-xs text-white/60 font-mono"
+                  className="max-w-[220px] truncate text-xs text-white/60 font-mono"
                   title={selectedKey}
                 >
                   {selectedKey}
@@ -177,7 +177,7 @@ export default function AdminToolbar() {
                 >
                   기본값 복원
                 </button>
-              </>
+              </div>
             )}
 
             <div className="hidden xl:flex items-center gap-2">

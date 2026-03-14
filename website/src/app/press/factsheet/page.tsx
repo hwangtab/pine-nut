@@ -93,7 +93,7 @@ export default function FactsheetPage() {
             defaultHref="/press"
             page="press"
             section="factsheet"
-            className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-forest)] transition-colors"
+            className="inline-flex items-center min-h-[44px] text-sm text-[var(--color-text-muted)] hover:text-[var(--color-forest)] transition-colors"
           >
             <EditableText contentKey="press.factsheet.back" defaultValue="자료실로 돌아가기" as="span" page="press" section="factsheet" />
           </EditableLink>

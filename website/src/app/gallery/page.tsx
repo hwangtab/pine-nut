@@ -309,8 +309,8 @@ function Lightbox({
             <h3 id="gallery-lightbox-title" className="text-[var(--color-overlay-text)] text-lg font-semibold break-words">
               {photo.title}
             </h3>
-            <p id="gallery-lightbox-description" className="text-[var(--color-overlay-text-muted)] text-sm mt-1">{photo.description}</p>
-            <p className="text-[var(--color-overlay-text-subtle)] text-xs mt-2">
+            <p id="gallery-lightbox-description" className="text-[var(--color-overlay-text-muted)] text-sm mt-1 break-words">{photo.description}</p>
+            <p className="text-[var(--color-overlay-text-subtle)] text-xs mt-2 break-words">
               사진: {photo.credit}
             </p>
           </div>

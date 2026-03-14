@@ -73,7 +73,7 @@ export default function EnglishFactsheetPage() {
             </svg>
             <EditableText contentKey="en.press.factsheet.pdf" defaultValue="Save as PDF" as="span" page="en/press" section="factsheet" />
           </button>
-          <EditableLink contentKey="en.press.factsheet.backHref" defaultHref="/en/press" page="en/press" section="factsheet" className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-forest)] transition-colors">
+          <EditableLink contentKey="en.press.factsheet.backHref" defaultHref="/en/press" page="en/press" section="factsheet" className="inline-flex items-center min-h-[44px] text-sm text-[var(--color-text-muted)] hover:text-[var(--color-forest)] transition-colors">
             <EditableText contentKey="en.press.factsheet.back" defaultValue="Back to press kit" as="span" page="en/press" section="factsheet" />
           </EditableLink>
         </div>
