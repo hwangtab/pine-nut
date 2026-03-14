@@ -662,7 +662,7 @@ export default function EnglishPetitionPage() {
       </div>
 
       {isEditMode && (
-        <div className="fixed bottom-4 left-4 z-40 flex flex-wrap gap-2 rounded-2xl border border-blue-200 bg-white/95 p-3 shadow-xl backdrop-blur">
+        <div className="fixed bottom-20 sm:bottom-4 left-2 right-2 sm:left-4 sm:right-auto z-40 flex flex-wrap gap-2 rounded-2xl border border-blue-200 bg-white/95 p-3 shadow-xl backdrop-blur max-w-sm sm:max-w-none">
           <EditableValue contentKey="en.petition.share.title" defaultValue="Save Pungcheon-ri" page="en/petition" section="share" buttonLabel="Share title" wrapperClassName="relative" buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
             {(value, editButton) => editButton ?? <span>{value}</span>}
           </EditableValue>

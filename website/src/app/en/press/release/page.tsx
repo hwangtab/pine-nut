@@ -49,7 +49,7 @@ export default function EnglishPressReleasePage() {
       </div>
 
       <div className="print-page max-w-3xl mx-auto px-6 py-12">
-        <div className="no-print mb-8 flex items-center gap-4">
+        <div className="no-print mb-8 flex flex-wrap items-center gap-3">
           <button
             onClick={() => {
               events.pressKitDownload("release_en");

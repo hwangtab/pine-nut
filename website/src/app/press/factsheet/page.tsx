@@ -63,7 +63,7 @@ export default function FactsheetPage() {
 
       <div className="print-page max-w-3xl mx-auto px-6 py-12">
         {/* Print button */}
-        <div className="no-print mb-8 flex items-center gap-4">
+        <div className="no-print mb-8 flex flex-wrap items-center gap-3">
           <button
             onClick={() => {
               events.pressKitDownload("factsheet");

@@ -353,7 +353,7 @@ export default function HomePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.8 }}
-              className="flex flex-wrap justify-center gap-8 sm:gap-16 mb-14"
+              className="flex flex-col items-center gap-6 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-16 mb-14"
             >
               <EditableList
                 contentKey="home.hero.counters"
@@ -1127,7 +1127,7 @@ export default function HomePage() {
               ]}
             >
               {(items) => (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-4 text-center">
                   {items.map((stat, i) => (
                     <FadeIn key={stat.label} delay={i * 0.1}>
                       <div>
@@ -1163,7 +1163,7 @@ export default function HomePage() {
       </AnimatePresence>
 
       {isEditMode && (
-        <div className="fixed bottom-4 left-4 z-40 flex flex-wrap gap-2 rounded-2xl border border-blue-200 bg-white/95 p-3 shadow-xl backdrop-blur">
+        <div className="fixed bottom-20 sm:bottom-4 left-2 right-2 sm:left-4 sm:right-auto z-40 flex flex-wrap gap-2 rounded-2xl border border-blue-200 bg-white/95 p-3 shadow-xl backdrop-blur max-w-sm sm:max-w-none">
           <EditableValue
             contentKey="home.share.title"
             defaultValue="풍천리를 지켜주세요"

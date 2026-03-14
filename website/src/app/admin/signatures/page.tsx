@@ -25,9 +25,9 @@ export default async function AdminSignaturesPage() {
       </div>
 
       {/* Daily chart */}
-      <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-6 mb-8">
+      <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-6 mb-8 overflow-hidden">
         <h2 className="text-lg font-bold text-[var(--color-admin-text)] mb-4">최근 14일 서명 추이</h2>
-        <div className="flex items-end gap-1 h-32 sm:h-40">
+        <div className="flex items-end gap-1 h-32 sm:h-40 pb-8">
           {stats.dailyCounts.map((day, i) => {
             const height = maxDaily > 0 ? (day.count / maxDaily) * 100 : 0;
             const dateLabel = day.date.slice(5); // MM-DD

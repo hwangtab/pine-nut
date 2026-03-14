@@ -206,8 +206,8 @@ export function EnglishStoryBattleSection() {
             <div className="space-y-8">
               {items.map((item, index) => (
                 <div key={index} className="flex gap-5 md:gap-8">
-                  <div className="shrink-0 w-20">
-                    <span className="inline-block bg-[var(--color-forest)] text-white text-xs md:text-sm font-bold px-3 py-1.5 rounded-full">
+                  <div className="shrink-0 w-24 md:w-28">
+                    <span className="inline-block bg-[var(--color-forest)] text-white text-xs md:text-sm font-bold px-2.5 md:px-3 py-1.5 rounded-full whitespace-nowrap">
                       {item.year}
                     </span>
                   </div>
