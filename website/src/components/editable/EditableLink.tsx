@@ -156,7 +156,7 @@ export default function EditableLink({
               }}
             />
             <p className="mt-3 text-sm text-gray-500">
-              내부 경로(`/story`), 외부 주소, `mailto:`, `tel:` 링크를 사용할 수 있습니다.
+              내부 경로(<code className="px-1 py-0.5 bg-gray-100 rounded text-gray-700">/story</code>), 외부 주소, <code className="px-1 py-0.5 bg-gray-100 rounded text-gray-700">mailto:</code>, <code className="px-1 py-0.5 bg-gray-100 rounded text-gray-700">tel:</code> 링크를 사용할 수 있습니다.
             </p>
             <div className="mt-6 flex justify-end gap-3">
               <button

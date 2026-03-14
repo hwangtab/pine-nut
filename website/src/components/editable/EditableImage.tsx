@@ -74,6 +74,9 @@ export default function EditableImage({
         } else if (result.error) {
           alert(result.error);
         }
+      } catch (err) {
+        alert("이미지 업로드 중 오류가 발생했습니다. 다시 시도해주세요.");
+        console.error("[EditableImage] Upload failed:", err);
       } finally {
         setUploading(false);
         if (fileInputRef.current) fileInputRef.current.value = "";
