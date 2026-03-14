@@ -772,7 +772,7 @@ export default function CardNews({
         </div>
       </div>
       {isEditMode && (
-        <div className="fixed bottom-4 right-4 z-40 flex flex-wrap gap-2 rounded-2xl border border-blue-200 bg-white/95 p-3 shadow-xl backdrop-blur">
+        <div className="fixed bottom-20 sm:bottom-4 right-2 sm:right-4 left-2 sm:left-auto z-40 flex flex-wrap gap-2 rounded-2xl border border-blue-200 bg-white/95 p-3 shadow-xl backdrop-blur max-w-sm sm:max-w-none">
           <EditableValue
             contentKey={`${prefix}.cards.shareTitle`}
             defaultValue={TEXT[locale].shareTitle}

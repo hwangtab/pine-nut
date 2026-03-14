@@ -112,9 +112,9 @@ export default function TimelineForm({ action, initialData, submitLabel }: Timel
           name="image_file"
           type="file"
           accept="image/jpeg,image/png,image/webp"
-          className="w-full px-4 py-3.5 text-base border border-[var(--color-admin-border)] rounded-xl
-                     file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border-0
-                     file:text-base file:font-medium file:bg-[var(--color-sky)]/10 file:text-[var(--color-sky)]
+          className="w-full px-3 sm:px-4 py-3 sm:py-3.5 text-sm sm:text-base border border-[var(--color-admin-border)] rounded-xl overflow-hidden
+                     file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0
+                     file:text-sm file:font-medium file:bg-[var(--color-sky)]/10 file:text-[var(--color-sky)]
                      hover:file:bg-[var(--color-sky)]/20 file:cursor-pointer"
         />
         <p className="text-sm text-[var(--color-admin-muted)] mt-1.5">
