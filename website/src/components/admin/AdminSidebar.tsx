@@ -104,24 +104,24 @@ export default function AdminSidebar() {
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--color-admin-border)] bg-[var(--color-admin-surface)]">
         <div className="flex overflow-x-auto px-2 py-2">
           {navItems.map((item) => {
-          const isActive =
-            item.href === "/admin"
-              ? pathname === "/admin"
-              : pathname.startsWith(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`min-w-[88px] min-h-[44px] flex shrink-0 flex-col items-center justify-center gap-1 rounded-2xl px-3 py-3 text-xs font-medium transition-colors ${
-                isActive
-                  ? "bg-[var(--color-forest)]/10 text-[var(--color-forest)]"
-                  : "text-[var(--color-admin-muted)]/70"
-              }`}
-            >
-              <item.icon size={24} />
-              {item.label}
-            </Link>
-          );
+            const isActive =
+              item.href === "/admin"
+                ? pathname === "/admin"
+                : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`min-w-[88px] min-h-[44px] flex shrink-0 flex-col items-center justify-center gap-1 rounded-2xl px-3 py-3 text-xs font-medium transition-colors ${
+                  isActive
+                    ? "bg-[var(--color-forest)]/10 text-[var(--color-forest)]"
+                    : "text-[var(--color-admin-muted)]/70"
+                }`}
+              >
+                <item.icon size={24} />
+                {item.label}
+              </Link>
+            );
           })}
           <button
             onClick={handleLogout}

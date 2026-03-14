@@ -28,7 +28,7 @@ export default async function AdminSignaturesPage() {
       <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-6 mb-8">
         <h2 className="text-lg font-bold text-[var(--color-admin-text)] mb-4">최근 14일 서명 추이</h2>
         <div className="flex items-end gap-1 h-40">
-          {stats.dailyCounts.map((day) => {
+          {stats.dailyCounts.map((day, i) => {
             const height = maxDaily > 0 ? (day.count / maxDaily) * 100 : 0;
             const dateLabel = day.date.slice(5); // MM-DD
             return (
@@ -40,7 +40,7 @@ export default async function AdminSignaturesPage() {
                   className="w-full bg-[var(--color-warm)] rounded-t-sm min-h-[2px]"
                   style={{ height: `${Math.max(height, 2)}%` }}
                 />
-                <span className="text-[10px] text-[var(--color-admin-muted)]/70 rotate-[-45deg] origin-top-left translate-y-2 whitespace-nowrap">
+                <span className={`text-[10px] text-[var(--color-admin-muted)]/70 rotate-[-45deg] origin-top-left translate-y-2 whitespace-nowrap${i % 2 !== 0 ? " hidden sm:inline" : ""}`}>
                   {dateLabel}
                 </span>
               </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 export default function AdminToolbar() {
   const {
@@ -20,6 +20,46 @@ export default function AdminToolbar() {
   } = useAdminEdit();
 
   const [showConfirmDiscard, setShowConfirmDiscard] = useState(false);
+  const [showConfirmRevert, setShowConfirmRevert] = useState(false);
+  const discardDialogRef = useRef<HTMLDivElement>(null);
+  const revertDialogRef = useRef<HTMLDivElement>(null);
+
+  // Escape key handler for discard dialog
+  useEffect(() => {
+    if (!showConfirmDiscard) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowConfirmDiscard(false);
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [showConfirmDiscard]);
+
+  // Escape key handler for revert dialog
+  useEffect(() => {
+    if (!showConfirmRevert) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowConfirmRevert(false);
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [showConfirmRevert]);
+
+  // Focus trap for dialogs
+  const trapFocus = useCallback((e: React.KeyboardEvent, ref: React.RefObject<HTMLDivElement | null>) => {
+    if (e.key !== "Tab" || !ref.current) return;
+    const focusable = ref.current.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last?.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first?.focus();
+    }
+  }, []);
 
   if (!isAdmin) return null;
 
@@ -128,12 +168,9 @@ export default function AdminToolbar() {
                 </span>
                 <button
                   type="button"
-                  onClick={async () => {
+                  onClick={() => {
                     if (!hasOverride(selectedKey) || saving) return;
-                    if (!window.confirm("선택한 요소를 하드코딩 기본값으로 복원하시겠습니까?")) {
-                      return;
-                    }
-                    await revertKey(selectedKey);
+                    setShowConfirmRevert(true);
                   }}
                   disabled={!hasOverride(selectedKey) || saving}
                   className="px-3 py-2 rounded-xl text-sm font-semibold bg-amber-500/90 hover:bg-amber-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
@@ -170,9 +207,9 @@ export default function AdminToolbar() {
         </a>
       </div>
 
-      {isEditMode && (
+      {isEditMode && !saveError && (
         <div className="fixed bottom-24 left-1/2 z-[9989] w-[min(92vw,38rem)] -translate-x-1/2 rounded-2xl border border-white/10 bg-gray-900/90 px-4 py-3 text-xs text-white/70 shadow-2xl backdrop-blur-xl">
-          인라인 편집은 문구, 이미지, 링크, 섹션 표시 여부를 다룹니다. 내비/푸터 링크 세트, 기존 섹션 순서, 커스텀 섹션은 `사이트 빌더`, 이전 상태 복원은 `히스토리`에서 관리합니다.
+          인라인 편집은 문구, 이미지, 링크, 섹션 표시 여부를 다룹니다. 내비/푸터 링크 세트, 기존 섹션 순서, 커스텀 섹션은 <strong className="text-white/90">사이트 빌더</strong>, 이전 상태 복원은 <strong className="text-white/90">히스토리</strong>에서 관리합니다.
         </div>
       )}
 
@@ -185,12 +222,26 @@ export default function AdminToolbar() {
 
       {/* Discard confirmation */}
       {showConfirmDiscard && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-2">
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4"
+          role="presentation"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowConfirmDiscard(false);
+          }}
+        >
+          <div
+            ref={discardDialogRef}
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="discard-dialog-title"
+            aria-describedby="discard-dialog-desc"
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6"
+            onKeyDown={(e) => trapFocus(e, discardDialogRef)}
+          >
+            <h3 id="discard-dialog-title" className="text-lg font-bold text-gray-900 mb-2">
               편집 모드 종료
             </h3>
-            <p className="text-sm text-gray-600 mb-6">
+            <p id="discard-dialog-desc" className="text-sm text-gray-600 mb-6">
               저장되지 않은 {changeCount}개의 변경사항이 있습니다. 종료하시겠습니까?
             </p>
             <div className="flex gap-3">
@@ -222,12 +273,62 @@ export default function AdminToolbar() {
                 onClick={() => {
                   discardChanges();
                   setShowConfirmDiscard(false);
-                  // toggleEditMode will now succeed since changes are cleared
                   toggleEditMode();
                 }}
                 className="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
               >
                 버리기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Revert confirmation */}
+      {showConfirmRevert && selectedKey && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4"
+          role="presentation"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowConfirmRevert(false);
+          }}
+        >
+          <div
+            ref={revertDialogRef}
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="revert-dialog-title"
+            aria-describedby="revert-dialog-desc"
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6"
+            onKeyDown={(e) => trapFocus(e, revertDialogRef)}
+          >
+            <h3 id="revert-dialog-title" className="text-lg font-bold text-gray-900 mb-2">
+              기본값으로 복원
+            </h3>
+            <p id="revert-dialog-desc" className="text-sm text-gray-600 mb-2">
+              선택한 요소를 하드코딩 기본값으로 복원하시겠습니까?
+            </p>
+            <p className="text-xs text-gray-400 font-mono mb-6 truncate" title={selectedKey}>
+              {selectedKey}
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowConfirmRevert(false)}
+                className="px-5 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                취소
+              </button>
+              <button
+                type="button"
+                disabled={saving}
+                onClick={async () => {
+                  await revertKey(selectedKey);
+                  setShowConfirmRevert(false);
+                }}
+                className="px-5 py-2.5 text-sm font-semibold text-white bg-amber-500 rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                {saving ? "복원 중..." : "복원"}
               </button>
             </div>
           </div>
