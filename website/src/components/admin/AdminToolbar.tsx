@@ -67,7 +67,7 @@ export default function AdminToolbar() {
     <>
       {/* Main toolbar */}
       <div
-        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9990] flex items-center gap-3 px-5 py-3 bg-gray-900/95 backdrop-blur-xl text-white rounded-2xl shadow-2xl border border-white/10"
+        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9990] flex items-center gap-2 sm:gap-3 px-3 sm:px-5 py-2.5 sm:py-3 bg-gray-900/95 backdrop-blur-xl text-white rounded-2xl shadow-2xl border border-white/10 max-w-[calc(100vw-2rem)]"
         data-admin-toolbar
       >
         {/* Edit mode toggle */}
@@ -215,7 +215,7 @@ export default function AdminToolbar() {
 
       {/* Save error toast */}
       {saveError && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[9991] px-5 py-3 bg-red-600 text-white text-sm font-semibold rounded-xl shadow-2xl">
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[9991] w-[min(92vw,24rem)] px-5 py-3 bg-red-600 text-white text-sm font-semibold rounded-xl shadow-2xl text-center">
           {saveError}
         </div>
       )}
@@ -244,7 +244,7 @@ export default function AdminToolbar() {
             <p id="discard-dialog-desc" className="text-sm text-gray-600 mb-6">
               저장되지 않은 {changeCount}개의 변경사항이 있습니다. 종료하시겠습니까?
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <button
                 type="button"
                 onClick={() => setShowConfirmDiscard(false)}

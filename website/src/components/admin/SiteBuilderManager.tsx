@@ -297,7 +297,7 @@ export default function SiteBuilderManager({
                       return [...prev, { ...current, id: createEmptyBuilderLink().id }];
                     })
                   }
-                  className="min-h-[40px] rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)]"
+                  className="min-h-[44px] rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)]"
                 >
                   복제
                 </button>
@@ -305,7 +305,7 @@ export default function SiteBuilderManager({
                   type="button"
                   onClick={() => setItems((prev) => moveItem(prev, index, -1))}
                   disabled={index === 0}
-                  className="min-h-[40px] min-w-[40px] rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)] disabled:opacity-30"
+                  className="min-h-[44px] min-w-[44px] rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)] disabled:opacity-30"
                   aria-label={`${item.label || "링크"} 위로 이동`}
                 >
                   ↑
@@ -314,7 +314,7 @@ export default function SiteBuilderManager({
                   type="button"
                   onClick={() => setItems((prev) => moveItem(prev, index, 1))}
                   disabled={index === items.length - 1}
-                  className="min-h-[40px] min-w-[40px] rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)] disabled:opacity-30"
+                  className="min-h-[44px] min-w-[44px] rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)] disabled:opacity-30"
                   aria-label={`${item.label || "링크"} 아래로 이동`}
                 >
                   ↓
@@ -324,7 +324,7 @@ export default function SiteBuilderManager({
                   onClick={() =>
                     setItems((prev) => prev.filter((prevItem) => prevItem.id !== item.id))
                   }
-                  className="min-h-[40px] rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100"
+                  className="min-h-[44px] rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100"
                 >
                   삭제
                 </button>
@@ -348,7 +348,7 @@ export default function SiteBuilderManager({
       <section className="grid gap-4 xl:grid-cols-[1.3fr_1fr]">
         <div className="rounded-3xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-6">
           <h2 className="text-lg font-bold text-[var(--color-admin-text)]">무엇을 여기서 편집하나요?</h2>
-          <div className="mt-4 grid gap-3 md:grid-cols-3">
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
             <div className="rounded-2xl bg-[var(--color-bg)] p-4">
               <div className="text-sm font-bold text-[var(--color-admin-text)]">글로벌 링크</div>
               <p className="mt-2 text-sm leading-relaxed text-[var(--color-admin-muted)]">
@@ -432,7 +432,7 @@ export default function SiteBuilderManager({
       </div>
 
       <section className="rounded-3xl border border-dashed border-[var(--color-admin-border)] px-6 py-5 text-sm leading-relaxed text-[var(--color-admin-muted)]">
-        `404 페이지`, 뉴스 상세, 보도자료 상세처럼 사이트 빌더 목록에 없는 특수 화면은 해당 공개 화면으로 가서 인라인 편집 모드로 수정합니다.
+        <strong className="text-[var(--color-admin-text)]">404 페이지</strong>, 뉴스 상세, 보도자료 상세처럼 사이트 빌더 목록에 없는 특수 화면은 해당 공개 화면으로 가서 인라인 편집 모드로 수정합니다.
       </section>
 
       <section className="rounded-3xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-6">
@@ -634,7 +634,7 @@ export default function SiteBuilderManager({
                 />
               </div>
 
-              <div className="mt-4 grid gap-4 md:grid-cols-4">
+              <div className="mt-4 grid gap-4 grid-cols-2 md:grid-cols-4">
                 <select
                   value={section.theme}
                   onChange={(event) =>
@@ -839,7 +839,7 @@ export default function SiteBuilderManager({
               return (
                 <div
                   key={sectionId}
-                  className="grid gap-4 rounded-2xl border border-[var(--color-admin-border)] bg-[var(--color-bg)] p-4 md:grid-cols-[1.4fr_180px_180px_auto]"
+                  className="grid gap-3 sm:gap-4 rounded-2xl border border-[var(--color-admin-border)] bg-[var(--color-bg)] p-4 sm:grid-cols-2 md:grid-cols-[1.4fr_180px_180px_auto]"
                 >
                   <div>
                     <div className="text-sm font-semibold text-[var(--color-admin-muted)]">

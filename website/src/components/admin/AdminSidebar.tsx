@@ -102,7 +102,7 @@ export default function AdminSidebar() {
 
       {/* Mobile bottom tab bar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--color-admin-border)] bg-[var(--color-admin-surface)]">
-        <div className="flex overflow-x-auto px-2 py-2">
+        <div className="flex overflow-x-auto px-1 sm:px-2 py-1.5 sm:py-2 scrollbar-none">
           {navItems.map((item) => {
             const isActive =
               item.href === "/admin"
@@ -112,22 +112,24 @@ export default function AdminSidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`min-w-[88px] min-h-[44px] flex shrink-0 flex-col items-center justify-center gap-1 rounded-2xl px-3 py-3 text-xs font-medium transition-colors ${
+                className={`min-w-[64px] sm:min-w-[80px] min-h-[44px] flex shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl sm:rounded-2xl px-2 sm:px-3 py-2 sm:py-3 text-[10px] sm:text-xs font-medium transition-colors ${
                   isActive
                     ? "bg-[var(--color-forest)]/10 text-[var(--color-forest)]"
                     : "text-[var(--color-admin-muted)]/70"
                 }`}
               >
-                <item.icon size={24} />
+                <item.icon size={20} className="sm:hidden" />
+                <item.icon size={24} className="hidden sm:block" />
                 {item.label}
               </Link>
             );
           })}
           <button
             onClick={handleLogout}
-            className="min-w-[88px] min-h-[44px] flex shrink-0 flex-col items-center justify-center gap-1 rounded-2xl px-3 py-3 text-xs font-medium text-[var(--color-admin-muted)]/70 transition-colors"
+            className="min-w-[64px] sm:min-w-[80px] min-h-[44px] flex shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl sm:rounded-2xl px-2 sm:px-3 py-2 sm:py-3 text-[10px] sm:text-xs font-medium text-[var(--color-admin-muted)]/70 transition-colors"
           >
-            <LogOut size={24} />
+            <LogOut size={20} className="sm:hidden" />
+            <LogOut size={24} className="hidden sm:block" />
             로그아웃
           </button>
         </div>

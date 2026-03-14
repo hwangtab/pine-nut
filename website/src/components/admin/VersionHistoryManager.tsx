@@ -79,7 +79,7 @@ export default function VersionHistoryManager({
       <section className="rounded-3xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <p className="text-sm leading-relaxed text-[var(--color-admin-muted)]">
-            `page_content`는 인라인 편집과 사이트 빌더 저장을 포함합니다. 복원 전에 공개 페이지를 새 탭에서 한 번 확인하는 흐름을 권장합니다.
+            <strong className="text-[var(--color-admin-text)]">page_content</strong>는 인라인 편집과 사이트 빌더 저장을 포함합니다. 복원 전에 공개 페이지를 새 탭에서 한 번 확인하는 흐름을 권장합니다.
           </p>
           <div className="flex flex-wrap gap-2">
             {[

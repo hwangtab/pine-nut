@@ -16,18 +16,18 @@ export default async function AdminSignaturesPage() {
       )}
 
       {/* Total count */}
-      <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-8 mb-8 text-center">
+      <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-5 sm:p-8 mb-8 text-center">
         <p className="text-[var(--color-admin-muted)] mb-2 text-lg">총 서명 수</p>
-        <p className="text-5xl font-bold text-[var(--color-warm)]">
+        <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-warm)]">
           {stats.totalCount.toLocaleString("ko-KR")}
-          <span className="text-2xl font-normal text-[var(--color-admin-muted)]/70 ml-2">명</span>
+          <span className="text-lg sm:text-xl md:text-2xl font-normal text-[var(--color-admin-muted)]/70 ml-2">명</span>
         </p>
       </div>
 
       {/* Daily chart */}
       <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-6 mb-8">
         <h2 className="text-lg font-bold text-[var(--color-admin-text)] mb-4">최근 14일 서명 추이</h2>
-        <div className="flex items-end gap-1 h-40">
+        <div className="flex items-end gap-1 h-32 sm:h-40">
           {stats.dailyCounts.map((day, i) => {
             const height = maxDaily > 0 ? (day.count / maxDaily) * 100 : 0;
             const dateLabel = day.date.slice(5); // MM-DD

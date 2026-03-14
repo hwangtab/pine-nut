@@ -179,7 +179,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-white/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/50">
           <p>&copy; {new Date().getFullYear()} 풍천리 주민회. All rights reserved.</p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             <button
               type="button"
               onClick={() => setShowPrivacy(!showPrivacy)}

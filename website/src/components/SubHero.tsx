@@ -105,7 +105,7 @@ export default function SubHero({
               {eyebrow}
             </p>
           )}
-          <h1 className="mb-4 text-3xl font-black tracking-tight text-white md:text-5xl">
+          <h1 className="mb-4 text-3xl sm:text-4xl font-black tracking-tight text-white md:text-5xl">
             {title}
           </h1>
         </div>

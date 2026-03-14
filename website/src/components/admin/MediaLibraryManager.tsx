@@ -94,7 +94,7 @@ export default function MediaLibraryManager({
       </div>
 
       <section className="rounded-3xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-5 text-sm leading-relaxed text-[var(--color-admin-muted)]">
-        권장 흐름: `업로드` → `URL 복사` → 공개 페이지 인라인 편집 또는 사이트 빌더에 붙여넣기. 현재 지원 형식은 JPG, PNG, WebP입니다.
+        권장 흐름: <strong className="text-[var(--color-admin-text)]">업로드</strong> → <strong className="text-[var(--color-admin-text)]">URL 복사</strong> → 공개 페이지 인라인 편집 또는 사이트 빌더에 붙여넣기. 현재 지원 형식은 JPG, PNG, WebP입니다.
       </section>
 
       {(message || error) && (
@@ -182,7 +182,7 @@ export default function MediaLibraryManager({
                       await navigator.clipboard.writeText(item.url);
                       setMessage("이미지 URL을 복사했습니다.");
                     }}
-                    className="rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)]"
+                    className="min-h-[44px] rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)]"
                   >
                     URL 복사
                   </button>
@@ -190,14 +190,14 @@ export default function MediaLibraryManager({
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)]"
+                    className="min-h-[44px] inline-flex items-center rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-admin-border)]"
                   >
                     열기
                   </a>
                   <button
                     type="button"
                     onClick={() => handleDelete(item.path)}
-                    className="rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100"
+                    className="min-h-[44px] rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100"
                   >
                     삭제
                   </button>

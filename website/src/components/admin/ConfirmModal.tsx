@@ -74,7 +74,7 @@ export default function ConfirmModal({
         aria-modal="true"
         aria-labelledby="confirm-modal-title"
         aria-describedby="confirm-modal-message"
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-5 sm:p-6"
         onKeyDown={handleKeyDown}
       >
         <h3 id="confirm-modal-title" className="text-lg font-bold text-gray-900 mb-2">
@@ -83,7 +83,7 @@ export default function ConfirmModal({
         <p id="confirm-modal-message" className="text-sm text-gray-600 whitespace-pre-line mb-6">
           {message}
         </p>
-        <div className="flex items-center justify-end gap-3">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center sm:justify-end gap-2 sm:gap-3">
           <button
             ref={cancelRef}
             type="button"
