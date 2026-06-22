@@ -1,6 +1,6 @@
 import { createHash } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import { isMissingSupabaseRelationError } from "@/lib/supabase-errors";
 
 const RATE_LIMIT_WINDOW = 60 * 1000;
@@ -49,6 +49,8 @@ function maskName(name: string): string {
 }
 
 export async function GET() {
+  const supabase = createSupabaseServiceClient();
+
   if (!supabase) {
     if (IS_PRODUCTION) {
       return NextResponse.json({ error: SERVICE_UNAVAILABLE_MESSAGE }, { status: 503 });
@@ -91,13 +93,8 @@ export async function GET() {
     console.error("Failed to fetch signatures:", error);
     if (isMissingSupabaseRelationError(error)) {
       return NextResponse.json(
-        {
-          count: 0,
-          signatures: [],
-          demo: false,
-          unavailable: true,
-        },
-        { status: 200 }
+        { error: SERVICE_UNAVAILABLE_MESSAGE },
+        { status: 503 }
       );
     }
     return NextResponse.json(
@@ -137,6 +134,8 @@ export async function POST(request: NextRequest) {
   if (agreeAge !== true) {
     return NextResponse.json({ error: "만 14세 이상 확인이 필요합니다." }, { status: 400 });
   }
+
+  const supabase = createSupabaseServiceClient();
 
   if (!supabase) {
     if (IS_PRODUCTION) {

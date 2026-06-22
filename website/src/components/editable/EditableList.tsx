@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 
 let globalId = 0;
@@ -73,7 +73,11 @@ export default function EditableList<T extends EditableListItem>({
 
   const stripUid = useCallback(
     (arr: ItemWithId[]): T[] =>
-      arr.map(({ _uid, ...rest }) => rest as unknown as T),
+      arr.map((item) => {
+        const rest = { ...item };
+        delete (rest as Partial<ItemWithId>)._uid;
+        return rest as unknown as T;
+      }),
     []
   );
 

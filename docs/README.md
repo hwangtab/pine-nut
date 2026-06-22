@@ -37,12 +37,26 @@
 |---|------|------|
 | 10 | [Customer Journey Map](10-customer-journey-map.md) | 고객 여정 맵 — 8단계 여정, 감정, 이탈 지점, 기회 |
 
+### 현안 팩트/자료 조사
+| # | 문서 | 설명 |
+|---|------|------|
+| 14 | [Pungcheonri Source Dossier](14-pungcheonri-source-dossier.md) | 풍천리 현안 팩트 dossier — 사업 개요, 핵심 쟁점, 인용 가능한 출처 기반 문구 |
+| 15 | [Media & Timeline Research](15-media-and-timeline-research.md) | 언론·연표 리서치 — 2019~2026 출처별 연표, 기사 목록, 숫자 충돌 메모 |
+
+### 현장 행동/행사 기획
+| # | 문서 | 설명 |
+|---|------|------|
+| 16 | [Before Cut Pungcheonri Event Plan](16-before-cut-pungcheonri-event-plan.md) | `베어지기 전에, 풍천리` 긴급 음악 문화행동 총괄 기획안 |
+| 17 | [Before Cut Pungcheonri Publicity Kit](17-before-cut-pungcheonri-publicity-kit.md) | 포스터·SNS·릴스·섭외문·보도자료·공동선언 문구 키트 |
+| 18 | [Before Cut Pungcheonri Operations Runbook](18-before-cut-pungcheonri-operations-runbook.md) | 장소 신고, 역할표, 장비, 큐시트, 주민 안전, 예산 운영 런북 |
+
 ---
 
 ## 즉시 착수 필요 사항 (Launch-Blocking)
 
-1. **콘텐츠 수집** — 사진 20장, 인터뷰 3건, 타임라인 이벤트 15개 (→ 02-pre-mortem T1)
+1. **콘텐츠 수집** — 사진 20장, 인터뷰 3건, 타임라인 이벤트 15개 (→ 02-pre-mortem T1, 14·15번 조사 문서 기반)
 2. **개인정보 처리방침 법률 검토** (→ 07-privacy-policy)
 3. **후원금 수령 구조 확정** (→ 02-pre-mortem T3)
 4. **도메인 확보** (pungcheon.kr 등)
 5. **핵심 개발자 2명 확보 확약**
+6. **7월 음악 문화행동 준비** — 장소 신고, 음악가 섭외, 보도자료 배포, 주민 안전 계획 확정 (→ 16·17·18번 행사 기획 문서)

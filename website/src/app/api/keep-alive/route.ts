@@ -1,24 +1,19 @@
 import { NextResponse } from 'next/server';
+import { createSupabaseServiceClient } from '@/lib/supabase-service';
 
 export async function GET() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabase = createSupabaseServiceClient();
 
-  if (!supabaseUrl || !supabaseKey) {
+  if (!supabase) {
     return NextResponse.json({ error: 'Missing Supabase credentials' }, { status: 500 });
   }
 
-  const response = await fetch(
-    `${supabaseUrl}/rest/v1/signatures?select=id&limit=1`,
-    {
-      headers: {
-        'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`,
-      },
-    }
-  );
+  const { error } = await supabase
+    .from('signatures')
+    .select('id')
+    .limit(1);
 
-  if (!response.ok) {
+  if (error) {
     return NextResponse.json({ error: 'Supabase ping failed' }, { status: 502 });
   }
 

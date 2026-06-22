@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "failclosed:check": "node scripts/check-production-fail-closed.mjs",
+    "imagehosts:check": "node scripts/check-image-host-config.mjs",
+    "notfound:check": "node scripts/check-notfound-semantics.mjs",
+    "security:check": "node scripts/check-signature-security.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",

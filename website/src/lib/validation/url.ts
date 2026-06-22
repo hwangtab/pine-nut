@@ -1,6 +1,17 @@
 import allowedImageHosts from "@/lib/allowed-image-hosts.json";
 
-const ALLOWED_IMAGE_HOST_SET = new Set<string>(allowedImageHosts);
+let configuredSupabaseHostname: string | null = null;
+try {
+  const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (raw) configuredSupabaseHostname = new URL(raw).hostname;
+} catch {
+  configuredSupabaseHostname = null;
+}
+
+const ALLOWED_IMAGE_HOST_SET = new Set<string>([
+  ...allowedImageHosts,
+  ...(configuredSupabaseHostname ? [configuredSupabaseHostname] : []),
+]);
 const HTTP_PROTOCOLS = new Set(["http:", "https:"]);
 
 export interface OptionalUrlValidationResult {

@@ -76,11 +76,14 @@ export async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
     .select("*")
     .eq("slug", slug)
     .eq("is_deleted", false)
-    .single();
+    .maybeSingle();
 
-  if (error || !data) {
+  if (error) {
     console.error(`Failed to fetch news by slug (${slug}):`, error);
     return fallbackOrThrow(() => fallbackNews.find((n) => n.slug === slug) ?? null, `Failed to fetch news by slug from Supabase: ${slug}`);
+  }
+  if (!data) {
+    return IS_PRODUCTION ? null : fallbackNews.find((n) => n.slug === slug) ?? null;
   }
   return rowToNewsItem(data);
 }
@@ -134,11 +137,14 @@ export async function getNewsById(id: number): Promise<NewsItem | null> {
     .from("news")
     .select("*")
     .eq("id", id)
-    .single();
+    .maybeSingle();
 
-  if (error || !data) {
+  if (error) {
     console.error(`Failed to fetch news by id (${id}):`, error);
     return fallbackOrThrow(() => null, `Failed to fetch news by id from Supabase: ${id}`);
+  }
+  if (!data) {
+    return IS_PRODUCTION ? null : fallbackNews.find((n) => n.id === id) ?? null;
   }
   return rowToNewsItem(data);
 }

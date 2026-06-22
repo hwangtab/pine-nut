@@ -196,6 +196,8 @@ export default function EnglishPetitionPage() {
       const data = await response.json();
       setSignatureCount(data.count);
       setSignatures(data.signatures || []);
+    } catch (error) {
+      console.error("Failed to fetch signatures:", error);
     } finally {
       setLoadingSignatures(false);
     }
