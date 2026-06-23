@@ -1,155 +1,28 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, type FormEvent, type ReactNode } from "react";
-import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
-import { Send, Check, Loader2, HeartHandshake, Megaphone } from "lucide-react";
+import { useState, useRef, useCallback, type FormEvent } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Send, Check, Loader2 } from "lucide-react";
 import SubHero from "@/components/SubHero";
-import { EditableLink, EditableList, EditableText, EditableValue } from "@/components/editable";
+import { EditableText, EditableValue } from "@/components/editable";
+import PetitionActionCards from "@/components/petition/PetitionActionCards";
+import PetitionAnimatedCounter from "@/components/petition/PetitionAnimatedCounter";
+import RecentSignatures from "@/components/petition/RecentSignatures";
+import SignatureConfetti from "@/components/petition/SignatureConfetti";
+import { usePetitionSignatureSummary } from "@/components/petition/usePetitionSignatureSummary";
 import { events } from "@/lib/analytics";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
-
-interface Signature {
-  name: string;
-  message: string;
-  created_at: string;
-}
-
-function AnimatedCounter({ target }: { target: number }) {
-  const count = useMotionValue(0);
-  const rounded = useTransform(count, (value) => Math.round(value).toLocaleString("en-US"));
-  const [display, setDisplay] = useState("0");
-
-  useEffect(() => {
-    const controls = animate(count, target, { duration: 2, ease: "easeOut" });
-    const unsubscribe = rounded.on("change", (value) => setDisplay(value));
-    return () => {
-      controls.stop();
-      unsubscribe();
-    };
-  }, [count, rounded, target]);
-
-  return <motion.span className="text-5xl sm:text-6xl font-black text-[var(--color-warm)]">{display}</motion.span>;
-}
-
-function Confetti() {
-  const colors = ["#C75000", "#FF6B1A", "#2D5016", "#4A7A2E", "#D4A843", "#1B4965"];
-  const pieces = Array.from({ length: 40 }, (_, index) => ({
-    id: index,
-    left: (index * 17.3) % 100,
-    delay: (index % 10) * 0.05,
-    size: 6 + (index % 8),
-    rotation: (index * 37) % 360,
-    borderRadius: index % 2 === 0 ? "50%" : "2px",
-    color: colors[index % colors.length],
-  }));
-
-  return (
-    <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden" aria-hidden="true">
-      {pieces.map((piece) => (
-        <span
-          key={piece.id}
-          className="absolute animate-confetti"
-          style={{
-            left: `${piece.left}%`,
-            top: "-10px",
-            width: piece.size,
-            height: piece.size,
-            backgroundColor: piece.color,
-            borderRadius: piece.borderRadius,
-            animationDelay: `${piece.delay}s`,
-            transform: `rotate(${piece.rotation}deg)`,
-          }}
-        />
-      ))}
-      <style>{`
-        @keyframes confetti-fall {
-          0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-          100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-        .animate-confetti {
-          animation: confetti-fall 2.5s ease-in forwards;
-        }
-      `}</style>
-    </div>
-  );
-}
-
-function RecentSignatures({ signatures, loading }: { signatures: Signature[]; loading: boolean }) {
-  const [offset, setOffset] = useState(0);
-
-  useEffect(() => {
-    if (signatures.length === 0) return;
-    const timer = setInterval(() => {
-      setOffset((prev) => (prev + 1) % signatures.length);
-    }, 3000);
-    return () => clearInterval(timer);
-  }, [signatures.length]);
-
-  const ordered = signatures.length > 0 ? [...signatures.slice(offset), ...signatures.slice(0, offset)] : [];
-
-  return (
-    <section className="w-full" aria-label="Recent signatures">
-      <EditableText
-        contentKey="en.petition.recent.heading"
-        defaultValue="Recent signatures"
-        as="h2"
-        page="en/petition"
-        section="recent"
-        className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]"
-      />
-      {loading ? (
-        <div className="flex items-center justify-center py-12 text-[var(--color-text-muted)]">
-          <Loader2 className="w-5 h-5 animate-spin mr-2" />
-          <EditableText
-            contentKey="en.petition.recent.loading"
-            defaultValue="Loading..."
-            as="span"
-            page="en/petition"
-            section="recent"
-          />
-        </div>
-      ) : signatures.length === 0 ? (
-        <EditableText
-          contentKey="en.petition.recent.empty"
-          defaultValue="No signatures yet. Be the first to add your name."
-          as="p"
-          page="en/petition"
-          section="recent"
-          className="text-center py-8 text-[var(--color-text-muted)]"
-        />
-      ) : (
-        <div className="space-y-3 overflow-hidden max-h-[320px]">
-          <AnimatePresence mode="popLayout">
-            {ordered.slice(0, 5).map((sig, index) => (
-              <motion.div
-                key={`${sig.name}-${(offset + index) % signatures.length}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-                className="bg-white border border-[var(--color-border)] rounded-xl px-5 py-4"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-[var(--color-text)]">{sig.name}</span>
-                  <time dateTime={sig.created_at} className="text-sm text-[var(--color-text-muted)]">
-                    {new Date(sig.created_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
-                  </time>
-                </div>
-                {sig.message && <p className="mt-1 text-[var(--color-text-muted)] text-[15px]">&ldquo;{sig.message}&rdquo;</p>}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-      )}
-    </section>
-  );
-}
+import { isValidEmail, submitSignature } from "@/lib/signatures/client";
 
 export default function EnglishPetitionPage() {
   const { getContent, isEditMode } = useAdminEdit();
-  const [signatureCount, setSignatureCount] = useState(0);
-  const [signatures, setSignatures] = useState<Signature[]>([]);
-  const [loadingSignatures, setLoadingSignatures] = useState(true);
+  const {
+    signatureCount,
+    setSignatureCount,
+    signatures,
+    loadingSignatures,
+    refreshSignatures,
+  } = usePetitionSignatureSummary();
   const [submitted, setSubmitted] = useState(false);
   const [submittedName, setSubmittedName] = useState("");
   const [showConfetti, setShowConfetti] = useState(false);
@@ -189,31 +62,13 @@ export default function EnglishPetitionPage() {
 
   const formRef = useRef<HTMLFormElement>(null);
 
-  const fetchSignatures = useCallback(async () => {
-    try {
-      const response = await fetch("/api/signatures");
-      if (!response.ok) throw new Error("Failed to fetch");
-      const data = await response.json();
-      setSignatureCount(data.count);
-      setSignatures(data.signatures || []);
-    } catch (error) {
-      console.error("Failed to fetch signatures:", error);
-    } finally {
-      setLoadingSignatures(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchSignatures();
-  }, [fetchSignatures]);
-
   const validate = useCallback(() => {
     const nextErrors: Record<string, string> = {};
 
     if (!name.trim()) nextErrors.name = errorName;
     if (!email.trim()) {
       nextErrors.email = errorEmailRequired;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    } else if (!isValidEmail(email)) {
       nextErrors.email = errorEmailInvalid;
     }
     if (!agreePrivacy) nextErrors.agreePrivacy = errorPrivacy;
@@ -231,27 +86,20 @@ export default function EnglishPetitionPage() {
     setSubmitError("");
 
     try {
-      const response = await fetch("/api/signatures", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(),
-          email: email.trim(),
-          message: message.trim(),
-          agreePrivacy,
-          agreeAge,
-        }),
+      const result = await submitSignature({
+        name: name.trim(),
+        email: email.trim(),
+        message: message.trim(),
+        agreePrivacy,
+        agreeAge,
       });
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || errorSubmit);
-
-      setSignatureCount(data.count);
+      setSignatureCount(result.count);
       setSubmittedName(name.trim());
       setSubmitted(true);
       setShowConfetti(true);
       events.signatureComplete();
-      fetchSignatures();
+      refreshSignatures();
       setTimeout(() => setShowConfetti(false), 3000);
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : errorSubmit);
@@ -301,7 +149,7 @@ export default function EnglishPetitionPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
-      {showConfetti && <Confetti />}
+      {showConfetti && <SignatureConfetti />}
 
       <SubHero
         imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
@@ -314,7 +162,7 @@ export default function EnglishPetitionPage() {
         variant="emphasis"
         metric={
           <div className="flex flex-col items-center gap-1">
-            <AnimatedCounter target={signatureCount} />
+            <PetitionAnimatedCounter target={signatureCount} locale="en-US" />
             <EditableText
               contentKey="en.petition.hero.metricLabel"
               defaultValue="people have signed so far"
@@ -328,63 +176,23 @@ export default function EnglishPetitionPage() {
       />
 
       <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 space-y-16">
-        <section aria-label="Ways to help">
-          <EditableList
-            contentKey="en.petition.cta.cards"
-            defaultItems={[
-              { title: "Sign", desc: "Add your name to strengthen the residents' public voice." },
-              { title: "Donate", desc: "Help cover transport, legal costs, and campaign materials." },
-              { title: "Share", desc: "Spread the story so the project cannot advance quietly." },
-            ]}
-            page="en/petition"
-            section="cta"
-            fields={[{ key: "title", label: "Title" }, { key: "desc", label: "Description", type: "textarea" }]}
-          >
-            {(items) => {
-              const icons = [
-                { Icon: Send, colorClass: "bg-[var(--color-warm)]/10 text-[var(--color-warm)]" },
-                { Icon: HeartHandshake, colorClass: "bg-[var(--color-forest)]/10 text-[var(--color-forest)]" },
-                { Icon: Megaphone, colorClass: "bg-[var(--color-sky)]/10 text-[var(--color-sky)]" },
-              ];
-              const wrappers = [
-                (children: ReactNode) => (
-                  <button key="cta-0" type="button" onClick={handleScrollToForm} className="text-left bg-white border border-[var(--color-border)] rounded-2xl p-6 transition-colors hover:bg-[var(--color-bg-warm)] cursor-pointer">
-                    {children}
-                  </button>
-                ),
-                (children: ReactNode) => (
-                  <EditableLink key="cta-1" contentKey="en.petition.cta.cards.1.href" defaultHref="/en/donate" page="en/petition" section="cta" className="block rounded-2xl border border-[var(--color-border)] bg-white p-6 transition-colors hover:bg-[var(--color-bg-warm)]">
-                    {children}
-                  </EditableLink>
-                ),
-                (children: ReactNode) => (
-                  <EditableLink key="cta-2" contentKey="en.petition.cta.cards.2.href" defaultHref="/en/share" page="en/petition" section="cta" className="block rounded-2xl border border-[var(--color-border)] bg-white p-6 transition-colors hover:bg-[var(--color-bg-warm)]">
-                    {children}
-                  </EditableLink>
-                ),
-              ];
-
-              return (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {items.map((item, index) => {
-                    const icon = icons[index] || icons[0];
-                    const wrap = wrappers[index] || wrappers[0];
-
-                    return wrap(
-                      <>
-                        <div className={`w-11 h-11 rounded-full ${icon.colorClass} flex items-center justify-center mb-4`}>
-                          <icon.Icon className="w-5 h-5" />
-                        </div>
-                        <h2 className="text-lg font-bold text-[var(--color-text)] mb-2">{item.title}</h2>
-                        <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">{item.desc}</p>
-                      </>,
-                    );
-                  })}
-                </div>
-              );
-            }}
-          </EditableList>
-        </section>
+        <PetitionActionCards
+          onScrollToForm={handleScrollToForm}
+          ariaLabel="Ways to help"
+          contentKey="en.petition.cta.cards"
+          page="en/petition"
+          defaultItems={[
+            { title: "Sign", desc: "Add your name to strengthen the residents' public voice." },
+            { title: "Donate", desc: "Help cover transport, legal costs, and campaign materials." },
+            { title: "Share", desc: "Spread the story so the project cannot advance quietly." },
+          ]}
+          titleLabel="Title"
+          descLabel="Description"
+          donateHrefKey="en.petition.cta.cards.1.href"
+          donateDefaultHref="/en/donate"
+          shareHrefKey="en.petition.cta.cards.2.href"
+          shareDefaultHref="/en/share"
+        />
 
         <EditableText
           contentKey="en.petition.emotional.prompt"
@@ -660,7 +468,19 @@ export default function EnglishPetitionPage() {
           )}
         </AnimatePresence>
 
-        <RecentSignatures signatures={signatures} loading={loadingSignatures} />
+        <RecentSignatures
+          signatures={signatures}
+          loading={loadingSignatures}
+          ariaLabel="Recent signatures"
+          page="en/petition"
+          headingKey="en.petition.recent.heading"
+          headingDefault="Recent signatures"
+          loadingKey="en.petition.recent.loading"
+          loadingDefault="Loading..."
+          emptyKey="en.petition.recent.empty"
+          emptyDefault="No signatures yet. Be the first to add your name."
+          dateLocale="en-US"
+        />
       </div>
 
       {isEditMode && (

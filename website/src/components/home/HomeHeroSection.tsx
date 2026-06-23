@@ -1,0 +1,128 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
+import { EditableImage, EditableList, EditableText } from "@/components/editable";
+import { AnimatedCounter } from "@/components/home/HomeMotion";
+import { MountainSilhouette } from "@/components/home/HomeVisuals";
+
+export default function HomeHeroSection({
+  onScrollToStory,
+}: {
+  onScrollToStory: () => void;
+}) {
+  return (
+    <>
+      <EditableImage
+        contentKey="home.hero.bgImage"
+        defaultSrc="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+        alt="풍천리 마을과 잣나무 숲 드론 항공 사진"
+        page="home"
+        section="hero"
+        fill
+        priority
+        sizes="100vw"
+        className="absolute inset-0 object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 z-[1]" />
+      <MountainSilhouette />
+
+      <div className="relative z-10 w-full max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+        >
+          <EditableText
+            contentKey="home.hero.title"
+            defaultValue="7년, 680번의 외침"
+            as="h1"
+            page="home"
+            section="hero"
+            className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tight leading-[1.12] mb-5 sm:mb-6"
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
+        >
+          <EditableText
+            contentKey="home.hero.subtitle"
+            defaultValue="강원도 홍천 풍천리 주민들은 양수발전소 건설에 맞서 7년 넘게 싸우고 있습니다"
+            as="p"
+            page="home"
+            section="hero"
+            className="text-base sm:text-xl md:text-2xl text-white/84 max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-10 md:mb-12"
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="grid w-full max-w-[22rem] grid-cols-3 items-start gap-2 mx-auto mb-8 sm:max-w-none sm:flex sm:flex-wrap sm:justify-center sm:gap-16 sm:mb-12 md:mb-14"
+        >
+          <EditableList
+            contentKey="home.hero.counters"
+            defaultItems={[
+              { target: "7", suffix: "년+", label: "투쟁 기간" },
+              { target: "680", suffix: "회+", label: "집회 횟수" },
+              { target: "140", suffix: "개+", label: "연대 단체" },
+            ]}
+            page="home"
+            section="hero"
+            fields={[
+              { key: "target", label: "숫자" },
+              { key: "suffix", label: "접미사" },
+              { key: "label", label: "라벨" },
+            ]}
+          >
+            {(items) =>
+              items.map((item) => (
+                <div key={item.label} className="flex min-w-0 flex-col items-center">
+                  <span className="text-3xl sm:text-5xl md:text-6xl font-black leading-none text-[var(--color-earth-light)]">
+                    <AnimatedCounter target={Number(item.target)} suffix={item.suffix} />
+                  </span>
+                  <span className="mt-2 text-[11px] leading-tight text-white/64 sm:text-base">
+                    {item.label}
+                  </span>
+                </div>
+              ))
+            }
+          </EditableList>
+        </motion.div>
+
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2 }}
+          onClick={onScrollToStory}
+          className="inline-flex items-center gap-2 min-h-[44px] px-6 py-3 sm:px-8 sm:py-4 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold text-base sm:text-lg transition-colors cursor-pointer"
+        >
+          <EditableText contentKey="home.story.cta" defaultValue="이야기 보기 ↓" as="span" page="home" section="hero" />
+        </motion.button>
+      </div>
+
+      <div className="absolute bottom-4 right-4 z-10 sm:bottom-16 sm:right-6">
+        <EditableText
+          contentKey="home.hero.photoCredit"
+          defaultValue="사진: 오마이뉴스"
+          as="p"
+          page="home"
+          section="hero"
+          className="text-[10px] text-white/45 sm:text-xs"
+        />
+      </div>
+
+      <motion.div
+        animate={{ y: [0, 12, 0] }}
+        transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+        className="absolute bottom-8 z-10 hidden sm:block"
+      >
+        <ChevronDown className="w-8 h-8 text-white/40" />
+      </motion.div>
+    </>
+  );
+}

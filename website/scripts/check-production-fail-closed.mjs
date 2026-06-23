@@ -18,6 +18,10 @@ const englishPetitionPage = readFileSync(
   join(root, "src", "app", "en", "petition", "page.tsx"),
   "utf8",
 );
+const petitionSignatureSummaryHook = readFileSync(
+  join(root, "src", "components", "petition", "usePetitionSignatureSummary.ts"),
+  "utf8",
+);
 
 assert(
   timelineData.includes("const IS_PRODUCTION"),
@@ -44,8 +48,12 @@ assert(
   "admin timeline must not unconditionally show editable-looking fallback data.",
 );
 assert(
-  englishPetitionPage.includes('console.error("Failed to fetch signatures:"'),
-  "English petition signature fetch must catch service failures instead of creating unhandled rejections.",
+  englishPetitionPage.includes("usePetitionSignatureSummary"),
+  "English petition page must use the shared signature summary hook.",
+);
+assert(
+  petitionSignatureSummaryHook.includes('console.error("Failed to fetch signatures:"'),
+  "Shared petition signature fetch must catch service failures instead of creating unhandled rejections.",
 );
 
 console.log("Production fail-closed checks passed.");

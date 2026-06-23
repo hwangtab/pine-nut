@@ -265,13 +265,13 @@ export default function Navigation() {
         <div
           id="mobile-menu"
           ref={mobileMenuRef}
-          className="fixed inset-0 z-40 bg-white flex flex-col pt-16"
+          className="fixed inset-0 z-40 bg-white flex flex-col overflow-hidden pt-16"
           role="dialog"
           aria-modal="true"
           aria-labelledby="mobile-menu-title"
         >
           <h2 id="mobile-menu-title" className="sr-only">모바일 메뉴</h2>
-          <div className="px-6 pt-4">
+          <div className="px-6 pt-2">
             <button
               type="button"
               onClick={closeMobileMenu}
@@ -280,14 +280,14 @@ export default function Navigation() {
               메뉴 닫기
             </button>
           </div>
-          <nav className="flex flex-col px-6 py-4 gap-2" aria-label="모바일 내비게이션">
+          <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-6 py-3 pb-8" aria-label="모바일 내비게이션">
             {navLinks.map((link) => (
               <span
                 key={link.id}
               >
                 {renderNavLink(
                   link.href,
-                  `px-4 py-4 rounded-xl text-xl font-medium min-h-[44px] flex items-center transition-colors ${
+                  `px-4 py-3 rounded-xl text-lg font-medium min-h-[48px] flex items-center transition-colors ${
                     isActive(link.href)
                       ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
                       : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]"
@@ -303,8 +303,8 @@ export default function Navigation() {
               defaultHref="/petition"
               page="nav"
               section="header"
-              className="px-4 py-4 rounded-full text-xl font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center justify-center transition-colors"
-              containerClassName="mt-4"
+              className="px-4 py-3 rounded-full text-lg font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[48px] flex items-center justify-center transition-colors"
+              containerClassName="mt-3"
               onNavigate={dismissMobileMenu}
             >
               <EditableText contentKey="nav.cta" defaultValue="함께하기" as="span" page="nav" section="header" />
