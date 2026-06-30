@@ -66,23 +66,31 @@ export async function deleteMeetingAttachmentAction(
     const supabase = await getAuthenticatedActionClient();
 
     const { data: row } = await supabase
-      .from("meeting_attachments").select("file_path, file_name").eq("id", attachmentId).single();
+      .from("meeting_attachments").select("file_path, file_name").eq("id", attachmentId).maybeSingle();
 
-    if (row?.file_path) {
-      await supabase.storage.from(BUCKET).remove([row.file_path]);
+    if (row === null) {
+      return { error: "첨부 파일을 찾을 수 없습니다." };
+    }
+
+    if (row.file_path) {
+      const { error: storageError } = await supabase.storage.from(BUCKET).remove([row.file_path]);
+      if (storageError) {
+        console.error("meeting attachment storage removal failed:", storageError);
+      }
     }
 
     const { error } = await supabase.from("meeting_attachments").delete().eq("id", attachmentId);
     if (error) return { error: "첨부 삭제에 실패했습니다. 다시 시도해주세요." };
 
     await logAudit(supabase, "meetings", meetingId, "update", {
-      entityKey: row?.file_name ?? undefined,
-      payload: { attachment_removed: row?.file_name ?? null },
+      entityKey: row.file_name ?? undefined,
+      payload: { attachment_removed: row.file_name ?? null },
     });
 
     revalidatePath(`/admin/meetings/${meetingId}/edit`);
     return null;
-  } catch {
+  } catch (e) {
+    console.error("deleteMeetingAttachmentAction failed:", e);
     return { error: "첨부 삭제에 실패했습니다. 다시 시도해주세요." };
   }
 }
