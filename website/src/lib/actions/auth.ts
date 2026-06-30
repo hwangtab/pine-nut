@@ -42,19 +42,35 @@ export interface AdminContext {
 async function loadAdminContext(): Promise<AdminContext | null> {
   const { supabase, user } = await getAuthenticatedActionContext();
   const email = (user.email ?? "").toLowerCase();
-  const { data } = await supabase
+
+  const cols = "id, email, display_name, role";
+  // 1) user_id 매칭 우선 (파라미터화된 eq — 인젝션 불가)
+  let { data } = await supabase
     .from("admin_members")
-    .select("id, email, display_name, role, active, user_id")
-    .or(`user_id.eq.${user.id},email.eq.${email}`)
+    .select(cols)
+    .eq("user_id", user.id)
     .eq("active", true)
     .order("role", { ascending: false })
     .limit(1)
     .maybeSingle();
+  // 2) 없으면 email 매칭 (미가입 계정 등)
+  if (!data && email) {
+    ({ data } = await supabase
+      .from("admin_members")
+      .select(cols)
+      .eq("email", email)
+      .eq("active", true)
+      .order("role", { ascending: false })
+      .limit(1)
+      .maybeSingle());
+  }
   if (!data) return null;
+  const role = data.role as AdminRole;
+  if (!(role in ROLE_RANK)) return null; // 알 수 없는 role은 무권한 처리
   return {
     supabase,
     user,
-    role: data.role as AdminRole,
+    role,
     member: { id: data.id, email: data.email, displayName: data.display_name ?? null },
   };
 }
