@@ -1,9 +1,11 @@
 "use client";
 
-import UtilityHeader from "@/components/UtilityHeader";
 import { SITE_HOST } from "@/lib/site-config";
-import { events } from "@/lib/analytics";
-import { EditableText, EditableRichText, EditableList, EditableSection, EditableLink } from "@/components/editable";
+import { EditableText, EditableRichText, EditableList } from "@/components/editable";
+import PressContactSection from "@/components/press/PressContactSection";
+import PressDocumentShell from "@/components/press/PressDocumentShell";
+import PressRichCallout from "@/components/press/PressRichCallout";
+import PressSectionHeading from "@/components/press/PressSectionHeading";
 
 const damageItems = [
   { label: "산림 파괴", description: "산림청이 '100대 명품숲'으로 지정한 1,800ha 잣나무 숲이 훼손되며, 약 11만 그루의 잣나무가 벌채될 예정" },
@@ -22,70 +24,24 @@ const demandItems = [
 
 export default function PressReleasePage() {
   return (
-    <>
-      <style jsx global>{`
-        @media print {
-          body {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-          }
-          .no-print {
-            display: none !important;
-          }
-          .print-page {
-            padding: 0 !important;
-            max-width: 100% !important;
-          }
-        }
-      `}</style>
-
-      <div className="no-print">
-        <UtilityHeader
-          title={<EditableText contentKey="press.release.header.title" defaultValue="보도자료" as="span" page="press" section="release" />}
-          subtitle={<EditableText contentKey="press.release.header.subtitle" defaultValue="풍천리 주민, 양수발전소 백지화 촉구" as="span" page="press" section="release" />}
-          eyebrow={<EditableText contentKey="press.release.header.eyebrow" defaultValue="보도자료" as="span" page="press" section="release" />}
-          tone="slate"
-        />
-      </div>
-
-      <div className="print-page max-w-3xl mx-auto px-6 py-12">
-        {/* Print button */}
-        <div className="no-print mb-8 flex flex-wrap items-center gap-3">
-          <button
-            onClick={() => {
-              events.pressKitDownload("release");
-              window.print();
-            }}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-forest)] text-white font-semibold rounded-xl hover:bg-[var(--color-forest-light)] transition-colors cursor-pointer"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            <EditableText contentKey="press.release.pdf" defaultValue="PDF로 저장" as="span" page="press" section="release" />
-          </button>
-          <EditableLink
-            contentKey="press.release.backHref"
-            defaultHref="/press"
-            page="press"
-            section="release"
-            className="inline-flex items-center min-h-[44px] text-sm text-[var(--color-text-muted)] hover:text-[var(--color-forest)] transition-colors"
-          >
-            <EditableText contentKey="press.release.back" defaultValue="자료실로 돌아가기" as="span" page="press" section="release" />
-          </EditableLink>
-        </div>
-
+    <PressDocumentShell
+      section="release"
+      downloadKind="release"
+      header={{
+        title: { contentKey: "press.release.header.title", defaultValue: "보도자료" },
+        subtitle: {
+          contentKey: "press.release.header.subtitle",
+          defaultValue: "풍천리 주민, 양수발전소 백지화 촉구",
+        },
+        eyebrow: { contentKey: "press.release.header.eyebrow", defaultValue: "보도자료" },
+      }}
+      action={{
+        pdfLabel: { contentKey: "press.release.pdf", defaultValue: "PDF로 저장" },
+        backHrefKey: "press.release.backHref",
+        backDefaultHref: "/press",
+        backLabel: { contentKey: "press.release.back", defaultValue: "자료실로 돌아가기" },
+      }}
+    >
         {/* Document header */}
         <header className="mb-10 border-b-2 border-[var(--color-forest)] pb-6">
           <EditableText
@@ -129,37 +85,20 @@ export default function PressReleasePage() {
           </div>
         </header>
 
-        {/* Lead */}
-        <section className="mb-8">
-          <div className="bg-[var(--color-bg-warm)] rounded-xl p-5 border border-[var(--color-border)]">
-            <EditableRichText
-              contentKey="press.release.lead"
-              defaultValue="[홍천, 강원도] 강원도 홍천군 화촌면 풍천리 주민들이 한국수력원자력(한수원)의 양수발전소 건설 계획의 전면 백지화를 촉구하고 나섰다. 2019년 3월 첫 반대 집회 이후 7년이 넘도록 이어진 주민 투쟁은 680회가 넘는 집회를 기록하며, 대한민국 환경·에너지 정책의 근본적 전환을 요구하고 있다."
-              page="press"
-              section="release"
-            >
-              {(value) => (
-                <p className="text-base text-[var(--color-text)] leading-relaxed font-medium">
-                  {value}
-                </p>
-              )}
-            </EditableRichText>
-          </div>
-        </section>
+        <PressRichCallout
+          contentKey="press.release.lead"
+          defaultValue="[홍천, 강원도] 강원도 홍천군 화촌면 풍천리 주민들이 한국수력원자력(한수원)의 양수발전소 건설 계획의 전면 백지화를 촉구하고 나섰다. 2019년 3월 첫 반대 집회 이후 7년이 넘도록 이어진 주민 투쟁은 680회가 넘는 집회를 기록하며, 대한민국 환경·에너지 정책의 근본적 전환을 요구하고 있다."
+          section="release"
+        />
 
         {/* Body */}
         <section className="mb-8 space-y-6">
           <div>
-            <h2 className="text-lg font-bold text-[var(--color-text)] mb-3 flex items-center gap-2">
-              <span className="w-1.5 h-6 bg-[var(--color-forest)] rounded-full inline-block" />
-              <EditableText
-                contentKey="press.release.overviewTitle"
-                defaultValue="사업 개요"
-                as="span"
-                page="press"
-                section="release"
-              />
-            </h2>
+            <PressSectionHeading
+              contentKey="press.release.overviewTitle"
+              defaultValue="사업 개요"
+              section="release"
+            />
             <EditableRichText
               contentKey="press.release.overviewBody"
               defaultValue="홍천 양수발전소는 한수원이 풍천리 일대에 600MW(300MW x 2기) 규모로 추진 중인 대형 국책사업이다. 총 사업비 1조 5,863억원이 투입되며, 사업 면적은 1,530,279㎡(약 153ha)에 달한다. 시공은 대우건설 컨소시엄이 맡고 있다."
@@ -175,16 +114,11 @@ export default function PressReleasePage() {
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-[var(--color-text)] mb-3 flex items-center gap-2">
-              <span className="w-1.5 h-6 bg-[var(--color-forest)] rounded-full inline-block" />
-              <EditableText
-                contentKey="press.release.struggleTitle"
-                defaultValue="7년간의 주민 투쟁"
-                as="span"
-                page="press"
-                section="release"
-              />
-            </h2>
+            <PressSectionHeading
+              contentKey="press.release.struggleTitle"
+              defaultValue="7년간의 주민 투쟁"
+              section="release"
+            />
             <EditableRichText
               contentKey="press.release.struggleBody"
               defaultValue="풍천리 주민들은 2019년 3월부터 현재까지 만장일치로 양수발전소 건설에 반대하고 있다. 7년이 넘는 기간 동안 680회가 넘는 집회를 이어왔으며, 이는 대한민국 환경 운동사에서 유례를 찾기 어려운 기록이다. 주민 대부분이 70대 이상의 고령임에도 불구하고 한결같은 의지로 투쟁을 계속하고 있다."
@@ -200,16 +134,12 @@ export default function PressReleasePage() {
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-[var(--color-text)] mb-3 flex items-center gap-2">
-              <span className="w-1.5 h-6 bg-[var(--color-warm)] rounded-full inline-block" />
-              <EditableText
-                contentKey="press.release.damageTitle"
-                defaultValue="피해 규모"
-                as="span"
-                page="press"
-                section="release"
-              />
-            </h2>
+            <PressSectionHeading
+              contentKey="press.release.damageTitle"
+              defaultValue="피해 규모"
+              section="release"
+              accent="warm"
+            />
             <EditableRichText
               contentKey="press.release.damageIntro"
               defaultValue="이 사업이 강행될 경우 예상되는 피해는 다음과 같다."
@@ -248,16 +178,12 @@ export default function PressReleasePage() {
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-[var(--color-text)] mb-3 flex items-center gap-2">
-              <span className="w-1.5 h-6 bg-[var(--color-sky)] rounded-full inline-block" />
-              <EditableText
-                contentKey="press.release.demandsTitle"
-                defaultValue="주민 요구 사항"
-                as="span"
-                page="press"
-                section="release"
-              />
-            </h2>
+            <PressSectionHeading
+              contentKey="press.release.demandsTitle"
+              defaultValue="주민 요구 사항"
+              section="release"
+              accent="sky"
+            />
             <EditableRichText
               contentKey="press.release.demandsIntro"
               defaultValue="풍천리 주민회는 다음을 요구한다."
@@ -316,40 +242,14 @@ export default function PressReleasePage() {
           </blockquote>
         </section>
 
-        {/* Contact */}
-        <EditableSection contentKey="press.release.contact.visibility" page="press" section="release">
-          <section className="mb-8">
-            <h2 className="text-lg font-bold text-[var(--color-text)] mb-3 flex items-center gap-2">
-              <span className="w-1.5 h-6 bg-[var(--color-forest)] rounded-full inline-block" />
-              <EditableText
-                contentKey="press.release.contactTitle"
-                defaultValue="문의처"
-                as="span"
-                page="press"
-                section="release"
-              />
-            </h2>
-            <div className="bg-[var(--color-bg)] rounded-xl p-5 border border-[var(--color-border)]">
-              <EditableRichText
-                contentKey="press.release.contactDetails"
-                defaultValue={`풍천리양수발전소건설반대위원회\n담당: 이창후 총무 / 010-8918-8933\n캠페인 페이지: campaigns.do/campaigns/1328\n웹사이트: ${SITE_HOST}`}
-                page="press"
-                section="release"
-              >
-                {(value) => (
-                  <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
-                    {value.split("\n").map((line, i) => (
-                      <span key={i}>
-                        {i > 0 && <br />}
-                        {i === 0 ? <strong>{line}</strong> : line}
-                      </span>
-                    ))}
-                  </p>
-                )}
-              </EditableRichText>
-            </div>
-          </section>
-        </EditableSection>
+        <PressContactSection
+          section="release"
+          visibilityContentKey="press.release.contact.visibility"
+          titleContentKey="press.release.contactTitle"
+          titleDefaultValue="문의처"
+          detailsContentKey="press.release.contactDetails"
+          detailsDefaultValue={`풍천리양수발전소건설반대위원회\n담당: 이창후 총무 / 010-8918-8933\n캠페인 페이지: campaigns.do/campaigns/1328\n웹사이트: ${SITE_HOST}`}
+        />
 
         {/* Footer */}
         <footer className="pt-6 border-t border-[var(--color-border)]">
@@ -371,7 +271,6 @@ export default function PressReleasePage() {
             )}
           </EditableRichText>
         </footer>
-      </div>
-    </>
+    </PressDocumentShell>
   );
 }

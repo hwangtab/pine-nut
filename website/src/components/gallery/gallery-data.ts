@@ -143,11 +143,90 @@ export const defaultSolidarityPhotos = [
   },
 ];
 
+export const englishBeautyPhotos = [
+  {
+    id: "1",
+    title: "Aerial view of Pungcheon-ri",
+    url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg",
+    credit: "OhmyNews",
+    description: "A drone photograph of the mountain village of Pungcheon-ri.",
+  },
+  {
+    id: "2",
+    title: "Century-old pine nut forest",
+    url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499236_STD.jpg",
+    credit: "OhmyNews",
+    description: "The pine nut forest that provides both livelihood and habitat.",
+  },
+  {
+    id: "3",
+    title: "Area threatened by lower dam construction",
+    url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535386_STD.jpg",
+    credit: "OhmyNews",
+    description: "The valley that would be submerged if the project goes ahead.",
+  },
+];
+
+export const englishStrugglePhotos = [
+  {
+    id: "4",
+    title: "Residents' protest in 2019",
+    url: "https://www.pressian.com/_resources/10/2025/11/12/2025111116512855285_l.jpg",
+    credit: "Pressian",
+    description: "Residents protesting against the project in the early phase of the struggle.",
+  },
+  {
+    id: "5",
+    title: "Street march in town",
+    url: "https://www.pressian.com/_resources/10/2025/11/12/2025111116584845825_l.jpg",
+    credit: "Pressian",
+    description: "A public march demanding the withdrawal of the plant plan.",
+  },
+  {
+    id: "6",
+    title: "Police confrontation at county hall",
+    url: "https://img1.newsis.com/2024/07/22/NISI20240722_0001608612_web.jpg",
+    credit: "Newsis",
+    description: "Residents confronting police at Hongcheon County Hall in July 2024.",
+  },
+];
+
+export const englishSolidarityPhotos = [
+  {
+    id: "7",
+    title: "Press conference in front of the presidential office",
+    url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535381_STD.jpg",
+    credit: "OhmyNews",
+    description: "Supporters and residents calling for the cancellation of new pumped-storage plants.",
+  },
+  {
+    id: "8",
+    title: "Press conference at the national planning commission",
+    url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535382_STD.jpg",
+    credit: "OhmyNews",
+    description: "Residents speaking publicly after the implementation approval process escalated.",
+  },
+  {
+    id: "9",
+    title: "Prayer gathering and solidarity event",
+    url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg",
+    credit: "OhmyNews",
+    description: "National supporters joining the residents in solidarity.",
+  },
+];
+
 export const photoFields = [
   { key: "title" as const, label: "제목" },
   { key: "url" as const, label: "이미지 URL", type: "url" as const },
   { key: "credit" as const, label: "출처" },
   { key: "description" as const, label: "설명", type: "textarea" as const },
+];
+
+export const englishPhotoFields = [
+  { key: "title" as const, label: "Title" },
+  { key: "url" as const, label: "Image URL", type: "url" as const },
+  { key: "credit" as const, label: "Credit" },
+  { key: "description" as const, label: "Description", type: "textarea" as const },
 ];
 
 export function toGalleryPhoto(

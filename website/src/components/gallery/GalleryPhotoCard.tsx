@@ -8,10 +8,14 @@ export default function GalleryPhotoCard({
   photo,
   index,
   onOpen,
+  creditLabel = "사진:",
+  openAriaLabel = (title) => `${title} 이미지 크게 보기`,
 }: {
   photo: GalleryPhoto;
   index: number;
   onOpen: (photo: GalleryPhoto, trigger: HTMLButtonElement) => void;
+  creditLabel?: string;
+  openAriaLabel?: (title: string) => string;
 }) {
   return (
     <motion.button
@@ -22,7 +26,7 @@ export default function GalleryPhotoCard({
       transition={{ duration: 0.4, delay: index * 0.06 }}
       className="group w-full cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-warm)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]"
       onClick={(event) => onOpen(photo, event.currentTarget)}
-      aria-label={`${photo.title} 이미지 크게 보기`}
+      aria-label={openAriaLabel(photo.title)}
     >
       <div className="relative aspect-[4/3] rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden hover:scale-[1.02] bg-[var(--color-bg)]">
         <Image
@@ -43,7 +47,9 @@ export default function GalleryPhotoCard({
           <p className="text-white text-sm font-medium leading-snug">
             {photo.title}
           </p>
-          <p className="text-white/70 text-xs mt-1">사진: {photo.credit}</p>
+          <p className="text-white/70 text-xs mt-1">
+            {creditLabel} {photo.credit}
+          </p>
         </div>
       </div>
     </motion.button>

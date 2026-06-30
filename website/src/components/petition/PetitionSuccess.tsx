@@ -2,23 +2,53 @@
 
 import { Check, Copy } from "lucide-react";
 import { EditableText } from "@/components/editable";
+import {
+  koreanPetitionSuccessCopy,
+  type PetitionEditableTextCopy,
+  type PetitionSuccessCopy,
+} from "@/components/petition/petition-copy";
+
+function SuccessText({
+  copy,
+  text,
+  as = "span",
+  className = "",
+}: {
+  copy: PetitionSuccessCopy;
+  text: PetitionEditableTextCopy;
+  as?: string;
+  className?: string;
+}) {
+  return (
+    <EditableText
+      contentKey={text.contentKey}
+      defaultValue={text.defaultValue}
+      as={as}
+      page={copy.page}
+      section="success"
+      className={className}
+    />
+  );
+}
 
 export default function PetitionSuccess({
   submittedName,
   signatureCount,
   urlCopied,
-  onShareKakao,
+  onPrimaryShare,
   onShareTwitter,
   onCopyUrl,
   onReset,
+  copy = koreanPetitionSuccessCopy,
 }: {
   submittedName: string;
   signatureCount: number;
   urlCopied: boolean;
-  onShareKakao: () => void;
+  onPrimaryShare: () => void;
   onShareTwitter: () => void;
   onCopyUrl: () => void;
-  onReset: () => void;
+  onReset?: () => void;
+  copy?: PetitionSuccessCopy;
 }) {
   return (
     <section
@@ -29,71 +59,42 @@ export default function PetitionSuccess({
         <Check className="w-8 h-8 text-[var(--color-forest)]" />
       </div>
       <h2 className="text-2xl sm:text-3xl font-black text-[var(--color-text)] mb-2">
-        <EditableText
-          contentKey="petition.success.titlePrefix"
-          defaultValue="감사합니다,"
-          as="span"
-          page="petition"
-          section="success"
-        />{" "}
+        <SuccessText copy={copy} text={copy.titlePrefix} />{" "}
         {submittedName}
-        <EditableText
-          contentKey="petition.success.titleSuffix"
-          defaultValue="님!"
-          as="span"
-          page="petition"
-          section="success"
-        />
+        <SuccessText copy={copy} text={copy.titleSuffix} />
       </h2>
       <p className="text-lg text-[var(--color-text-muted)] mb-8">
+        {copy.countPrefix && (
+          <>
+            <SuccessText copy={copy} text={copy.countPrefix} />{" "}
+          </>
+        )}
         <span className="font-bold text-[var(--color-warm)]">
-          {signatureCount.toLocaleString("ko-KR")}
+          {signatureCount.toLocaleString(copy.countLocale)}
         </span>
-        <EditableText
-          contentKey="petition.success.countSuffix"
-          defaultValue="번째로 함께해주셨습니다."
-          as="span"
-          page="petition"
-          section="success"
-        />
+        <SuccessText copy={copy} text={copy.countSuffix} />
       </p>
 
       <div className="space-y-3">
-        <p className="text-[15px] font-semibold text-[var(--color-text)] mb-4">
-          <EditableText
-            contentKey="petition.success.sharePrompt"
-            defaultValue="더 많은 사람에게 알려주세요"
-            as="span"
-            page="petition"
-            section="success"
-          />
-        </p>
+        {copy.sharePrompt && (
+          <p className="text-[15px] font-semibold text-[var(--color-text)] mb-4">
+            <SuccessText copy={copy} text={copy.sharePrompt} />
+          </p>
+        )}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             type="button"
-            onClick={onShareKakao}
-            className="min-h-[48px] px-6 py-3 rounded-xl bg-[#FEE500] text-[#191919] font-semibold flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
+            onClick={onPrimaryShare}
+            className={copy.primaryShareClassName}
           >
-            <EditableText
-              contentKey="petition.success.shareKakao"
-              defaultValue="카카오톡 공유"
-              as="span"
-              page="petition"
-              section="success"
-            />
+            <SuccessText copy={copy} text={copy.primaryShare} />
           </button>
           <button
             type="button"
             onClick={onShareTwitter}
             className="min-h-[48px] px-6 py-3 rounded-xl bg-[#1DA1F2] text-white font-semibold flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
           >
-            <EditableText
-              contentKey="petition.success.shareTwitter"
-              defaultValue="트위터 공유"
-              as="span"
-              page="petition"
-              section="success"
-            />
+            <SuccessText copy={copy} text={copy.twitterShare} />
           </button>
           <button
             type="button"
@@ -103,43 +104,27 @@ export default function PetitionSuccess({
             {urlCopied ? (
               <>
                 <Check className="w-4 h-4" />
-                <EditableText
-                  contentKey="petition.success.copied"
-                  defaultValue="복사됨!"
-                  as="span"
-                  page="petition"
-                  section="success"
-                />
+                <SuccessText copy={copy} text={copy.copiedLabel} />
               </>
             ) : (
               <>
                 <Copy className="w-4 h-4" />
-                <EditableText
-                  contentKey="petition.success.copy"
-                  defaultValue="URL 복사"
-                  as="span"
-                  page="petition"
-                  section="success"
-                />
+                <SuccessText copy={copy} text={copy.copyLabel} />
               </>
             )}
           </button>
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={onReset}
-        className="mt-8 text-[var(--color-text-muted)] underline text-sm hover:text-[var(--color-text)] transition-colors min-h-[44px]"
-      >
-        <EditableText
-          contentKey="petition.success.reset"
-          defaultValue="다른 사람도 서명하기"
-          as="span"
-          page="petition"
-          section="success"
-        />
-      </button>
+      {copy.resetLabel && onReset && (
+        <button
+          type="button"
+          onClick={onReset}
+          className="mt-8 text-[var(--color-text-muted)] underline text-sm hover:text-[var(--color-text)] transition-colors min-h-[44px]"
+        >
+          <SuccessText copy={copy} text={copy.resetLabel} />
+        </button>
+      )}
     </section>
   );
 }

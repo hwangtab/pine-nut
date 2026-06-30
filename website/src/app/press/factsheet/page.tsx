@@ -1,9 +1,11 @@
 "use client";
 
-import UtilityHeader from "@/components/UtilityHeader";
 import { SITE_HOST } from "@/lib/site-config";
-import { events } from "@/lib/analytics";
-import { EditableText, EditableRichText, EditableList, EditableSection, EditableLink } from "@/components/editable";
+import { EditableText, EditableRichText, EditableList } from "@/components/editable";
+import PressContactSection from "@/components/press/PressContactSection";
+import PressDocumentShell from "@/components/press/PressDocumentShell";
+import PressRichCallout from "@/components/press/PressRichCallout";
+import PressSectionHeading from "@/components/press/PressSectionHeading";
 
 const factSheetData = [
   { label: "위치", value: "강원도 홍천군 화촌면 풍천리" },
@@ -35,70 +37,24 @@ const keyNumbers = [
 
 export default function FactsheetPage() {
   return (
-    <>
-      <style jsx global>{`
-        @media print {
-          body {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-          }
-          .no-print {
-            display: none !important;
-          }
-          .print-page {
-            padding: 0 !important;
-            max-width: 100% !important;
-          }
-        }
-      `}</style>
-
-      <div className="no-print">
-        <UtilityHeader
-          title={<EditableText contentKey="press.factsheet.header.title" defaultValue="핵심 팩트시트" as="span" page="press" section="factsheet" />}
-          subtitle={<EditableText contentKey="press.factsheet.header.subtitle" defaultValue="풍천리 양수발전소 반대 투쟁 핵심 요약" as="span" page="press" section="factsheet" />}
-          eyebrow={<EditableText contentKey="press.factsheet.header.eyebrow" defaultValue="팩트시트" as="span" page="press" section="factsheet" />}
-          tone="slate"
-        />
-      </div>
-
-      <div className="print-page max-w-3xl mx-auto px-6 py-12">
-        {/* Print button */}
-        <div className="no-print mb-8 flex flex-wrap items-center gap-3">
-          <button
-            onClick={() => {
-              events.pressKitDownload("factsheet");
-              window.print();
-            }}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-forest)] text-white font-semibold rounded-xl hover:bg-[var(--color-forest-light)] transition-colors cursor-pointer"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            <EditableText contentKey="press.factsheet.pdf" defaultValue="PDF로 저장" as="span" page="press" section="factsheet" />
-          </button>
-          <EditableLink
-            contentKey="press.factsheet.backHref"
-            defaultHref="/press"
-            page="press"
-            section="factsheet"
-            className="inline-flex items-center min-h-[44px] text-sm text-[var(--color-text-muted)] hover:text-[var(--color-forest)] transition-colors"
-          >
-            <EditableText contentKey="press.factsheet.back" defaultValue="자료실로 돌아가기" as="span" page="press" section="factsheet" />
-          </EditableLink>
-        </div>
-
+    <PressDocumentShell
+      section="factsheet"
+      downloadKind="factsheet"
+      header={{
+        title: { contentKey: "press.factsheet.header.title", defaultValue: "핵심 팩트시트" },
+        subtitle: {
+          contentKey: "press.factsheet.header.subtitle",
+          defaultValue: "풍천리 양수발전소 반대 투쟁 핵심 요약",
+        },
+        eyebrow: { contentKey: "press.factsheet.header.eyebrow", defaultValue: "팩트시트" },
+      }}
+      action={{
+        pdfLabel: { contentKey: "press.factsheet.pdf", defaultValue: "PDF로 저장" },
+        backHrefKey: "press.factsheet.backHref",
+        backDefaultHref: "/press",
+        backLabel: { contentKey: "press.factsheet.back", defaultValue: "자료실로 돌아가기" },
+      }}
+    >
         {/* Document header */}
         <header className="mb-10 border-b-2 border-[var(--color-forest)] pb-6">
           <EditableText
@@ -136,36 +92,21 @@ export default function FactsheetPage() {
           />
         </header>
 
-        {/* Summary */}
-        <section className="mb-8">
-          <div className="bg-[var(--color-bg-warm)] rounded-xl p-5 border border-[var(--color-border)]">
-            <EditableRichText
-              contentKey="press.factsheet.summary"
-              defaultValue="강원도 홍천군 풍천리 주민들은 2019년부터 한수원의 양수발전소 건설 계획에 맞서 7년 넘게 투쟁하고 있습니다. 이 사업은 산림청이 지정한 '100대 명품숲'을 파괴하고, 11만 그루의 잣나무를 벌채하며, 51가구의 삶의 터전을 수몰시킵니다."
-              page="press"
-              section="factsheet"
-            >
-              {(value) => (
-                <p className="text-base text-[var(--color-text)] leading-relaxed">
-                  {value}
-                </p>
-              )}
-            </EditableRichText>
-          </div>
-        </section>
+        <PressRichCallout
+          contentKey="press.factsheet.summary"
+          defaultValue="강원도 홍천군 풍천리 주민들은 2019년부터 한수원의 양수발전소 건설 계획에 맞서 7년 넘게 투쟁하고 있습니다. 이 사업은 산림청이 지정한 '100대 명품숲'을 파괴하고, 11만 그루의 잣나무를 벌채하며, 51가구의 삶의 터전을 수몰시킵니다."
+          section="factsheet"
+          className="text-base text-[var(--color-text)] leading-relaxed"
+        />
 
         {/* Fact table */}
         <section className="mb-8">
-          <h2 className="text-lg font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
-            <span className="w-1.5 h-6 bg-[var(--color-forest)] rounded-full inline-block" />
-            <EditableText
-              contentKey="press.factsheet.tableTitle"
-              defaultValue="사업 개요 및 현황"
-              as="span"
-              page="press"
-              section="factsheet"
-            />
-          </h2>
+          <PressSectionHeading
+            contentKey="press.factsheet.tableTitle"
+            defaultValue="사업 개요 및 현황"
+            section="factsheet"
+            className="mb-4"
+          />
           <EditableList
             contentKey="press.factsheet.items"
             defaultItems={factSheetData}
@@ -202,16 +143,13 @@ export default function FactsheetPage() {
 
         {/* Key numbers highlight */}
         <section className="mb-8">
-          <h2 className="text-lg font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
-            <span className="w-1.5 h-6 bg-[var(--color-warm)] rounded-full inline-block" />
-            <EditableText
-              contentKey="press.factsheet.keyNumbersTitle"
-              defaultValue="핵심 수치"
-              as="span"
-              page="press"
-              section="factsheet"
-            />
-          </h2>
+          <PressSectionHeading
+            contentKey="press.factsheet.keyNumbersTitle"
+            defaultValue="핵심 수치"
+            section="factsheet"
+            accent="warm"
+            className="mb-4"
+          />
           <EditableList
             contentKey="press.factsheet.keyNumbers"
             defaultItems={keyNumbers}
@@ -242,40 +180,16 @@ export default function FactsheetPage() {
           </EditableList>
         </section>
 
-        {/* Contact */}
-        <EditableSection contentKey="press.factsheet.contact.visibility" page="press" section="factsheet">
-          <section className="mb-8">
-            <h2 className="text-lg font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
-              <span className="w-1.5 h-6 bg-[var(--color-sky)] rounded-full inline-block" />
-              <EditableText
-                contentKey="press.factsheet.contactTitle"
-                defaultValue="문의"
-                as="span"
-                page="press"
-                section="factsheet"
-              />
-            </h2>
-            <div className="bg-[var(--color-bg)] rounded-xl p-5 border border-[var(--color-border)]">
-              <EditableRichText
-                contentKey="press.factsheet.contactDetails"
-                defaultValue={`풍천리 주민회\n캠페인 페이지: campaigns.do/campaigns/1328\n웹사이트: ${SITE_HOST}`}
-                page="press"
-                section="factsheet"
-              >
-                {(value) => (
-                  <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
-                    {value.split("\n").map((line, i) => (
-                      <span key={i}>
-                        {i > 0 && <br />}
-                        {i === 0 ? <strong>{line}</strong> : line}
-                      </span>
-                    ))}
-                  </p>
-                )}
-              </EditableRichText>
-            </div>
-          </section>
-        </EditableSection>
+        <PressContactSection
+          section="factsheet"
+          visibilityContentKey="press.factsheet.contact.visibility"
+          titleContentKey="press.factsheet.contactTitle"
+          titleDefaultValue="문의"
+          detailsContentKey="press.factsheet.contactDetails"
+          detailsDefaultValue={`풍천리 주민회\n캠페인 페이지: campaigns.do/campaigns/1328\n웹사이트: ${SITE_HOST}`}
+          accent="sky"
+          titleMarginClassName="mb-4"
+        />
 
         {/* Footer */}
         <footer className="pt-6 border-t border-[var(--color-border)]">
@@ -288,7 +202,6 @@ export default function FactsheetPage() {
             className="text-xs text-[var(--color-text-muted)] text-center"
           />
         </footer>
-      </div>
-    </>
+    </PressDocumentShell>
   );
 }

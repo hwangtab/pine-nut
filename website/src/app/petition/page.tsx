@@ -166,7 +166,7 @@ export default function PetitionPage() {
                 submittedName={submittedName}
                 signatureCount={signatureCount}
                 urlCopied={urlCopied}
-                onShareKakao={handleShareKakao}
+                onPrimaryShare={handleShareKakao}
                 onShareTwitter={handleShareTwitter}
                 onCopyUrl={handleCopyUrl}
                 onReset={() => {

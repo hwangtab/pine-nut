@@ -9,9 +9,13 @@ import type { GalleryPhoto } from "@/components/gallery/gallery-data";
 export default function GalleryLightbox({
   photo,
   onClose,
+  closeLabel = "닫기",
+  creditLabel = "사진:",
 }: {
   photo: GalleryPhoto;
   onClose: () => void;
+  closeLabel?: string;
+  creditLabel?: string;
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -99,7 +103,7 @@ export default function GalleryLightbox({
             type="button"
             onClick={onClose}
             className="absolute top-4 right-4 z-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-[var(--color-overlay-soft)] hover:bg-[var(--color-overlay-soft-hover)] transition-colors"
-            aria-label="닫기"
+            aria-label={closeLabel}
           >
             <X className="w-6 h-6 text-[var(--color-overlay-text)]" />
           </button>
@@ -124,7 +128,7 @@ export default function GalleryLightbox({
               {photo.description}
             </p>
             <p className="text-[var(--color-overlay-text-subtle)] text-xs mt-2 break-words">
-              사진: {photo.credit}
+              {creditLabel} {photo.credit}
             </p>
           </div>
         </motion.div>

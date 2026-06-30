@@ -1,6 +1,7 @@
 "use client";
 
 import type { Dispatch, SetStateAction } from "react";
+import { moveItem } from "./move-item";
 import {
   SECTION_SPACING_OPTIONS,
   SECTION_THEME_OPTIONS,
@@ -11,14 +12,6 @@ import {
 interface ExistingSectionMeta {
   id: string;
   label: string;
-}
-
-function moveItem<T>(items: T[], index: number, direction: -1 | 1): T[] {
-  const next = [...items];
-  const targetIndex = index + direction;
-  if (targetIndex < 0 || targetIndex >= next.length) return items;
-  [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
-  return next;
 }
 
 export default function ExistingSectionsEditor({

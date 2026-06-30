@@ -1,213 +1,47 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
-import { redirect } from "next/navigation";
-import { validateOptionalImageUrl } from "@/lib/validation/url";
-import { validateEditableHref } from "@/lib/validation/editable-link";
+import { getAuthenticatedActionContext } from "./auth";
 import { logAudit } from "./audit";
-
-const KEY_PATTERN = /^[a-zA-Z0-9._-]+$/;
-
-interface ContentChange {
-  content_key: string;
-  content_type: string;
-  value: string;
-  metadata?: Record<string, string>;
-  page: string;
-  section?: string;
-}
-
-const CONTENT_TYPES = new Set([
-  "text",
-  "richtext",
-  "image",
-  "list",
-  "link",
-  "section",
-]);
-
-const PUBLIC_PAGE_PATHS = [
-  "/",
-  "/_not-found",
-  "/story",
-  "/timeline",
-  "/news",
-  "/gallery",
-  "/press",
-  "/press/release",
-  "/press/factsheet",
-  "/share",
-  "/petition",
-  "/donate",
-  "/privacy",
-  "/en",
-] as const;
-
-const PAGE_PATHS: Record<string, readonly string[]> = {
-  home: ["/"],
-  story: ["/story"],
-  timeline: ["/timeline"],
-  news: ["/news"],
-  gallery: ["/gallery"],
-  press: ["/press", "/press/release", "/press/factsheet"],
-  share: ["/share"],
-  petition: ["/petition"],
-  donate: ["/donate"],
-  privacy: ["/privacy"],
-  en: ["/en"],
-  "not-found": ["/_not-found"],
-  nav: PUBLIC_PAGE_PATHS,
-  footer: PUBLIC_PAGE_PATHS,
-};
-
-async function getAuthenticatedClient() {
-  const supabase = await createSupabaseServerClient();
-  if (!supabase) throw new Error("Supabase not configured");
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/admin/login");
-  return { supabase, user };
-}
-
-function normalizeChange(change: ContentChange): { row: ContentChange; error: string | null } {
-  if (!CONTENT_TYPES.has(change.content_type)) {
-    return {
-      row: change,
-      error: `지원하지 않는 content_type: ${change.content_type}`,
-    };
-  }
-
-  if (!change.page.trim()) {
-    return {
-      row: change,
-      error: `page 값이 비어 있습니다: ${change.content_key}`,
-    };
-  }
-
-  if (change.content_type === "image") {
-    const validation = validateOptionalImageUrl(change.value, "이미지 URL");
-    if (validation.error || !validation.value) {
-      return {
-        row: change,
-        error: validation.error ?? `잘못된 이미지 URL: ${change.content_key}`,
-      };
-    }
-
-    return {
-      row: {
-        ...change,
-        value: validation.value,
-      },
-      error: null,
-    };
-  }
-
-  if (change.content_type === "list") {
-    try {
-      const parsed = JSON.parse(change.value);
-      if (!Array.isArray(parsed)) {
-        return {
-          row: change,
-          error: `리스트 값은 배열 JSON이어야 합니다: ${change.content_key}`,
-        };
-      }
-    } catch {
-      return {
-        row: change,
-        error: `리스트 값 JSON이 올바르지 않습니다: ${change.content_key}`,
-      };
-    }
-  }
-
-  if (change.content_type === "link") {
-    const validation = validateEditableHref(change.value, "링크 주소");
-    if (validation.error || !validation.value) {
-      return {
-        row: change,
-        error: validation.error ?? `잘못된 링크 주소: ${change.content_key}`,
-      };
-    }
-
-    return {
-      row: {
-        ...change,
-        value: validation.value,
-      },
-      error: null,
-    };
-  }
-
-  if (
-    change.content_type === "section" &&
-    change.value !== "hidden" &&
-    change.value !== "visible"
-  ) {
-    return {
-      row: change,
-      error: `섹션 값은 hidden 또는 visible 이어야 합니다: ${change.content_key}`,
-    };
-  }
-
-  return { row: change, error: null };
-}
-
-function revalidatePageContentPages(pages: Iterable<string>) {
-  const paths = new Set<string>();
-
-  for (const page of pages) {
-    const mappedPaths = PAGE_PATHS[page];
-    if (mappedPaths) {
-      mappedPaths.forEach((path) => paths.add(path));
-      continue;
-    }
-
-    paths.add(page === "home" ? "/" : `/${page}`);
-  }
-
-  revalidatePath("/", "layout");
-  paths.forEach((path) => revalidatePath(path));
-}
+import { revalidatePageContentPages } from "@/lib/actions/page-content/revalidation";
+import { parsePageContentRestoreRows } from "@/lib/actions/page-content/restore-payload";
+import type {
+  ContentChange,
+  PageContentActionResult,
+} from "@/lib/actions/page-content/types";
+import {
+  normalizeContentChanges,
+  validateContentKey,
+} from "@/lib/actions/page-content/validation";
 
 /**
  * Save multiple content changes in a single batch.
  * Uses upsert on content_key to create or update.
  */
 export async function savePageContentAction(
-  changes: ContentChange[]
-): Promise<{ error: string | null }> {
+  changes: ContentChange[],
+): Promise<PageContentActionResult> {
   if (changes.length === 0) return { error: null };
 
-  for (const c of changes) {
-    if (!KEY_PATTERN.test(c.content_key)) {
-      return { error: `잘못된 content_key: ${c.content_key}` };
-    }
+  const normalized = normalizeContentChanges(changes);
+  if (normalized.error) {
+    return { error: normalized.error };
   }
 
-  const normalizedChanges: ContentChange[] = [];
-  for (const change of changes) {
-    const normalized = normalizeChange(change);
-    if (normalized.error) {
-      return { error: normalized.error };
-    }
-    normalizedChanges.push(normalized.row);
-  }
-
-  const { supabase, user } = await getAuthenticatedClient();
+  const normalizedChanges = normalized.rows;
+  const { supabase, user } = await getAuthenticatedActionContext();
   const keys = normalizedChanges.map((change) => change.content_key);
   const { data: beforeRows } = await supabase
     .from("page_content")
     .select("content_key, content_type, value, metadata, page, section")
     .in("content_key", keys);
 
-  const rows = normalizedChanges.map((c) => ({
-    content_key: c.content_key,
-    content_type: c.content_type,
-    value: c.value,
-    metadata: c.metadata ?? {},
-    page: c.page,
-    section: c.section ?? null,
+  const rows = normalizedChanges.map((change) => ({
+    content_key: change.content_key,
+    content_type: change.content_type,
+    value: change.value,
+    metadata: change.metadata ?? {},
+    page: change.page,
+    section: change.section ?? null,
     updated_at: new Date().toISOString(),
     updated_by: user.email ?? "unknown",
   }));
@@ -228,7 +62,7 @@ export async function savePageContentAction(
     },
   });
 
-  revalidatePageContentPages(new Set(normalizedChanges.map((c) => c.page)));
+  revalidatePageContentPages(new Set(normalizedChanges.map((change) => change.page)));
 
   return { error: null };
 }
@@ -238,13 +72,12 @@ export async function savePageContentAction(
  */
 export async function deletePageContentAction(
   contentKey: string,
-  page?: string
-): Promise<{ error: string | null }> {
-  if (!KEY_PATTERN.test(contentKey)) {
-    return { error: "잘못된 content_key 형식입니다." };
-  }
+  page?: string,
+): Promise<PageContentActionResult> {
+  const keyError = validateContentKey(contentKey, "잘못된 content_key 형식입니다.");
+  if (keyError) return { error: keyError };
 
-  const { supabase } = await getAuthenticatedClient();
+  const { supabase } = await getAuthenticatedActionContext();
   const { data: beforeRow } = await supabase
     .from("page_content")
     .select("content_key, content_type, value, metadata, page, section")
@@ -268,63 +101,28 @@ export async function deletePageContentAction(
     },
   });
 
-  if (page) {
-    revalidatePageContentPages([page]);
-  } else {
-    revalidatePageContentPages(["home"]);
-  }
+  revalidatePageContentPages([page ?? "home"]);
   return { error: null };
 }
 
 export async function restorePageContentVersionAction(
   payload: Record<string, unknown> | null | undefined,
-): Promise<{ error: string | null }> {
-  const normalizedPayload =
-    payload && typeof payload === "object" ? payload : null;
-
-  if (!normalizedPayload) {
-    return { error: "복원할 버전 데이터가 없습니다." };
+): Promise<PageContentActionResult> {
+  const parsed = parsePageContentRestoreRows(payload);
+  if (parsed.error) {
+    return { error: parsed.error };
   }
 
-  const before = Array.isArray(normalizedPayload.before)
-    ? normalizedPayload.before
-    : normalizedPayload.before && typeof normalizedPayload.before === "object"
-      ? [normalizedPayload.before]
-      : [];
-
-  if (before.length === 0) {
-    return { error: "복원 가능한 이전 데이터가 없습니다." };
-  }
-
-  const rows = before
-    .filter((row): row is Record<string, unknown> => !!row && typeof row === "object")
-    .map((row) => ({
-      content_key: typeof row.content_key === "string" ? row.content_key : "",
-      content_type: typeof row.content_type === "string" ? row.content_type : "",
-      value: typeof row.value === "string" ? row.value : "",
-      metadata:
-        row.metadata && typeof row.metadata === "object"
-          ? (row.metadata as Record<string, string>)
-          : {},
-      page: typeof row.page === "string" ? row.page : "",
-      section: typeof row.section === "string" ? row.section : undefined,
-    }))
-    .filter((row) => row.content_key && row.content_type && row.page);
-
-  if (rows.length === 0) {
-    return { error: "복원 가능한 이전 데이터가 없습니다." };
-  }
-
-  return savePageContentAction(rows);
+  return savePageContentAction(parsed.rows);
 }
 
 /**
  * Upload an image and return its public URL.
  */
 export async function uploadEditableImageAction(
-  formData: FormData
+  formData: FormData,
 ): Promise<{ url: string | null; error: string | null }> {
-  const { supabase } = await getAuthenticatedClient();
+  const { supabase } = await getAuthenticatedActionContext();
 
   const file = formData.get("file") as File | null;
   if (!file) return { url: null, error: "파일이 없습니다." };
