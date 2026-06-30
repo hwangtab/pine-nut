@@ -8,6 +8,7 @@ import {
   Newspaper,
   Clock,
   Users,
+  UserCog,
   LogOut,
   Blocks,
   Images,
@@ -34,10 +35,10 @@ interface AdminSidebarProps {
 export default function AdminSidebar({ role }: AdminSidebarProps) {
   const navItems =
     role === "owner"
-      ? [...baseNavItems, { href: "/admin/members", label: "기획단", icon: Users }]
+      ? [...baseNavItems, { href: "/admin/members", label: "기획단", icon: UserCog }]
       : baseNavItems;
   const pathname = usePathname();
-  const isLoginPage = pathname === "/admin/login";
+  const isPublicPage = pathname === "/admin/login" || pathname === "/admin/signup";
 
   const handleLogout = useCallback(async () => {
     const supabase = createSupabaseBrowserClient();
@@ -49,7 +50,7 @@ export default function AdminSidebar({ role }: AdminSidebarProps) {
 
   // onAuthStateChange로 세션 만료 즉시 감지
   useEffect(() => {
-    if (isLoginPage) return;
+    if (isPublicPage) return;
 
     const supabase = createSupabaseBrowserClient();
     if (!supabase) return;
@@ -61,9 +62,9 @@ export default function AdminSidebar({ role }: AdminSidebarProps) {
     });
 
     return () => subscription.unsubscribe();
-  }, [isLoginPage]);
+  }, [isPublicPage]);
 
-  if (isLoginPage) return null;
+  if (isPublicPage) return null;
 
   return (
     <>
