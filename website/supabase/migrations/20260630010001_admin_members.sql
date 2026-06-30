@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS admin_members (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-  email TEXT NOT NULL UNIQUE,
+  email TEXT NOT NULL UNIQUE CHECK (email <> ''),
   display_name TEXT,
   role TEXT NOT NULL DEFAULT 'viewer' CHECK (role IN ('owner', 'editor', 'viewer')),
   active BOOLEAN NOT NULL DEFAULT true,
@@ -25,7 +25,7 @@ RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS
     SELECT 1 FROM admin_members m
     WHERE m.active
       AND (m.user_id = auth.uid()
-           OR lower(m.email) = lower(coalesce(auth.jwt() ->> 'email', '')))
+           OR lower(m.email) = lower(auth.jwt() ->> 'email'))
   );
 $$;
 
@@ -34,7 +34,7 @@ RETURNS TEXT LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT m.role FROM admin_members m
   WHERE m.active
     AND (m.user_id = auth.uid()
-         OR lower(m.email) = lower(coalesce(auth.jwt() ->> 'email', '')))
+         OR lower(m.email) = lower(auth.jwt() ->> 'email'))
   ORDER BY CASE m.role WHEN 'owner' THEN 3 WHEN 'editor' THEN 2 ELSE 1 END DESC
   LIMIT 1;
 $$;
