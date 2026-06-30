@@ -308,8 +308,8 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 - Produces:
   - `type AdminRole = "owner" | "editor" | "viewer"`
   - `getAdminContext(): Promise<{ supabase; user; role: AdminRole; member: { id: number; email: string; displayName: string | null } }>` — 활성 관리자 아니면 `/admin/login` redirect
-  - `requireEditor(): Promise<{ supabase } | { error: string }>`
-  - `requireOwner(): Promise<{ supabase; role: AdminRole } | { error: string }>`
+  - `requireEditor(): Promise<{ supabase; user } | { error: string }>`
+  - `requireOwner(): Promise<{ supabase; user; role: AdminRole } | { error: string }>`
 
 - [ ] **Step 1: auth.ts에 역할 헬퍼 추가** (기존 export는 유지, 아래를 파일 끝에 추가)
 
@@ -353,19 +353,19 @@ export async function getAdminContext(): Promise<AdminContext> {
 }
 
 // 콘텐츠 변경 액션용: editor 이상 아니면 친화적 에러 반환(redirect 아님)
-export async function requireEditor(): Promise<{ supabase: AuthenticatedActionClient } | { error: string }> {
+export async function requireEditor(): Promise<{ supabase: AuthenticatedActionClient; user: User } | { error: string }> {
   const ctx = await loadAdminContext();
   if (!ctx) return { error: "관리자 권한이 없습니다. 다시 로그인해주세요." };
   if (ROLE_RANK[ctx.role] < ROLE_RANK.editor) return { error: "편집 권한이 없습니다. (읽기 전용 계정)" };
-  return { supabase: ctx.supabase };
+  return { supabase: ctx.supabase, user: ctx.user };
 }
 
 // 명부 관리 액션용: owner 아니면 에러
-export async function requireOwner(): Promise<{ supabase: AuthenticatedActionClient; role: AdminRole } | { error: string }> {
+export async function requireOwner(): Promise<{ supabase: AuthenticatedActionClient; user: User; role: AdminRole } | { error: string }> {
   const ctx = await loadAdminContext();
   if (!ctx) return { error: "관리자 권한이 없습니다. 다시 로그인해주세요." };
   if (ctx.role !== "owner") return { error: "이 작업은 owner만 할 수 있습니다." };
-  return { supabase: ctx.supabase, role: ctx.role };
+  return { supabase: ctx.supabase, user: ctx.user, role: ctx.role };
 }
 ```
 
@@ -487,19 +487,33 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 - Consumes: `requireEditor` (Task 3).
 - Produces: 모든 콘텐츠 변경(create/update/delete/restore/upload 등)이 editor 미만이면 `{ error }` 반환.
 
-**적용 패턴 (모든 변경 함수에 동일 적용):** 각 함수에서 현재
+**적용 패턴 — 두 가지 (파일이 쓰는 인증 헬퍼에 맞춰 선택):**
+
+(가) `getAuthenticatedActionClient()`를 쓰는 파일 (news/timeline/meetings/media-library/meeting-attachments). 현재:
 ```ts
 const supabase = await getAuthenticatedActionClient();
 ```
-로 클라이언트를 얻는 첫 줄을, 다음으로 교체한다:
+→ 교체:
 ```ts
 const gate = await requireEditor();
 if ("error" in gate) return { error: gate.error };
 const supabase = gate.supabase;
 ```
-그리고 파일 상단 import에 `requireEditor`를 추가한다(기존 `getAuthenticatedActionClient` import는 다른 사용처가 없으면 제거).
+import에서 `getAuthenticatedActionClient`를 `requireEditor`로 교체(다른 사용처 없으면 제거).
 
-> try/catch로 감싼 delete/restore의 경우, `requireEditor()` 호출은 try 블록 **안** 첫 줄에 두어 `{ error }` 반환이 catch로 새지 않게 한다.
+(나) `getAuthenticatedActionContext()`를 쓰는 파일 (page-content.ts — `user`도 사용). 현재:
+```ts
+const { supabase, user } = await getAuthenticatedActionContext();
+```
+또는 `const { supabase } = await getAuthenticatedActionContext();` → 교체:
+```ts
+const gate = await requireEditor();
+if ("error" in gate) return { error: gate.error };
+const { supabase, user } = gate;   // user 안 쓰면 const { supabase } = gate;
+```
+import에서 `getAuthenticatedActionContext`를 `requireEditor`로 교체(다른 사용처 없으면 제거).
+
+> try/catch로 감싼 delete/restore의 경우, `requireEditor()` 호출은 try 블록 **안** 첫 줄에 두어 `{ error }` 반환이 catch로 새지 않게 한다. `requireEditor`는 `@/lib/actions/auth`(상대경로 `./auth` 또는 `../auth`)에서 import.
 
 - [ ] **Step 1: news/mutations.ts 게이트 적용**
 
@@ -600,7 +614,7 @@ export async function addAdminMemberAction(_prev: ActionState, formData: FormDat
 
   const { data, error } = await supabase
     .from("admin_members")
-    .insert({ email, role, display_name: displayName, active: true, created_by: gate.role })
+    .insert({ email, role, display_name: displayName, active: true, created_by: gate.user.email ?? "owner" })
     .select("id")
     .single();
   if (error) {
