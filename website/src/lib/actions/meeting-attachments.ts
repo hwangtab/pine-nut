@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getAuthenticatedActionClient } from "./auth";
+import { getAuthenticatedActionClient, requireEditor } from "./auth";
 import { logAudit } from "./audit";
 import type { ActionState } from "./state";
 
@@ -21,7 +21,9 @@ export async function uploadMeetingAttachmentAction(
     return { error: "파일 용량은 20MB 이하만 가능합니다." };
   }
 
-  const supabase = await getAuthenticatedActionClient();
+  const gate = await requireEditor();
+  if ("error" in gate) return { error: gate.error };
+  const supabase = gate.supabase;
 
   const safeName = file.name.replace(/[^\w.\-가-힣]/g, "_");
   const path = `${meetingId}/${Date.now()}_${safeName}`;
@@ -63,7 +65,9 @@ export async function deleteMeetingAttachmentAction(
   meetingId: number,
 ): Promise<ActionState> {
   try {
-    const supabase = await getAuthenticatedActionClient();
+    const gate = await requireEditor();
+    if ("error" in gate) return { error: gate.error };
+    const supabase = gate.supabase;
 
     const { data: row } = await supabase
       .from("meeting_attachments").select("file_path, file_name").eq("id", attachmentId).maybeSingle();

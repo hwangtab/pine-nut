@@ -1,6 +1,6 @@
 "use server";
 
-import { getAuthenticatedActionContext } from "./auth";
+import { requireEditor } from "./auth";
 import { logAudit } from "./audit";
 import { revalidatePageContentPages } from "@/lib/actions/page-content/revalidation";
 import { parsePageContentRestoreRows } from "@/lib/actions/page-content/restore-payload";
@@ -28,7 +28,9 @@ export async function savePageContentAction(
   }
 
   const normalizedChanges = normalized.rows;
-  const { supabase, user } = await getAuthenticatedActionContext();
+  const gate = await requireEditor();
+  if ("error" in gate) return { error: gate.error };
+  const { supabase, user } = gate;
   const keys = normalizedChanges.map((change) => change.content_key);
   const { data: beforeRows } = await supabase
     .from("page_content")
@@ -77,7 +79,9 @@ export async function deletePageContentAction(
   const keyError = validateContentKey(contentKey, "잘못된 content_key 형식입니다.");
   if (keyError) return { error: keyError };
 
-  const { supabase } = await getAuthenticatedActionContext();
+  const gate = await requireEditor();
+  if ("error" in gate) return { error: gate.error };
+  const { supabase } = gate;
   const { data: beforeRow } = await supabase
     .from("page_content")
     .select("content_key, content_type, value, metadata, page, section")
@@ -122,7 +126,9 @@ export async function restorePageContentVersionAction(
 export async function uploadEditableImageAction(
   formData: FormData,
 ): Promise<{ url: string | null; error: string | null }> {
-  const { supabase } = await getAuthenticatedActionContext();
+  const gate = await requireEditor();
+  if ("error" in gate) return { url: null, error: gate.error };
+  const { supabase } = gate;
 
   const file = formData.get("file") as File | null;
   if (!file) return { url: null, error: "파일이 없습니다." };

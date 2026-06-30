@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { logAudit } from "@/lib/actions/audit";
-import { getAuthenticatedActionClient } from "@/lib/actions/auth";
+import { requireEditor } from "@/lib/actions/auth";
 import type { AuthenticatedActionClient } from "@/lib/actions/auth";
 import type { ActionState } from "@/lib/actions/state";
 import {
@@ -38,7 +38,9 @@ export async function createTimeline(formData: FormData): Promise<ActionState> {
     return { error: validationError ?? "입력값이 올바르지 않습니다." };
   }
 
-  const supabase = await getAuthenticatedActionClient();
+  const gate = await requireEditor();
+  if ("error" in gate) return { error: gate.error };
+  const supabase = gate.supabase;
   const imageFile = formData.get("image_file") as File | null;
   const uploadResult = await uploadImageFromFormData(
     supabase,
@@ -90,7 +92,9 @@ export async function updateTimeline(
     return { error: validationError ?? "입력값이 올바르지 않습니다." };
   }
 
-  const supabase = await getAuthenticatedActionClient();
+  const gate = await requireEditor();
+  if ("error" in gate) return { error: gate.error };
+  const supabase = gate.supabase;
   const imageFile = formData.get("image_file") as File | null;
   const uploadResult = await uploadImageFromFormData(
     supabase,
@@ -133,7 +137,9 @@ export async function updateTimeline(
 
 export async function deleteTimeline(id: number): Promise<ActionState> {
   try {
-    const supabase = await getAuthenticatedActionClient();
+    const gate = await requireEditor();
+    if ("error" in gate) return { error: gate.error };
+    const supabase = gate.supabase;
     const beforeRow = await getTimelineAuditRow(supabase, id);
     const { data: afterRow, error } = await supabase
       .from("timeline_events")
@@ -159,7 +165,9 @@ export async function deleteTimeline(id: number): Promise<ActionState> {
 
 export async function restoreTimeline(id: number): Promise<ActionState> {
   try {
-    const supabase = await getAuthenticatedActionClient();
+    const gate = await requireEditor();
+    if ("error" in gate) return { error: gate.error };
+    const supabase = gate.supabase;
     const beforeRow = await getTimelineAuditRow(supabase, id);
     const { data: afterRow, error } = await supabase
       .from("timeline_events")
@@ -192,7 +200,9 @@ export async function restoreTimelineVersion(
   }
 
   try {
-    const supabase = await getAuthenticatedActionClient();
+    const gate = await requireEditor();
+    if ("error" in gate) return { error: gate.error };
+    const supabase = gate.supabase;
     const currentRow = await getTimelineAuditRow(supabase, row.id);
     const { error } = await supabase.from("timeline_events").upsert(
       {

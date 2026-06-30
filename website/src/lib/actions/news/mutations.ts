@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { logAudit } from "@/lib/actions/audit";
-import { getAuthenticatedActionClient } from "@/lib/actions/auth";
+import { requireEditor } from "@/lib/actions/auth";
 import {
   getNewsAuditRow,
   NEWS_AUDIT_SELECT,
@@ -22,7 +22,9 @@ export async function createNews(formData: FormData): Promise<ActionState> {
     return { error: validationError ?? "입력값이 올바르지 않습니다." };
   }
 
-  const supabase = await getAuthenticatedActionClient();
+  const gate = await requireEditor();
+  if ("error" in gate) return { error: gate.error };
+  const supabase = gate.supabase;
   const imageFile = formData.get("image_file") as File | null;
   const uploadResult = await uploadImageFromFormData(supabase, imageFile, "news");
   if (uploadResult.error) return { error: uploadResult.error };
@@ -72,7 +74,9 @@ export async function updateNews(
     return { error: validationError ?? "입력값이 올바르지 않습니다." };
   }
 
-  const supabase = await getAuthenticatedActionClient();
+  const gate = await requireEditor();
+  if ("error" in gate) return { error: gate.error };
+  const supabase = gate.supabase;
   const imageFile = formData.get("image_file") as File | null;
   const uploadResult = await uploadImageFromFormData(supabase, imageFile, "news");
   if (uploadResult.error) return { error: uploadResult.error };
@@ -117,7 +121,9 @@ export async function updateNews(
 
 export async function deleteNews(id: number): Promise<ActionState> {
   try {
-    const supabase = await getAuthenticatedActionClient();
+    const gate = await requireEditor();
+    if ("error" in gate) return { error: gate.error };
+    const supabase = gate.supabase;
     const beforeRow = await getNewsAuditRow(supabase, id);
     const { data: afterRow, error } = await supabase
       .from("news")
@@ -143,7 +149,9 @@ export async function deleteNews(id: number): Promise<ActionState> {
 
 export async function restoreNews(id: number): Promise<ActionState> {
   try {
-    const supabase = await getAuthenticatedActionClient();
+    const gate = await requireEditor();
+    if ("error" in gate) return { error: gate.error };
+    const supabase = gate.supabase;
     const beforeRow = await getNewsAuditRow(supabase, id);
     const { data: afterRow, error } = await supabase
       .from("news")
@@ -176,7 +184,9 @@ export async function restoreNewsVersion(
   }
 
   try {
-    const supabase = await getAuthenticatedActionClient();
+    const gate = await requireEditor();
+    if ("error" in gate) return { error: gate.error };
+    const supabase = gate.supabase;
     const currentRow = await getNewsAuditRow(supabase, row.id);
     const { error } = await supabase.from("news").upsert(
       {

@@ -1,9 +1,6 @@
 import { redirect } from "next/navigation";
 import { logAudit } from "@/lib/actions/audit";
-import {
-  getAuthenticatedActionClient,
-  getAuthenticatedActionContext,
-} from "@/lib/actions/auth";
+import { requireEditor } from "@/lib/actions/auth";
 import { replaceMeetingChildren } from "@/lib/actions/meetings/children";
 import {
   friendlyMeetingError,
@@ -33,7 +30,9 @@ export async function createMeeting(formData: FormData): Promise<ActionState> {
     return { error: validationError ?? "입력값이 올바르지 않습니다." };
   }
 
-  const { supabase, user } = await getAuthenticatedActionContext();
+  const gate = await requireEditor();
+  if ("error" in gate) return { error: gate.error };
+  const { supabase, user } = gate;
 
   const { data: meeting, error } = await supabase
     .from("meetings")
@@ -69,7 +68,9 @@ export async function updateMeeting(
     return { error: validationError ?? "입력값이 올바르지 않습니다." };
   }
 
-  const supabase = await getAuthenticatedActionClient();
+  const gate = await requireEditor();
+  if ("error" in gate) return { error: gate.error };
+  const supabase = gate.supabase;
   const { data: meeting, error } = await supabase
     .from("meetings")
     .update({
@@ -98,7 +99,9 @@ export async function updateMeeting(
 
 export async function deleteMeeting(id: number): Promise<ActionState> {
   try {
-    const supabase = await getAuthenticatedActionClient();
+    const gate = await requireEditor();
+    if ("error" in gate) return { error: gate.error };
+    const supabase = gate.supabase;
     const { data, error } = await supabase
       .from("meetings")
       .update({ is_deleted: true })
@@ -119,7 +122,9 @@ export async function deleteMeeting(id: number): Promise<ActionState> {
 
 export async function restoreMeeting(id: number): Promise<ActionState> {
   try {
-    const supabase = await getAuthenticatedActionClient();
+    const gate = await requireEditor();
+    if ("error" in gate) return { error: gate.error };
+    const supabase = gate.supabase;
     const { data, error } = await supabase
       .from("meetings")
       .update({ is_deleted: false })

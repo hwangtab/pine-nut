@@ -2,13 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import { uploadImageFromFormData } from "@/lib/storage/upload";
-import { getAuthenticatedActionClient } from "./auth";
+import { requireEditor } from "./auth";
 import { logAudit } from "./audit";
 
 export async function uploadMediaLibraryAction(
   formData: FormData,
 ): Promise<{ url: string | null; path: string | null; error: string | null }> {
-  const supabase = await getAuthenticatedActionClient();
+  const gate = await requireEditor();
+  if ("error" in gate) return { url: null, path: null, error: gate.error };
+  const supabase = gate.supabase;
   const folder = ((formData.get("folder") as string) || "library").trim() || "library";
   const file = formData.get("file") as File | null;
 
@@ -39,7 +41,9 @@ export async function uploadMediaLibraryAction(
 export async function deleteMediaLibraryItemAction(
   path: string,
 ): Promise<{ error: string | null }> {
-  const supabase = await getAuthenticatedActionClient();
+  const gate = await requireEditor();
+  if ("error" in gate) return { error: gate.error };
+  const supabase = gate.supabase;
   const { error } = await supabase.storage.from("images").remove([path]);
 
   if (error) {
