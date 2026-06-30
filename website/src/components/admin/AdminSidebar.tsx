@@ -12,6 +12,7 @@ import {
   Blocks,
   Images,
   History,
+  ClipboardList,
 } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
@@ -20,6 +21,7 @@ const navItems = [
   { href: "/admin/site-builder", label: "사이트 빌더", icon: Blocks },
   { href: "/admin/media", label: "미디어", icon: Images },
   { href: "/admin/history", label: "히스토리", icon: History },
+  { href: "/admin/meetings", label: "회의록", icon: ClipboardList },
   { href: "/admin/news", label: "소식 관리", icon: Newspaper },
   { href: "/admin/timeline", label: "타임라인 관리", icon: Clock },
   { href: "/admin/signatures", label: "서명 현황", icon: Users },
