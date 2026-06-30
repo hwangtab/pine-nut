@@ -27,3 +27,57 @@ export async function getAuthenticatedActionClient(): Promise<AuthenticatedActio
   const { supabase } = await getAuthenticatedActionContext();
   return supabase;
 }
+
+export type AdminRole = "owner" | "editor" | "viewer";
+
+const ROLE_RANK: Record<AdminRole, number> = { viewer: 1, editor: 2, owner: 3 };
+
+export interface AdminContext {
+  supabase: AuthenticatedActionClient;
+  user: User;
+  role: AdminRole;
+  member: { id: number; email: string; displayName: string | null };
+}
+
+async function loadAdminContext(): Promise<AdminContext | null> {
+  const { supabase, user } = await getAuthenticatedActionContext();
+  const email = (user.email ?? "").toLowerCase();
+  const { data } = await supabase
+    .from("admin_members")
+    .select("id, email, display_name, role, active, user_id")
+    .or(`user_id.eq.${user.id},email.eq.${email}`)
+    .eq("active", true)
+    .order("role", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (!data) return null;
+  return {
+    supabase,
+    user,
+    role: data.role as AdminRole,
+    member: { id: data.id, email: data.email, displayName: data.display_name ?? null },
+  };
+}
+
+// 페이지/레이아웃용: 활성 관리자가 아니면 로그인으로 redirect
+export async function getAdminContext(): Promise<AdminContext> {
+  const ctx = await loadAdminContext();
+  if (!ctx) redirect("/admin/login");
+  return ctx;
+}
+
+// 콘텐츠 변경 액션용: editor 이상 아니면 친화적 에러 반환(redirect 아님)
+export async function requireEditor(): Promise<{ supabase: AuthenticatedActionClient; user: User } | { error: string }> {
+  const ctx = await loadAdminContext();
+  if (!ctx) return { error: "관리자 권한이 없습니다. 다시 로그인해주세요." };
+  if (ROLE_RANK[ctx.role] < ROLE_RANK.editor) return { error: "편집 권한이 없습니다. (읽기 전용 계정)" };
+  return { supabase: ctx.supabase, user: ctx.user };
+}
+
+// 명부 관리 액션용: owner 아니면 에러
+export async function requireOwner(): Promise<{ supabase: AuthenticatedActionClient; user: User; role: AdminRole } | { error: string }> {
+  const ctx = await loadAdminContext();
+  if (!ctx) return { error: "관리자 권한이 없습니다. 다시 로그인해주세요." };
+  if (ctx.role !== "owner") return { error: "이 작업은 owner만 할 수 있습니다." };
+  return { supabase: ctx.supabase, user: ctx.user, role: ctx.role };
+}
