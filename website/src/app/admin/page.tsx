@@ -3,9 +3,11 @@ import AdminDashboardGuide from "@/components/admin/dashboard/AdminDashboardGuid
 import AdminDashboardWarnings from "@/components/admin/dashboard/AdminDashboardWarnings";
 import AdminQuickActions from "@/components/admin/dashboard/AdminQuickActions";
 import AdminSpecialPagesNotice from "@/components/admin/dashboard/AdminSpecialPagesNotice";
+import { getAdminContext } from "@/lib/actions/auth";
 import { getAdminDashboardData } from "@/lib/data/admin-dashboard";
 
 export default async function AdminDashboard() {
+  await getAdminContext(); // 비-명부/비활성 인증자는 로그인으로 리다이렉트 (viewer 이상 통과)
   const { newsStatus, timelineStatus, signatureStatus, warnings } =
     await getAdminDashboardData();
 
