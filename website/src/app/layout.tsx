@@ -5,7 +5,7 @@ import Analytics from "@/components/Analytics";
 import AdminEditShell from "@/components/admin/AdminEditShell";
 import { SITE_URL } from "@/lib/site-config";
 import { getAllPageContent } from "@/lib/data/page-content";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { getMyAdminMember } from "@/lib/data/admin-members";
 
 export const metadata: Metadata = {
   title: "풍천리를 지켜주세요 — 양수발전소 건설 반대",
@@ -33,12 +33,8 @@ export const metadata: Metadata = {
 
 async function checkIsAdmin(): Promise<boolean> {
   try {
-    const supabase = await createSupabaseServerClient();
-    if (!supabase) return false;
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    return !!user;
+    const me = await getMyAdminMember();
+    return me?.role === "owner" || me?.role === "editor";
   } catch {
     return false;
   }

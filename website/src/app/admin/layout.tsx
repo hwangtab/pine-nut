@@ -1,4 +1,5 @@
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import { getMyAdminMember } from "@/lib/data/admin-members";
 
 export const metadata = {
   title: "관리자 — 풍천리를 지켜주세요",
@@ -12,9 +13,10 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const me = await getMyAdminMember();
   return (
     <div className="flex min-h-screen bg-[var(--color-admin-bg)]" style={{ fontSize: "18px" }}>
-      <AdminSidebar />
+      <AdminSidebar role={me?.role ?? null} />
       <div className="flex-1 pb-20 md:pb-0">
         {children}
       </div>

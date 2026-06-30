@@ -6,12 +6,14 @@ export async function proxy(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
   const isAdminLoginPage = pathname === "/admin/login";
+  const isAdminSignupPage = pathname === "/admin/signup";
+  const isAdminPublicPage = isAdminLoginPage || isAdminSignupPage;
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    if (!isAdminLoginPage) {
+    if (!isAdminPublicPage) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
     return response;
@@ -34,11 +36,11 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user && !isAdminLoginPage) {
+  if (!user && !isAdminPublicPage) {
     return NextResponse.redirect(new URL("/admin/login", request.url));
   }
 
-  if (user && isAdminLoginPage) {
+  if (user && isAdminPublicPage) {
     return NextResponse.redirect(new URL("/admin", request.url));
   }
 

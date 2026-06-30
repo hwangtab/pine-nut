@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
-const navItems = [
+const baseNavItems = [
   { href: "/admin", label: "홈", icon: Home },
   { href: "/admin/site-builder", label: "사이트 빌더", icon: Blocks },
   { href: "/admin/media", label: "미디어", icon: Images },
@@ -27,7 +27,15 @@ const navItems = [
   { href: "/admin/signatures", label: "서명 현황", icon: Users },
 ];
 
-export default function AdminSidebar() {
+interface AdminSidebarProps {
+  role: "owner" | "editor" | "viewer" | null;
+}
+
+export default function AdminSidebar({ role }: AdminSidebarProps) {
+  const navItems =
+    role === "owner"
+      ? [...baseNavItems, { href: "/admin/members", label: "기획단", icon: Users }]
+      : baseNavItems;
   const pathname = usePathname();
   const isLoginPage = pathname === "/admin/login";
 
