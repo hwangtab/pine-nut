@@ -47,6 +47,14 @@ const lastDropAnonInsert = lastIndexOfSqlPattern(
   migrationSql,
   /drop policy if exists "allow anonymous inserts" on (?:public\.)?signatures/g,
 );
+const lastAuthenticatedReadPolicy = lastIndexOfSqlPattern(
+  migrationSql,
+  /create policy "authenticated read signatures" on (?:public\.)?signatures/g,
+);
+const lastDropAuthenticatedRead = lastIndexOfSqlPattern(
+  migrationSql,
+  /drop policy if exists "authenticated read signatures" on (?:public\.)?signatures/g,
+);
 
 assert(
   lastDropAnonSelect > lastAnonSelectPolicy,
@@ -67,6 +75,16 @@ assert(
     normalizedSql,
   ),
   "authenticated admins must be able to read signatures.",
+);
+assert(
+  lastDropAuthenticatedRead > lastAuthenticatedReadPolicy,
+  "signatures must drop the broad authenticated read policy after it was created.",
+);
+assert(
+  /create policy "signatures_admin_read" on (?:public\.)?signatures for select to authenticated using \(is_active_admin\(\)\)/.test(
+    normalizedSql,
+  ),
+  "signatures SELECT must be limited to active admins.",
 );
 assert(
   /grant select,\s*insert on (?:table )?(?:public\.)?signatures to service_role/.test(

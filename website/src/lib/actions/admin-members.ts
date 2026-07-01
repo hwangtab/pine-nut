@@ -2,10 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { AdminRole } from "@/lib/admin-roles";
 import { requireOwner } from "./auth";
 import { logAudit } from "./audit";
 import type { ActionState } from "./state";
-import type { AdminRole } from "./auth";
 
 const VALID_ROLES: AdminRole[] = ["owner", "editor", "viewer"];
 

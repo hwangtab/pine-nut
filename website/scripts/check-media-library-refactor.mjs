@@ -58,6 +58,8 @@ for (const banned of [
 }
 
 const hookSource = read("src/components/admin/media/useMediaLibraryManager.ts");
+const mediaActionSource = read("src/lib/actions/media-library.ts");
+const hardeningMigrationSource = read("supabase/migrations/20260701000001_admin_role_security_hardening.sql");
 for (const required of [
   "useTransition",
   "uploadMediaLibraryAction",
@@ -90,5 +92,15 @@ for (const required of [
 ]) {
   assert(cardSource.includes(required), `MediaLibraryCard.tsx must contain ${required}.`);
 }
+
+assert(
+  mediaActionSource.includes('supabase.storage.from("images").remove([path])'),
+  "media library delete action must remove images from storage.",
+);
+assert(
+  hardeningMigrationSource.includes('CREATE POLICY "images_editor_delete"') &&
+    hardeningMigrationSource.includes("bucket_id = 'images' AND admin_can_edit()"),
+  "images storage delete must have an editor+ RLS policy.",
+);
 
 console.log("Media library refactor checks passed.");

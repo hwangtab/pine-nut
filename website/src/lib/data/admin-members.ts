@@ -1,5 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
-import type { AdminRole } from "@/lib/actions/auth";
+import { isAdminRole, ROLE_RANK, type AdminRole } from "@/lib/admin-roles";
 
 export interface AdminMember {
   id: number;
@@ -13,10 +13,11 @@ export interface AdminMember {
 
 interface AdminMemberRow {
   id: number; email: string; display_name: string | null;
-  role: AdminRole; active: boolean; user_id: string | null; created_at: string;
+  role: string; active: boolean; user_id: string | null; created_at: string;
 }
 
-function rowToMember(r: AdminMemberRow): AdminMember {
+function rowToMember(r: AdminMemberRow): AdminMember | null {
+  if (!isAdminRole(r.role)) return null;
   return {
     id: r.id, email: r.email, displayName: r.display_name, role: r.role,
     active: r.active, claimed: r.user_id !== null, createdAt: r.created_at,
@@ -29,13 +30,15 @@ export async function getAdminMembers(): Promise<AdminMember[]> {
   const { data, error } = await supabase
     .from("admin_members")
     .select("id, email, display_name, role, active, user_id, created_at")
-    .order("role", { ascending: false })
     .order("created_at", { ascending: true });
   if (error || !data) {
     console.error("Failed to fetch admin members:", error);
     return [];
   }
-  return (data as AdminMemberRow[]).map(rowToMember);
+  return (data as AdminMemberRow[])
+    .map(rowToMember)
+    .filter((member): member is AdminMember => member !== null)
+    .sort((a, b) => ROLE_RANK[b.role] - ROLE_RANK[a.role] || a.createdAt.localeCompare(b.createdAt));
 }
 
 export async function getMyAdminMember(): Promise<{ role: AdminRole } | null> {
@@ -43,26 +46,7 @@ export async function getMyAdminMember(): Promise<{ role: AdminRole } | null> {
   if (!supabase) return null;
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
-  const email = (user.email ?? "").toLowerCase();
-  // 보안: .or 문자열 보간 대신 파라미터화된 eq 2-쿼리 (PostgREST 필터 인젝션 회피)
-  let { data } = await supabase
-    .from("admin_members")
-    .select("role")
-    .eq("user_id", user.id)
-    .eq("active", true)
-    .order("role", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (!data && email) {
-    ({ data } = await supabase
-      .from("admin_members")
-      .select("role")
-      .eq("email", email)
-      .eq("active", true)
-      .order("role", { ascending: false })
-      .limit(1)
-      .maybeSingle());
-  }
-  if (!data) return null;
-  return { role: data.role as AdminRole };
+  const { data, error } = await supabase.rpc("admin_role");
+  if (error || !isAdminRole(data)) return null;
+  return { role: data };
 }

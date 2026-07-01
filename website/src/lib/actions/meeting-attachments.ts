@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getAuthenticatedActionClient, requireEditor } from "./auth";
+import { requireActiveAdmin, requireEditor } from "./auth";
 import { logAudit } from "./audit";
 import type { ActionState } from "./state";
 
@@ -100,7 +100,9 @@ export async function deleteMeetingAttachmentAction(
 }
 
 export async function getMeetingAttachmentUrl(filePath: string): Promise<string | null> {
-  const supabase = await getAuthenticatedActionClient();
+  const gate = await requireActiveAdmin();
+  if ("error" in gate) return null;
+  const supabase = gate.supabase;
   const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(filePath, 60 * 60);
   if (error || !data) return null;
   return data.signedUrl;

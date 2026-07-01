@@ -2,16 +2,17 @@
 
 import { redirect } from "next/navigation";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
+import { isAdminRole, ROLE_RANK, type AdminRole } from "@/lib/admin-roles";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 
-export interface AuthenticatedActionContext {
+interface AuthenticatedActionContext {
   supabase: SupabaseClient;
   user: User;
 }
 
 export type AuthenticatedActionClient = AuthenticatedActionContext["supabase"];
 
-export async function getAuthenticatedActionContext(): Promise<AuthenticatedActionContext> {
+async function getAuthenticatedActionContext(): Promise<AuthenticatedActionContext> {
   const supabase = await createSupabaseServerClient();
   if (!supabase) throw new Error("Supabase not configured");
 
@@ -23,15 +24,6 @@ export async function getAuthenticatedActionContext(): Promise<AuthenticatedActi
   return { supabase, user };
 }
 
-export async function getAuthenticatedActionClient(): Promise<AuthenticatedActionClient> {
-  const { supabase } = await getAuthenticatedActionContext();
-  return supabase;
-}
-
-export type AdminRole = "owner" | "editor" | "viewer";
-
-const ROLE_RANK: Record<AdminRole, number> = { viewer: 1, editor: 2, owner: 3 };
-
 export interface AdminContext {
   supabase: AuthenticatedActionClient;
   user: User;
@@ -39,34 +31,54 @@ export interface AdminContext {
   member: { id: number; email: string; displayName: string | null };
 }
 
+interface AdminMemberCandidate {
+  id: number;
+  email: string;
+  display_name: string | null;
+  role: string;
+}
+
+type RankedAdminMemberCandidate = AdminMemberCandidate & { role: AdminRole };
+
+function pickHighestAdminMember(rows: AdminMemberCandidate[]): RankedAdminMemberCandidate | null {
+  return rows
+    .filter((row): row is RankedAdminMemberCandidate => isAdminRole(row.role))
+    .sort((a, b) => {
+      return ROLE_RANK[b.role] - ROLE_RANK[a.role] || a.id - b.id;
+    })[0] ?? null;
+}
+
 async function loadAdminContext(): Promise<AdminContext | null> {
   const { supabase, user } = await getAuthenticatedActionContext();
   const email = (user.email ?? "").toLowerCase();
 
   const cols = "id, email, display_name, role";
-  // 1) user_id 매칭 우선 (파라미터화된 eq — 인젝션 불가)
-  let { data } = await supabase
+  const candidates = new Map<number, AdminMemberCandidate>();
+
+  const { data: userRows, error: userRowsError } = await supabase
     .from("admin_members")
     .select(cols)
     .eq("user_id", user.id)
-    .eq("active", true)
-    .order("role", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  // 2) 없으면 email 매칭 (미가입 계정 등)
-  if (!data && email) {
-    ({ data } = await supabase
+    .eq("active", true);
+  if (userRowsError) return null;
+  for (const row of (userRows ?? []) as AdminMemberCandidate[]) {
+    candidates.set(row.id, row);
+  }
+
+  if (email) {
+    const { data: emailRows, error: emailRowsError } = await supabase
       .from("admin_members")
       .select(cols)
       .eq("email", email)
-      .eq("active", true)
-      .order("role", { ascending: false })
-      .limit(1)
-      .maybeSingle());
+      .eq("active", true);
+    if (emailRowsError) return null;
+    for (const row of (emailRows ?? []) as AdminMemberCandidate[]) {
+      candidates.set(row.id, row);
+    }
   }
+  const data = pickHighestAdminMember([...candidates.values()]);
   if (!data) return null;
-  const role = data.role as AdminRole;
-  if (!(role in ROLE_RANK)) return null; // 알 수 없는 role은 무권한 처리
+  const role = data.role;
   return {
     supabase,
     user,
@@ -83,6 +95,14 @@ export async function getAdminContext(): Promise<AdminContext> {
 }
 
 // 콘텐츠 변경 액션용: editor 이상 아니면 친화적 에러 반환(redirect 아님)
+export async function requireActiveAdmin(): Promise<
+  { supabase: AuthenticatedActionClient; user: User; role: AdminRole } | { error: string }
+> {
+  const ctx = await loadAdminContext();
+  if (!ctx) return { error: "관리자 권한이 없습니다. 다시 로그인해주세요." };
+  return { supabase: ctx.supabase, user: ctx.user, role: ctx.role };
+}
+
 export async function requireEditor(): Promise<{ supabase: AuthenticatedActionClient; user: User } | { error: string }> {
   const ctx = await loadAdminContext();
   if (!ctx) return { error: "관리자 권한이 없습니다. 다시 로그인해주세요." };
