@@ -20,7 +20,7 @@ export default async function AdminMeetingsPage() {
         <div className="space-y-3">
           {meetings.map((m) => (
             <div key={m.id} className="bg-[var(--color-admin-surface)] rounded-xl border border-[var(--color-admin-border)] p-5 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="min-w-0 flex-1">
+              <Link href={`/admin/meetings/${m.id}`} className="min-w-0 flex-1 hover:opacity-80 transition-opacity">
                 <div className="flex items-center gap-2 mb-1">
                   <span className={`text-sm font-semibold px-2 py-0.5 rounded ${m.status === "completed" ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10" : "text-[var(--color-sky)] bg-[var(--color-sky)]/10"}`}>
                     {m.status === "completed" ? "완료" : "예정"}
@@ -33,7 +33,7 @@ export default async function AdminMeetingsPage() {
                 <p className="text-base text-[var(--color-admin-muted)]">
                   {[m.meetingDate, m.location, `참석 ${m.attendeeCount}명`].filter(Boolean).join(" · ")}
                 </p>
-              </div>
+              </Link>
               <MeetingListActions id={m.id} isDeleted={m.isDeleted} />
             </div>
           ))}
