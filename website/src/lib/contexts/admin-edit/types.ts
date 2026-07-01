@@ -13,6 +13,8 @@ export interface StagedChange {
 export interface AdminEditContextType {
   /** Whether the current user is an authenticated admin */
   isAdmin: boolean;
+  /** Whether any user (including general/pending members) is logged in */
+  isLoggedIn: boolean;
   /** Whether edit mode is active (admin clicked the edit button) */
   isEditMode: boolean;
   /** Toggle edit mode on/off */
@@ -46,5 +48,6 @@ export interface AdminEditContextType {
 export interface AdminEditProviderProps {
   children: ReactNode;
   isAdmin: boolean;
+  isLoggedIn: boolean;
   initialContent: Record<string, PageContent>;
 }

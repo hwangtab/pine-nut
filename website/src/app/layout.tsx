@@ -6,6 +6,7 @@ import AdminEditShell from "@/components/admin/AdminEditShell";
 import { SITE_URL } from "@/lib/site-config";
 import { getAllPageContent } from "@/lib/data/page-content";
 import { getMyAdminMember } from "@/lib/data/admin-members";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 export const metadata: Metadata = {
   title: "풍천리를 지켜주세요 — 양수발전소 건설 반대",
@@ -40,13 +41,27 @@ async function checkIsAdmin(): Promise<boolean> {
   }
 }
 
+async function checkIsLoggedIn(): Promise<boolean> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    if (!supabase) return false;
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    return !!user;
+  } catch {
+    return false;
+  }
+}
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isAdmin, initialContent] = await Promise.all([
+  const [isAdmin, isLoggedIn, initialContent] = await Promise.all([
     checkIsAdmin(),
+    checkIsLoggedIn(),
     getAllPageContent(),
   ]);
 
@@ -54,7 +69,11 @@ export default async function RootLayout({
     <html lang="ko">
       <body className="antialiased">
         <Analytics />
-        <AdminEditShell isAdmin={isAdmin} initialContent={initialContent}>
+        <AdminEditShell
+          isAdmin={isAdmin}
+          isLoggedIn={isLoggedIn}
+          initialContent={initialContent}
+        >
           <PublicShell>{children}</PublicShell>
         </AdminEditShell>
       </body>

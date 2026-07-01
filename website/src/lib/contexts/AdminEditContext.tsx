@@ -28,6 +28,7 @@ import useEditableSelection from "@/lib/contexts/admin-edit/useEditableSelection
 
 const AdminEditContext = createContext<AdminEditContextType>({
   isAdmin: false,
+  isLoggedIn: false,
   isEditMode: false,
   toggleEditMode: () => {},
   getContent: () => undefined,
@@ -51,6 +52,7 @@ export function useAdminEdit() {
 export function AdminEditProvider({
   children,
   isAdmin,
+  isLoggedIn,
   initialContent,
 }: AdminEditProviderProps) {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -158,6 +160,7 @@ export function AdminEditProvider({
   const value = useMemo<AdminEditContextType>(
     () => ({
       isAdmin,
+      isLoggedIn,
       isEditMode,
       toggleEditMode,
       getContent,
@@ -175,6 +178,7 @@ export function AdminEditProvider({
     }),
     [
       isAdmin,
+      isLoggedIn,
       isEditMode,
       toggleEditMode,
       getContent,
