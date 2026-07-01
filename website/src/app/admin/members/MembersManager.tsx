@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useTransition } from "react";
+import { useState, useActionState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 import type { AdminMember } from "@/lib/data/admin-members";
 import {
@@ -25,6 +25,17 @@ function AddButton() {
 export default function MembersManager({ members }: { members: AdminMember[] }) {
   const [state, formAction] = useActionState(addAdminMemberAction, null);
   const [pending, startTransition] = useTransition();
+  const [copied, setCopied] = useState(false);
+  const signupUrl = typeof window !== "undefined" ? `${window.location.origin}/admin/signup` : "/admin/signup";
+  async function copySignupUrl() {
+    try {
+      await navigator.clipboard.writeText(signupUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* clipboard 불가 시 무시 */
+    }
+  }
 
   function changeRole(id: number, role: string) {
     startTransition(() => { updateAdminRoleAction(id, role); });
@@ -39,6 +50,20 @@ export default function MembersManager({ members }: { members: AdminMember[] }) 
 
   return (
     <div className="space-y-8">
+      <div className="rounded-xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-4">
+        <p className="mb-2 text-sm font-semibold text-[var(--color-admin-text)]">가입 안내</p>
+        <p className="mb-3 text-sm text-[var(--color-admin-muted)]">
+          아래 이메일로 관리자를 추가한 뒤, 본인에게 이 주소에서 가입하라고 안내하세요.
+        </p>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <code className="flex-1 truncate rounded-lg bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-admin-text)]">{signupUrl}</code>
+          <button type="button" onClick={copySignupUrl}
+            className="shrink-0 rounded-lg bg-[var(--color-forest)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--color-forest-light)] transition-colors">
+            {copied ? "복사됨" : "링크 복사"}
+          </button>
+        </div>
+      </div>
+
       <form action={formAction} className="bg-[var(--color-admin-surface)] rounded-xl border border-[var(--color-admin-border)] p-5 space-y-3">
         <h2 className="font-bold text-[var(--color-admin-text)]">관리자 추가</h2>
         {state?.error && <p className="text-sm text-[var(--color-danger)]">{state.error}</p>}

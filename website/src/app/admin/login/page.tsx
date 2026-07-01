@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 const MAX_ATTEMPTS = 5;
@@ -142,6 +143,12 @@ export default function AdminLoginPage() {
                   : "로그인"}
             </button>
           </form>
+          <p className="mt-6 text-center text-sm text-[var(--color-admin-muted)]">
+            초대받으셨나요?{" "}
+            <Link href="/admin/signup" className="font-semibold text-[var(--color-forest)] hover:underline">
+              가입하기
+            </Link>
+          </p>
         </div>
       </div>
     </div>
