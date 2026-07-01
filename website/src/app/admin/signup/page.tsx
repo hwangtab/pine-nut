@@ -21,7 +21,7 @@ export default function AdminSignupPage() {
     <div className="min-h-screen flex items-center justify-center p-6 bg-[var(--color-admin-bg)]">
       <div className="w-full max-w-md bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-8">
         <h1 className="text-2xl font-bold text-[var(--color-admin-text)] mb-2">관리자 가입</h1>
-        <p className="text-sm text-[var(--color-admin-muted)] mb-6">owner가 등록한 이메일로만 가입할 수 있습니다.</p>
+        <p className="text-sm text-[var(--color-admin-muted)] mb-6">가입하면 관리자 승인(역할 부여) 후 이용할 수 있습니다.</p>
         {state?.error && (
           <div className="mb-4 bg-[var(--color-danger-bg)] border border-[var(--color-danger-border)] text-[var(--color-danger)] px-4 py-3 rounded-xl text-base">{state.error}</div>
         )}
