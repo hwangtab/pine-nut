@@ -15,3 +15,15 @@ RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS
            OR lower(m.email) = lower(auth.jwt() ->> 'email'))
   );
 $$;
+
+-- admin_role: pending은 역할 없음(NULL)으로 정규화 — 미래 정책이 admin_role() IS NOT NULL을 관리자로 오인하지 않도록
+CREATE OR REPLACE FUNCTION admin_role()
+RETURNS TEXT LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT m.role FROM admin_members m
+  WHERE m.active
+    AND m.role IN ('owner', 'editor', 'viewer')
+    AND (m.user_id = auth.uid()
+         OR lower(m.email) = lower(auth.jwt() ->> 'email'))
+  ORDER BY CASE m.role WHEN 'owner' THEN 3 WHEN 'editor' THEN 2 ELSE 1 END DESC
+  LIMIT 1;
+$$;
