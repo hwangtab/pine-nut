@@ -76,7 +76,7 @@ for (const expected of [
 const mutationSource = read("src/lib/actions/meetings/mutations.ts");
 for (const expected of [
   "redirect",
-  "getAuthenticatedActionClient",
+  "requireEditor",
   "logAudit",
   "replaceMeetingChildren",
   "revalidateMeetingPaths",

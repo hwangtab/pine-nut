@@ -40,8 +40,22 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/admin/login", request.url));
   }
 
-  if (user && isAdminPublicPage) {
-    return NextResponse.redirect(new URL("/admin", request.url));
+  if (!user) {
+    return response;
+  }
+
+  const { data: isActiveAdmin, error: adminCheckError } =
+    await supabase.rpc("is_active_admin");
+  const canAccessAdmin = adminCheckError ? false : isActiveAdmin === true;
+
+  if (isAdminPublicPage) {
+    return canAccessAdmin
+      ? NextResponse.redirect(new URL("/admin", request.url))
+      : response;
+  }
+
+  if (!canAccessAdmin) {
+    return NextResponse.redirect(new URL("/admin/login", request.url));
   }
 
   return response;

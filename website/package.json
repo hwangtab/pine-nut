@@ -11,6 +11,7 @@
     "admin-edit-context:refactor:check": "node scripts/check-admin-edit-context-refactor.mjs",
     "admin-dashboard:refactor:check": "node scripts/check-admin-dashboard-refactor.mjs",
     "admin-forms:refactor:check": "node scripts/check-admin-forms-refactor.mjs",
+    "admin-auth:check": "node scripts/check-admin-auth-gate.mjs",
     "admin-toolbar-dialogs:refactor:check": "node scripts/check-admin-toolbar-dialogs-refactor.mjs",
     "admin-toolbar:refactor:check": "node scripts/check-admin-toolbar-refactor.mjs",
     "actions-auth:refactor:check": "node scripts/check-actions-auth-refactor.mjs",
