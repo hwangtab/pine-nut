@@ -4,13 +4,14 @@ import { usePathname } from "next/navigation";
 import DesktopNavigation from "@/components/navigation/DesktopNavigation";
 import MobileNavigationButton from "@/components/navigation/MobileNavigationButton";
 import MobileNavigationMenu from "@/components/navigation/MobileNavigationMenu";
+import NavigationAuthLinks from "@/components/navigation/NavigationAuthLinks";
 import NavigationLogo from "@/components/navigation/NavigationLogo";
 import useNavigationChrome from "@/components/navigation/useNavigationChrome";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 import { defaultNavLinks, parseBuilderLinks } from "@/lib/custom-sections";
 
 export default function Navigation() {
-  const { getContent } = useAdminEdit();
+  const { getContent, isAdmin, isLoggedIn } = useAdminEdit();
   const pathname = usePathname();
   const navLinks = parseBuilderLinks(
     getContent("builder.global.navLinks"),
@@ -44,11 +45,18 @@ export default function Navigation() {
           aria-label="주요 내비게이션"
         >
           <NavigationLogo isTransparent={isTransparent} />
-          <DesktopNavigation
-            navLinks={navLinks}
-            isTransparent={isTransparent}
-            isActive={isActive}
-          />
+          <div className="hidden md:flex items-center">
+            <DesktopNavigation
+              navLinks={navLinks}
+              isTransparent={isTransparent}
+              isActive={isActive}
+            />
+            <NavigationAuthLinks
+              isAdmin={isAdmin}
+              isLoggedIn={isLoggedIn}
+              variant="desktop"
+            />
+          </div>
           <MobileNavigationButton
             buttonRef={mobileMenuButtonRef}
             isOpen={mobileMenuOpen}
@@ -66,6 +74,8 @@ export default function Navigation() {
           isActive={isActive}
           onClose={closeMobileMenu}
           onDismiss={dismissMobileMenu}
+          isAdmin={isAdmin}
+          isLoggedIn={isLoggedIn}
         />
       )}
     </>

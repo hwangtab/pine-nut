@@ -2,6 +2,7 @@
 
 import type { RefObject } from "react";
 import { EditableLink, EditableText } from "@/components/editable";
+import NavigationAuthLinks from "@/components/navigation/NavigationAuthLinks";
 import NavigationLink from "@/components/navigation/NavigationLink";
 import type { BuilderLinkItem } from "@/lib/custom-sections";
 
@@ -11,6 +12,8 @@ interface MobileNavigationMenuProps {
   isActive: (href: string) => boolean;
   onClose: () => void;
   onDismiss: () => void;
+  isAdmin?: boolean;
+  isLoggedIn?: boolean;
 }
 
 export default function MobileNavigationMenu({
@@ -19,6 +22,8 @@ export default function MobileNavigationMenu({
   isActive,
   onClose,
   onDismiss,
+  isAdmin = false,
+  isLoggedIn = false,
 }: MobileNavigationMenuProps) {
   return (
     <div
@@ -81,6 +86,11 @@ export default function MobileNavigationMenu({
             section="header"
           />
         </EditableLink>
+        <NavigationAuthLinks
+          isAdmin={isAdmin}
+          isLoggedIn={isLoggedIn}
+          variant="mobile"
+        />
       </nav>
     </div>
   );
