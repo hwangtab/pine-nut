@@ -55,7 +55,8 @@ export async function proxy(request: NextRequest) {
   }
 
   if (!canAccessAdmin) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    // 로그인했지만 관리자(기획단)가 아닌 일반 회원 → 마이페이지로
+    return NextResponse.redirect(new URL("/mypage", request.url));
   }
 
   return response;
