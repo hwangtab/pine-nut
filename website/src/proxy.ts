@@ -14,7 +14,7 @@ export async function proxy(request: NextRequest) {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     if (!isAdminPublicPage) {
-      return NextResponse.redirect(new URL("/admin/login", request.url));
+      return NextResponse.redirect(new URL("/login", request.url));
     }
     return response;
   }
@@ -37,7 +37,7 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user && !isAdminPublicPage) {
-    return NextResponse.redirect(new URL("/admin/login", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   if (!user) {
@@ -55,7 +55,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (!canAccessAdmin) {
-    return NextResponse.redirect(new URL("/admin/login", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return response;
