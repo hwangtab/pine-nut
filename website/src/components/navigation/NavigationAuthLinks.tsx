@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback } from "react";
 import Link from "next/link";
-import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
+import LogoutButton from "@/components/auth/LogoutButton";
 
 interface NavigationAuthLinksProps {
   isActiveAdmin: boolean;
@@ -15,14 +14,6 @@ export default function NavigationAuthLinks({
   isLoggedIn,
   variant = "desktop",
 }: NavigationAuthLinksProps) {
-  const handleLogout = useCallback(async () => {
-    const supabase = createSupabaseBrowserClient();
-    if (supabase) {
-      await supabase.auth.signOut();
-    }
-    window.location.href = "/";
-  }, []);
-
   const isMobile = variant === "mobile";
 
   const linkClassName = isMobile
@@ -61,9 +52,7 @@ export default function NavigationAuthLinks({
           관리자
         </Link>
       )}
-      <button type="button" onClick={handleLogout} className={buttonClassName}>
-        로그아웃
-      </button>
+      <LogoutButton className={buttonClassName} />
     </div>
   );
 }
