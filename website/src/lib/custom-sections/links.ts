@@ -28,6 +28,7 @@ export function defaultNavLinks(): BuilderLinkItem[] {
     { id: "nav-gallery", label: "갤러리", href: "/gallery" },
     { id: "nav-press", label: "자료실", href: "/press" },
     { id: "nav-share", label: "카드뉴스", href: "/share" },
+    { id: "nav-board", label: "게시판", href: "/board" },
   ];
 }
 
@@ -39,6 +40,7 @@ export function defaultFooterLinks(): BuilderLinkItem[] {
     { id: "footer-gallery", label: "갤러리", href: "/gallery" },
     { id: "footer-press", label: "자료실", href: "/press" },
     { id: "footer-share", label: "카드뉴스", href: "/share" },
+    { id: "footer-board", label: "게시판", href: "/board" },
     { id: "footer-petition", label: "서명하기", href: "/petition" },
     { id: "footer-donate", label: "후원하기", href: "/donate" },
   ];
