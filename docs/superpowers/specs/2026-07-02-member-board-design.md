@@ -65,9 +65,12 @@ pine-nut 신규. peace/kosmart의 board_* 스키마는 참조만 하고 pine-nut
 | created_at / updated_at | timestamptz | |
 
 - 인덱스: `board_posts(created_at DESC) WHERE NOT is_deleted`; `board_comments(post_id, created_at)`.
-- 작성자 이름: `admin_members.display_name`을 `author_user_id = admin_members.user_id`로 조인해
-  **항상 최신 닉네임** 표시(스냅샷 안 함). 닉네임 미설정(null)이면 표시는 "회원"(fallback), 단
-  **작성 자체는 닉네임 필수**(4.3).
+- 작성자 이름: **`author_nickname` 컬럼에 작성 시점 닉네임을 스냅샷**(denormalize)한다. 이유:
+  `admin_members`는 RLS상 활성 관리자만 SELECT 가능 → 공개(anon) 게시판이 조인으로 닉네임을 읽을
+  수 없다. 스냅샷이면 공개 읽기가 `board_posts`/`board_comments`만으로 완결된다. 닉네임 변경은
+  **이후 작성 글에만** 반영(과거 글 소급 안 함, v1). 작성 시 `display_name` 필수(4.3)이므로
+  `author_nickname`은 NOT NULL.
+  - `board_posts` / `board_comments`에 `author_nickname text NOT NULL` 추가.
 
 ## 5. 접근 · RLS (이중 방어)
 
