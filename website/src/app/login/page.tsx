@@ -48,6 +48,8 @@ export default function LoginPage() {
     return () => {
       cancelled = true;
     };
+    // 마운트 시 1회만 실행(router는 안정적). 의도적으로 deps 비움.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startCountdown = useCallback((seconds: number) => {
