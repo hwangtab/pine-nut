@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [lockedUntil, setLockedUntil] = useState<number | null>(null);
   const [countdown, setCountdown] = useState(0);
+  const [checking, setChecking] = useState(true);
   const failCount = useRef(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const router = useRouter();
@@ -23,6 +24,29 @@ export default function LoginPage() {
   useEffect(() => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const supabase = createSupabaseBrowserClient();
+      if (!supabase) {
+        if (!cancelled) setChecking(false);
+        return;
+      }
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const path = await getLandingPath();
+        if (!cancelled) router.replace(path);
+        return; // keep checking=true so the form never flashes before navigation
+      }
+      if (!cancelled) setChecking(false);
+    })();
+    return () => {
+      cancelled = true;
     };
   }, []);
 
@@ -83,6 +107,14 @@ export default function LoginPage() {
     const path = await getLandingPath();
     router.push(path);
     router.refresh();
+  }
+
+  if (checking) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-[var(--color-admin-muted)]">
+        불러오는 중…
+      </div>
+    );
   }
 
   return (
