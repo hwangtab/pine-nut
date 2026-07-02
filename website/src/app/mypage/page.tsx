@@ -2,7 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { getMyAdminMember } from "@/lib/data/admin-members";
+import { getMyMemberProfile } from "@/lib/data/member";
 import LogoutButton from "@/components/auth/LogoutButton";
+import NicknameForm from "./NicknameForm";
 
 export default async function MyPage() {
   const supabase = await createSupabaseServerClient();
@@ -17,6 +19,7 @@ export default async function MyPage() {
   }
 
   const me = await getMyAdminMember();
+  const profile = await getMyMemberProfile();
 
   return (
     <div className="mx-auto max-w-2xl p-6 md:p-10">
@@ -33,6 +36,14 @@ export default async function MyPage() {
             ? `기획단 · ${me.role}`
             : "일반 회원 · 게시판 기능이 곧 추가됩니다."}
         </p>
+
+        <div className="mb-8">
+          <h2 className="mb-2 text-lg font-semibold text-[var(--color-admin-text)]">닉네임</h2>
+          <p className="mb-3 text-sm text-[var(--color-admin-muted)]">
+            게시판 글쓰기 전에 닉네임을 설정하세요.
+          </p>
+          <NicknameForm current={profile?.nickname ?? null} />
+        </div>
 
         <div className="flex flex-wrap items-center gap-3">
           {me && (

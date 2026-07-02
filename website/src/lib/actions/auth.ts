@@ -117,3 +117,27 @@ export async function requireOwner(): Promise<{ supabase: AuthenticatedActionCli
   if (ctx.role !== "owner") return { error: "이 작업은 owner만 할 수 있습니다." };
   return { supabase: ctx.supabase, user: ctx.user, role: ctx.role };
 }
+
+// 게시판 작성용: pending 포함 활성 회원이면 통과(로그인 안 됐으면 에러, redirect 아님)
+export async function requireMember(): Promise<
+  { supabase: AuthenticatedActionClient; user: User; memberId: number; nickname: string | null } | { error: string }
+> {
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return { error: "서버 설정 오류입니다." };
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "로그인이 필요합니다." };
+  const email = (user.email ?? "").toLowerCase();
+  const cols = "id, display_name";
+  const seen = new Map<number, { id: number; display_name: string | null }>();
+  const { data: byId } = await supabase.from("admin_members").select(cols).eq("user_id", user.id).eq("active", true);
+  for (const r of (byId ?? []) as { id: number; display_name: string | null }[]) seen.set(r.id, r);
+  if (email) {
+    const { data: byEmail } = await supabase.from("admin_members").select(cols).eq("email", email).eq("active", true);
+    for (const r of (byEmail ?? []) as { id: number; display_name: string | null }[]) seen.set(r.id, r);
+  }
+  const row = [...seen.values()].sort((a, b) => a.id - b.id)[0];
+  if (!row) return { error: "회원만 작성할 수 있습니다." };
+  return { supabase, user, memberId: row.id, nickname: row.display_name ?? null };
+}
