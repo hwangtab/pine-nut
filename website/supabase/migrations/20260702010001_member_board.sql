@@ -81,10 +81,15 @@ CREATE POLICY "admin_members_self_read" ON admin_members
 -- self-UPDATE 정책을 열면 role/active까지 위조 가능하므로, 컬럼을 함수로 제한한다.
 CREATE OR REPLACE FUNCTION set_my_nickname(new_nickname text)
 RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
-DECLARE updated int;
+DECLARE updated int; trimmed text;
 BEGIN
+  trimmed := btrim(coalesce(new_nickname, ''));
+  -- 서버측 길이 가드(TS 우회 직접 호출 방어). 2~20자 아니면 거부.
+  IF length(trimmed) < 2 OR length(trimmed) > 20 THEN
+    RETURN false;
+  END IF;
   UPDATE admin_members
-    SET display_name = new_nickname
+    SET display_name = trimmed
     WHERE active AND (user_id = auth.uid() OR lower(email) = lower(auth.jwt() ->> 'email'));
   GET DIAGNOSTICS updated = ROW_COUNT;
   RETURN updated > 0;
