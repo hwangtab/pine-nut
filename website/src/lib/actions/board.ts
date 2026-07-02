@@ -66,3 +66,41 @@ export async function setPostHidden(id: number, hidden: boolean): Promise<Action
   revalidatePath("/board"); revalidatePath(`/board/${id}`);
   return null;
 }
+
+export async function createBoardComment(postId: number, _prev: ActionState, formData: FormData): Promise<ActionState> {
+  const content = (formData.get("content") as string | null)?.trim() ?? "";
+  if (!content) return { error: "댓글 내용을 입력해주세요." };
+  if (content.length > 2000) return { error: "댓글은 2000자 이하로 입력해주세요." };
+  const gate = await requireMember();
+  if ("error" in gate) return { error: gate.error };
+  if (!gate.nickname) return { error: "닉네임을 먼저 설정해주세요. (마이페이지)" };
+  const { data, error } = await gate.supabase
+    .from("board_comments")
+    .insert({ post_id: postId, author_user_id: gate.user.id, author_nickname: gate.nickname, content })
+    .select("id").single();
+  if (error || !data) return { error: "댓글 작성에 실패했습니다." };
+  await logAudit(gate.supabase, "board_comments", data.id, "create", {});
+  revalidatePath(`/board/${postId}`);
+  return null;
+}
+
+export async function deleteBoardComment(id: number, postId: number): Promise<ActionState> {
+  const gate = await requireMember();
+  if ("error" in gate) return { error: gate.error };
+  const { error } = await gate.supabase
+    .from("board_comments").update({ is_deleted: true }).eq("id", id).eq("author_user_id", gate.user.id).select("id").single();
+  if (error) return { error: "삭제에 실패했습니다. (본인 댓글만)" };
+  await logAudit(gate.supabase, "board_comments", id, "delete", {});
+  revalidatePath(`/board/${postId}`);
+  return null;
+}
+
+export async function setCommentHidden(id: number, postId: number, hidden: boolean): Promise<ActionState> {
+  const gate = await requireEditor();
+  if ("error" in gate) return { error: gate.error };
+  const { error } = await gate.supabase.from("board_comments").update({ is_hidden: hidden }).eq("id", id).select("id").single();
+  if (error) return { error: "처리에 실패했습니다." };
+  await logAudit(gate.supabase, "board_comments", id, "update", { payload: { is_hidden: hidden } });
+  revalidatePath(`/board/${postId}`);
+  return null;
+}
