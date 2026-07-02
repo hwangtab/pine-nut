@@ -71,3 +71,38 @@ CREATE POLICY "board_posts_editor_update" ON board_posts
   FOR UPDATE TO authenticated USING (admin_can_edit()) WITH CHECK (admin_can_edit());
 CREATE POLICY "board_comments_editor_update" ON board_comments
   FOR UPDATE TO authenticated USING (admin_can_edit()) WITH CHECK (admin_can_edit());
+
+-- ==================== admin_members: 본인 행 self-read (pending 포함) ====================
+CREATE POLICY "admin_members_self_read" ON admin_members
+  FOR SELECT TO authenticated
+  USING (user_id = auth.uid() OR lower(email) = lower(auth.jwt() ->> 'email'));
+
+-- ==================== 닉네임 설정: display_name만 갱신하는 SECURITY DEFINER RPC ====================
+-- self-UPDATE 정책을 열면 role/active까지 위조 가능하므로, 컬럼을 함수로 제한한다.
+CREATE OR REPLACE FUNCTION set_my_nickname(new_nickname text)
+RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE updated int;
+BEGIN
+  UPDATE admin_members
+    SET display_name = new_nickname
+    WHERE active AND (user_id = auth.uid() OR lower(email) = lower(auth.jwt() ->> 'email'));
+  GET DIAGNOSTICS updated = ROW_COUNT;
+  RETURN updated > 0;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION set_my_nickname(text) TO authenticated;
+
+-- ==================== 모더레이션 우회 방지: 비-기획단은 is_hidden 변경 불가 ====================
+CREATE OR REPLACE FUNCTION board_guard_is_hidden()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  IF NEW.is_hidden IS DISTINCT FROM OLD.is_hidden AND NOT admin_can_edit() THEN
+    NEW.is_hidden := OLD.is_hidden;  -- 작성자 본인이라도 숨김 상태는 되돌릴 수 없음
+  END IF;
+  RETURN NEW;
+END;
+$$;
+CREATE TRIGGER board_posts_guard_hidden BEFORE UPDATE ON board_posts
+  FOR EACH ROW EXECUTE FUNCTION board_guard_is_hidden();
+CREATE TRIGGER board_comments_guard_hidden BEFORE UPDATE ON board_comments
+  FOR EACH ROW EXECUTE FUNCTION board_guard_is_hidden();
