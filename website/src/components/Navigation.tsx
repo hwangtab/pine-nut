@@ -11,7 +11,7 @@ import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 import { defaultNavLinks, parseBuilderLinks } from "@/lib/custom-sections";
 
 export default function Navigation() {
-  const { getContent, isAdmin, isLoggedIn } = useAdminEdit();
+  const { getContent, isActiveAdmin, isLoggedIn } = useAdminEdit();
   const pathname = usePathname();
   const navLinks = parseBuilderLinks(
     getContent("builder.global.navLinks"),
@@ -52,7 +52,7 @@ export default function Navigation() {
               isActive={isActive}
             />
             <NavigationAuthLinks
-              isAdmin={isAdmin}
+              isActiveAdmin={isActiveAdmin}
               isLoggedIn={isLoggedIn}
               variant="desktop"
             />
@@ -74,7 +74,7 @@ export default function Navigation() {
           isActive={isActive}
           onClose={closeMobileMenu}
           onDismiss={dismissMobileMenu}
-          isAdmin={isAdmin}
+          isActiveAdmin={isActiveAdmin}
           isLoggedIn={isLoggedIn}
         />
       )}

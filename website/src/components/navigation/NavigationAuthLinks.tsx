@@ -5,13 +5,13 @@ import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 interface NavigationAuthLinksProps {
-  isAdmin: boolean;
+  isActiveAdmin: boolean;
   isLoggedIn: boolean;
   variant?: "desktop" | "mobile";
 }
 
 export default function NavigationAuthLinks({
-  isAdmin,
+  isActiveAdmin,
   isLoggedIn,
   variant = "desktop",
 }: NavigationAuthLinksProps) {
@@ -56,7 +56,7 @@ export default function NavigationAuthLinks({
 
   return (
     <div className={containerClassName}>
-      {isAdmin && (
+      {isActiveAdmin && (
         <Link href="/admin" className={linkClassName}>
           관리자
         </Link>

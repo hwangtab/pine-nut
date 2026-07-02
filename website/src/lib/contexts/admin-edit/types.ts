@@ -11,8 +11,10 @@ export interface StagedChange {
 }
 
 export interface AdminEditContextType {
-  /** Whether the current user is an authenticated admin */
+  /** Whether the current user is an authenticated admin (owner/editor) */
   isAdmin: boolean;
+  /** Whether the current user is an active admin member (owner/editor/viewer) */
+  isActiveAdmin: boolean;
   /** Whether any user (including general/pending members) is logged in */
   isLoggedIn: boolean;
   /** Whether edit mode is active (admin clicked the edit button) */
@@ -48,6 +50,7 @@ export interface AdminEditContextType {
 export interface AdminEditProviderProps {
   children: ReactNode;
   isAdmin: boolean;
+  isActiveAdmin: boolean;
   isLoggedIn: boolean;
   initialContent: Record<string, PageContent>;
 }

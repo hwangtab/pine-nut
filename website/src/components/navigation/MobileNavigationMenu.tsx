@@ -12,7 +12,7 @@ interface MobileNavigationMenuProps {
   isActive: (href: string) => boolean;
   onClose: () => void;
   onDismiss: () => void;
-  isAdmin?: boolean;
+  isActiveAdmin?: boolean;
   isLoggedIn?: boolean;
 }
 
@@ -22,7 +22,7 @@ export default function MobileNavigationMenu({
   isActive,
   onClose,
   onDismiss,
-  isAdmin = false,
+  isActiveAdmin = false,
   isLoggedIn = false,
 }: MobileNavigationMenuProps) {
   return (
@@ -87,7 +87,7 @@ export default function MobileNavigationMenu({
           />
         </EditableLink>
         <NavigationAuthLinks
-          isAdmin={isAdmin}
+          isActiveAdmin={isActiveAdmin}
           isLoggedIn={isLoggedIn}
           variant="mobile"
         />

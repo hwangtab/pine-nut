@@ -7,6 +7,7 @@ import type { PageContent } from "@/lib/data/page-content";
 interface AdminEditShellProps {
   children: React.ReactNode;
   isAdmin: boolean;
+  isActiveAdmin: boolean;
   isLoggedIn: boolean;
   initialContent: Record<string, PageContent>;
 }
@@ -18,12 +19,14 @@ interface AdminEditShellProps {
 export default function AdminEditShell({
   children,
   isAdmin,
+  isActiveAdmin,
   isLoggedIn,
   initialContent,
 }: AdminEditShellProps) {
   return (
     <AdminEditProvider
       isAdmin={isAdmin}
+      isActiveAdmin={isActiveAdmin}
       isLoggedIn={isLoggedIn}
       initialContent={initialContent}
     >

@@ -32,12 +32,18 @@ export const metadata: Metadata = {
   },
 };
 
-async function checkIsAdmin(): Promise<boolean> {
+async function checkAdminFlags(): Promise<{
+  isAdmin: boolean;
+  isActiveAdmin: boolean;
+}> {
   try {
     const me = await getMyAdminMember();
-    return me?.role === "owner" || me?.role === "editor";
+    return {
+      isActiveAdmin: me != null,
+      isAdmin: me?.role === "owner" || me?.role === "editor",
+    };
   } catch {
-    return false;
+    return { isAdmin: false, isActiveAdmin: false };
   }
 }
 
@@ -59,11 +65,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isAdmin, isLoggedIn, initialContent] = await Promise.all([
-    checkIsAdmin(),
-    checkIsLoggedIn(),
-    getAllPageContent(),
-  ]);
+  const [{ isAdmin, isActiveAdmin }, isLoggedIn, initialContent] =
+    await Promise.all([
+      checkAdminFlags(),
+      checkIsLoggedIn(),
+      getAllPageContent(),
+    ]);
 
   return (
     <html lang="ko">
@@ -71,6 +78,7 @@ export default async function RootLayout({
         <Analytics />
         <AdminEditShell
           isAdmin={isAdmin}
+          isActiveAdmin={isActiveAdmin}
           isLoggedIn={isLoggedIn}
           initialContent={initialContent}
         >
