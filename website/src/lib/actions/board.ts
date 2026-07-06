@@ -5,9 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireMember, requireEditor } from "./auth";
 import { logAudit } from "./audit";
 import type { ActionState } from "./state";
-
-export const BOARD_CATEGORIES = ["자유", "질문", "제안", "후기"] as const;
-export type BoardCategory = (typeof BOARD_CATEGORIES)[number];
+import { BOARD_CATEGORIES, type BoardCategory } from "@/lib/board-categories";
 
 function parseCategory(formData: FormData): BoardCategory {
   const raw = (formData.get("category") as string | null)?.trim() ?? "";

@@ -1,12 +1,9 @@
 import Link from "next/link";
 import { getBoardPosts } from "@/lib/data/board";
 import { getMyMemberProfile } from "@/lib/data/member";
+import { BOARD_CATEGORIES } from "@/lib/board-categories";
 
 const PER_PAGE = 20;
-
-// "use server" 파일(@/lib/actions/board)은 async 함수만 export 가능하므로
-// BOARD_CATEGORIES를 이 서버 컴포넌트에서 직접 import할 수 없다. 값은 동일하게 유지.
-const BOARD_CATEGORIES = ["자유", "질문", "제안", "후기"] as const;
 
 type SearchParams = Promise<{ page?: string; category?: string; q?: string }>;
 
