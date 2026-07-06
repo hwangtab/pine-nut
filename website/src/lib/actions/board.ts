@@ -6,6 +6,14 @@ import { requireMember, requireEditor } from "./auth";
 import { logAudit } from "./audit";
 import type { ActionState } from "./state";
 
+export const BOARD_CATEGORIES = ["자유", "질문", "제안", "후기"] as const;
+export type BoardCategory = (typeof BOARD_CATEGORIES)[number];
+
+function parseCategory(formData: FormData): BoardCategory {
+  const raw = (formData.get("category") as string | null)?.trim() ?? "";
+  return (BOARD_CATEGORIES as readonly string[]).includes(raw) ? (raw as BoardCategory) : "자유";
+}
+
 function parseTitleContent(formData: FormData): { title: string; content: string } | { error: string } {
   const title = (formData.get("title") as string | null)?.trim() ?? "";
   const content = (formData.get("content") as string | null)?.trim() ?? "";
@@ -22,7 +30,7 @@ export async function createBoardPost(_prev: ActionState, formData: FormData): P
   if (!gate.nickname) return { error: "닉네임을 먼저 설정해주세요. (마이페이지)" };
   const { data, error } = await gate.supabase
     .from("board_posts")
-    .insert({ author_user_id: gate.user.id, author_nickname: gate.nickname, title: parsed.title, content: parsed.content })
+    .insert({ author_user_id: gate.user.id, author_nickname: gate.nickname, title: parsed.title, content: parsed.content, category: parseCategory(formData) })
     .select("id").single();
   if (error || !data) return { error: "글 작성에 실패했습니다." };
   await logAudit(gate.supabase, "board_posts", data.id, "create", { entityKey: parsed.title });
@@ -37,7 +45,7 @@ export async function updateBoardPost(id: number, _prev: ActionState, formData: 
   if ("error" in gate) return { error: gate.error };
   // 본인 글만: RLS(owner_update)로 강제되며, 앱에서도 author 확인
   const { data, error } = await gate.supabase
-    .from("board_posts").update({ title: parsed.title, content: parsed.content })
+    .from("board_posts").update({ title: parsed.title, content: parsed.content, category: parseCategory(formData) })
     .eq("id", id).eq("author_user_id", gate.user.id).select("id").single();
   if (error || !data) return { error: "수정에 실패했습니다. (본인 글만 수정 가능)" };
   await logAudit(gate.supabase, "board_posts", id, "update", { entityKey: parsed.title });
