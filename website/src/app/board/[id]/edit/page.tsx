@@ -41,7 +41,7 @@ export default async function EditBoardPostPage({
       </h1>
       <BoardPostForm
         action={action}
-        initial={{ title: post.title, content: post.content }}
+        initial={{ title: post.title, content: post.content, category: post.category }}
         submitLabel="수정"
       />
     </div>

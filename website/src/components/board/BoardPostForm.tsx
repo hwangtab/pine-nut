@@ -6,7 +6,7 @@ import type { ActionState } from "@/lib/actions/state";
 
 interface BoardPostFormProps {
   action: (prev: ActionState, formData: FormData) => Promise<ActionState>;
-  initial?: { title: string; content: string };
+  initial?: { title: string; content: string; category?: string };
   submitLabel: string;
 }
 
@@ -38,6 +38,26 @@ export default function BoardPostForm({
           {state.error}
         </div>
       )}
+
+      <div>
+        <label
+          htmlFor="category"
+          className="mb-2 block text-base font-medium text-[var(--color-text)]"
+        >
+          카테고리
+        </label>
+        <select
+          id="category"
+          name="category"
+          defaultValue={initial?.category ?? "자유"}
+          className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-admin-surface)] px-4 py-3.5 text-base outline-none focus:border-[var(--color-forest)] focus:ring-2 focus:ring-[var(--color-forest)]/40"
+        >
+          <option value="자유">자유</option>
+          <option value="질문">질문</option>
+          <option value="제안">제안</option>
+          <option value="후기">후기</option>
+        </select>
+      </div>
 
       <div>
         <label
