@@ -3,7 +3,7 @@ import { BOARD_CATEGORIES } from "@/lib/board-categories";
 
 export interface BoardPostListItem {
   id: number; title: string; category: string; authorNickname: string; createdAt: string; commentCount: number;
-  isHidden: boolean; isDeleted: boolean;
+  isHidden: boolean; isDeleted: boolean; likeCount: number;
 }
 export interface BoardComment {
   id: number; authorUserId: string; authorNickname: string; content: string; createdAt: string;
@@ -12,12 +12,14 @@ export interface BoardComment {
 export interface BoardPostDetail {
   id: number; authorUserId: string; authorNickname: string; title: string; content: string; category: string;
   createdAt: string; updatedAt: string; isHidden: boolean; isDeleted: boolean; comments: BoardComment[];
+  likeCount: number;
 }
 
 interface PostRow {
   id: number; author_user_id: string; author_nickname: string; title: string; content: string; category: string;
   created_at: string; updated_at: string; is_hidden: boolean; is_deleted: boolean;
   board_comments?: { count: number }[];
+  board_post_likes?: { count: number }[];
 }
 interface CommentRow {
   id: number; author_user_id: string; author_nickname: string; content: string; created_at: string;
@@ -41,7 +43,7 @@ export async function getBoardPosts(
 
   let query = supabase
     .from("board_posts")
-    .select("id, title, category, author_nickname, created_at, is_hidden, is_deleted, board_comments(count)", { count: "exact" })
+    .select("id, title, category, author_nickname, created_at, is_hidden, is_deleted, board_comments(count), board_post_likes(count)", { count: "exact" })
     .order("created_at", { ascending: false });
 
   const category = opts.category;
@@ -60,6 +62,7 @@ export async function getBoardPosts(
     items: (data as PostRow[]).map((r) => ({
       id: r.id, title: r.title, category: r.category, authorNickname: r.author_nickname, createdAt: r.created_at,
       commentCount: r.board_comments?.[0]?.count ?? 0, isHidden: r.is_hidden, isDeleted: r.is_deleted,
+      likeCount: r.board_post_likes?.[0]?.count ?? 0,
     })),
     total: count ?? 0,
   };
@@ -70,17 +73,28 @@ export async function getBoardPost(id: number): Promise<BoardPostDetail | null> 
   if (!supabase) return null;
   const { data, error } = await supabase
     .from("board_posts")
-    .select("id, author_user_id, author_nickname, title, content, category, created_at, updated_at, is_hidden, is_deleted, board_comments(id, author_user_id, author_nickname, content, created_at, is_hidden, is_deleted)")
+    .select("id, author_user_id, author_nickname, title, content, category, created_at, updated_at, is_hidden, is_deleted, board_comments(id, author_user_id, author_nickname, content, created_at, is_hidden, is_deleted), board_post_likes(count)")
     .eq("id", id)
     .maybeSingle();
   if (error) { console.error("getBoardPost", error); return null; }
   if (!data) return null;
-  const p = data as Omit<PostRow, "board_comments"> & { board_comments: CommentRow[] };
+  const p = data as Omit<PostRow, "board_comments"> & { board_comments: CommentRow[]; board_post_likes?: { count: number }[] };
   return {
     id: p.id, authorUserId: p.author_user_id, authorNickname: p.author_nickname, title: p.title, content: p.content,
     category: p.category, createdAt: p.created_at, updatedAt: p.updated_at, isHidden: p.is_hidden, isDeleted: p.is_deleted,
     comments: (p.board_comments ?? [])
       .sort((a, b) => a.created_at.localeCompare(b.created_at))
       .map((c) => ({ id: c.id, authorUserId: c.author_user_id, authorNickname: c.author_nickname, content: c.content, createdAt: c.created_at, isHidden: c.is_hidden, isDeleted: c.is_deleted })),
+    likeCount: p.board_post_likes?.[0]?.count ?? 0,
   };
+}
+
+export async function hasLikedPost(postId: number): Promise<boolean> {
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return false;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+  const { data } = await supabase
+    .from("board_post_likes").select("id").eq("post_id", postId).eq("user_id", user.id).maybeSingle();
+  return !!data;
 }

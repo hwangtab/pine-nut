@@ -110,3 +110,22 @@ export async function setCommentHidden(id: number, postId: number, hidden: boole
   revalidatePath(`/board/${postId}`);
   return null;
 }
+
+export async function togglePostLike(postId: number): Promise<ActionState> {
+  const gate = await requireMember();
+  if ("error" in gate) return { error: gate.error };
+  const { data: existing } = await gate.supabase
+    .from("board_post_likes").select("id").eq("post_id", postId).eq("user_id", gate.user.id).maybeSingle();
+  if (existing) {
+    const { error } = await gate.supabase.from("board_post_likes").delete().eq("id", existing.id);
+    if (error) return { error: "처리에 실패했습니다." };
+  } else {
+    const { error } = await gate.supabase
+      .from("board_post_likes").insert({ post_id: postId, user_id: gate.user.id });
+    // UNIQUE 위반(동시요청)은 이미 눌린 상태이므로 무시
+    if (error && !error.message.includes("duplicate")) return { error: "처리에 실패했습니다." };
+  }
+  revalidatePath("/board");
+  revalidatePath(`/board/${postId}`);
+  return null;
+}
