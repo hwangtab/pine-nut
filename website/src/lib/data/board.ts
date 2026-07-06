@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { BOARD_CATEGORIES } from "@/lib/board-categories";
 
 export interface BoardPostListItem {
   id: number; title: string; category: string; authorNickname: string; createdAt: string; commentCount: number;
@@ -44,7 +45,7 @@ export async function getBoardPosts(
     .order("created_at", { ascending: false });
 
   const category = opts.category;
-  if (category && (["자유", "질문", "제안", "후기"] as string[]).includes(category)) {
+  if (category && (BOARD_CATEGORIES as readonly string[]).includes(category)) {
     query = query.eq("category", category);
   }
   const q = sanitizeSearch(opts.q ?? "");
