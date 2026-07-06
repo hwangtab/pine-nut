@@ -67,6 +67,15 @@ export default async function BoardPostPage({
         {post.content}
       </p>
 
+      {post.images.length > 0 && (
+        <div className="mt-6 space-y-3">
+          {post.images.map((im) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img key={im.id} src={im.url} alt="" className="w-full rounded-xl" />
+          ))}
+        </div>
+      )}
+
       <div className="mt-6">
         <LikeButton
           postId={id}

@@ -4,6 +4,7 @@ import BoardPostForm from "@/components/board/BoardPostForm";
 import { getBoardPost } from "@/lib/data/board";
 import { updateBoardPost } from "@/lib/actions/board";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
+import BoardImageManager from "./BoardImageManager";
 
 export default async function EditBoardPostPage({
   params,
@@ -43,6 +44,10 @@ export default async function EditBoardPostPage({
         action={action}
         initial={{ title: post.title, content: post.content, category: post.category }}
         submitLabel="수정"
+      />
+      <BoardImageManager
+        postId={id}
+        images={post.images.map((i) => ({ id: i.id, url: i.url }))}
       />
     </div>
   );
