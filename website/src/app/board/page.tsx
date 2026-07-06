@@ -4,21 +4,38 @@ import { getMyMemberProfile } from "@/lib/data/member";
 
 const PER_PAGE = 20;
 
+// "use server" 파일(@/lib/actions/board)은 async 함수만 export 가능하므로
+// BOARD_CATEGORIES를 이 서버 컴포넌트에서 직접 import할 수 없다. 값은 동일하게 유지.
+const BOARD_CATEGORIES = ["자유", "질문", "제안", "후기"] as const;
+
+type SearchParams = Promise<{ page?: string; category?: string; q?: string }>;
+
 export default async function BoardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: SearchParams;
 }) {
-  const { page: pageParam } = await searchParams;
-  const parsedPage = Number.parseInt(pageParam ?? "1", 10);
+  const sp = await searchParams;
+  const parsedPage = Number.parseInt(sp.page ?? "1", 10);
   const page = Number.isNaN(parsedPage) || parsedPage < 1 ? 1 : parsedPage;
+  const category = sp.category ?? "";
+  const q = sp.q ?? "";
 
   const [{ items, total }, profile] = await Promise.all([
-    getBoardPosts(page, PER_PAGE),
+    getBoardPosts(page, { category, q }, PER_PAGE),
     getMyMemberProfile(),
   ]);
 
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+
+  function buildHref(params: { page?: number; category?: string; q?: string }) {
+    const usp = new URLSearchParams();
+    if (params.page && params.page > 1) usp.set("page", String(params.page));
+    if (params.category) usp.set("category", params.category);
+    if (params.q) usp.set("q", params.q);
+    const qs = usp.toString();
+    return qs ? `/board?${qs}` : "/board";
+  }
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
@@ -34,9 +51,52 @@ export default async function BoardPage({
         )}
       </div>
 
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        <Link
+          href={buildHref({ q })}
+          className={
+            category === ""
+              ? "rounded-full bg-[var(--color-forest)] px-4 py-1.5 text-sm font-semibold text-white"
+              : "rounded-full border border-[var(--color-border)] px-4 py-1.5 text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-bg)]"
+          }
+        >
+          전체
+        </Link>
+        {BOARD_CATEGORIES.map((c) => (
+          <Link
+            key={c}
+            href={buildHref({ category: c, q })}
+            className={
+              category === c
+                ? "rounded-full bg-[var(--color-forest)] px-4 py-1.5 text-sm font-semibold text-white"
+                : "rounded-full border border-[var(--color-border)] px-4 py-1.5 text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-bg)]"
+            }
+          >
+            {c}
+          </Link>
+        ))}
+      </div>
+
+      <form method="get" action="/board" className="mb-6 flex gap-2">
+        <input type="hidden" name="category" value={category} />
+        <input
+          type="text"
+          name="q"
+          defaultValue={q}
+          placeholder="검색..."
+          className="flex-1 rounded-xl border border-[var(--color-border)] px-4 py-2 text-sm text-[var(--color-text)] outline-none focus:border-[var(--color-forest)]"
+        />
+        <button
+          type="submit"
+          className="rounded-xl border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-bg)]"
+        >
+          검색
+        </button>
+      </form>
+
       {items.length === 0 ? (
         <p className="py-20 text-center text-[var(--color-text-muted)]">
-          아직 글이 없습니다.
+          {q ? "검색 결과가 없습니다." : "글이 없습니다."}
         </p>
       ) : (
         <div className="divide-y divide-[var(--color-border)] rounded-xl border border-[var(--color-border)]">
@@ -47,6 +107,9 @@ export default async function BoardPage({
               className="block px-5 py-4 transition-colors hover:bg-[var(--color-bg)]"
             >
               <div className="flex items-center gap-2">
+                <span className="rounded-full bg-[var(--color-bg)] px-2 py-0.5 text-xs font-medium text-[var(--color-forest)]">
+                  {item.category}
+                </span>
                 <h2 className="font-semibold text-[var(--color-text)]">
                   {item.title}
                 </h2>
@@ -70,7 +133,7 @@ export default async function BoardPage({
         <div className="mt-8 flex items-center justify-center gap-4">
           {page > 1 ? (
             <Link
-              href={`/board?page=${page - 1}`}
+              href={buildHref({ page: page - 1, category, q })}
               className="rounded-xl border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-bg)]"
             >
               이전
@@ -85,7 +148,7 @@ export default async function BoardPage({
           </span>
           {page < totalPages ? (
             <Link
-              href={`/board?page=${page + 1}`}
+              href={buildHref({ page: page + 1, category, q })}
               className="rounded-xl border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-bg)]"
             >
               다음
