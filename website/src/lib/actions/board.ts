@@ -148,9 +148,11 @@ export async function deleteBoardImage(imageId: number, postId: number): Promise
   if ("error" in gate) return { error: gate.error };
   const { data: row } = await gate.supabase.from("board_post_images").select("storage_path").eq("id", imageId).maybeSingle();
   if (!row) return { error: "이미지를 찾을 수 없습니다." };
-  // 행 삭제(RLS: 작성자/기획단). 성공 시 스토리지도 정리(owner/editor 정책).
-  const { error: delErr } = await gate.supabase.from("board_post_images").delete().eq("id", imageId);
+  // 행 삭제(RLS: 작성자/기획단). 0행이면 권한 없음 → 거짓 성공 방지.
+  const { data: deleted, error: delErr } = await gate.supabase
+    .from("board_post_images").delete().eq("id", imageId).select("id").maybeSingle();
   if (delErr) return { error: "삭제에 실패했습니다." };
+  if (!deleted) return { error: "본인 이미지만 삭제할 수 있습니다." };
   const { error: stErr } = await gate.supabase.storage.from(BOARD_IMAGE_BUCKET).remove([row.storage_path]);
   if (stErr) console.error("board image storage remove:", stErr);
   revalidatePath(`/board/${postId}`);
