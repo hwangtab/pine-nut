@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Heart } from "lucide-react";
 import { getBoardPosts } from "@/lib/data/board";
 import { getMyMemberProfile } from "@/lib/data/member";
 import { BOARD_CATEGORIES } from "@/lib/board-categories";
@@ -116,10 +117,16 @@ export default async function BoardPage({
                   </span>
                 )}
               </div>
-              <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-                {item.authorNickname} ·{" "}
-                {new Date(item.createdAt).toLocaleDateString("ko-KR")} · 댓글{" "}
-                {item.commentCount}
+              <p className="mt-1 flex items-center gap-1 text-sm text-[var(--color-text-muted)]">
+                <span>
+                  {item.authorNickname} ·{" "}
+                  {new Date(item.createdAt).toLocaleDateString("ko-KR")} · 댓글{" "}
+                  {item.commentCount} ·
+                </span>
+                <span className="inline-flex items-center gap-0.5">
+                  <Heart size={13} />
+                  {item.likeCount}
+                </span>
               </p>
             </Link>
           ))}

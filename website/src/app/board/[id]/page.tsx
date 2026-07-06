@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getBoardPost } from "@/lib/data/board";
+import { getBoardPost, hasLikedPost } from "@/lib/data/board";
 import { getMyMemberProfile } from "@/lib/data/member";
 import { getMyAdminMember } from "@/lib/data/admin-members";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import BoardPostActions from "./BoardPostActions";
 import CommentSection from "./CommentSection";
+import LikeButton from "./LikeButton";
 
 export default async function BoardPostPage({
   params,
@@ -25,9 +26,10 @@ export default async function BoardPostPage({
   } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
   const meId = user?.id ?? null;
 
-  const [profile, admin] = await Promise.all([
+  const [profile, admin, liked] = await Promise.all([
     getMyMemberProfile(),
     getMyAdminMember(),
+    hasLikedPost(id),
   ]);
   const canWrite = !!profile;
   const hasNickname = !!profile?.nickname;
@@ -64,6 +66,15 @@ export default async function BoardPostPage({
       <p className="mt-6 whitespace-pre-line text-base leading-relaxed text-[var(--color-text)]">
         {post.content}
       </p>
+
+      <div className="mt-6">
+        <LikeButton
+          postId={id}
+          count={post.likeCount}
+          liked={liked}
+          canLike={canWrite}
+        />
+      </div>
 
       <div className="mt-6">
         <BoardPostActions
