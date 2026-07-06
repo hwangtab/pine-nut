@@ -111,6 +111,53 @@ export async function setCommentHidden(id: number, postId: number, hidden: boole
   return null;
 }
 
+const BOARD_IMAGE_BUCKET = "board-images";
+const BOARD_IMAGE_MAX = 5 * 1024 * 1024;
+const BOARD_IMAGE_TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
+
+export async function uploadBoardImage(postId: number, _prev: ActionState, formData: FormData): Promise<ActionState> {
+  const file = formData.get("image_file");
+  if (!(file instanceof File) || file.size === 0) return { error: "이미지를 선택해주세요." };
+  const ext = BOARD_IMAGE_TYPES[file.type];
+  if (!ext) return { error: "JPG, PNG, WebP 형식만 올릴 수 있습니다." };
+  if (file.size > BOARD_IMAGE_MAX) return { error: "이미지는 5MB 이하만 가능합니다." };
+  const gate = await requireMember();
+  if ("error" in gate) return { error: gate.error };
+
+  const path = `${postId}/${crypto.randomUUID()}.${ext}`;
+  const { error: upErr } = await gate.supabase.storage.from(BOARD_IMAGE_BUCKET)
+    .upload(path, file, { contentType: file.type, upsert: false });
+  if (upErr) return { error: "이미지 업로드에 실패했습니다." };
+
+  // 정렬 순서: 현재 개수
+  const { count } = await gate.supabase.from("board_post_images").select("id", { count: "exact", head: true }).eq("post_id", postId);
+  const { error: insErr } = await gate.supabase.from("board_post_images")
+    .insert({ post_id: postId, storage_path: path, sort_order: count ?? 0 });
+  if (insErr) {
+    // 작성자 아님(RLS) 등 실패 시 업로드한 파일 정리
+    await gate.supabase.storage.from(BOARD_IMAGE_BUCKET).remove([path]);
+    return { error: "이미지 등록에 실패했습니다. (본인 글에만 첨부 가능)" };
+  }
+  revalidatePath(`/board/${postId}`);
+  revalidatePath(`/board/${postId}/edit`);
+  return null;
+}
+
+export async function deleteBoardImage(imageId: number, postId: number): Promise<ActionState> {
+  const gate = await requireMember();
+  if ("error" in gate) return { error: gate.error };
+  const { data: row } = await gate.supabase.from("board_post_images").select("storage_path").eq("id", imageId).maybeSingle();
+  if (!row) return { error: "이미지를 찾을 수 없습니다." };
+  // 행 삭제(RLS: 작성자/기획단). 성공 시 스토리지도 정리(owner/editor 정책).
+  const { error: delErr } = await gate.supabase.from("board_post_images").delete().eq("id", imageId);
+  if (delErr) return { error: "삭제에 실패했습니다." };
+  const { error: stErr } = await gate.supabase.storage.from(BOARD_IMAGE_BUCKET).remove([row.storage_path]);
+  if (stErr) console.error("board image storage remove:", stErr);
+  revalidatePath(`/board/${postId}`);
+  revalidatePath(`/board/${postId}/edit`);
+  return null;
+}
+
 export async function togglePostLike(postId: number): Promise<ActionState> {
   const gate = await requireMember();
   if ("error" in gate) return { error: gate.error };

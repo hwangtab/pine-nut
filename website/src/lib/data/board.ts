@@ -9,10 +9,13 @@ export interface BoardComment {
   id: number; authorUserId: string; authorNickname: string; content: string; createdAt: string;
   isHidden: boolean; isDeleted: boolean;
 }
+export interface BoardImage {
+  id: number; url: string; sortOrder: number;
+}
 export interface BoardPostDetail {
   id: number; authorUserId: string; authorNickname: string; title: string; content: string; category: string;
   createdAt: string; updatedAt: string; isHidden: boolean; isDeleted: boolean; comments: BoardComment[];
-  likeCount: number;
+  likeCount: number; images: BoardImage[];
 }
 
 interface PostRow {
@@ -72,12 +75,16 @@ export async function getBoardPost(id: number): Promise<BoardPostDetail | null> 
   if (!supabase) return null;
   const { data, error } = await supabase
     .from("board_posts")
-    .select("id, author_user_id, author_nickname, title, content, category, created_at, updated_at, is_hidden, is_deleted, like_count, board_comments(id, author_user_id, author_nickname, content, created_at, is_hidden, is_deleted)")
+    .select("id, author_user_id, author_nickname, title, content, category, created_at, updated_at, is_hidden, is_deleted, like_count, board_comments(id, author_user_id, author_nickname, content, created_at, is_hidden, is_deleted), board_post_images(id, storage_path, sort_order)")
     .eq("id", id)
     .maybeSingle();
   if (error) { console.error("getBoardPost", error); return null; }
   if (!data) return null;
   const p = data as Omit<PostRow, "board_comments"> & { board_comments: CommentRow[] };
+  const rawImages = (p as unknown as { board_post_images?: { id: number; storage_path: string; sort_order: number }[] }).board_post_images ?? [];
+  const images: BoardImage[] = rawImages
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map((im) => ({ id: im.id, sortOrder: im.sort_order, url: supabase.storage.from("board-images").getPublicUrl(im.storage_path).data.publicUrl }));
   return {
     id: p.id, authorUserId: p.author_user_id, authorNickname: p.author_nickname, title: p.title, content: p.content,
     category: p.category, createdAt: p.created_at, updatedAt: p.updated_at, isHidden: p.is_hidden, isDeleted: p.is_deleted,
@@ -85,6 +92,7 @@ export async function getBoardPost(id: number): Promise<BoardPostDetail | null> 
       .sort((a, b) => a.created_at.localeCompare(b.created_at))
       .map((c) => ({ id: c.id, authorUserId: c.author_user_id, authorNickname: c.author_nickname, content: c.content, createdAt: c.created_at, isHidden: c.is_hidden, isDeleted: c.is_deleted })),
     likeCount: p.like_count ?? 0,
+    images,
   };
 }
 
