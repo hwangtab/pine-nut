@@ -48,7 +48,12 @@ export default async function BoardPostPage({
         </div>
       )}
 
-      <h1 className="mt-4 text-2xl font-bold text-[var(--color-text)]">
+      <div className="mt-4 flex items-center gap-2">
+        <span className="rounded-full bg-[var(--color-forest)]/10 px-2.5 py-0.5 text-xs font-semibold text-[var(--color-forest)]">
+          {post.category}
+        </span>
+      </div>
+      <h1 className="mt-2 text-2xl font-bold text-[var(--color-text)]">
         {post.title}
       </h1>
       <p className="mt-2 text-sm text-[var(--color-text-muted)]">
