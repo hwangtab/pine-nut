@@ -122,8 +122,8 @@ export async function togglePostLike(postId: number): Promise<ActionState> {
   } else {
     const { error } = await gate.supabase
       .from("board_post_likes").insert({ post_id: postId, user_id: gate.user.id });
-    // UNIQUE 위반(동시요청)은 이미 눌린 상태이므로 무시
-    if (error && !error.message.includes("duplicate")) return { error: "처리에 실패했습니다." };
+    // UNIQUE 위반(동시요청, 23505)은 이미 눌린 상태이므로 무시
+    if (error && error.code !== "23505") return { error: "처리에 실패했습니다." };
   }
   revalidatePath("/board");
   revalidatePath(`/board/${postId}`);
