@@ -7,6 +7,7 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 import BoardPostActions from "./BoardPostActions";
 import CommentSection from "./CommentSection";
 import LikeButton from "./LikeButton";
+import ReportButton from "./ReportButton";
 
 export default async function BoardPostPage({
   params,
@@ -76,13 +77,16 @@ export default async function BoardPostPage({
         </div>
       )}
 
-      <div className="mt-6">
+      <div className="mt-6 flex flex-wrap items-center gap-3">
         <LikeButton
           postId={id}
           count={post.likeCount}
           liked={liked}
           canLike={canWrite}
         />
+        {meId !== post.authorUserId && (
+          <ReportButton targetType="post" targetId={id} canReport={canWrite} />
+        )}
       </div>
 
       <div className="mt-6">

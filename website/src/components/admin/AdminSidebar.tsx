@@ -14,6 +14,7 @@ import {
   Images,
   History,
   ClipboardList,
+  Flag,
 } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
@@ -33,10 +34,13 @@ interface AdminSidebarProps {
 }
 
 export default function AdminSidebar({ role }: AdminSidebarProps) {
-  const navItems =
-    role === "owner"
-      ? [...baseNavItems, { href: "/admin/members", label: "기획단", icon: UserCog }]
-      : baseNavItems;
+  const navItems = [...baseNavItems];
+  if (role === "owner" || role === "editor") {
+    navItems.push({ href: "/admin/board-reports", label: "게시판 신고", icon: Flag });
+  }
+  if (role === "owner") {
+    navItems.push({ href: "/admin/members", label: "기획단", icon: UserCog });
+  }
   const pathname = usePathname();
   const isPublicPage = pathname === "/admin/login" || pathname === "/admin/signup";
 

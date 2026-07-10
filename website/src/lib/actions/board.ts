@@ -160,6 +160,34 @@ export async function deleteBoardImage(imageId: number, postId: number): Promise
   return null;
 }
 
+const REPORT_REASONS = ["스팸/광고", "욕설/비방", "부적절한 내용", "기타"];
+
+export async function reportTarget(targetType: "post" | "comment", targetId: number, reason: string): Promise<ActionState> {
+  if (!REPORT_REASONS.includes(reason)) return { error: "신고 사유를 선택해주세요." };
+  const gate = await requireMember();
+  if ("error" in gate) return { error: gate.error };
+  const { error } = await gate.supabase
+    .from("board_reports")
+    .insert({ target_type: targetType, target_id: targetId, reporter_user_id: gate.user.id, reason });
+  if (error) {
+    if (error.code === "23505") return { error: "이미 신고하셨습니다." };
+    return { error: "신고에 실패했습니다." };
+  }
+  return null;
+}
+
+export async function resolveReports(targetType: "post" | "comment", targetId: number, status: "resolved" | "dismissed"): Promise<ActionState> {
+  const gate = await requireEditor();
+  if ("error" in gate) return { error: gate.error };
+  const { error } = await gate.supabase
+    .from("board_reports").update({ status })
+    .eq("target_type", targetType).eq("target_id", targetId).eq("status", "pending");
+  if (error) return { error: "처리에 실패했습니다." };
+  await logAudit(gate.supabase, "board_reports", targetId, "update", { payload: { targetType, status } });
+  revalidatePath("/admin/board-reports");
+  return null;
+}
+
 export async function togglePostLike(postId: number): Promise<ActionState> {
   const gate = await requireMember();
   if ("error" in gate) return { error: gate.error };

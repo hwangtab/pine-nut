@@ -11,6 +11,7 @@ import {
   setCommentHidden,
 } from "@/lib/actions/board";
 import type { BoardComment } from "@/lib/data/board";
+import ReportButton from "./ReportButton";
 
 interface CommentSectionProps {
   postId: number;
@@ -39,12 +40,14 @@ function CommentItem({
   postId,
   meUserId,
   isEditor,
+  canWrite,
   onMutated,
 }: {
   comment: BoardComment;
   postId: number;
   meUserId: string | null;
   isEditor: boolean;
+  canWrite: boolean;
   onMutated: () => void;
 }) {
   const [pending, startTransition] = useTransition();
@@ -124,6 +127,9 @@ function CommentItem({
             {comment.isHidden ? "숨김 해제" : "숨김"}
           </button>
         )}
+        {!isHiddenOrDeleted && meUserId !== comment.authorUserId && (
+          <ReportButton targetType="comment" targetId={comment.id} canReport={canWrite} />
+        )}
       </div>
     </li>
   );
@@ -162,6 +168,7 @@ export default function CommentSection({
               postId={postId}
               meUserId={meUserId}
               isEditor={isEditor}
+              canWrite={canWrite}
               onMutated={handleMutated}
             />
           ))}
