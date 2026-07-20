@@ -6,6 +6,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "/", priority: 1.0 },
     { url: "/story", priority: 0.9 },
     { url: "/timeline", priority: 0.8 },
+    { url: "/concert", priority: 0.8 },
     { url: "/petition", priority: 0.9 },
     { url: "/donate", priority: 0.8 },
     { url: "/news", priority: 0.8 },

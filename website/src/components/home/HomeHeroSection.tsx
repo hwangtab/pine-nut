@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { EditableImage, EditableList, EditableText } from "@/components/editable";
+import HomeConcertBanner from "@/components/home/HomeConcertBanner";
 import { AnimatedCounter } from "@/components/home/HomeMotion";
 import { MountainSilhouette } from "@/components/home/HomeVisuals";
 
@@ -28,6 +29,14 @@ export default function HomeHeroSection({
       <MountainSilhouette />
 
       <div className="relative z-10 w-full max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <HomeConcertBanner />
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
