@@ -180,7 +180,7 @@ export default function ConcertPage() {
           <div className="mt-8 overflow-hidden rounded-2xl border border-[var(--color-border)] shadow-lg">
             <Image
               src="/images/concert/poster.jpg"
-              alt="베어지기 전에 풍천리 공연 포스터 — 2026년 8월 1일 토요일 오후 1시부터 8시, 청와대 앞"
+              alt="베어지기 전에 풍천리 공연 포스터 — 2026년 8월 1일 토요일 오후 1시부터 8시, 청와대 앞. 출연: 강민정, 경하와 세민과 멍구와 흑염소, 길가는 밴드, 김민정(알마즈), 남수, 물장구클럽, 삼각전파사, 아나자오, 이서영, 자이, 종이코트, 치핵"
               width={1200}
               height={1697}
               sizes="(max-width: 768px) 100vw, 672px"
