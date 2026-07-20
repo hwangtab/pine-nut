@@ -344,12 +344,12 @@ export default function ConcertPage() {
             </div>
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <div className="mx-auto mt-6 flex w-full max-w-md flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row sm:items-center">
             <a
               href="https://map.kakao.com/link/search/%EC%B2%AD%EC%99%80%EB%8C%80"
               target="_blank"
               rel="noopener noreferrer"
-              className="min-h-[44px] rounded-full bg-[#FEE500] px-6 py-3 text-base font-bold text-[#191919] transition-opacity hover:opacity-85"
+              className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[#FEE500] px-6 py-3 text-base font-bold text-[#191919] transition-opacity hover:opacity-85"
             >
               카카오맵에서 보기
             </a>
@@ -357,7 +357,7 @@ export default function ConcertPage() {
               href="https://map.naver.com/p/search/%EC%B2%AD%EC%99%80%EB%8C%80"
               target="_blank"
               rel="noopener noreferrer"
-              className="min-h-[44px] rounded-full bg-[#03C75A] px-6 py-3 text-base font-bold text-white transition-opacity hover:opacity-85"
+              className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[#03C75A] px-6 py-3 text-base font-bold text-white transition-opacity hover:opacity-85"
             >
               네이버지도에서 보기
             </a>
@@ -445,22 +445,22 @@ export default function ConcertPage() {
           <p className="mx-auto mt-4 max-w-xl break-keep text-base text-white/80 sm:text-lg">
             서명 한 번, 응원 한 줄, 후원 한 걸음이 풍천리의 숲을 지키는 힘이 됩니다.
           </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <div className="mx-auto mt-8 flex w-full max-w-md flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row sm:items-center sm:flex-wrap">
             <Link
               href="/petition"
-              className="min-h-[48px] rounded-full bg-[var(--color-warm)] px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-[var(--color-warm-light)]"
+              className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[var(--color-warm)] px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-[var(--color-warm-light)]"
             >
               서명하기
             </Link>
             <Link
               href="/board"
-              className="min-h-[48px] rounded-full border-2 border-white/70 px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-white/10"
+              className="inline-flex min-h-[52px] items-center justify-center rounded-full border-2 border-white/70 px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-white/10"
             >
               게시판에 응원 남기기
             </Link>
             <Link
               href="/donate"
-              className="min-h-[48px] rounded-full border-2 border-white/70 px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-white/10"
+              className="inline-flex min-h-[52px] items-center justify-center rounded-full border-2 border-white/70 px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-white/10"
             >
               후원하기
             </Link>

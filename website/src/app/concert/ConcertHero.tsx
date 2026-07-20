@@ -76,17 +76,17 @@ export default function ConcertHero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1 }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-3"
+          className="mx-auto mt-10 flex w-full max-w-xs flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row sm:items-center"
         >
           <Link
             href="/petition"
-            className="min-h-[48px] rounded-full bg-[var(--color-warm)] px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-[var(--color-warm-light)] sm:text-lg"
+            className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[var(--color-warm)] px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-[var(--color-warm-light)] sm:text-lg"
           >
             서명으로 함께하기
           </Link>
           <a
             href="#poster"
-            className="min-h-[48px] rounded-full border-2 border-white/60 px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-white/10 sm:text-lg"
+            className="inline-flex min-h-[52px] items-center justify-center rounded-full border-2 border-white/60 px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-white/10 sm:text-lg"
           >
             포스터 보기
           </a>
