@@ -142,7 +142,7 @@ export default function EnglishPetitionPage() {
           as="p"
           page="en/petition"
           section="emotional"
-          className="text-center text-xl font-serif text-[var(--color-text-muted)] mb-6"
+          className="text-center text-xl font-serif-display text-[var(--color-text-muted)] mb-6"
         />
 
         <AnimatePresence mode="wait">

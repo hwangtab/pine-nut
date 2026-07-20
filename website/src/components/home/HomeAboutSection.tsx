@@ -20,11 +20,10 @@ export default function HomeAboutSection({ storyRef }: HomeAboutSectionProps) {
         <FadeIn delay={0.1}>
           <EditableText
             contentKey="home.about.heading"
-            defaultValue="*풍천리*를 아시나요?"
+            defaultValue="풍천리를 아시나요?"
             as="h2"
             page="home"
             section="about"
-            accent
             className="text-3xl sm:text-4xl md:text-5xl font-black mb-8 text-[var(--color-text)]"
           />
         </FadeIn>

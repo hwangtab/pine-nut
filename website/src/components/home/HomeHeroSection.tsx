@@ -46,11 +46,10 @@ export default function HomeHeroSection({
         >
           <EditableText
             contentKey="home.hero.title"
-            defaultValue="7년, *680번*의 외침"
+            defaultValue="7년, 680번의 외침"
             as="h1"
             page="home"
             section="hero"
-            accent
             className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.14] mb-5 sm:mb-6"
           />
         </motion.div>
@@ -94,7 +93,7 @@ export default function HomeHeroSection({
             {(items) =>
               items.map((item) => (
                 <div key={item.label} className="flex min-w-0 flex-col items-center">
-                  <span className="serif-accent text-3xl sm:text-5xl md:text-6xl leading-none text-white">
+                  <span className="text-3xl sm:text-5xl md:text-6xl font-black leading-none text-white">
                     <AnimatedCounter target={Number(item.target)} suffix={item.suffix} />
                   </span>
                   <span className="mt-2 text-[11px] leading-tight text-white/64 sm:text-base">

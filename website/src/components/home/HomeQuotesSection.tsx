@@ -54,7 +54,7 @@ export default function HomeQuotesSection() {
               <FadeIn key={item.name} delay={i * 0.15}>
                 <blockquote className="relative pl-8 md:pl-12">
                   <span
-                    className="absolute top-0 left-0 text-6xl md:text-8xl font-serif leading-none text-white/20 select-none"
+                    className="absolute top-0 left-0 text-6xl md:text-8xl font-serif-display leading-none text-white/20 select-none"
                     aria-hidden="true"
                   >
                     {"\u201C"}
