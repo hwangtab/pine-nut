@@ -55,6 +55,7 @@ export default function Navigation() {
               isActiveAdmin={isActiveAdmin}
               isLoggedIn={isLoggedIn}
               variant="desktop"
+              isTransparent={isTransparent}
             />
           </div>
           <MobileNavigationButton
