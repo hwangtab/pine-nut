@@ -135,10 +135,8 @@ export default function ConcertPage() {
           <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
             Why We Sing
           </p>
-          <h2 className="mt-3 text-center text-3xl font-bold leading-tight text-[var(--color-text)] sm:text-4xl">
-            숲이 베어지기 전에,
-            <br />
-            노래로 곁을 지킵니다
+          <h2 className="mt-3 text-balance break-keep text-center text-3xl font-bold leading-tight text-[var(--color-text)] sm:text-4xl">
+            숲이 베어지기 전에, 노래로 곁을 지킵니다
           </h2>
 
           {/* 첫 문단 + 숲 사진 */}
@@ -209,7 +207,7 @@ export default function ConcertPage() {
           <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[#3BEF7C]">
             What&apos;s at Stake
           </p>
-          <h2 className="mt-3 text-center text-2xl font-bold text-white sm:text-3xl">
+          <h2 className="mt-3 text-balance break-keep text-center text-2xl font-bold text-white sm:text-3xl">
             우리가 지키려는 것
           </h2>
           <dl className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4">
@@ -244,7 +242,7 @@ export default function ConcertPage() {
           <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
             Time Table
           </p>
-          <h2 className="mt-3 text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
+          <h2 className="mt-3 text-balance break-keep text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
             함께하는 음악가 12팀
           </h2>
           <p className="mt-3 text-center text-sm text-[var(--color-text-muted)]">
@@ -286,7 +284,7 @@ export default function ConcertPage() {
           <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
             Join Us
           </p>
-          <h2 className="mt-3 text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
+          <h2 className="mt-3 text-balance break-keep text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
             이렇게 함께해주세요
           </h2>
           <div className="mt-10 grid gap-4 md:grid-cols-3">
@@ -314,7 +312,7 @@ export default function ConcertPage() {
           <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
             Location
           </p>
-          <h2 className="mt-3 text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
+          <h2 className="mt-3 text-balance break-keep text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
             오시는 길
           </h2>
           <p className="mt-4 text-center text-lg font-bold text-[var(--color-text)]">
@@ -371,7 +369,7 @@ export default function ConcertPage() {
           <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
             Spread the Word
           </p>
-          <h2 className="mt-3 text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
+          <h2 className="mt-3 text-balance break-keep text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
             포스터를 널리 알려주세요
           </h2>
           <p className="mt-3 break-keep text-base text-[var(--color-text-muted)]">
@@ -405,7 +403,7 @@ export default function ConcertPage() {
           <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
             FAQ
           </p>
-          <h2 className="mt-3 text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
+          <h2 className="mt-3 text-balance break-keep text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
             자주 묻는 질문
           </h2>
           <dl className="mt-10 space-y-3">
@@ -438,11 +436,10 @@ export default function ConcertPage() {
       <section className="relative overflow-hidden bg-[var(--color-forest)] px-6 py-20 text-center sm:py-24">
         <div className="mx-auto max-w-3xl">
           <Megaphone className="mx-auto h-10 w-10 text-[#3BEF7C]" aria-hidden />
-          <h2 className="mt-5 text-3xl font-bold leading-tight text-white sm:text-4xl">
-            공연장에 오지 못해도
-            <br className="sm:hidden" /> 함께할 수 있어요
+          <h2 className="mx-auto mt-5 max-w-[16ch] text-balance break-keep text-3xl font-bold leading-tight text-white sm:text-4xl">
+            공연장에 오지 못해도 함께할 수 있어요
           </h2>
-          <p className="mx-auto mt-4 max-w-xl break-keep text-base text-white/80 sm:text-lg">
+          <p className="mx-auto mt-4 max-w-xl text-balance break-keep text-base text-white/80 sm:text-lg">
             서명 한 번, 응원 한 줄, 후원 한 걸음이 풍천리의 숲을 지키는 힘이 됩니다.
           </p>
           <div className="mx-auto mt-8 flex w-full max-w-md flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row sm:items-center sm:flex-wrap">
