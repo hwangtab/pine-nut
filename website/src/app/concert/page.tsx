@@ -26,11 +26,11 @@ import ConcertHero from "./ConcertHero";
 export const metadata: Metadata = {
   title: "베어지기 전에 풍천리 — 8·1 청와대 앞 공연",
   description:
-    "2026년 8월 1일(토) 오후 1시–8시, 청와대 앞. 잣나무 11만 그루가 베어지기 전에, 풍천리를 지키려는 음악가 12팀이 모입니다. 강민정·경하와 세민과 멍구와 흑염소·길가는 밴드·김민정(알마즈)·남수·물장구클럽·삼각전파사·아나자오·이서영·자이·종이코트·치핵.",
+    "2026년 8월 1일(토) 오후 1시–8시, 청와대 앞. 잣나무 11만 그루가 베어지기 전에, 풍천리를 지키려는 음악가 13팀이 모입니다. 강민정·경하와 세민과 멍구와 흑염소·길가는 밴드·김민정(알마즈)·남수·물장구클럽·삼각전파사·아나자오·이서영·자이·종이코트·치핵·하늘소년 김영준.",
   openGraph: {
     title: "베어지기 전에 풍천리 — 8·1 청와대 앞 공연",
     description:
-      "2026년 8월 1일(토) 오후 1시–8시, 청와대 앞. 풍천리를 지키려는 음악가 12팀의 공연에 함께해주세요.",
+      "2026년 8월 1일(토) 오후 1시–8시, 청와대 앞. 풍천리를 지키려는 음악가 13팀의 공연에 함께해주세요.",
     images: [
       {
         url: `${SITE_URL}/images/concert/poster-og.jpg`,
@@ -190,7 +190,7 @@ export default function ConcertPage() {
           <div className="mt-12 rounded-3xl border-l-4 border-[var(--color-warm)] bg-[var(--color-bg-warm)] px-6 py-8 sm:px-10">
             <p className="break-keep text-lg leading-loose text-[var(--color-text)] sm:text-xl">
               주민들은 2019년부터 7년 동안 680번 넘게 거리에 섰습니다. 예순에서 여든의 손들이
-              팻말을 들었고, 그 가운데 일곱 분은 지금 재판을 받고 있습니다. 이제 음악가 열두
+              팻말을 들었고, 그 가운데 일곱 분은 지금 재판을 받고 있습니다. 이제 음악가 열세
               팀이 그 손을 마주 잡으러 청와대 앞에 섭니다. 숲이 사라지기 전에, 우리 노래가
               가닿아야 할 곳이 있습니다.
             </p>
@@ -243,10 +243,10 @@ export default function ConcertPage() {
             Time Table
           </p>
           <h2 className="mt-3 text-balance break-keep text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
-            함께하는 음악가 12팀
+            함께하는 음악가 13팀
           </h2>
           <p className="mt-3 text-center text-sm text-[var(--color-text-muted)]">
-            팀당 약 30분 · 현장 상황에 따라 순서와 시간이 조정될 수 있습니다.
+            팀당 30분 · 현장 상황에 따라 순서와 시간이 조정될 수 있습니다.
           </p>
           <ol className="mt-10 space-y-2">
             {CONCERT_TIMETABLE.map((slot, i) => (
@@ -268,7 +268,7 @@ export default function ConcertPage() {
             <li className="flex items-center gap-3 rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-4 sm:gap-4 sm:px-5">
               <span className="w-7 shrink-0" aria-hidden />
               <span className="w-[7.5rem] shrink-0 text-sm font-bold tabular-nums text-[var(--color-text-muted)]">
-                19:55 – 20:00
+                19:30 – 20:00
               </span>
               <span className="break-keep text-base font-semibold text-[var(--color-text-muted)]">
                 마무리 발언 · 단체사진
@@ -379,7 +379,7 @@ export default function ConcertPage() {
           <div className="mt-8 overflow-hidden rounded-2xl border border-[var(--color-border)] shadow-lg">
             <Image
               src="/images/concert/poster.jpg"
-              alt="베어지기 전에 풍천리 공연 포스터 — 2026년 8월 1일 토요일 오후 1시부터 8시, 청와대 앞. 출연: 강민정, 경하와 세민과 멍구와 흑염소, 길가는 밴드, 김민정(알마즈), 남수, 물장구클럽, 삼각전파사, 아나자오, 이서영, 자이, 종이코트, 치핵"
+              alt="베어지기 전에 풍천리 공연 포스터 — 2026년 8월 1일 토요일 오후 1시부터 8시, 청와대 앞"
               width={1200}
               height={1697}
               sizes="(max-width: 768px) 100vw, 672px"

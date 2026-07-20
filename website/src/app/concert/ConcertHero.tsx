@@ -55,7 +55,7 @@ export default function ConcertHero() {
           transition={{ duration: 1, delay: 0.4 }}
           className="mx-auto mt-6 max-w-2xl text-balance break-keep text-base leading-relaxed text-white/85 sm:text-xl"
         >
-          잣나무 11만 그루가 베어지기 전에. 풍천리를 지키려는 음악가 12팀이 청와대 앞에 모입니다.
+          잣나무 11만 그루가 베어지기 전에. 풍천리를 지키려는 음악가 13팀이 청와대 앞에 모입니다.
         </motion.p>
 
         <motion.div
