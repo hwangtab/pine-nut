@@ -24,6 +24,28 @@ export const CONCERT_LINEUP = [
   "치핵",
 ];
 
+export interface ConcertSlot {
+  start: string;
+  end: string;
+  name: string;
+}
+
+// 공연 순서(30분 공연 + 전환 5분). 마무리는 페이지에서 별도 표기.
+export const CONCERT_TIMETABLE: ConcertSlot[] = [
+  { start: "13:00", end: "13:30", name: "물장구클럽" },
+  { start: "13:35", end: "14:05", name: "강민정" },
+  { start: "14:10", end: "14:40", name: "경하와 세민과 멍구와 흑염소" },
+  { start: "14:45", end: "15:15", name: "길가는 밴드" },
+  { start: "15:20", end: "15:50", name: "남수" },
+  { start: "15:55", end: "16:25", name: "이서영" },
+  { start: "16:30", end: "17:00", name: "김민정(알마즈)" },
+  { start: "17:05", end: "17:35", name: "자이" },
+  { start: "17:40", end: "18:10", name: "종이코트" },
+  { start: "18:15", end: "18:45", name: "아나자오(ANAZAO)" },
+  { start: "18:50", end: "19:20", name: "삼각전파사" },
+  { start: "19:25", end: "19:55", name: "치핵" },
+];
+
 const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 

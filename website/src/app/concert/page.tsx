@@ -6,10 +6,10 @@ import ShareButtons from "@/components/ShareButtons";
 import { SITE_URL } from "@/lib/site-config";
 import {
   CONCERT_DATE_LABEL,
-  CONCERT_LINEUP,
   CONCERT_PHONE,
   CONCERT_PLACE,
   CONCERT_TIME_LABEL,
+  CONCERT_TIMETABLE,
   CONCERT_TITLE,
 } from "@/lib/concert";
 import ConcertHero from "./ConcertHero";
@@ -74,30 +74,45 @@ export default function ConcertPage() {
         </div>
       </section>
 
-      {/* 라인업 */}
+      {/* 타임테이블 */}
       <section className="bg-[var(--color-bg-warm)] px-6 py-16 sm:py-24">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-2xl">
           <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
-            Starring
+            Time Table
           </p>
           <h2 className="mt-3 text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
             함께하는 음악가 12팀
           </h2>
-          <ul className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-            {CONCERT_LINEUP.map((name, i) => (
+          <p className="mt-3 text-center text-sm text-[var(--color-text-muted)]">
+            현장 상황에 따라 순서와 시간이 조정될 수 있습니다.
+          </p>
+          <ol className="mt-10 space-y-2">
+            {CONCERT_TIMETABLE.map((slot, i) => (
               <li
-                key={name}
-                className="flex min-h-[88px] flex-col items-center justify-center rounded-2xl border border-[var(--color-border)] bg-white px-3 py-5 text-center transition-transform hover:-translate-y-1"
+                key={slot.name}
+                className="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-white px-4 py-4 sm:gap-4 sm:px-5"
               >
-                <span className="text-xs font-bold text-[var(--color-warm)]">
+                <span className="w-7 shrink-0 text-sm font-black text-[var(--color-warm)]">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="mt-1 break-keep text-base font-bold leading-snug text-[var(--color-text)]">
-                  {name}
+                <span className="w-[7.5rem] shrink-0 text-sm font-bold tabular-nums text-[var(--color-text-muted)]">
+                  {slot.start} – {slot.end}
+                </span>
+                <span className="break-keep text-base font-bold leading-snug text-[var(--color-text)]">
+                  {slot.name}
                 </span>
               </li>
             ))}
-          </ul>
+            <li className="flex items-center gap-3 rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-4 sm:gap-4 sm:px-5">
+              <span className="w-7 shrink-0" aria-hidden />
+              <span className="w-[7.5rem] shrink-0 text-sm font-bold tabular-nums text-[var(--color-text-muted)]">
+                19:55 – 20:00
+              </span>
+              <span className="break-keep text-base font-semibold text-[var(--color-text-muted)]">
+                마무리 발언 · 단체사진
+              </span>
+            </li>
+          </ol>
         </div>
       </section>
 
