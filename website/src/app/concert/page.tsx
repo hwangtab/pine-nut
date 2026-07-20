@@ -130,7 +130,7 @@ export default function ConcertPage() {
       </section>
 
       {/* 왜 이 공연인가 */}
-      <section className="px-6 pb-4 sm:pb-8">
+      <section className="px-6 pb-4 pt-4 sm:pb-8">
         <div className="mx-auto max-w-3xl">
           <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
             Why We Sing
@@ -140,22 +140,64 @@ export default function ConcertPage() {
             <br />
             노래로 곁을 지킵니다
           </h2>
-          <div className="mx-auto mt-8 max-w-2xl space-y-5 text-base leading-relaxed text-[var(--color-text-muted)] sm:text-lg">
-            <p>
-              강원도 홍천 풍천리에는 국내 최대 잣나무 숲(1,800ha)이 있습니다. 산림청이
-              ‘100대 명품숲’으로 꼽은 이 숲에는 100년 된 잣나무가 자라고, 산양·까막딱다구리·수달
-              같은 멸종위기종이 깃들어 삽니다. 마을 주민의 약 70%가 이 숲에서 나는 잣으로
-              생계를 잇습니다.
+
+          {/* 첫 문단 + 숲 사진 */}
+          <div className="mt-10 overflow-hidden rounded-3xl border border-[var(--color-border)] shadow-lg">
+            <div className="relative aspect-[16/9] w-full">
+              <Image
+                src="/images/pine-forest-1.jpg"
+                alt="안개가 내려앉은 잣나무 숲"
+                fill
+                sizes="(max-width: 768px) 100vw, 768px"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent" />
+              <p className="absolute bottom-4 left-5 right-5 text-sm font-medium text-white/90 drop-shadow">
+                산림청이 꼽은 ‘100대 명품숲’ · 국내 최대 잣나무 숲
+              </p>
+            </div>
+          </div>
+          <p className="mt-8 break-keep text-lg leading-loose text-[var(--color-text)] sm:text-xl">
+            <b className="font-bold">백 년입니다.</b> 풍천리 잣나무가 지금 키에 이르기까지 걸린
+            시간이. 강원도 홍천 가리산 자락에 1,800헥타르로 펼쳐진 이 숲을 산림청은 ‘100대
+            명품숲’으로 꼽았습니다. 국내에서 가장 큰 잣나무 숲입니다. 나무 사이로 산양이
+            지나가고, 까막딱다구리가 둥지를 틀고, 골짜기에는 수달이 삽니다. 마을 사람 열에
+            일곱은 이 숲이 떨어뜨린 잣을 주워 한 해를 납니다. 이곳 사람들에게 숲은 살림이자
+            이웃이고, 백 년을 함께 산 식구입니다.
+          </p>
+
+          {/* 둘째 문단 — 위기, 톱날 이미지 */}
+          <div className="mt-12 grid gap-6 sm:grid-cols-[1fr_0.9fr] sm:items-center">
+            <p className="order-2 break-keep text-base leading-loose text-[var(--color-text-muted)] sm:order-1 sm:text-lg">
+              그 백 년을 <b className="font-bold text-[var(--color-warm)]">84개월</b>이면 지울 수
+              있다고 합니다. 양수발전소가 들어서면 잣나무 11만 그루가 잘려 나가고, 51가구가
+              물에 잠기거나 정든 집을 떠나야 합니다. 앞으로의 이야기가 아닙니다. 2024년 10월,
+              이설도로를 낸다며 벌써 2,256그루가 먼저 쓰러졌습니다. 톱날은 이미 숲의 가장자리를
+              파고들고 있습니다.
             </p>
-            <p>
-              그러나 양수발전소 건설이 강행되면 잣나무 약 11만 그루가 베어지고, 51가구가
-              물에 잠기거나 삶터를 떠나야 합니다. 이미 2024년 10월, 이설도로 공사로 잣나무
-              2,256그루가 먼저 잘려나갔습니다.
+            <div className="order-1 overflow-hidden rounded-3xl border border-[var(--color-border)] shadow-lg sm:order-2">
+              <div className="relative aspect-[4/5] w-full">
+                <Image
+                  src="/images/pine-forest-2.jpg"
+                  alt="빛이 스며드는 숲 속"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 340px"
+                  className="object-cover"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 셋째 문단 — 강조 인용 블록 */}
+          <div className="mt-12 rounded-3xl border-l-4 border-[var(--color-warm)] bg-[var(--color-bg-warm)] px-6 py-8 sm:px-10">
+            <p className="break-keep text-lg leading-loose text-[var(--color-text)] sm:text-xl">
+              주민들은 2019년부터 7년 동안 680번 넘게 거리에 섰습니다. 예순에서 여든의 손들이
+              팻말을 들었고, 그 가운데 일곱 분은 지금 재판을 받고 있습니다. 이제 음악가 열두
+              팀이 그 손을 마주 잡으러 청와대 앞에 섭니다. 숲이 사라지기 전에, 우리 노래가
+              가닿아야 할 곳이 있습니다.
             </p>
-            <p>
-              주민들은 2019년부터 7년 넘게, 680회가 넘는 집회로 맞서 왔습니다. 이제
-              음악가 12팀이 그 곁에 섭니다. 청와대 앞에서, 숲이 완전히 베어지기 전에 —
-              함께 듣고, 함께 외쳐주세요.
+            <p className="mt-5 break-keep text-xl font-bold text-[var(--color-warm)] sm:text-2xl">
+              8월 1일, 당신이 앉을 자리 하나가 그 숲의 한 그루가 됩니다.
             </p>
           </div>
         </div>
