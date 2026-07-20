@@ -27,7 +27,7 @@ export default function HomeHopeSection() {
       <FadeIn className="text-center mb-6">
         <EditableText
           contentKey="home.hope.eyebrow"
-          defaultValue="그럼에도 주민들은 포기하지 않았습니다"
+          defaultValue="그러나 이야기는 여기서 끝나지 않습니다"
           as="p"
           page="home"
           section="hope"
@@ -43,11 +43,11 @@ export default function HomeHopeSection() {
         />
         <EditableText
           contentKey="home.hope.subtitle"
-          defaultValue="7년간 680번의 집회. 70대 어르신들이 매주 버스를 타고 홍천군청까지 갔습니다."
+          defaultValue="7년간 680번. 일흔 넘은 어르신들이 매주 버스에 올라 홍천군청 앞에 섰습니다. 지팡이를 짚고서라도, 단 한 주도 거르지 않았습니다."
           as="p"
           page="home"
           section="hope"
-          className="text-lg md:text-xl text-[var(--color-text-muted)] leading-relaxed max-w-2xl mx-auto"
+          className="text-balance text-lg md:text-xl text-[var(--color-text-muted)] leading-relaxed max-w-2xl mx-auto"
         />
       </FadeIn>
 
@@ -56,15 +56,15 @@ export default function HomeHopeSection() {
         defaultItems={[
           {
             title: "672차 기도회",
-            desc: "매주 빠짐없이 모여 평화로운 기도회를 이어왔습니다",
+            desc: "비가 오나 눈이 오나, 매주 한자리에 모여 평화로운 기도를 이어왔습니다.",
           },
           {
             title: "140개 단체 연대",
-            desc: "전국의 환경·시민단체가 풍천리와 함께합니다",
+            desc: "전국 140개 환경·시민단체가 풍천리의 손을 맞잡았습니다.",
           },
           {
             title: "시민공모전 대상",
-            desc: "한국내셔널트러스트 '이곳만은 지키자' 시민공모전 대상 수상",
+            desc: "한국내셔널트러스트 '이곳만은 지키자' 공모전 대상. 지켜야 할 가치를 온 사회가 함께 인정했습니다.",
           },
         ]}
         page="home"

@@ -32,7 +32,7 @@ export default function HomeAboutSection({ storyRef }: HomeAboutSectionProps) {
           <div className="space-y-6 text-lg md:text-xl text-[var(--color-text-muted)] leading-relaxed">
             <EditableText
               contentKey="home.about.paragraph1"
-              defaultValue="강원도 홍천군 화촌면에 위치한 작은 마을, 풍천리. 산림청 지정 '100대 명품숲', 1,800ha 규모 국내 최대 잣나무 숲에 둘러싸인 가리산 자락의 산촌입니다."
+              defaultValue="강원도 홍천군 화촌면, 가리산 자락에 깃든 작은 산촌 풍천리. 산림청이 '100대 명품숲'으로 꼽은 1,800ha의 국내 최대 잣나무 숲이, 마을을 병풍처럼 감싸 안고 있습니다."
               as="p"
               page="home"
               section="about"
@@ -67,14 +67,14 @@ export default function HomeAboutSection({ storyRef }: HomeAboutSectionProps) {
           <div className="space-y-6 text-lg md:text-xl text-[var(--color-text-muted)] leading-relaxed">
             <EditableText
               contentKey="home.about.paragraph2"
-              defaultValue="주민 약 70%가 잣 생산으로 생계를 유지하는 이 마을은, 숲과 사람이 함께 숨 쉬는 곳입니다."
+              defaultValue="주민 열에 일곱이 잣을 거두어 살아가는 이곳은, 숲이 사람을 먹이고 사람이 숲을 돌보며 오랜 세월 한 호흡으로 살아온 땅입니다."
               as="p"
               page="home"
               section="about"
             />
             <EditableText
               contentKey="home.about.paragraph3"
-              defaultValue="이 숲에는 산양(천연기념물), 까막딱다구리, 수달 등 멸종위기종이 서식하고 있습니다."
+              defaultValue="천연기념물 산양과 까막딱다구리, 수달까지. 사라져 가는 생명들이 마지막으로 기대어 사는 보금자리이기도 합니다."
               as="p"
               page="home"
               section="about"

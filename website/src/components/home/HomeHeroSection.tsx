@@ -61,11 +61,11 @@ export default function HomeHeroSection({
         >
           <EditableText
             contentKey="home.hero.subtitle"
-            defaultValue="강원도 홍천 풍천리 주민들은 양수발전소 건설에 맞서 7년 넘게 싸우고 있습니다"
+            defaultValue="강원도 홍천, 잣나무 숲이 품은 작은 마을 풍천리. 주민들은 7년 넘게 양수발전소 건설에 맞서 삶의 터전과 숲을 지켜오고 있습니다"
             as="p"
             page="home"
             section="hero"
-            className="text-base sm:text-xl md:text-2xl text-white/84 max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-10 md:mb-12"
+            className="text-balance text-base sm:text-xl md:text-2xl text-white/84 max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-10 md:mb-12"
           />
         </motion.div>
 
@@ -73,7 +73,7 @@ export default function HomeHeroSection({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="grid w-full max-w-[22rem] grid-cols-3 items-start gap-2 mx-auto mb-8 sm:max-w-none sm:flex sm:flex-wrap sm:justify-center sm:gap-16 sm:mb-12 md:mb-14"
+          className="grid w-full max-w-[22rem] grid-cols-3 items-start gap-3 mx-auto mb-8 sm:max-w-2xl sm:gap-6 sm:mb-12 md:mb-14"
         >
           <EditableList
             contentKey="home.hero.counters"
@@ -93,7 +93,7 @@ export default function HomeHeroSection({
             {(items) =>
               items.map((item) => (
                 <div key={item.label} className="flex min-w-0 flex-col items-center">
-                  <span className="text-3xl sm:text-5xl md:text-6xl font-black leading-none text-white">
+                  <span className="whitespace-nowrap text-2xl sm:text-4xl md:text-5xl font-black leading-none text-white">
                     <AnimatedCounter target={Number(item.target)} suffix={item.suffix} />
                   </span>
                   <span className="mt-2 text-[11px] leading-tight text-white/64 sm:text-base">

@@ -45,7 +45,7 @@ export default function HomeImpactSection() {
       <FadeIn className="text-center mb-16">
         <EditableText
           contentKey="home.impact.heading"
-          defaultValue="무엇이 위협하고 있나요?"
+          defaultValue="무엇이 이 숲을 위협하나요?"
           as="h2"
           page="home"
           section="impact"
@@ -53,11 +53,11 @@ export default function HomeImpactSection() {
         />
         <EditableText
           contentKey="home.impact.subtitle"
-          defaultValue="양수발전소 건설이 풍천리에 가져올 피해"
+          defaultValue="양수발전소가 들어서는 순간, 마을과 숲이 잃게 될 것들"
           as="p"
           page="home"
           section="impact"
-          className="text-lg text-[var(--color-text-muted)]"
+          className="text-balance text-lg text-[var(--color-text-muted)]"
         />
       </FadeIn>
 
@@ -66,19 +66,19 @@ export default function HomeImpactSection() {
         defaultItems={[
           {
             title: "생태계 파괴",
-            desc: "잣나무 약 11만 그루 벌채 예정, 153ha 산림 파괴. 산양·까막딱다구리·수달 서식지가 사라집니다",
+            desc: "잣나무 11만 그루가 잘려 나가고 153ha의 숲이 사라집니다. 산양과 까막딱다구리, 수달이 깃들던 마지막 보금자리도 함께 무너집니다.",
           },
           {
             title: "소음·분진",
-            desc: "84개월(7년) 공사, 총사업비 1.59조원 규모. 대규모 공사로 고령 주민들의 건강이 위협받습니다",
+            desc: "84개월, 꼬박 7년에 걸친 1조 5,900억 원 규모의 공사. 끊이지 않는 소음과 분진 속에서 어르신들의 하루하루가 위협받습니다.",
           },
           {
             title: "공동체 와해",
-            desc: "51가구 수몰·이주 예정. 수십 년간 이어온 마을 공동체가 해체됩니다",
+            desc: "51가구가 물에 잠기고, 정든 이웃들이 뿔뿔이 흩어집니다. 수십 년을 함께 나눈 마을 공동체가 통째로 사라집니다.",
           },
           {
             title: "생계 위협",
-            desc: "주민 70%가 잣 생산에 의존. 이미 2024년 10월 이설도로 건설로 2,256그루 벌채가 시작되었습니다",
+            desc: "주민 70%의 생계가 걸린 잣나무. 2024년 10월 이설도로 공사로 이미 2,256그루가 베어지며, 그 위협은 눈앞의 현실이 되었습니다.",
           },
         ]}
         page="home"

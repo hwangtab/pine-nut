@@ -17,11 +17,11 @@ export default function HomeQuotesSection() {
         />
         <EditableText
           contentKey="home.quotes.subtitle"
-          defaultValue="풍천리에서 평생을 살아온 사람들의 이야기"
+          defaultValue="이 땅에서 한평생을 살아온 사람들이, 직접 건네는 이야기"
           as="p"
           page="home"
           section="quotes"
-          className="text-white/60 text-lg"
+          className="text-balance text-white/60 text-lg"
         />
       </FadeIn>
 

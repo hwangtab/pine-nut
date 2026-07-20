@@ -55,11 +55,11 @@ export default function HomeCtaSection({
         />
         <EditableText
           contentKey="home.cta.subtitle"
-          defaultValue="작은 관심이 큰 힘이 됩니다"
+          defaultValue="당신의 작은 마음 하나가, 숲을 지키는 큰 힘이 됩니다"
           as="p"
           page="home"
           section="cta"
-          className="text-lg text-[var(--color-text-muted)]"
+          className="text-balance text-lg text-[var(--color-text-muted)]"
         />
       </FadeIn>
 
