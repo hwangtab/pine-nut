@@ -29,7 +29,7 @@ export default function MobileNavigationMenu({
     <div
       id="mobile-menu"
       ref={menuRef}
-      className="fixed inset-0 z-40 bg-white flex flex-col overflow-hidden pt-16"
+      className="frost-sheet fixed inset-0 z-40 flex flex-col overflow-hidden pt-20"
       role="dialog"
       aria-modal="true"
       aria-labelledby="mobile-menu-title"
@@ -37,17 +37,17 @@ export default function MobileNavigationMenu({
       <h2 id="mobile-menu-title" className="sr-only">
         모바일 메뉴
       </h2>
-      <div className="px-6 pt-2">
+      <div className="relative z-[1] px-6 pt-2">
         <button
           type="button"
           onClick={onClose}
-          className="min-h-[44px] rounded-lg px-4 py-2 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors"
+          className="min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold text-[var(--frost-muted)] hover:text-[var(--color-text)] hover:bg-black/5 transition-colors"
         >
           메뉴 닫기
         </button>
       </div>
       <nav
-        className="flex flex-1 flex-col gap-1 overflow-y-auto px-6 py-3 pb-8"
+        className="relative z-[1] flex flex-1 flex-col gap-1 overflow-y-auto px-6 py-3 pb-8"
         aria-label="모바일 내비게이션"
       >
         {navLinks.map((link) => {

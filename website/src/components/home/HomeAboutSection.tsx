@@ -17,18 +17,19 @@ export default function HomeAboutSection({ storyRef }: HomeAboutSectionProps) {
           <PineTreeIcon className="w-16 h-16 mx-auto mb-8 text-[var(--color-forest)]" />
         </FadeIn>
 
-        <FadeIn delay={0.15}>
+        <FadeIn delay={0.1}>
           <EditableText
             contentKey="home.about.heading"
-            defaultValue="풍천리를 아시나요?"
+            defaultValue="*풍천리*를 아시나요?"
             as="h2"
             page="home"
             section="about"
-            className="text-3xl sm:text-4xl md:text-5xl font-black mb-8 text-[var(--color-forest)]"
+            accent
+            className="text-3xl sm:text-4xl md:text-5xl font-black mb-8 text-[var(--color-text)]"
           />
         </FadeIn>
 
-        <FadeIn delay={0.3}>
+        <FadeIn delay={0.15}>
           <div className="space-y-6 text-lg md:text-xl text-[var(--color-text-muted)] leading-relaxed">
             <EditableText
               contentKey="home.about.paragraph1"
@@ -40,7 +41,7 @@ export default function HomeAboutSection({ storyRef }: HomeAboutSectionProps) {
           </div>
         </FadeIn>
 
-        <FadeIn delay={0.4}>
+        <FadeIn delay={0.2}>
           <div className="my-10">
             <EditableImage
               contentKey="home.about.forestImage"
@@ -50,7 +51,7 @@ export default function HomeAboutSection({ storyRef }: HomeAboutSectionProps) {
               section="about"
               width={1200}
               height={800}
-              className="w-full rounded-2xl shadow-lg"
+              className="w-full rounded-card border border-black/5 shadow-card"
             />
             <EditableText
               contentKey="home.about.forestPhotoCredit"
@@ -63,7 +64,7 @@ export default function HomeAboutSection({ storyRef }: HomeAboutSectionProps) {
           </div>
         </FadeIn>
 
-        <FadeIn delay={0.45}>
+        <FadeIn delay={0.2}>
           <div className="space-y-6 text-lg md:text-xl text-[var(--color-text-muted)] leading-relaxed">
             <EditableText
               contentKey="home.about.paragraph2"

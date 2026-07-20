@@ -27,7 +27,7 @@ export default function HomeInlineSignatureForm({
 
   return (
     <FadeIn className="mb-12">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto rounded-[var(--radius-panel)] border border-[var(--color-border)] bg-white p-6 shadow-card sm:p-8">
         {success ? (
           <HomeInlineSignatureSuccess />
         ) : (

@@ -1,6 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
 @import "tailwindcss";
 
+/*
+ * 색 역할 (color diet):
+ * - warm: 유일한 액션 컬러. CTA·서명 버튼에만 사용
+ * - forest: 브랜드 보조색. 아이콘·로고·포인트 그래픽
+ * - sky / earth: 기능적 용도(뱃지, 인용 배경 등)로만 사용
+ * - 본문·제목은 text / text-muted 무채색 계열
+ */
 :root {
   --color-forest: #2D5016;
   --color-forest-light: #4A7A2E;
@@ -44,6 +51,40 @@
   --color-text: var(--color-text);
   --color-text-muted: var(--color-text-muted);
   --color-border: var(--color-border);
+  --font-serif-display: 'Nanum Myeongjo', serif;
+  --radius-panel: 1.75rem;
+  --radius-card: 1rem;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgb(26 26 26 / 0.05), 0 6px 20px rgb(26 26 26 / 0.07);
+  --shadow-card-hover: 0 2px 4px rgb(26 26 26 / 0.06), 0 12px 32px rgb(26 26 26 / 0.1);
+  --motion-hover: 200ms;
+  --motion-press: 120ms;
+
+  /*
+   * 리퀴드 글래스 재질 (iOS 26 스타일). 두 갈래로 나뉩니다:
+   * - 보는 유리(glass/·strong/·subtle): 투명·광채. 큰 제목·장식 전용
+   * - 읽는 유리(frost): 흰 틴트 55~70% + 강한 블러. 본문·폼 전용, 어두운 잉크
+   * - 다크 틴트(glass-dark): 사진 위 소형 요소(칩·캡션·뱃지) 전용, 흰 잉크
+   */
+  --glass-tint-a: rgba(255, 255, 255, 0.24);
+  --glass-tint-b: rgba(255, 255, 255, 0.08);
+  --glass-edge: rgba(255, 255, 255, 0.34);
+  --glass-hi: rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 16px 40px rgba(8, 16, 8, 0.28);
+
+  --frost-tint-a: rgba(255, 255, 255, 0.66);
+  --frost-tint-b: rgba(255, 255, 255, 0.44);
+  --frost-ink: #1a1a1a;
+  --frost-muted: #47463e;
+  --frost-field-bg: rgba(255, 255, 255, 0.55);
+  --frost-field-line: rgba(255, 255, 255, 0.75);
+
+  --glass-dark-a: rgba(16, 26, 14, 0.5);
+  --glass-dark-b: rgba(8, 16, 8, 0.64);
+  --glass-dark-edge: rgba(255, 255, 255, 0.22);
+
+  --glass-fallback-dark: rgba(38, 48, 32, 0.85);
+  --glass-fallback-frost: #f7f6f1;
 }
 
 body {
@@ -56,10 +97,11 @@ body {
   overflow-wrap: break-word;
 }
 
+/* 제목은 산세리프 굵은체, 강조 단어만 .serif-accent(명조)로 대비 */
 h1, h2, h3 {
-  font-family: 'Nanum Myeongjo', serif;
   word-break: keep-all;
   line-height: 1.3;
+  letter-spacing: -0.02em;
 }
 
 h4 {
@@ -67,9 +109,25 @@ h4 {
   line-height: 1.3;
 }
 
+/* 제목 속 세리프 강조 — EditableText의 accent(*단어*) 파싱이 사용 */
+.serif-accent {
+  font-family: var(--font-serif-display);
+  font-weight: 800;
+  font-style: normal;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-count {
+    animation: none;
+  }
 }
 
 /* Accessible focus styles */
@@ -98,4 +156,230 @@ html {
 
 .animate-count {
   animation: countUp 0.6s ease-out forwards;
+}
+
+/* ────────────────────────────────────────────────────────────
+   리퀴드 글래스 재질 시스템
+   컴포넌트는 아래 클래스 하나만 고른다. 값은 직접 만지지 않는다.
+   ──────────────────────────────────────────────────────────── */
+
+/* 공통 스펙큘러 하이라이트 (좌상단 빛 반사) */
+.glass,
+.glass-strong,
+.glass-subtle,
+.frost {
+  position: relative;
+}
+.glass::after,
+.glass-strong::after,
+.glass-subtle::after,
+.frost::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(120% 60% at 18% 0%, rgba(255, 255, 255, 0.3), transparent 44%);
+}
+
+/* 보는 유리 — 표준 */
+.glass {
+  background: linear-gradient(135deg, var(--glass-tint-a), var(--glass-tint-b));
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  backdrop-filter: blur(20px) saturate(1.6);
+  border: 1px solid var(--glass-edge);
+  box-shadow: inset 0 1px 0 var(--glass-hi), inset 0 -1px 0 rgba(255, 255, 255, 0.07), var(--glass-shadow);
+}
+
+/* 보는 유리 — 약(칩·뱃지·얇은 바) */
+.glass-subtle {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04));
+  -webkit-backdrop-filter: blur(10px) saturate(1.3);
+  backdrop-filter: blur(10px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+/* 보는 유리 — 강(히어로 패널·모달) */
+.glass-strong {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.13));
+  -webkit-backdrop-filter: blur(32px) saturate(1.8);
+  backdrop-filter: blur(32px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 18px 44px rgba(8, 16, 8, 0.3);
+}
+
+/* 읽는 유리 — 본문·폼 (luminous frost) */
+.frost {
+  background: linear-gradient(135deg, var(--frost-tint-a), var(--frost-tint-b));
+  -webkit-backdrop-filter: blur(36px) saturate(1.5);
+  backdrop-filter: blur(36px) saturate(1.5);
+  border: 1px solid var(--glass-edge);
+  box-shadow: inset 0 1px 0 var(--glass-hi), inset 0 -1px 0 rgba(255, 255, 255, 0.1), 0 16px 40px rgba(8, 16, 8, 0.22);
+  color: var(--frost-ink);
+}
+
+/* 읽는 유리 — 전체 화면 시트 (모바일 메뉴·오버레이).
+   뒤 페이지를 확실히 가리도록 불투명도 90%+, 유리 질감은 블러로 유지 */
+.frost-sheet {
+  position: relative;
+  background: linear-gradient(180deg, rgba(250, 250, 245, 0.93), rgba(245, 240, 232, 0.9));
+  -webkit-backdrop-filter: blur(40px) saturate(1.4);
+  backdrop-filter: blur(40px) saturate(1.4);
+  color: var(--frost-ink);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .frost-sheet {
+    background: var(--color-bg);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .frost-sheet {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--color-bg);
+  }
+}
+
+/* 다크 틴트 — 사진 위 소형 요소 (흰 잉크 보장) */
+.glass-dark {
+  position: relative;
+  background: linear-gradient(160deg, var(--glass-dark-a), var(--glass-dark-b));
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+  border: 1px solid var(--glass-dark-edge);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 14px 36px rgba(8, 16, 8, 0.3);
+  color: #fff;
+}
+
+/* frost 표면 안에 놓는 입력 필드 */
+.frost-field {
+  font: inherit;
+  font-size: 15px;
+  color: var(--frost-ink);
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--frost-field-bg);
+  border: 1px solid var(--frost-field-line);
+  box-shadow: inset 0 1px 2px rgba(26, 26, 26, 0.05);
+  width: 100%;
+}
+.frost-field::placeholder {
+  color: var(--frost-muted);
+  opacity: 0.7;
+}
+
+/* 유리 버튼 & 칩 */
+.glass-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius-pill);
+  border: 0;
+  font: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform var(--motion-press), box-shadow var(--motion-hover), background var(--motion-hover);
+}
+.glass-btn:active {
+  transform: scale(0.97);
+}
+.glass-btn--primary {
+  background: var(--color-warm);
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 8px 24px rgba(199, 80, 0, 0.35);
+}
+.glass-btn--primary:hover {
+  background: var(--color-warm-light);
+}
+.glass-btn--glass {
+  background: linear-gradient(135deg, var(--glass-tint-a), var(--glass-tint-b));
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid var(--glass-edge);
+  color: #fff;
+  box-shadow: inset 0 1px 0 var(--glass-hi);
+}
+.glass-btn--glass:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.14));
+}
+
+.glass-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px;
+  border-radius: var(--radius-pill);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: linear-gradient(160deg, var(--glass-dark-a), var(--glass-dark-b));
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  border: 1px solid var(--glass-dark-edge);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+/* 카드 hover 마이크로 인터랙션 (등장 애니메이션 대신 반응형 모션) */
+.hover-lift {
+  transition: transform var(--motion-hover), box-shadow var(--motion-hover);
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hover-lift {
+    transition: none;
+  }
+  .hover-lift:hover {
+    transform: none;
+  }
+}
+
+/* 폴백 1: backdrop-filter 미지원 → 불투명 배경 */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass,
+  .glass-strong,
+  .glass-subtle,
+  .glass-btn--glass {
+    background: var(--glass-fallback-dark);
+  }
+  .frost {
+    background: var(--glass-fallback-frost);
+  }
+  .glass-dark,
+  .glass-chip {
+    background: rgba(12, 20, 12, 0.9);
+  }
+  .frost-field {
+    background: #fff;
+  }
+}
+
+/* 폴백 2: 투명도 줄이기 선호 → 블러 제거 + 불투명 */
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .glass-strong,
+  .glass-subtle,
+  .glass-btn--glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--glass-fallback-dark);
+  }
+  .frost {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--glass-fallback-frost);
+  }
+  .glass-dark,
+  .glass-chip {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(12, 20, 12, 0.92);
+  }
 }

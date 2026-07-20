@@ -13,7 +13,7 @@ export default function HomeConcertBanner() {
   return (
     <Link
       href="/concert"
-      className="mb-6 inline-flex max-w-full flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-full border border-white/30 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20 sm:text-base"
+      className="glass-dark mb-6 inline-flex max-w-full flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-[filter] hover:brightness-125 sm:text-base"
     >
       <span className="rounded-full bg-[var(--color-warm)] px-2.5 py-0.5 text-xs font-black sm:text-sm">
         {dday}

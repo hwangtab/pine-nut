@@ -16,6 +16,24 @@ interface EditableTextProps {
   section?: string;
   /** Additional CSS classes */
   className?: string;
+  /** 뷰 모드에서 *별표* 구간을 세리프 강조(.serif-accent)로 렌더 */
+  accent?: boolean;
+}
+
+/* "7년, *680번*의 외침" → 680번만 <em class="serif-accent">로 감싼다.
+   편집 모드에서는 별표가 그대로 보이고 그대로 저장된다. */
+function renderAccent(text: string) {
+  const parts = text.split(/\*([^*]+)\*/g);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) =>
+    i % 2 === 1 ? (
+      <em key={i} className="serif-accent">
+        {part}
+      </em>
+    ) : (
+      part
+    )
+  );
 }
 
 export default function EditableText({
@@ -25,6 +43,7 @@ export default function EditableText({
   page,
   section,
   className = "",
+  accent = false,
 }: EditableTextProps) {
   const { isEditMode, getContent, stageChange } = useAdminEdit();
   const ref = useRef<HTMLElement | null>(null);
@@ -77,7 +96,7 @@ export default function EditableText({
   const Tag = tag as ElementType;
 
   if (!isEditMode) {
-    return <Tag className={className}>{value}</Tag>;
+    return <Tag className={className}>{accent ? renderAccent(value) : value}</Tag>;
   }
 
   return (

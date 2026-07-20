@@ -124,7 +124,7 @@ export default function HomeCtaSection({
                 const IconComp = icons[index] || icons[0];
                 return (
                   <FadeIn key={card.title} delay={index * 0.1}>
-                    <div className="bg-white rounded-2xl p-8 border border-[var(--color-border)] text-center h-full flex flex-col">
+                    <div className="hover-lift bg-white rounded-[var(--radius-card)] p-8 border border-[var(--color-border)] shadow-card text-center h-full flex flex-col">
                       <IconComp className="w-10 h-10 text-[var(--color-warm)] mx-auto mb-5" />
                       <h3 className="text-xl font-bold mb-3">{card.title}</h3>
                       <p className="text-[var(--color-text-muted)] leading-relaxed mb-6 flex-1">

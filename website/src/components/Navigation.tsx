@@ -29,42 +29,45 @@ export default function Navigation() {
     dismissMobileMenu,
   } = useNavigationChrome(pathname);
 
+  // 사진 위(투명)에서는 보는 유리 + 흰 잉크, 콘텐츠 위에서는 읽는 유리 + 어두운 잉크
+  const material = isTransparent ? "glass" : "frost";
+
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          visible ? "translate-y-0" : "-translate-y-full"
-        } ${
-          isTransparent
-            ? "bg-transparent border-b border-transparent"
-            : "bg-white/90 backdrop-blur-md border-b border-[var(--color-border)]"
+        className={`fixed inset-x-0 top-2 sm:top-3 z-50 flex justify-center px-3 sm:px-4 pointer-events-none transition-transform duration-300 ${
+          visible ? "translate-y-0" : "-translate-y-[160%]"
         }`}
       >
         <nav
-          className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16"
           aria-label="주요 내비게이션"
+          className={`${material} pointer-events-auto w-full max-w-6xl rounded-full transition-all duration-300 ${
+            isTransparent ? "px-4 sm:px-5 py-2.5" : "px-3 sm:px-4 py-2"
+          }`}
         >
-          <NavigationLogo isTransparent={isTransparent} />
-          <div className="hidden md:flex items-center">
-            <DesktopNavigation
-              navLinks={navLinks}
+          <div className="relative z-[1] flex w-full items-center justify-between">
+            <NavigationLogo isTransparent={isTransparent} />
+            <div className="hidden xl:flex items-center">
+              <DesktopNavigation
+                navLinks={navLinks}
+                isTransparent={isTransparent}
+                isActive={isActive}
+              />
+              <NavigationAuthLinks
+                isActiveAdmin={isActiveAdmin}
+                isLoggedIn={isLoggedIn}
+                variant="desktop"
+                isTransparent={isTransparent}
+              />
+            </div>
+            <MobileNavigationButton
+              buttonRef={mobileMenuButtonRef}
+              isOpen={mobileMenuOpen}
               isTransparent={isTransparent}
-              isActive={isActive}
-            />
-            <NavigationAuthLinks
-              isActiveAdmin={isActiveAdmin}
-              isLoggedIn={isLoggedIn}
-              variant="desktop"
-              isTransparent={isTransparent}
+              onOpen={openMobileMenu}
+              onClose={closeMobileMenu}
             />
           </div>
-          <MobileNavigationButton
-            buttonRef={mobileMenuButtonRef}
-            isOpen={mobileMenuOpen}
-            isTransparent={isTransparent}
-            onOpen={openMobileMenu}
-            onClose={closeMobileMenu}
-          />
         </nav>
       </header>
 

@@ -43,7 +43,7 @@ export function TimelineCard({
           isLeft ? "md:mr-auto md:pr-8" : "md:ml-auto md:pl-8"
         }`}
       >
-        <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-[var(--color-border)]">
+        <div className="bg-white rounded-[var(--radius-card)] shadow-card hover-lift overflow-hidden border border-[var(--color-border)]">
           {event.imageUrl && (
             <div className="relative w-full">
               <Image

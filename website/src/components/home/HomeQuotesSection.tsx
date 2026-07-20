@@ -59,7 +59,7 @@ export default function HomeQuotesSection() {
                   >
                     {"\u201C"}
                   </span>
-                  <p className="text-xl sm:text-2xl md:text-3xl font-medium leading-relaxed mb-4">
+                  <p className="font-serif-display text-xl sm:text-2xl md:text-3xl leading-relaxed mb-4">
                     {item.quote}
                   </p>
                   <footer className="text-white/50 text-base md:text-lg">

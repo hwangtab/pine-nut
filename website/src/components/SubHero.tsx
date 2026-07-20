@@ -41,12 +41,6 @@ export default function SubHero({
     variant === "emphasis"
       ? "pt-32 md:pt-40 pb-24 md:pb-32"
       : "pt-32 md:pt-40 pb-20 md:pb-28";
-  const titleAnchorClass = hasEyebrow
-    ? variant === "emphasis"
-      ? "-translate-y-2 md:-translate-y-3"
-      : "-translate-y-1 md:-translate-y-2"
-    : "";
-
   useEffect(() => {
     setCurrentImage(imageUrl);
   }, [imageUrl]);
@@ -100,23 +94,25 @@ export default function SubHero({
         aria-hidden="true"
       />
       <div className="absolute -top-28 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-white/8 blur-3xl" aria-hidden="true" />
-      <div className={`relative mx-auto max-w-3xl ${titleAnchorClass}`}>
-        <div className="relative inline-block">
-          {hasEyebrow && (
-            <p className="absolute bottom-full left-1/2 mb-3 w-max max-w-[min(92vw,34rem)] -translate-x-1/2 overflow-hidden text-ellipsis whitespace-nowrap text-xs font-semibold uppercase tracking-[0.26em] text-white/72 md:text-sm">
-              {eyebrow}
-            </p>
-          )}
-          <h1 className="mb-4 text-3xl sm:text-4xl font-black tracking-tight text-white md:text-5xl">
-            {title}
-          </h1>
+      <div className="relative mx-auto max-w-2xl">
+        <div className="glass rounded-[var(--radius-panel)] px-6 py-8 sm:px-10 sm:py-10">
+          <div className="relative z-[1] flex flex-col items-center">
+            {hasEyebrow && (
+              <span className="glass-dark mb-4 inline-block max-w-full overflow-hidden text-ellipsis whitespace-nowrap rounded-full px-3.5 py-1 text-xs font-bold uppercase tracking-[0.12em] text-white">
+                {eyebrow}
+              </span>
+            )}
+            <h1 className="mb-4 text-3xl sm:text-4xl font-black tracking-tight text-white md:text-5xl">
+              {title}
+            </h1>
+            {subtitle && (
+              <p className="mx-auto max-w-xl text-base leading-relaxed text-white/84 md:text-lg">
+                {subtitle}
+              </p>
+            )}
+            {metric && <div className="mt-8 md:mt-10">{metric}</div>}
+          </div>
         </div>
-        {subtitle && (
-          <p className="mx-auto max-w-xl text-base leading-relaxed text-white/84 md:text-lg">
-            {subtitle}
-          </p>
-        )}
-        {metric && <div className="mt-8 md:mt-10">{metric}</div>}
       </div>
     </section>
   );

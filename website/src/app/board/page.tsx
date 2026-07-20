@@ -42,7 +42,7 @@ export default async function BoardPage({
         {profile && (
           <Link
             href="/board/new"
-            className="rounded-xl bg-[var(--color-forest)] px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-[var(--color-forest-light)]"
+            className="rounded-full bg-[var(--color-forest)] px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-[var(--color-forest-light)]"
           >
             글쓰기
           </Link>
@@ -97,7 +97,7 @@ export default async function BoardPage({
           {q ? "검색 결과가 없습니다." : "글이 없습니다."}
         </p>
       ) : (
-        <div className="divide-y divide-[var(--color-border)] rounded-xl border border-[var(--color-border)]">
+        <div className="divide-y divide-[var(--color-border)] overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-card">
           {items.map((item) => (
             <Link
               key={item.id}

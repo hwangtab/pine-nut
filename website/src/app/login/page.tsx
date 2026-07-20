@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { getLandingPath } from "@/lib/actions/session";
+import AuthShell from "@/components/auth/AuthShell";
 
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_SECONDS = 30;
@@ -120,73 +121,67 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4">
-      <div className="w-full max-w-md">
-        <div className="bg-[var(--color-admin-surface)] rounded-2xl shadow-lg p-8 md:p-10">
-          <h1 className="text-2xl font-bold text-[var(--color-admin-text)] text-center mb-2">
-            로그인
-          </h1>
-          <p className="text-[var(--color-admin-muted)] text-center mb-8">
-            로그인하여 이용하세요
-          </p>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label htmlFor="email" className="block text-base font-medium text-[var(--color-admin-text)] mb-2">
-                이메일
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-4 text-base border border-[var(--color-admin-border)] rounded-xl focus:ring-2 focus:ring-[var(--color-forest)]/40 focus:border-[var(--color-forest)] outline-none transition"
-                placeholder="example@email.com"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-base font-medium text-[var(--color-admin-text)] mb-2">
-                비밀번호
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-4 text-base border border-[var(--color-admin-border)] rounded-xl focus:ring-2 focus:ring-[var(--color-forest)]/40 focus:border-[var(--color-forest)] outline-none transition"
-                placeholder="비밀번호를 입력하세요"
-              />
-            </div>
-
-            {error && (
-              <p className="text-[var(--color-danger)] text-base font-medium bg-[var(--color-danger-bg)] border border-[var(--color-danger-border)] px-4 py-3 rounded-xl">
-                {error}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading || countdown > 0}
-              className="w-full py-4 text-lg font-bold text-white bg-[var(--color-forest)] hover:bg-[var(--color-forest-light)] disabled:bg-[var(--color-admin-muted)] rounded-xl transition-colors"
-            >
-              {countdown > 0
-                ? `${countdown}초 후 재시도`
-                : loading
-                  ? "로그인 중..."
-                  : "로그인"}
-            </button>
-          </form>
-          <p className="mt-6 text-center text-sm text-[var(--color-admin-muted)]">
-            계정이 없으신가요?{" "}
-            <Link href="/signup" className="font-semibold text-[var(--color-forest)] hover:underline">
-              회원가입
-            </Link>
-          </p>
+    <AuthShell
+      title="로그인"
+      subtitle="로그인하여 이용하세요"
+      footer={
+        <>
+          계정이 없으신가요?{" "}
+          <Link href="/signup" className="font-semibold text-[var(--color-forest)] hover:underline">
+            회원가입
+          </Link>
+        </>
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="flex flex-col gap-1.5 text-left">
+          <label htmlFor="email" className="text-sm font-bold text-[var(--frost-muted)]">
+            이메일
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="frost-field outline-none focus:ring-2 focus:ring-[var(--color-forest)]/50"
+            placeholder="example@email.com"
+          />
         </div>
-      </div>
-    </div>
+
+        <div className="flex flex-col gap-1.5 text-left">
+          <label htmlFor="password" className="text-sm font-bold text-[var(--frost-muted)]">
+            비밀번호
+          </label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="frost-field outline-none focus:ring-2 focus:ring-[var(--color-forest)]/50"
+            placeholder="비밀번호를 입력하세요"
+          />
+        </div>
+
+        {error && (
+          <p className="rounded-xl border border-[var(--color-danger-border)] bg-[var(--color-danger-bg)] px-4 py-3 text-base font-medium text-[var(--color-danger)]">
+            {error}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading || countdown > 0}
+          className="w-full rounded-full bg-[var(--color-forest)] py-4 text-lg font-bold text-white transition-colors hover:bg-[var(--color-forest-light)] disabled:opacity-60"
+        >
+          {countdown > 0
+            ? `${countdown}초 후 재시도`
+            : loading
+              ? "로그인 중..."
+              : "로그인"}
+        </button>
+      </form>
+    </AuthShell>
   );
 }

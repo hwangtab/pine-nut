@@ -22,7 +22,7 @@ export default function MobileNavigationButton({
     <button
       ref={buttonRef}
       type="button"
-      className={`md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors duration-300 ${
+      className={`xl:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors duration-300 ${
         isTransparent ? "hover:bg-white/10" : "hover:bg-[var(--color-bg)]"
       }`}
       onClick={() => {

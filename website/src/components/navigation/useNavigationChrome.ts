@@ -12,6 +12,7 @@ const HERO_PAGES = [
   "/share",
   "/petition",
   "/donate",
+  "/concert",
   "/en",
 ];
 

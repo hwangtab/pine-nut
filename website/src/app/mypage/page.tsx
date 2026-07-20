@@ -23,7 +23,7 @@ export default async function MyPage() {
 
   return (
     <div className="mx-auto max-w-2xl p-6 md:p-10">
-      <div className="rounded-xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-6 md:p-10">
+      <div className="rounded-[var(--radius-panel)] border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-6 shadow-card md:p-10">
         <h1 className="mb-2 text-2xl font-bold text-[var(--color-admin-text)]">
           마이페이지
         </h1>
@@ -49,14 +49,14 @@ export default async function MyPage() {
           {me && (
             <Link
               href="/admin"
-              className="px-5 py-3 text-base font-semibold text-white bg-[var(--color-forest)] rounded-xl hover:opacity-90 transition-opacity"
+              className="px-5 py-3 text-base font-semibold text-white bg-[var(--color-forest)] rounded-full hover:opacity-90 transition-opacity"
             >
               관리자 페이지로
             </Link>
           )}
           <Link
             href="/"
-            className="px-5 py-3 text-base font-semibold text-[var(--color-admin-muted)] border border-[var(--color-admin-border)] rounded-xl hover:bg-[var(--color-bg)] transition-colors"
+            className="px-5 py-3 text-base font-semibold text-[var(--color-admin-muted)] border border-[var(--color-admin-border)] rounded-full hover:bg-[var(--color-bg)] transition-colors"
           >
             홈으로
           </Link>

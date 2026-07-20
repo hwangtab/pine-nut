@@ -16,7 +16,7 @@ export default function DesktopNavigation({
   isActive,
 }: DesktopNavigationProps) {
   return (
-    <div className="hidden md:flex items-center gap-1">
+    <div className="hidden xl:flex items-center gap-1">
       {navLinks.map((link) => {
         const active = isActive(link.href);
         // 기간 한정 이벤트(공연) 링크는 warm 색으로 강조

@@ -27,9 +27,12 @@ export default function NavigationAuthLinks({
     ? `px-4 py-3 rounded-xl text-lg font-medium min-h-[48px] flex items-center transition-colors ${mutedColor}`
     : `px-4 py-2 rounded-lg text-[15px] font-medium min-h-[44px] flex items-center transition-colors duration-300 ${mutedColor}`;
 
+  // 색 다이어트: warm "함께하기"만 유일한 솔리드 CTA. 회원가입은 아웃라인으로 강등
   const signupClassName = isMobile
     ? "px-4 py-3 rounded-xl text-lg font-bold min-h-[48px] flex items-center justify-center transition-colors text-white bg-[var(--color-forest)] hover:opacity-90"
-    : "px-4 py-2 rounded-lg text-[15px] font-bold min-h-[44px] flex items-center transition-colors text-white bg-[var(--color-forest)] hover:opacity-90";
+    : onDark
+      ? "px-4 py-2 rounded-full text-[15px] font-bold min-h-[44px] flex items-center transition-colors text-white border border-white/55 hover:bg-white/15"
+      : "px-4 py-2 rounded-full text-[15px] font-bold min-h-[44px] flex items-center transition-colors text-[var(--color-forest)] border border-[var(--color-forest)]/45 hover:bg-[var(--color-forest)]/10";
 
   const buttonClassName = isMobile
     ? `px-4 py-3 rounded-xl text-lg font-medium min-h-[48px] flex items-center transition-colors text-left ${mutedColor}`

@@ -16,7 +16,7 @@ export function NewsCard({
   return (
     <Link
       href={`${newsListConfig.detailPathPrefix}/${item.slug}`}
-      className="group block min-h-[44px] bg-white rounded-2xl border border-[var(--color-border)] shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 overflow-hidden"
+      className="group block min-h-[44px] bg-white rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card hover-lift overflow-hidden"
     >
       <div className="relative w-full h-48 bg-[var(--color-bg)]">
         {item.thumbnailUrl ? (

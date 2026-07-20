@@ -30,7 +30,7 @@ export default function ConcertHero() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="mb-6 inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full border border-white/25 bg-white/10 px-5 py-2 text-sm font-semibold text-white/90 backdrop-blur-sm sm:text-base"
+          className="glass-dark mb-6 inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full px-5 py-2 text-sm font-semibold text-white/90 sm:text-base"
         >
           <span>{CONCERT_DATE_LABEL}</span>
           <span aria-hidden>·</span>
