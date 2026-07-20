@@ -44,7 +44,7 @@ export const metadata: Metadata = {
 
 const INFO_CARDS = [
   { icon: CalendarDays, label: "일시", value: `${CONCERT_DATE_LABEL}`, sub: CONCERT_TIME_LABEL },
-  { icon: MapPin, label: "장소", value: CONCERT_PLACE, sub: "서울 종로구" },
+  { icon: MapPin, label: "장소", value: CONCERT_PLACE, sub: "사랑채 앞 도로" },
   { icon: Ticket, label: "관람", value: "무료", sub: "예매 없이 누구나" },
   { icon: Phone, label: "문의", value: CONCERT_PHONE, sub: "대책위", href: `tel:${CONCERT_PHONE}` },
 ];
@@ -315,8 +315,8 @@ export default function ConcertPage() {
           <h2 className="mt-3 text-balance break-keep text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
             오시는 길
           </h2>
-          <p className="mt-4 text-center text-lg font-bold text-[var(--color-text)]">
-            청와대 앞 · 서울 종로구
+          <p className="mt-4 text-balance break-keep text-center text-lg font-bold text-[var(--color-text)]">
+            청와대 사랑채 앞 도로 · 서울 종로구 효자동
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -326,8 +326,9 @@ export default function ConcertPage() {
                 지하철
               </span>
               <p className="mt-3 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                3호선 <b className="text-[var(--color-text)]">경복궁역 4번 출구</b>에서 도보 약 15분,
-                또는 <b className="text-[var(--color-text)]">안국역</b>에서 마을버스 이용.
+                3호선 <b className="text-[var(--color-text)]">경복궁역 3번 출구</b>에서 약 900m
+                (도보 약 15분). <b className="text-[var(--color-text)]">청와대사랑채입구</b> 정류장이
+                바로 앞입니다.
               </p>
             </div>
             <div className="rounded-2xl border border-[var(--color-border)] bg-white p-6 shadow-sm">
@@ -344,7 +345,7 @@ export default function ConcertPage() {
 
           <div className="mx-auto mt-6 flex w-full max-w-md flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row sm:items-center">
             <a
-              href="https://map.kakao.com/link/search/%EC%B2%AD%EC%99%80%EB%8C%80"
+              href="https://map.kakao.com/link/search/%EC%B2%AD%EC%99%80%EB%8C%80%20%EC%82%AC%EB%9E%91%EC%B1%84"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[#FEE500] px-6 py-3 text-base font-bold text-[#191919] transition-opacity hover:opacity-85"
@@ -352,7 +353,7 @@ export default function ConcertPage() {
               카카오맵에서 보기
             </a>
             <a
-              href="https://map.naver.com/p/search/%EC%B2%AD%EC%99%80%EB%8C%80"
+              href="https://map.naver.com/p/entry/place/32408375"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[#03C75A] px-6 py-3 text-base font-bold text-white transition-opacity hover:opacity-85"
