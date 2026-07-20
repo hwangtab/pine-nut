@@ -22,7 +22,7 @@ export const CONCERT_LINEUP = [
   "자이",
   "종이코트",
   "치핵",
-  "하늘소년 김영준",
+  "하늘소년",
 ];
 
 export interface ConcertSlot {
@@ -37,7 +37,7 @@ export const CONCERT_TIMETABLE: ConcertSlot[] = [
   { start: "13:30", end: "14:00", name: "강민정" },
   { start: "14:00", end: "14:30", name: "경하와 세민과 멍구와 흑염소" },
   { start: "14:30", end: "15:00", name: "길가는 밴드" },
-  { start: "15:00", end: "15:30", name: "하늘소년 김영준" },
+  { start: "15:00", end: "15:30", name: "하늘소년" },
   { start: "15:30", end: "16:00", name: "남수" },
   { start: "16:00", end: "16:30", name: "이서영" },
   { start: "16:30", end: "17:00", name: "김민정(알마즈)" },
