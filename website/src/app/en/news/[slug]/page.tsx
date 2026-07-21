@@ -135,7 +135,7 @@ export default async function EnglishNewsDetailPage({
         </div>
 
         {translatedItem.thumbnailUrl && (
-          <div className="relative w-full aspect-[16/9] mb-10 rounded-xl overflow-hidden">
+          <div className="relative w-full aspect-[16/9] mb-10 rounded-[var(--radius-card)] overflow-hidden">
             <Image
               src={translatedItem.thumbnailUrl}
               alt={translatedItem.title}
@@ -175,7 +175,7 @@ export default async function EnglishNewsDetailPage({
           {prevItem ? (
             <Link
               href={`/en/news/${prevItem.slug}`}
-              className="group flex flex-col p-5 rounded-xl border border-[var(--color-border)] hover:border-[var(--color-forest)] hover:shadow-md transition-all"
+              className="group flex flex-col p-5 rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card hover-lift"
             >
               <EditableText
                 contentKey="en.news.detail.prevLabel"
@@ -195,7 +195,7 @@ export default async function EnglishNewsDetailPage({
           {nextItem ? (
             <Link
               href={`/en/news/${nextItem.slug}`}
-              className="group flex flex-col items-end text-right p-5 rounded-xl border border-[var(--color-border)] hover:border-[var(--color-forest)] hover:shadow-md transition-all"
+              className="group flex flex-col items-end text-right p-5 rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card hover-lift"
             >
               <EditableText
                 contentKey="en.news.detail.nextLabel"

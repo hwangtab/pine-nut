@@ -100,7 +100,7 @@ export default function RecentSignatures({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="bg-white border border-[var(--color-border)] rounded-xl px-5 py-4"
+                className="bg-white border border-[var(--color-border)] rounded-[var(--radius-card)] shadow-card px-5 py-4"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-[var(--color-text)]">{sig.name}</span>

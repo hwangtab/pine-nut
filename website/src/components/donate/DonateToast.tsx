@@ -18,7 +18,7 @@ export default function DonateToast({ message, visible }: DonateToastProps) {
       role="status"
       aria-live="polite"
     >
-      <div className="flex items-center gap-2 bg-[var(--color-text)] text-white px-5 py-3 rounded-xl shadow-lg text-[15px] font-medium">
+      <div className="flex items-center gap-2 bg-[var(--color-text)]/95 backdrop-blur-md border border-white/10 text-white px-5 py-3 rounded-2xl shadow-lg text-[15px] font-medium">
         <Check className="w-4 h-4 shrink-0" />
         {message}
       </div>

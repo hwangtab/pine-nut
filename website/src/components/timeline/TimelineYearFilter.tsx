@@ -11,7 +11,7 @@ export function TimelineYearFilter({
   onSelectYear: (year: TimelineYearValue) => void;
 }) {
   return (
-    <div className="sticky top-16 z-30 bg-white/90 backdrop-blur-md border-b border-[var(--color-border)] shadow-sm">
+    <div className="sticky top-20 z-30 bg-white/90 backdrop-blur-md border-b border-[var(--color-border)] shadow-sm">
       <div className="max-w-4xl mx-auto px-4 py-3">
         <div className="flex w-full gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 justify-start sm:justify-center">
           {timelineConfig.years.map((year) => (

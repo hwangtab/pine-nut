@@ -17,7 +17,7 @@ function SubmitButton({ submitLabel }: { submitLabel: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="w-full rounded-xl bg-[var(--color-forest)] px-8 py-4 text-lg font-bold text-white transition-colors hover:bg-[var(--color-forest-light)] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+      className="w-full rounded-full bg-[var(--color-forest)] px-8 py-4 text-lg font-bold text-white transition-colors hover:bg-[var(--color-forest-light)] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
     >
       {pending ? "등록 중..." : submitLabel}
     </button>
@@ -34,7 +34,7 @@ export default function BoardPostForm({
   return (
     <form action={formAction} className="space-y-6">
       {state?.error && (
-        <div className="rounded-xl border border-[var(--color-danger-border)] bg-[var(--color-danger-bg)] px-4 py-3 text-base font-medium text-[var(--color-danger)]">
+        <div className="rounded-[var(--radius-card)] border border-[var(--color-danger-border)] bg-[var(--color-danger-bg)] px-4 py-3 text-base font-medium text-[var(--color-danger)]">
           {state.error}
         </div>
       )}
@@ -50,7 +50,7 @@ export default function BoardPostForm({
           id="category"
           name="category"
           defaultValue={initial?.category ?? "자유"}
-          className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-admin-surface)] px-4 py-3.5 text-base outline-none focus:border-[var(--color-forest)] focus:ring-2 focus:ring-[var(--color-forest)]/40"
+          className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-admin-surface)] px-4 py-3.5 text-base outline-none focus:border-[var(--color-forest)] focus:ring-2 focus:ring-[var(--color-forest)]/30"
         >
           <option value="자유">자유</option>
           <option value="질문">질문</option>
@@ -74,7 +74,7 @@ export default function BoardPostForm({
           maxLength={200}
           defaultValue={initial?.title}
           placeholder="제목을 입력하세요"
-          className="w-full rounded-xl border border-[var(--color-border)] px-4 py-3.5 text-base outline-none focus:border-[var(--color-forest)] focus:ring-2 focus:ring-[var(--color-forest)]/40"
+          className="w-full rounded-xl border border-[var(--color-border)] px-4 py-3.5 text-base outline-none focus:border-[var(--color-forest)] focus:ring-2 focus:ring-[var(--color-forest)]/30"
         />
       </div>
 
@@ -92,7 +92,7 @@ export default function BoardPostForm({
           rows={10}
           defaultValue={initial?.content}
           placeholder="내용을 입력하세요"
-          className="w-full resize-y rounded-xl border border-[var(--color-border)] px-4 py-3.5 text-base outline-none focus:border-[var(--color-forest)] focus:ring-2 focus:ring-[var(--color-forest)]/40"
+          className="w-full resize-y rounded-xl border border-[var(--color-border)] px-4 py-3.5 text-base outline-none focus:border-[var(--color-forest)] focus:ring-2 focus:ring-[var(--color-forest)]/30"
         />
       </div>
 

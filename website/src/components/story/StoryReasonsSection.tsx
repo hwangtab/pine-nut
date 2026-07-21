@@ -152,7 +152,7 @@ export function StoryReasonsSection() {
                   return (
                     <div
                       key={index}
-                      className={`bg-white rounded-2xl p-8 border-2 ${color.border} shadow-sm`}
+                      className={`bg-white rounded-[var(--radius-card)] p-8 border-2 ${color.border} shadow-card`}
                     >
                       <div
                         className={`w-12 h-12 rounded-xl ${color.bg} flex items-center justify-center mb-5`}
@@ -184,7 +184,7 @@ export function StoryReasonsSection() {
             section="reasons"
             width={1200}
             height={800}
-            className="w-full rounded-xl shadow-lg my-6"
+            className="w-full rounded-[var(--radius-card)] shadow-card my-6"
           />
           <EditableText
             contentKey="story.reasons.photoCaption"

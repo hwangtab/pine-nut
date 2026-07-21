@@ -77,7 +77,7 @@ export function StoryBattleSection() {
               section="battle"
               width={1200}
               height={800}
-              className="w-full rounded-xl shadow-lg my-6"
+              className="w-full rounded-[var(--radius-card)] shadow-card my-6"
             />
             <EditableText
               contentKey="story.battle.photo1Caption"
@@ -97,7 +97,7 @@ export function StoryBattleSection() {
               section="battle"
               width={1200}
               height={800}
-              className="w-full rounded-xl shadow-lg my-6"
+              className="w-full rounded-[var(--radius-card)] shadow-card my-6"
             />
             <EditableText
               contentKey="story.battle.photo2Caption"

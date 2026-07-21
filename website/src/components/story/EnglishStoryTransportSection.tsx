@@ -37,7 +37,7 @@ export function EnglishStoryTransportSection() {
           ]}
         >
           {(items) => (
-            <div className="bg-white rounded-2xl p-6 md:p-8 border-2 border-[var(--color-forest)]/15 shadow-sm">
+            <div className="bg-white rounded-[var(--radius-card)] p-6 md:p-8 border-2 border-[var(--color-forest)]/15 shadow-card">
               <h4 className="text-lg font-bold text-[var(--color-text)] mb-5">
                 By car
               </h4>
@@ -86,7 +86,7 @@ export function EnglishStoryTransportSection() {
           ]}
         >
           {(items) => (
-            <div className="bg-white rounded-2xl p-6 md:p-8 border-2 border-[var(--color-forest)]/15 shadow-sm">
+            <div className="bg-white rounded-[var(--radius-card)] p-6 md:p-8 border-2 border-[var(--color-forest)]/15 shadow-card">
               <h4 className="text-lg font-bold text-[var(--color-text)] mb-5">
                 Public transit
               </h4>

@@ -46,7 +46,7 @@ export default async function BoardPostPage({
       </Link>
 
       {(post.isHidden || post.isDeleted) && (
-        <div className="mt-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-sm font-medium text-[var(--color-text-muted)]">
+        <div className="mt-4 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-sm font-medium text-[var(--color-text-muted)]">
           이 글은 숨김/삭제되었습니다 (기획단에게만 표시)
         </div>
       )}
@@ -72,7 +72,7 @@ export default async function BoardPostPage({
         <div className="mt-6 space-y-3">
           {post.images.map((im) => (
             // eslint-disable-next-line @next/next/no-img-element
-            <img key={im.id} src={im.url} alt="" className="w-full rounded-xl" />
+            <img key={im.id} src={im.url} alt="" className="w-full rounded-[var(--radius-card)]" />
           ))}
         </div>
       )}

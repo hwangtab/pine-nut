@@ -106,7 +106,7 @@ Hongcheon County applied to host the plant in 2019, after which KHNP selected Pu
             section="video"
             className="text-center text-[var(--color-text-muted)] mb-8 text-base md:text-lg"
           />
-          <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-lg border-2 border-[var(--color-forest)]/15">
+          <div className="aspect-video w-full rounded-[var(--radius-panel)] overflow-hidden shadow-card border-2 border-[var(--color-forest)]/15">
             <iframe
               src="https://www.youtube.com/embed/MtmOKKpkGMk"
               title="Save Pungcheon-ri campaign video"
@@ -129,7 +129,7 @@ Hongcheon County applied to host the plant in 2019, after which KHNP selected Pu
             section="location"
             className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
           />
-          <div className="rounded-2xl overflow-hidden border-2 border-[var(--color-forest)]/15 shadow-sm">
+          <div className="rounded-[var(--radius-panel)] overflow-hidden border-2 border-[var(--color-forest)]/15 shadow-card">
             <iframe
               src="https://www.openstreetmap.org/export/embed.html?bbox=127.93,37.78,128.04,37.85&layer=mapnik&marker=37.8167,127.9833"
               className="w-full h-[300px] md:h-[400px] lg:h-[450px] border-0"
@@ -175,7 +175,7 @@ Small actions from outside the village can still make a real difference.`}
               defaultHref="/en/petition"
               page="en/story"
               section="cta"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-xl bg-white text-[var(--color-forest)] font-bold text-lg hover:bg-white/90 transition-colors min-h-[52px]"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-full bg-white text-[var(--color-forest)] font-bold text-lg hover:bg-white/90 transition-colors min-h-[52px]"
             >
               <EditableText contentKey="en.storyPage.cta.signButton" defaultValue="Sign the petition" as="span" page="en/story" section="cta" />
             </EditableLink>
@@ -184,7 +184,7 @@ Small actions from outside the village can still make a real difference.`}
               defaultHref="/en/donate"
               page="en/story"
               section="cta"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-xl bg-white/15 border-2 border-white/30 text-white font-bold text-lg hover:bg-white/25 transition-colors min-h-[52px]"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/15 border-2 border-white/30 text-white font-bold text-lg hover:bg-white/25 transition-colors min-h-[52px]"
             >
               <EditableText contentKey="en.storyPage.cta.donateButton" defaultValue="Donate" as="span" page="en/story" section="cta" />
             </EditableLink>

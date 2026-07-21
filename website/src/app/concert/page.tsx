@@ -105,7 +105,7 @@ export default function ConcertPage() {
           {INFO_CARDS.map((card) => (
             <div
               key={card.label}
-              className="rounded-2xl border border-[var(--color-border)] bg-white px-4 py-6 text-center shadow-sm"
+              className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white px-4 py-6 text-center shadow-card"
             >
               <card.icon className="mx-auto h-7 w-7 text-[var(--color-forest)]" aria-hidden />
               <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
@@ -140,7 +140,7 @@ export default function ConcertPage() {
           </h2>
 
           {/* 첫 문단 + 숲 사진 */}
-          <div className="mt-10 overflow-hidden rounded-3xl border border-[var(--color-border)] shadow-lg">
+          <div className="mt-10 overflow-hidden rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card">
             <div className="relative aspect-[16/9] w-full">
               <Image
                 src="/images/pine-forest-1.jpg"
@@ -173,7 +173,7 @@ export default function ConcertPage() {
               이설도로를 낸다며 벌써 2,256그루가 먼저 쓰러졌습니다. 톱날은 이미 숲의 가장자리를
               파고들고 있습니다.
             </p>
-            <div className="order-1 overflow-hidden rounded-3xl border border-[var(--color-border)] shadow-lg sm:order-2">
+            <div className="order-1 overflow-hidden rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card sm:order-2">
               <div className="relative aspect-[4/5] w-full">
                 <Image
                   src="/images/pine-forest-2.jpg"
@@ -187,7 +187,7 @@ export default function ConcertPage() {
           </div>
 
           {/* 셋째 문단 — 강조 인용 블록 */}
-          <div className="mt-12 rounded-3xl border-l-4 border-[var(--color-warm)] bg-[var(--color-bg-warm)] px-6 py-8 sm:px-10">
+          <div className="mt-12 rounded-[var(--radius-panel)] border-l-4 border-[var(--color-warm)] bg-[var(--color-bg-warm)] px-6 py-8 sm:px-10">
             <p className="break-keep text-lg leading-loose text-[var(--color-text)] sm:text-xl">
               주민들은 2019년부터 7년 동안 680번 넘게 거리에 섰습니다. 예순에서 여든의 손들이
               팻말을 들었고, 그 가운데 일곱 분은 지금 재판을 받고 있습니다. 이제 음악가 열세
@@ -252,7 +252,7 @@ export default function ConcertPage() {
             {CONCERT_TIMETABLE.map((slot, i) => (
               <li
                 key={slot.name}
-                className="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-white px-4 py-4 shadow-sm transition-colors hover:border-[var(--color-warm)]/40 sm:gap-4 sm:px-5"
+                className="flex items-center gap-3 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white px-4 py-4 shadow-card transition-colors hover:border-[var(--color-warm)]/40 sm:gap-4 sm:px-5"
               >
                 <span className="w-7 shrink-0 text-sm font-black text-[var(--color-warm)]">
                   {String(i + 1).padStart(2, "0")}
@@ -265,7 +265,7 @@ export default function ConcertPage() {
                 </span>
               </li>
             ))}
-            <li className="flex items-center gap-3 rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-4 sm:gap-4 sm:px-5">
+            <li className="flex items-center gap-3 rounded-[var(--radius-card)] border border-dashed border-[var(--color-border)] px-4 py-4 sm:gap-4 sm:px-5">
               <span className="w-7 shrink-0" aria-hidden />
               <span className="w-[7.5rem] shrink-0 text-sm font-bold tabular-nums text-[var(--color-text-muted)]">
                 19:30 – 20:00
@@ -291,7 +291,7 @@ export default function ConcertPage() {
             {PARTICIPATE.map((p) => (
               <div
                 key={p.title}
-                className="rounded-2xl border border-[var(--color-border)] bg-white p-6 shadow-sm"
+                className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-card"
               >
                 <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-warm)]/10 text-[var(--color-warm)]">
                   <p.icon className="h-6 w-6" aria-hidden />
@@ -320,7 +320,7 @@ export default function ConcertPage() {
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-[var(--color-border)] bg-white p-6 shadow-sm">
+            <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-card">
               <span className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-forest)]">
                 <Train className="h-5 w-5" aria-hidden />
                 지하철
@@ -331,7 +331,7 @@ export default function ConcertPage() {
                 바로 앞입니다.
               </p>
             </div>
-            <div className="rounded-2xl border border-[var(--color-border)] bg-white p-6 shadow-sm">
+            <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-card">
               <span className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-forest)]">
                 <TreePine className="h-5 w-5" aria-hidden />
                 한여름 야외 공연
@@ -376,7 +376,7 @@ export default function ConcertPage() {
           <p className="mt-3 break-keep text-base text-[var(--color-text-muted)]">
             내려받아 SNS·단체방·동네 게시판에 공유해주세요.
           </p>
-          <div className="mt-8 overflow-hidden rounded-2xl border border-[var(--color-border)] shadow-lg">
+          <div className="mt-8 overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card">
             <Image
               src="/images/concert/poster.jpg"
               alt="베어지기 전에 풍천리 공연 포스터 — 2026년 8월 1일 토요일 오후 1시부터 8시, 청와대 앞. 출연: 강민정, 경하와 세민과 멍구와 흑염소, 길가는 밴드, 김민정(알마즈), 남수, 물장구클럽, 삼각전파사, 아나자오, 이서영, 자이, 종이코트, 치핵, 하늘소년"
@@ -411,7 +411,7 @@ export default function ConcertPage() {
             {FAQ.map((item) => (
               <div
                 key={item.q}
-                className="rounded-2xl border border-[var(--color-border)] bg-white p-6 shadow-sm"
+                className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-card"
               >
                 <dt className="text-lg font-bold text-[var(--color-text)]">Q. {item.q}</dt>
                 <dd className="mt-2 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">

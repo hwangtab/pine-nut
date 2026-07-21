@@ -26,7 +26,7 @@ export default function PetitionSignatureForm({
         onSubmit={form.handleSubmit}
         onFocusCapture={form.handleFocusCapture}
         noValidate
-        className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 space-y-6"
+        className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] shadow-card p-6 sm:p-8 space-y-6"
       >
         <PetitionFormFields
           copy={copy}

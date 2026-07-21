@@ -78,9 +78,9 @@ export default function PressPage() {
                     defaultHref={item.href}
                     page="press"
                     section="kit"
-                    className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-[var(--color-border)] shadow-sm hover:shadow-md hover:border-[var(--color-forest)]/20 transition-all"
+                    className="group flex flex-col items-center text-center p-6 bg-white rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card hover-lift"
                   >
-                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 ${item.color}`}>
+                    <div className={`w-14 h-14 rounded-[var(--radius-card)] flex items-center justify-center mb-4 ${item.color}`}>
                       <Icon className="w-6 h-6" />
                     </div>
                     <EditableText
@@ -142,7 +142,7 @@ export default function PressPage() {
               section="contact"
               className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
             />
-            <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm p-6 md:p-8">
+            <div className="bg-white rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card p-6 md:p-8">
               <EditableRichText
                 contentKey="press.contact.description"
                 defaultValue="취재 및 자료 요청은 빠띠 캠페인 페이지를 통해 문의해 주세요. 빠른 시일 내에 답변드리겠습니다."
@@ -152,7 +152,7 @@ export default function PressPage() {
                 className="text-[var(--color-text-muted)] mb-6 leading-relaxed"
               />
               <div className="grid grid-cols-1 gap-4">
-                <div className="flex items-start gap-3 p-4 bg-[var(--color-bg-warm)] rounded-xl">
+                <div className="flex items-start gap-3 p-4 bg-[var(--color-bg-warm)] rounded-[var(--radius-card)]">
                   <ExternalLink className="w-5 h-5 text-[var(--color-forest)] mt-0.5 shrink-0" />
                   <div>
                     <EditableText
@@ -199,7 +199,7 @@ export default function PressPage() {
               section="cite"
               className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
             />
-            <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm p-6 md:p-8">
+            <div className="bg-white rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card p-6 md:p-8">
               <EditableRichText
                 contentKey="press.cite.description"
                 defaultValue="연구 및 보도 시 아래 형식으로 인용해 주시기 바랍니다."
@@ -208,7 +208,7 @@ export default function PressPage() {
                 renderMode="paragraph"
                 className="text-[var(--color-text-muted)] mb-4 leading-relaxed"
               />
-              <div className="bg-[var(--color-bg-warm)] rounded-xl p-5 border border-[var(--color-border)]">
+              <div className="bg-[var(--color-bg-warm)] rounded-[var(--radius-card)] p-5 border border-[var(--color-border)]">
                 <EditableRichText
                   contentKey="press.cite.citation"
                   defaultValue={`풍천리 주민회. (2026). 풍천리 양수발전소 반대 투쟁 기록.\n${SITE_URL}`}
@@ -226,7 +226,7 @@ export default function PressPage() {
                 section="cite"
                 className="text-sm text-[var(--color-text-muted)] mt-4 leading-relaxed"
               />
-              <div className="bg-[var(--color-bg-warm)] rounded-xl p-5 border border-[var(--color-border)] mt-2">
+              <div className="bg-[var(--color-bg-warm)] rounded-[var(--radius-card)] p-5 border border-[var(--color-border)] mt-2">
                 <EditableRichText
                   contentKey="press.cite.apaCitation"
                   defaultValue={`풍천리 주민회 (2026). 풍천리를 지켜주세요: 양수발전소 건설 반대 투쟁 기록. ${SITE_URL}`}

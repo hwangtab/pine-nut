@@ -70,9 +70,9 @@ export default function EnglishPressPage() {
                   defaultHref={item.href}
                   page="en/press"
                   section="kit"
-                  className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-[var(--color-border)] shadow-sm hover:shadow-md hover:border-[var(--color-forest)]/20 transition-all"
+                  className="group flex flex-col items-center text-center p-6 bg-white rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card hover-lift"
                 >
-                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 ${item.color}`}>
+                  <div className={`w-14 h-14 rounded-[var(--radius-card)] flex items-center justify-center mb-4 ${item.color}`}>
                     <Icon className="w-6 h-6" />
                   </div>
                   <EditableText
@@ -122,7 +122,7 @@ export default function EnglishPressPage() {
             section="contact"
             className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
           />
-          <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm p-6 md:p-8">
+          <div className="bg-white rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card p-6 md:p-8">
             <EditableRichText
               contentKey="en.press.contact.description"
               defaultValue="For reporting requests, interviews, and source materials, please contact the campaign through the official campaigns.do page."
@@ -132,7 +132,7 @@ export default function EnglishPressPage() {
               className="text-[var(--color-text-muted)] mb-6 leading-relaxed"
             />
             <div className="grid grid-cols-1 gap-4">
-              <div className="flex items-start gap-3 p-4 bg-[var(--color-bg-warm)] rounded-xl">
+              <div className="flex items-start gap-3 p-4 bg-[var(--color-bg-warm)] rounded-[var(--radius-card)]">
                 <ExternalLink className="w-5 h-5 text-[var(--color-forest)] mt-0.5 shrink-0" />
                 <div>
                   <EditableText
@@ -173,7 +173,7 @@ export default function EnglishPressPage() {
             section="cite"
             className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
           />
-          <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm p-6 md:p-8">
+          <div className="bg-white rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card p-6 md:p-8">
             <EditableRichText
               contentKey="en.press.cite.description"
               defaultValue="If you cite this campaign in reporting or research, you may use the following format."
@@ -182,7 +182,7 @@ export default function EnglishPressPage() {
               renderMode="paragraph"
               className="text-[var(--color-text-muted)] mb-4 leading-relaxed"
             />
-            <div className="bg-[var(--color-bg-warm)] rounded-xl p-5 border border-[var(--color-border)]">
+            <div className="bg-[var(--color-bg-warm)] rounded-[var(--radius-card)] p-5 border border-[var(--color-border)]">
               <EditableRichText
                 contentKey="en.press.cite.citation"
                 defaultValue={`Pungcheon-ri Residents' Committee. (2026). Save Pungcheon-ri campaign materials.\n${SITE_URL}/en`}

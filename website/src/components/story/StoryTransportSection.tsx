@@ -37,7 +37,7 @@ export function StoryTransportSection() {
       >
         {(items) => (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-2xl p-6 md:p-8 border-2 border-[var(--color-forest)]/15 shadow-sm">
+            <div className="bg-white rounded-[var(--radius-card)] p-6 md:p-8 border-2 border-[var(--color-forest)]/15 shadow-card">
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-10 h-10 rounded-xl bg-[var(--color-forest)]/10 flex items-center justify-center">
                   <svg
@@ -104,7 +104,7 @@ export function StoryTransportSection() {
               ]}
             >
               {(publicItems) => (
-                <div className="bg-white rounded-2xl p-6 md:p-8 border-2 border-[var(--color-forest)]/15 shadow-sm">
+                <div className="bg-white rounded-[var(--radius-card)] p-6 md:p-8 border-2 border-[var(--color-forest)]/15 shadow-card">
                   <div className="flex items-center gap-3 mb-5">
                     <div className="w-10 h-10 rounded-xl bg-[var(--color-forest)]/10 flex items-center justify-center">
                       <svg
@@ -163,7 +163,7 @@ export function StoryTransportSection() {
         fields={[{ key: "text", label: "내용" }]}
       >
         {(noteItems) => (
-          <div className="mt-6 bg-[var(--color-forest)]/5 rounded-2xl p-6 md:p-8 border border-[var(--color-forest)]/10">
+          <div className="mt-6 bg-[var(--color-forest)]/5 rounded-[var(--radius-panel)] p-6 md:p-8 border border-[var(--color-forest)]/10">
             <h4 className="text-base font-bold text-[var(--color-forest)] mb-4">
               참고사항
             </h4>
@@ -189,7 +189,7 @@ export function StoryTransportSection() {
                 </li>
               ))}
             </ul>
-            <div className="mt-5 flex items-start gap-3 bg-white/60 rounded-xl p-4 border border-[var(--color-forest)]/10">
+            <div className="mt-5 flex items-start gap-3 bg-white/60 rounded-[var(--radius-card)] p-4 border border-[var(--color-forest)]/10">
               <span className="shrink-0 mt-0.5">
                 <svg
                   className="w-5 h-5 text-[var(--color-forest)]"

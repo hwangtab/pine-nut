@@ -28,7 +28,7 @@ function SubmitCommentButton() {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-lg bg-[var(--color-forest)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--color-forest-light)] disabled:cursor-not-allowed disabled:opacity-50"
+      className="rounded-full bg-[var(--color-forest)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--color-forest-light)] disabled:cursor-not-allowed disabled:opacity-50"
     >
       {pending ? "등록 중..." : "댓글 등록"}
     </button>
@@ -80,7 +80,7 @@ function CommentItem({
 
   return (
     <li
-      className={`rounded-xl border border-[var(--color-border)] px-4 py-3 ${
+      className={`rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card px-4 py-3 ${
         isHiddenOrDeleted ? "bg-[var(--color-bg)]" : ""
       }`}
     >
@@ -89,7 +89,7 @@ function CommentItem({
         <span>·</span>
         <span>{new Date(comment.createdAt).toLocaleDateString("ko-KR")}</span>
         {isHiddenOrDeleted && (
-          <span className="rounded bg-[var(--color-border)] px-2 py-0.5 text-xs font-medium text-[var(--color-text-muted)]">
+          <span className="rounded-full bg-[var(--color-border)] px-2 py-0.5 text-xs font-medium text-[var(--color-text-muted)]">
             {comment.isDeleted ? "삭제됨" : "숨김"}
           </span>
         )}
@@ -112,7 +112,7 @@ function CommentItem({
             type="button"
             onClick={handleDelete}
             disabled={pending}
-            className="rounded-lg bg-[var(--color-danger-bg)] px-3 py-1.5 text-xs font-semibold text-[var(--color-danger)] transition-colors hover:opacity-80 disabled:opacity-50"
+            className="rounded-full bg-[var(--color-danger-bg)] px-3 py-1.5 text-xs font-semibold text-[var(--color-danger)] transition-colors hover:opacity-80 disabled:opacity-50"
           >
             삭제
           </button>
@@ -122,7 +122,7 @@ function CommentItem({
             type="button"
             onClick={handleToggleHidden}
             disabled={pending}
-            className="rounded-lg border border-[var(--color-border)] px-3 py-1.5 text-xs font-semibold text-[var(--color-text)] transition-colors hover:bg-[var(--color-bg)] disabled:opacity-50"
+            className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-xs font-semibold text-[var(--color-text)] transition-colors hover:bg-[var(--color-bg)] disabled:opacity-50"
           >
             {comment.isHidden ? "숨김 해제" : "숨김"}
           </button>
@@ -179,7 +179,7 @@ export default function CommentSection({
         {canWrite && hasNickname && (
           <form action={formAction} className="space-y-3">
             {state?.error && (
-              <div className="rounded-xl border border-[var(--color-danger-border)] bg-[var(--color-danger-bg)] px-4 py-3 text-sm font-medium text-[var(--color-danger)]">
+              <div className="rounded-[var(--radius-card)] border border-[var(--color-danger-border)] bg-[var(--color-danger-bg)] px-4 py-3 text-sm font-medium text-[var(--color-danger)]">
                 {state.error}
               </div>
             )}
@@ -188,7 +188,7 @@ export default function CommentSection({
               required
               rows={3}
               placeholder="댓글을 입력하세요"
-              className="w-full resize-y rounded-xl border border-[var(--color-border)] px-4 py-3 text-base outline-none focus:border-[var(--color-forest)] focus:ring-2 focus:ring-[var(--color-forest)]/40"
+              className="w-full resize-y rounded-xl border border-[var(--color-border)] px-4 py-3 text-base outline-none focus:border-[var(--color-forest)] focus:ring-2 focus:ring-[var(--color-forest)]/30"
             />
             <SubmitCommentButton />
           </form>

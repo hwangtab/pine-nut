@@ -20,7 +20,7 @@ export default function PrivacyPage() {
       />
 
       <div className="max-w-3xl mx-auto px-4 py-12 md:py-16">
-        <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 md:p-10 space-y-10">
+        <div className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] shadow-card p-6 sm:p-8 md:p-10 space-y-10">
           <EditableRichText
             contentKey="privacy.intro"
             defaultValue={`"풍천리를 지켜주세요" 웹사이트(이하 "서비스")는 이용자의 개인정보를 소중히 보호하며, 관련 법령을 준수합니다. 본 방침은 서비스가 수집하는 개인정보의 항목, 수집 목적, 보유 기간, 이용자의 권리 등을 안내합니다.`}
@@ -40,7 +40,7 @@ export default function PrivacyPage() {
               className="text-xl font-bold text-[var(--color-forest)] mb-4"
             />
             <div className="space-y-4">
-              <div className="bg-[var(--color-bg)] rounded-xl p-5">
+              <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] p-5">
                 <EditableText
                   contentKey="privacy.section1.signupTitle"
                   defaultValue="서명 참여 시"
@@ -58,7 +58,7 @@ export default function PrivacyPage() {
                   className="text-[var(--color-text-muted)] text-[15px] leading-relaxed"
                 />
               </div>
-              <div className="bg-[var(--color-bg)] rounded-xl p-5">
+              <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] p-5">
                 <EditableText
                   contentKey="privacy.section1.autoTitle"
                   defaultValue="웹사이트 이용 시 자동 수집"
@@ -174,7 +174,7 @@ export default function PrivacyPage() {
               renderMode="paragraph"
               className="text-[var(--color-text)] text-[15px] leading-relaxed mb-4"
             />
-            <div className="bg-[var(--color-bg)] rounded-xl p-5 space-y-2">
+            <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] p-5 space-y-2">
               <p className="text-[var(--color-text)] text-[15px]">
                 <strong>
                   <EditableText

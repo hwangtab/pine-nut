@@ -5,7 +5,7 @@ import { EditableText } from "@/components/editable";
 export default function DonateQuoteSection() {
   return (
     <div className="bg-[var(--color-bg-warm)] py-8 px-4">
-      <blockquote className="max-w-xl mx-auto bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-2xl px-6 py-5 text-[var(--color-text)] text-center">
+      <blockquote className="max-w-xl mx-auto bg-white border border-[var(--color-border)] rounded-[var(--radius-card)] px-6 py-5 text-[var(--color-text)] text-center shadow-card">
         <EditableText
           contentKey="donate.quote.text"
           defaultValue={"\u201C여러분의 후원은 70대 어르신들이 매주 서울까지 버스를 타고 갈 수 있는 교통비가 됩니다\u201D"}

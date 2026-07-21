@@ -25,7 +25,7 @@ export function EnglishNumbersSection() {
           {items.map((stat, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl p-4 md:p-6 lg:p-8 text-center shadow-sm border border-[var(--color-border)]"
+              className="bg-white rounded-[var(--radius-card)] p-4 md:p-6 lg:p-8 text-center shadow-card border border-[var(--color-border)]"
             >
               <p className="text-3xl md:text-4xl font-black text-[var(--color-forest)] mb-2">
                 {stat.number}
@@ -94,7 +94,7 @@ export function EnglishStakeSection() {
             return (
               <div
                 key={index}
-                className="bg-white rounded-2xl p-5 md:p-8 border border-[var(--color-border)] shadow-sm"
+                className="bg-white rounded-[var(--radius-card)] p-5 md:p-8 border border-[var(--color-border)] shadow-card"
               >
                 <div
                   className={`w-12 h-12 rounded-xl ${icon.bgClass} flex items-center justify-center mb-5`}
@@ -169,7 +169,7 @@ export function EnglishHelpCards() {
           {items.map((card, index) => (
             <div
               key={index}
-              className="bg-white/10 rounded-2xl p-6 md:p-8 border border-white/15"
+              className="bg-white/10 rounded-[var(--radius-card)] p-6 md:p-8 border border-white/15"
             >
               <h3 className="text-lg font-bold mb-3">{card.title}</h3>
               <p className="text-white/70 text-[15px] leading-relaxed mb-5">

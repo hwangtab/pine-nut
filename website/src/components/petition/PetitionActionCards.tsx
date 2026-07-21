@@ -57,7 +57,7 @@ export default function PetitionActionCards({
                 key="cta-0"
                 type="button"
                 onClick={onScrollToForm}
-                className="text-left bg-white border border-[var(--color-border)] rounded-2xl p-6 transition-colors hover:bg-[var(--color-bg-warm)] cursor-pointer"
+                className="text-left bg-white border border-[var(--color-border)] rounded-[var(--radius-card)] shadow-card hover-lift p-6 cursor-pointer"
               >
                 {children}
               </button>
@@ -69,7 +69,7 @@ export default function PetitionActionCards({
                 defaultHref={donateDefaultHref}
                 page={page}
                 section="cta"
-                className="block rounded-2xl border border-[var(--color-border)] bg-white p-6 transition-colors hover:bg-[var(--color-bg-warm)]"
+                className="block rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-card hover-lift"
               >
                 {children}
               </EditableLink>
@@ -81,7 +81,7 @@ export default function PetitionActionCards({
                 defaultHref={shareDefaultHref}
                 page={page}
                 section="cta"
-                className="block rounded-2xl border border-[var(--color-border)] bg-white p-6 transition-colors hover:bg-[var(--color-bg-warm)]"
+                className="block rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-card hover-lift"
               >
                 {children}
               </EditableLink>

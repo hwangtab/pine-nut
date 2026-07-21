@@ -207,7 +207,7 @@ export default function PetitionPage() {
             ]}
           >
             {(items) => (
-              <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 space-y-5">
+              <div className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] shadow-card p-6 sm:p-8 space-y-5">
                 {items.map((item, i) => (
                   <div key={i} className="flex gap-4 items-start">
                     <span

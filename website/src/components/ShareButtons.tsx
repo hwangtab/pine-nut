@@ -31,7 +31,7 @@ export default function ShareButtons({
       <div className="flex flex-wrap gap-2">
         <ShareButton
           onClick={handleKakao}
-          className="bg-[#FEE500] text-[#3C1E1E] hover:bg-[#FDD835]"
+          className="rounded-full bg-[#FEE500] text-[#3C1E1E] hover:bg-[#FDD835]"
           ariaLabel="카카오톡으로 공유"
           icon={<MessageCircle className="w-4 h-4" />}
         >
@@ -39,7 +39,7 @@ export default function ShareButtons({
         </ShareButton>
         <ShareButton
           onClick={handleTwitter}
-          className="bg-[var(--color-text)] text-white hover:bg-[var(--color-text)]/90"
+          className="rounded-full bg-[var(--color-text)] text-white hover:bg-[var(--color-text)]/90"
           ariaLabel="트위터(X)로 공유"
           icon={<Twitter className="w-4 h-4" />}
         >
@@ -47,7 +47,7 @@ export default function ShareButtons({
         </ShareButton>
         <ShareButton
           onClick={handleFacebook}
-          className="bg-[#1877F2] text-white hover:bg-[#166FE5]"
+          className="rounded-full bg-[#1877F2] text-white hover:bg-[#166FE5]"
           ariaLabel="페이스북으로 공유"
           icon={<Facebook className="w-4 h-4" />}
         >
@@ -55,7 +55,7 @@ export default function ShareButtons({
         </ShareButton>
         <ShareButton
           onClick={handleCopyUrl}
-          className="bg-[var(--color-bg)] text-[var(--color-text-muted)] hover:bg-[var(--color-border)]"
+          className="rounded-full bg-[var(--color-bg)] text-[var(--color-text-muted)] hover:bg-[var(--color-border)]"
           ariaLabel="URL 복사"
           icon={<LinkIcon className="w-4 h-4" />}
         >

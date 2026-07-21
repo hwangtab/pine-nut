@@ -23,7 +23,7 @@ export default function DonateBankTransferSection({
         section="bank"
         className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)] text-center"
       />
-      <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 shadow-sm">
+      <div className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] p-6 sm:p-8 shadow-card">
         <div className="text-center mb-5">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[var(--color-bg-warm)] mb-3">
             <svg
@@ -53,7 +53,7 @@ export default function DonateBankTransferSection({
           />
         </div>
 
-        <div className="bg-[var(--color-bg)] rounded-xl px-5 py-4 mb-4 text-center">
+        <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] px-5 py-4 mb-4 text-center">
           <EditableText
             contentKey="donate.bank.accountLabel"
             defaultValue="후원 계좌"
@@ -70,7 +70,7 @@ export default function DonateBankTransferSection({
         <button
           type="button"
           onClick={onCopyAccount}
-          className="w-full min-h-[56px] rounded-xl bg-[var(--color-warm)] hover:brightness-110 active:scale-[0.98] text-white font-bold text-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
+          className="w-full min-h-[56px] rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] active:scale-[0.98] text-white font-bold text-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
         >
           <Copy className="w-5 h-5" />
           <EditableText

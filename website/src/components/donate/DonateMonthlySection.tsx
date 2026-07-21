@@ -13,8 +13,8 @@ export default function DonateMonthlySection() {
         section="monthly"
         className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]"
       />
-      <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8">
-        <div className="bg-[var(--color-bg-warm)] rounded-xl px-5 py-4 text-center">
+      <div className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] p-6 sm:p-8 shadow-card">
+        <div className="bg-[var(--color-bg-warm)] rounded-[var(--radius-card)] px-5 py-4 text-center">
           <EditableText
             contentKey="donate.monthly.statusTitle"
             defaultValue="후원금 사용 내역은 확정 후 공개 예정입니다."

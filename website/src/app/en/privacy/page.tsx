@@ -30,7 +30,7 @@ export default function EnglishPrivacyPage() {
       />
 
       <div className="max-w-3xl mx-auto px-4 py-12 md:py-16">
-        <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 md:p-10 space-y-10">
+        <div className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] shadow-card p-6 sm:p-8 md:p-10 space-y-10">
           <EditableRichText
             contentKey="en.privacy.intro"
             defaultValue={`The Save Pungcheon-ri website values and protects personal information. This policy explains what data we collect, why we collect it, how long we retain it, and what rights users have.`}
@@ -43,11 +43,11 @@ export default function EnglishPrivacyPage() {
           <section>
             <EditableText contentKey="en.privacy.section1.title" defaultValue="1. Information We Collect" as="h2" page="en/privacy" section="section1" className="text-xl font-bold text-[var(--color-forest)] mb-4" />
             <div className="space-y-4">
-              <div className="bg-[var(--color-bg)] rounded-xl p-5">
+              <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] p-5">
                 <EditableText contentKey="en.privacy.section1.signupTitle" defaultValue="When signing the petition" as="h3" page="en/privacy" section="section1" className="font-semibold text-[var(--color-text)] mb-2" />
                 <EditableRichText contentKey="en.privacy.section1.signupContent" defaultValue="Name, email address, and an optional message of support" page="en/privacy" section="section1" renderMode="paragraph" className="text-[var(--color-text-muted)] text-[15px] leading-relaxed" />
               </div>
-              <div className="bg-[var(--color-bg)] rounded-xl p-5">
+              <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] p-5">
                 <EditableText contentKey="en.privacy.section1.autoTitle" defaultValue="Automatically collected website data" as="h3" page="en/privacy" section="section1" className="font-semibold text-[var(--color-text)] mb-2" />
                 <EditableRichText contentKey="en.privacy.section1.autoContent" defaultValue="Pages visited, time spent, and browser information collected anonymously through analytics tools" page="en/privacy" section="section1" renderMode="paragraph" className="text-[var(--color-text-muted)] text-[15px] leading-relaxed" />
               </div>
@@ -78,7 +78,7 @@ export default function EnglishPrivacyPage() {
           <section>
             <EditableText contentKey="en.privacy.section6.title" defaultValue="6. Contact" as="h2" page="en/privacy" section="section6" className="text-xl font-bold text-[var(--color-forest)] mb-4" />
             <EditableRichText contentKey="en.privacy.section6.intro" defaultValue="For privacy-related questions or requests, please contact us through the following channels." page="en/privacy" section="section6" renderMode="paragraph" className="text-[var(--color-text)] text-[15px] leading-relaxed mb-4" />
-            <div className="bg-[var(--color-bg)] rounded-xl p-5 space-y-2">
+            <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] p-5 space-y-2">
               <p className="text-[var(--color-text)] text-[15px]">
                 <strong>
                   <EditableText contentKey="en.privacy.section6.campaignLabel" defaultValue="Campaign page:" as="span" page="en/privacy" section="section6" />

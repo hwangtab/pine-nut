@@ -22,7 +22,7 @@ export default function DonateFundsSection() {
         section="funds"
         className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]"
       />
-      <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8">
+      <div className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] p-6 sm:p-8 shadow-card">
         <EditableText
           contentKey="donate.funds.disclaimer"
           defaultValue="* 아래는 후원금 사용 계획(안)이며, 실제 집행 시 변동될 수 있습니다."
@@ -84,7 +84,7 @@ export default function DonateFundsSection() {
           )}
         </EditableList>
 
-        <div className="bg-[var(--color-bg-warm)] rounded-xl px-5 py-4">
+        <div className="bg-[var(--color-bg-warm)] rounded-[var(--radius-card)] px-5 py-4">
           <EditableText
             contentKey="donate.funds.transparencyTitle"
             defaultValue="후원금 사용 내역은 정리 후 이 페이지에 공개됩니다."

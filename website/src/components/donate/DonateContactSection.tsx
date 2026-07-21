@@ -6,7 +6,7 @@ import { EditableLink, EditableText } from "@/components/editable";
 export default function DonateContactSection() {
   return (
     <section
-      className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 space-y-6"
+      className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] p-6 sm:p-8 space-y-6 shadow-card"
       aria-label="안내사항"
     >
       <div>

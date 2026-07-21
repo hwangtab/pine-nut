@@ -18,7 +18,7 @@ export const koreanPetitionSuccessCopy: PetitionSuccessCopy = {
     defaultValue: "카카오톡 공유",
   },
   primaryShareClassName:
-    "min-h-[48px] px-6 py-3 rounded-xl bg-[#FEE500] text-[#191919] font-semibold flex items-center justify-center gap-2 transition-opacity hover:opacity-90",
+    "min-h-[48px] px-6 py-3 rounded-full bg-[#FEE500] text-[#191919] font-semibold flex items-center justify-center gap-2 transition-opacity hover:opacity-90",
   twitterShare: {
     contentKey: "petition.success.shareTwitter",
     defaultValue: "트위터 공유",
@@ -43,7 +43,7 @@ export const englishPetitionSuccessCopy: PetitionSuccessCopy = {
   countSuffix: { contentKey: "en.petition.success.countSuffix", defaultValue: "." },
   primaryShare: { contentKey: "en.petition.success.share", defaultValue: "Share" },
   primaryShareClassName:
-    "min-h-[48px] px-6 py-3 rounded-xl bg-[var(--color-forest)] text-white font-semibold flex items-center justify-center gap-2 transition-opacity hover:opacity-90",
+    "min-h-[48px] px-6 py-3 rounded-full bg-[var(--color-forest)] text-white font-semibold flex items-center justify-center gap-2 transition-opacity hover:opacity-90",
   twitterShare: { contentKey: "en.petition.success.shareX", defaultValue: "Share on X" },
   copyLabel: { contentKey: "en.petition.success.copy", defaultValue: "Copy URL" },
   copiedLabel: { contentKey: "en.petition.success.copied", defaultValue: "Copied" },

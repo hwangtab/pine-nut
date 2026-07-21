@@ -51,7 +51,7 @@ export default function ReportButton({ targetType, targetId, canReport }: Report
       <button
         type="button"
         onClick={handleToggle}
-        className="rounded-lg border border-[var(--color-border)] px-3 py-1.5 text-xs font-semibold text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-bg)]"
+        className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-xs font-semibold text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-bg)]"
       >
         신고
       </button>
@@ -60,7 +60,7 @@ export default function ReportButton({ targetType, targetId, canReport }: Report
           <select
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            className="rounded-lg border border-[var(--color-border)] px-2 py-1.5 text-xs outline-none focus:border-[var(--color-forest)]"
+            className="rounded-xl border border-[var(--color-border)] px-2 py-1.5 text-xs outline-none focus:border-[var(--color-forest)] focus:ring-2 focus:ring-[var(--color-forest)]/30"
           >
             {REASONS.map((r) => (
               <option key={r} value={r}>
@@ -72,7 +72,7 @@ export default function ReportButton({ targetType, targetId, canReport }: Report
             type="button"
             onClick={handleSubmit}
             disabled={pending}
-            className="rounded-lg bg-[var(--color-warm)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
+            className="rounded-full bg-[var(--color-warm)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
           >
             {pending ? "제출 중..." : "제출"}
           </button>

@@ -110,7 +110,7 @@ export function EnglishStoryReasonsSection() {
                   const color = colorMap[item.color] || colorMap.forest;
 
                   return (
-                    <div key={index} className={`bg-white rounded-2xl p-8 border-2 ${color.border} shadow-sm`}>
+                    <div key={index} className={`bg-white rounded-[var(--radius-card)] p-8 border-2 ${color.border} shadow-card`}>
                       <div className={`w-12 h-12 rounded-xl ${color.bg} flex items-center justify-center mb-5`}>
                         <span className={color.text}>
                           {iconMap[item.icon] || iconMap.sparkle}
@@ -139,7 +139,7 @@ export function EnglishStoryReasonsSection() {
             section="reasons"
             width={1200}
             height={800}
-            className="w-full rounded-xl shadow-lg my-6"
+            className="w-full rounded-[var(--radius-card)] shadow-card my-6"
           />
           <EditableText
             contentKey="en.storyPage.reasons.photoCaption"

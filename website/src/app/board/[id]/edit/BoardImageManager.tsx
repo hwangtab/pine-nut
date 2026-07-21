@@ -11,7 +11,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-lg bg-[var(--color-forest)] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+      className="rounded-full bg-[var(--color-forest)] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
     >
       {pending ? "업로드 중..." : "이미지 추가"}
     </button>
@@ -43,7 +43,7 @@ export default function BoardImageManager({
   }
 
   return (
-    <div className="mt-8 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-4">
+    <div className="mt-8 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-bg)] shadow-card p-4">
       <h2 className="text-lg font-bold text-[var(--color-text)]">이미지</h2>
       <p className="mt-1 text-sm text-[var(--color-text-muted)]">
         JPG/PNG/WebP, 5MB 이하
@@ -71,7 +71,7 @@ export default function BoardImageManager({
               <img
                 src={img.url}
                 alt=""
-                className="h-24 w-24 rounded object-cover"
+                className="h-24 w-24 rounded-[var(--radius-card)] object-cover"
               />
               <button
                 type="button"

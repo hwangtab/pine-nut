@@ -28,7 +28,7 @@ export default function GalleryPhotoCard({
       onClick={(event) => onOpen(photo, event.currentTarget)}
       aria-label={openAriaLabel(photo.title)}
     >
-      <div className="relative aspect-[4/3] rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden hover:scale-[1.02] bg-[var(--color-bg)]">
+      <div className="relative aspect-[4/3] rounded-[var(--radius-card)] overflow-hidden shadow-card hover-lift bg-[var(--color-bg)]">
         <Image
           src={photo.url}
           alt={photo.description}

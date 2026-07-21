@@ -56,7 +56,7 @@ export default function BoardPostActions({
         <>
           <Link
             href={`/board/${postId}/edit`}
-            className="rounded-lg bg-[var(--color-sky)]/10 px-4 py-2 text-sm font-semibold text-[var(--color-sky)] transition-colors hover:bg-[var(--color-sky)]/20"
+            className="rounded-full bg-[var(--color-sky)]/10 px-4 py-2 text-sm font-semibold text-[var(--color-sky)] transition-colors hover:bg-[var(--color-sky)]/20"
           >
             수정
           </Link>
@@ -64,7 +64,7 @@ export default function BoardPostActions({
             type="button"
             onClick={handleDelete}
             disabled={pending}
-            className="rounded-lg bg-[var(--color-danger-bg)] px-4 py-2 text-sm font-semibold text-[var(--color-danger)] transition-colors hover:opacity-80 disabled:opacity-50"
+            className="rounded-full bg-[var(--color-danger-bg)] px-4 py-2 text-sm font-semibold text-[var(--color-danger)] transition-colors hover:opacity-80 disabled:opacity-50"
           >
             삭제
           </button>
@@ -75,7 +75,7 @@ export default function BoardPostActions({
           type="button"
           onClick={handleToggleHidden}
           disabled={pending}
-          className="rounded-lg border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-text)] transition-colors hover:bg-[var(--color-bg)] disabled:opacity-50"
+          className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-text)] transition-colors hover:bg-[var(--color-bg)] disabled:opacity-50"
         >
           {isHidden ? "숨김 해제" : "숨김"}
         </button>
