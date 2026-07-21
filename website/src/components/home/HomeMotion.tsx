@@ -1,7 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useInView, useReducedMotion, animate } from "framer-motion";
+import { useEffect, useState } from "react";
+import { useReveal } from "@/lib/use-reveal";
+
+function prefersReducedMotion() {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+  );
+}
 
 export function AnimatedCounter({
   target,
@@ -12,27 +19,31 @@ export function AnimatedCounter({
   suffix?: string;
   duration?: number;
 }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
-  const reduceMotion = useReducedMotion();
+  const { ref, inView } = useReveal<HTMLSpanElement>("0px 0px -100px 0px");
   const [displayed, setDisplayed] = useState(0);
 
   useEffect(() => {
-    // 동작 줄이기 설정 시 카운트업 없이 최종값을 바로 렌더(아래 참조)
-    if (!inView || reduceMotion) return;
-    const controls = animate(0, target, {
-      duration,
-      ease: "easeOut",
-      onUpdate(v) {
-        setDisplayed(Math.round(v));
-      },
-    });
-    return () => controls.stop();
-  }, [inView, target, duration, reduceMotion]);
+    if (!inView) return;
+    if (prefersReducedMotion()) return; // 아래 렌더에서 target을 바로 표시
+    let raf = 0;
+    let startTs = 0;
+    const durationMs = duration * 1000;
+    const tick = (ts: number) => {
+      if (!startTs) startTs = ts;
+      const p = Math.min((ts - startTs) / durationMs, 1);
+      // easeOut
+      const eased = 1 - Math.pow(1 - p, 3);
+      setDisplayed(Math.round(eased * target));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [inView, target, duration]);
 
+  const reduce = prefersReducedMotion();
   return (
     <span ref={ref}>
-      {reduceMotion ? target : displayed}
+      {reduce ? target : displayed}
       {suffix}
     </span>
   );
@@ -42,25 +53,22 @@ export function FadeIn({
   children,
   delay = 0,
   className = "",
-  y = 40,
 }: {
   children: React.ReactNode;
   delay?: number;
   className?: string;
+  /** @deprecated framer 시절 y 이동거리 — CSS 리빌은 고정 24px 사용 */
   y?: number;
 }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const { ref, inView } = useReveal<HTMLDivElement>();
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      initial={{ opacity: 0, y }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay, ease: "easeOut" }}
-      className={className}
+      className={`reveal ${inView ? "is-visible" : ""} ${className}`.trim()}
+      style={delay ? { transitionDelay: `${delay}s` } : undefined}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

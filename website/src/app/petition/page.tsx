@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import SubHero from "@/components/SubHero";
 import { EditableText, EditableList } from "@/components/editable";
 import PetitionActionCards from "@/components/petition/PetitionActionCards";
@@ -138,46 +137,31 @@ export default function PetitionPage() {
         />
 
         {/* ── Form / Success ── */}
-        <AnimatePresence mode="wait">
-          {!submitted ? (
-            <motion.section
-              key="form"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              id="signature-form"
-              aria-label="서명 양식"
-            >
-              <PetitionSignatureForm
-                formRef={formRef}
-                onSubmitted={handleSignatureSubmitted}
-                onRefreshSignatures={refreshSignatures}
-              />
-            </motion.section>
-          ) : (
-            <motion.div
-              key="success"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
-            >
-              <PetitionSuccess
-                submittedName={submittedName}
-                signatureCount={signatureCount}
-                urlCopied={urlCopied}
-                onPrimaryShare={handleShareKakao}
-                onShareTwitter={handleShareTwitter}
-                onCopyUrl={handleCopyUrl}
-                onReset={() => {
-                  setSubmitted(false);
-                  setSubmittedName("");
-                  setUrlCopied(false);
-                }}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {!submitted ? (
+          <section className="fade-in" id="signature-form" aria-label="서명 양식">
+            <PetitionSignatureForm
+              formRef={formRef}
+              onSubmitted={handleSignatureSubmitted}
+              onRefreshSignatures={refreshSignatures}
+            />
+          </section>
+        ) : (
+          <div className="fade-in">
+            <PetitionSuccess
+              submittedName={submittedName}
+              signatureCount={signatureCount}
+              urlCopied={urlCopied}
+              onPrimaryShare={handleShareKakao}
+              onShareTwitter={handleShareTwitter}
+              onCopyUrl={handleCopyUrl}
+              onReset={() => {
+                setSubmitted(false);
+                setSubmittedName("");
+                setUrlCopied(false);
+              }}
+            />
+          </div>
+        )}
 
         {/* ── Recent Signatures ── */}
         <RecentSignatures signatures={signatures} loading={loadingSignatures} />

@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { animate, motion, useMotionValue, useTransform } from "framer-motion";
+
+function prefersReducedMotion() {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+  );
+}
 
 export default function PetitionAnimatedCounter({
   target,
@@ -10,32 +16,29 @@ export default function PetitionAnimatedCounter({
   target: number;
   locale?: string;
 }) {
-  const count = useMotionValue(0);
-  const rounded = useTransform(count, (value) =>
-    Math.round(value).toLocaleString(locale),
-  );
-  const [display, setDisplay] = useState("0");
+  const [value, setValue] = useState(0);
 
   useEffect(() => {
-    const controls = animate(count, target, {
-      duration: 2,
-      ease: "easeOut",
-    });
-    const unsubscribe = rounded.on("change", (value) => setDisplay(value));
-    return () => {
-      controls.stop();
-      unsubscribe();
+    if (prefersReducedMotion()) return; // 아래 렌더에서 target 직접 표시
+    let raf = 0;
+    let startTs = 0;
+    const durationMs = 2000;
+    const tick = (ts: number) => {
+      if (!startTs) startTs = ts;
+      const p = Math.min((ts - startTs) / durationMs, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setValue(Math.round(eased * target));
+      if (p < 1) raf = requestAnimationFrame(tick);
     };
-  }, [target, count, rounded]);
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target]);
+
+  const shown = prefersReducedMotion() ? target : value;
 
   return (
-    <motion.span
-      className="text-5xl sm:text-6xl font-black text-[var(--color-warm)]"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
-      {display}
-    </motion.span>
+    <span className="rise-in text-5xl sm:text-6xl font-black text-[var(--color-warm)]">
+      {shown.toLocaleString(locale)}
+    </span>
   );
 }

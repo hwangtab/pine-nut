@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { EditableList, EditableText } from "@/components/editable";
+import { useReveal } from "@/lib/use-reveal";
 import GalleryPhotoCard from "@/components/gallery/GalleryPhotoCard";
 import {
   photoFields,
@@ -39,14 +39,12 @@ export default function GalleryPhotoSection({
   creditLabel?: string;
   openAriaLabel?: (title: string) => string;
 }) {
+  const { ref, inView } = useReveal<HTMLDivElement>();
   return (
     <div className="max-w-5xl mx-auto mb-16 md:mb-24">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="mb-8"
+      <div
+        ref={ref}
+        className={`reveal ${inView ? "is-visible" : ""} mb-8`}
       >
         <EditableText
           contentKey={titleKey}
@@ -64,7 +62,7 @@ export default function GalleryPhotoSection({
           section={section}
           className="text-[var(--color-text-muted)] text-base md:text-lg leading-relaxed max-w-2xl"
         />
-      </motion.div>
+      </div>
 
       <EditableList
         contentKey={contentKey}

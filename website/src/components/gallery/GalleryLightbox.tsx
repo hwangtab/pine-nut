@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
 import type { GalleryPhoto } from "@/components/gallery/gallery-data";
@@ -76,28 +75,20 @@ export default function GalleryLightbox({
   }, [onClose]);
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
-        style={{ backgroundColor: "var(--color-overlay-strong)" }}
-        onClick={onClose}
+    <div
+      className="fade-in fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ backgroundColor: "var(--color-overlay-strong)" }}
+      onClick={onClose}
+    >
+      <div
+        ref={dialogRef}
+        className="pop-in relative max-w-4xl w-full"
+        onClick={(event) => event.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="gallery-lightbox-title"
+        aria-describedby="gallery-lightbox-description"
       >
-        <motion.div
-          ref={dialogRef}
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="relative max-w-4xl w-full"
-          onClick={(event) => event.stopPropagation()}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="gallery-lightbox-title"
-          aria-describedby="gallery-lightbox-description"
-        >
           <button
             ref={closeButtonRef}
             type="button"
@@ -131,8 +122,7 @@ export default function GalleryLightbox({
               {creditLabel} {photo.credit}
             </p>
           </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+      </div>
+    </div>
   );
 }

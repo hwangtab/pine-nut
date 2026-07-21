@@ -173,10 +173,58 @@ html {
 .rise-in-1 { animation-delay: 0.12s; }
 .rise-in-2 { animation-delay: 0.24s; }
 .rise-in-3 { animation-delay: 0.38s; }
+
+/* 스크롤 진입 리빌 — framer-motion 대체(IntersectionObserver가 .is-visible 토글).
+   below-fold 전용(초기 opacity:0는 LCP 요소에 쓰지 않는다). */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* 소셜 프루프 토스트 진입(좌측 슬라이드) */
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(-100px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.toast-in { animation: toast-in 0.4s ease-out both; }
+
+/* 잔잔한 페이드 진입(회전 리스트 등) */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fade-in 0.4s ease-out both; }
+
+/* 모달 등장(스케일 팝) */
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+.pop-in { animation: pop-in 0.25s ease-out both; }
+
+/* 히어로 스크롤 셰브론 바운스(무한) */
+@keyframes chevron-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(12px); }
+}
+.chevron-bounce { animation: chevron-bounce 2s ease-in-out infinite; }
+
 @media (prefers-reduced-motion: reduce) {
-  .rise-in {
-    animation: none;
+  .rise-in { animation: none; }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
+  .toast-in { animation: none; }
+  .chevron-bounce { animation: none; }
 }
 
 /* ────────────────────────────────────────────────────────────

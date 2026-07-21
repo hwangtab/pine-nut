@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { EditableText } from "@/components/editable";
 import type { PublicSignature } from "@/lib/signatures/client";
@@ -92,30 +91,24 @@ export default function RecentSignatures({
         />
       ) : (
         <div className="space-y-3 overflow-hidden max-h-[320px]">
-          <AnimatePresence mode="popLayout">
-            {ordered.slice(0, 5).map((sig, i) => (
-              <motion.div
-                key={`${sig.name}-${(offset + i) % signatures.length}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-                className="bg-white border border-[var(--color-border)] rounded-[var(--radius-card)] shadow-card px-5 py-4"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-[var(--color-text)]">{sig.name}</span>
-                  <time dateTime={sig.created_at} className="text-sm text-[var(--color-text-muted)]">
-                    {formatSignatureDate(sig.created_at, dateLocale)}
-                  </time>
-                </div>
-                {sig.message && (
-                  <p className="mt-1 text-[var(--color-text-muted)] text-[15px]">
-                    &ldquo;{sig.message}&rdquo;
-                  </p>
-                )}
-              </motion.div>
-            ))}
-          </AnimatePresence>
+          {ordered.slice(0, 5).map((sig, i) => (
+            <div
+              key={`${sig.name}-${(offset + i) % signatures.length}`}
+              className="fade-in bg-white border border-[var(--color-border)] rounded-[var(--radius-card)] shadow-card px-5 py-4"
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-[var(--color-text)]">{sig.name}</span>
+                <time dateTime={sig.created_at} className="text-sm text-[var(--color-text-muted)]">
+                  {formatSignatureDate(sig.created_at, dateLocale)}
+                </time>
+              </div>
+              {sig.message && (
+                <p className="mt-1 text-[var(--color-text-muted)] text-[15px]">
+                  &ldquo;{sig.message}&rdquo;
+                </p>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </section>

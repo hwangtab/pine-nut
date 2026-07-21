@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
+import { useReveal } from "@/lib/use-reveal";
 import type { GalleryPhoto } from "@/components/gallery/gallery-data";
 
 export default function GalleryPhotoCard({
@@ -17,14 +17,13 @@ export default function GalleryPhotoCard({
   creditLabel?: string;
   openAriaLabel?: (title: string) => string;
 }) {
+  const { ref, inView } = useReveal<HTMLButtonElement>();
   return (
-    <motion.button
+    <button
+      ref={ref}
       type="button"
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.4, delay: index * 0.06 }}
-      className="group w-full cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-warm)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]"
+      className={`reveal ${inView ? "is-visible" : ""} group w-full cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-warm)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]`}
+      style={{ transitionDelay: `${index * 0.06}s` }}
       onClick={(event) => onOpen(photo, event.currentTarget)}
       aria-label={openAriaLabel(photo.title)}
     >
@@ -52,6 +51,6 @@ export default function GalleryPhotoCard({
           </p>
         </div>
       </div>
-    </motion.button>
+    </button>
   );
 }

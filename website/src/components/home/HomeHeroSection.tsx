@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { EditableImage, EditableList, EditableText } from "@/components/editable";
 import HomeConcertBanner from "@/components/home/HomeConcertBanner";
@@ -12,7 +11,6 @@ export default function HomeHeroSection({
 }: {
   onScrollToStory: () => void;
 }) {
-  const reduceMotion = useReducedMotion();
   return (
     <>
       <EditableImage
@@ -111,13 +109,9 @@ export default function HomeHeroSection({
         />
       </div>
 
-      <motion.div
-        animate={reduceMotion ? undefined : { y: [0, 12, 0] }}
-        transition={reduceMotion ? undefined : { repeat: Infinity, duration: 2, ease: "easeInOut" }}
-        className="absolute bottom-8 z-10 hidden sm:block"
-      >
+      <div className="chevron-bounce absolute bottom-8 z-10 hidden sm:block">
         <ChevronDown className="w-8 h-8 text-white/40" />
-      </motion.div>
+      </div>
     </>
   );
 }

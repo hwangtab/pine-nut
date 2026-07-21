@@ -1,16 +1,12 @@
-import { motion } from "framer-motion";
 import { EditableLink, EditableText } from "@/components/editable";
+import { useReveal } from "@/lib/use-reveal";
 import type { TimelineConfig } from "./timeline-config";
 
 export function TimelineCta({ timelineConfig }: { timelineConfig: TimelineConfig }) {
+  const { ref, inView } = useReveal<HTMLDivElement>();
   return (
     <section className="py-16 md:py-20 px-4 text-center bg-gradient-to-t from-[var(--color-bg-warm)] to-transparent">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-      >
+      <div ref={ref} className={`reveal ${inView ? "is-visible" : ""}`}>
         <EditableText
           contentKey={timelineConfig.cta.titleKey}
           defaultValue={timelineConfig.cta.titleDefault}
@@ -34,7 +30,7 @@ export function TimelineCta({ timelineConfig }: { timelineConfig: TimelineConfig
             section="cta"
           />
         </EditableLink>
-      </motion.div>
+      </div>
     </section>
   );
 }

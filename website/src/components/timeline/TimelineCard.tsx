@@ -1,6 +1,5 @@
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
 import Image from "next/image";
+import { useReveal } from "@/lib/use-reveal";
 import type { TimelineConfig, TimelineDisplayEvent } from "./timeline-config";
 
 export function TimelineCard({
@@ -12,8 +11,7 @@ export function TimelineCard({
   index: number;
   timelineConfig: TimelineConfig;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const { ref, inView } = useReveal<HTMLDivElement>();
   const isLeft = index % 2 === 0;
   const categoryStyles =
     timelineConfig.categoryStyles[event.category] ?? timelineConfig.fallbackCategoryStyle;
@@ -35,11 +33,8 @@ export function TimelineCard({
       </div>
       <div className="w-10 shrink-0 md:hidden" />
 
-      <motion.div
-        initial={{ opacity: 0, x: isLeft ? -40 : 40, y: 20 }}
-        animate={isInView ? { opacity: 1, x: 0, y: 0 } : {}}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className={`w-full md:w-[calc(50%-2rem)] ${
+      <div
+        className={`reveal ${inView ? "is-visible" : ""} w-full md:w-[calc(50%-2rem)] ${
           isLeft ? "md:mr-auto md:pr-8" : "md:ml-auto md:pl-8"
         }`}
       >
@@ -76,7 +71,7 @@ export function TimelineCard({
             </span>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

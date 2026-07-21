@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { motion } from "framer-motion";
 import { Camera } from "lucide-react";
 import SubHero from "@/components/SubHero";
+import { useReveal } from "@/lib/use-reveal";
 import { EditableLink, EditableText } from "@/components/editable";
 import ManagedSection from "@/components/builder/ManagedSection";
 import OrderedSectionGroup from "@/components/builder/OrderedSectionGroup";
@@ -22,6 +22,7 @@ export default function GalleryPage() {
     null
   );
   const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const { ref: ctaRef, inView: ctaInView } = useReveal<HTMLDivElement>();
 
   const openLightbox = useCallback((photo: GalleryPhoto, trigger: HTMLButtonElement) => {
     lastTriggerRef.current = trigger;
@@ -117,12 +118,9 @@ export default function GalleryPage() {
             section="cta"
             defaultClassName="py-16 md:py-20 px-4 text-center bg-gradient-to-t from-[var(--color-bg-warm)] to-transparent"
           >
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="max-w-lg mx-auto"
+            <div
+              ref={ctaRef}
+              className={`reveal ${ctaInView ? "is-visible" : ""} max-w-lg mx-auto`}
             >
               <Camera className="w-10 h-10 text-[var(--color-warm)] mx-auto mb-4" />
               <EditableText
@@ -156,7 +154,7 @@ export default function GalleryPage() {
                   section="cta"
                 />
               </EditableLink>
-            </motion.div>
+            </div>
           </ManagedSection>
         </OrderedSectionGroup>
       </div>
