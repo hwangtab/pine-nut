@@ -144,15 +144,15 @@ export default function ConcertPage() {
           <div className="mt-10 overflow-hidden rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card">
             <div className="relative aspect-[16/9] w-full">
               <Image
-                src="/images/pine-forest-1.jpg"
-                alt="안개가 내려앉은 잣나무 숲"
+                src="/images/concert/real-canopy.jpg"
+                alt="풍천리 잣나무 숲을 아래에서 올려다본 실제 모습"
                 fill
                 sizes="(max-width: 768px) 100vw, 768px"
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent" />
               <p className="absolute bottom-4 left-5 right-5 text-sm font-medium text-white/90 drop-shadow">
-                산림청이 꼽은 ‘100대 명품숲’ · 국내 최대 잣나무 숲
+                산림청이 꼽은 ‘100대 명품숲’ · 국내 최대 잣나무 숲 (풍천리 현지 사진)
               </p>
             </div>
           </div>
@@ -177,8 +177,8 @@ export default function ConcertPage() {
             <div className="order-1 overflow-hidden rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card sm:order-2">
               <div className="relative aspect-[4/5] w-full">
                 <Image
-                  src="/images/pine-forest-2.jpg"
-                  alt="빛이 스며드는 숲 속"
+                  src="/images/concert/real-logs.jpg"
+                  alt="풍천리에서 실제로 베어진 잣나무들이 쌓여 있는 모습"
                   fill
                   sizes="(max-width: 768px) 100vw, 340px"
                   className="object-cover"

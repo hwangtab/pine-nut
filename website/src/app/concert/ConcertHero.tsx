@@ -15,8 +15,8 @@ export default function ConcertHero() {
   return (
     <section className="relative flex min-h-[88svh] flex-col items-center justify-center overflow-hidden px-4 pt-28 pb-20 text-center text-white sm:px-6">
       <Image
-        src="/images/forest-aerial.jpg"
-        alt="풍천리 잣나무 숲"
+        src="/images/concert/real-rally.jpg"
+        alt="풍천리 잣나무 숲에서 양수발전소 백지화를 외치는 주민들의 실제 집회 모습"
         fill
         priority
         sizes="100vw"
