@@ -8,6 +8,7 @@ import {
   Megaphone,
   Phone,
   Share2,
+  Shirt,
   Ticket,
   Train,
   TreePine,
@@ -302,6 +303,33 @@ export default function ConcertPage() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 현장 부스 */}
+      <section className="px-6 py-16 sm:py-24">
+        <div className="mx-auto max-w-3xl">
+          <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
+            On-site Booth
+          </p>
+          <h2 className="mt-3 text-balance break-keep text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
+            현장 부스도 함께합니다
+          </h2>
+          <div className="mt-8 flex flex-col items-start gap-5 rounded-[var(--radius-panel)] border border-[var(--color-border)] bg-[var(--color-bg-warm)] p-6 shadow-card sm:flex-row sm:p-8">
+            <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--color-forest)]/10 text-[var(--color-forest)]">
+              <Shirt className="h-6 w-6" aria-hidden />
+            </span>
+            <div>
+              <h3 className="text-lg font-bold text-[var(--color-text)]">
+                강원녹색당 — 실크스크린 · 티셔츠 판매 부스
+              </h3>
+              <p className="mt-2 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+                강원녹색당이 공연에 함께해 실크스크린 체험과 티셔츠 판매 부스를 운영합니다.
+                직접 찍어보는 실크스크린과 풍천리를 담은 티셔츠로, 공연장에서 또 하나의
+                연대를 만나보세요.
+              </p>
+            </div>
           </div>
         </div>
       </section>
