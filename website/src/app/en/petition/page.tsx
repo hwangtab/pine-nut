@@ -137,7 +137,7 @@ export default function EnglishPetitionPage() {
 
         <EditableText
           contentKey="en.petition.emotional.prompt"
-          defaultValue="Add your name to more than 680 cries of resistance"
+          defaultValue="Add your name to more than 705 cries of resistance"
           as="p"
           page="en/petition"
           section="emotional"

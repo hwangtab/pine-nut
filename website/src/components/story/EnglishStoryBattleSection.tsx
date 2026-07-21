@@ -23,7 +23,7 @@ export function EnglishStoryBattleSection() {
             },
             {
               year: "Weekly",
-              text: "They continued weekly protests in front of the county office through rain, snow, heat, and winter cold. By late 2025 the count had passed 680.",
+              text: "They continued weekly protests in front of the county office through rain, snow, heat, and winter cold. As of July 2026 the count had passed 705.",
             },
             {
               year: "2024.7",

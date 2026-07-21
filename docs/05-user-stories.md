@@ -13,7 +13,7 @@
 
 Acceptance Criteria:
 - [ ] 풍천리 전경 사진 또는 주민 사진이 풀스크린 히어로 이미지로 표시된다
-- [ ] 핵심 숫자 3개(7년, 680+회, 70대 이상 주민)가 애니메이션 카운터로 표시된다
+- [ ] 핵심 숫자 3개(7년, 705+회, 70대 이상 주민)가 애니메이션 카운터로 표시된다
 - [ ] "풍천리 이야기 보기" CTA 버튼이 있고, 클릭 시 스크롤 다운된다
 - [ ] 모바일에서 히어로 이미지가 잘리지 않고 텍스트가 읽힌다 (18px+)
 - [ ] 페이지 로드 시간 3초 이내 (이미지 최적화, next/image 사용)
@@ -225,7 +225,7 @@ Priority: P0 | Effort: S | Dependencies: 없음
 
 Acceptance Criteria:
 - [ ] 단일 페이지: Background, The Struggle, Environmental Impact, How to Help
-- [ ] 핵심 수치(7 years, 680+ protests)와 사진 3~5장 포함
+- [ ] 핵심 수치(7 years, 705+ protests)와 사진 3~5장 포함
 - [ ] 서명 페이지로 연결되는 CTA
 - [ ] 네비게이션에 "EN" 링크로 접근 가능
 - [ ] CMS에서 영문 텍스트 수정 가능

@@ -10,7 +10,7 @@ export default function HomeStatsSection() {
         contentKey="home.stats.items"
         defaultItems={[
           { number: "2019년~", label: "투쟁 시작" },
-          { number: "680회+", label: "집회 횟수" },
+          { number: "705회+", label: "집회 횟수" },
           { number: "140개+", label: "연대 단체" },
           { number: "11만+", label: "벌채 예정 잣나무" },
         ]}

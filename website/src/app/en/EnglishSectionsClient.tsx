@@ -9,7 +9,7 @@ export function EnglishNumbersSection() {
       contentKey="en.numbers.stats"
       defaultItems={[
         { number: "7+", label: "Years of resistance" },
-        { number: "680+", label: "Weekly protests held" },
+        { number: "705+", label: "Weekly protests held" },
         { number: "140+", label: "Organizations in solidarity" },
         { number: "110K+", label: "Pine nut trees at risk" },
       ]}

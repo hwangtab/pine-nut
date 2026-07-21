@@ -186,7 +186,7 @@ const timelineTranslations: Record<number, EnglishTimelineTranslation> = {
     date: "As of 2026",
     title: "The Struggle Continues with Support from More Than 140 Organizations",
     description:
-      "More than seven years later, the struggle continues. Over 140 organizations now stand in solidarity with Pungcheon-ri, turning the issue into a national question of ecology, democracy, and residents' rights.",
+      "More than seven years later, the struggle continues. The weekly protest count has passed 705, and over 140 organizations now stand in solidarity with Pungcheon-ri, turning the issue into a national question of ecology, democracy, and residents' rights.",
     category: "Solidarity",
   },
 };

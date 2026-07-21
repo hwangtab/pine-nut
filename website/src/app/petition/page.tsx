@@ -129,7 +129,7 @@ export default function PetitionPage() {
         {/* Emotional prompt */}
         <EditableText
           contentKey="petition.emotional.prompt"
-          defaultValue="680번의 외침에 당신의 이름을 더해주세요"
+          defaultValue="705번의 외침에 당신의 이름을 더해주세요"
           as="p"
           page="petition"
           section="emotional"

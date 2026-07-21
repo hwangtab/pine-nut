@@ -42,7 +42,7 @@ const newsTranslations: Record<string, EnglishNewsTranslation> = {
 
 These residents, aged from their 60s to 80s, are the same villagers who have held weekly protests since 2019 demanding the cancellation of the project. After spending their entire lives with the pine nut forest, they now face criminal punishment simply for trying to defend the land that sustained them.
 
-Residents of Pungcheon-ri have held more than 680 regular protests since 2019. KHNP and Hongcheon County have continued to push the project forward, and after the Ministry of Trade, Industry and Energy issued its implementation approval notice in 2025, advance construction intensified the conflict even further.
+Residents of Pungcheon-ri have held more than 705 regular protests since 2019. KHNP and Hongcheon County have continued to push the project forward, and after the Ministry of Trade, Industry and Energy issued its implementation approval notice in 2025, advance construction intensified the conflict even further.
 
 The case shows how local voices can be sidelined in large state-backed development projects. It has also drawn criticism and solidarity from civil society groups across the country.`,
     category: "Press Coverage",

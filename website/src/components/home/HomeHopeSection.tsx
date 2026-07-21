@@ -43,7 +43,7 @@ export default function HomeHopeSection() {
         />
         <EditableText
           contentKey="home.hope.subtitle"
-          defaultValue="7년간 680번. 일흔 넘은 어르신들이 매주 버스에 올라 홍천군청 앞에 섰습니다. 지팡이를 짚고서라도, 단 한 주도 거르지 않았습니다."
+          defaultValue="7년간 705번. 일흔 넘은 어르신들이 매주 버스에 올라 홍천군청 앞에 섰습니다. 지팡이를 짚고서라도, 단 한 주도 거르지 않았습니다."
           as="p"
           page="home"
           section="hope"

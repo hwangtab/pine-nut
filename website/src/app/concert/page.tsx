@@ -55,7 +55,7 @@ const STATS = [
   { value: "11만", unit: "그루", label: "벌채 예정 잣나무", accent: "pink" as const },
   { value: "51", unit: "가구", label: "수몰·이주 대상", accent: "green" as const },
   { value: "1,800", unit: "ha", label: "국내 최대 잣나무 숲", accent: "green" as const },
-  { value: "680", unit: "회+", label: "주민들의 집회", accent: "pink" as const },
+  { value: "705", unit: "회+", label: "주민들의 집회", accent: "pink" as const },
 ];
 
 const PARTICIPATE = [
@@ -190,7 +190,7 @@ export default function ConcertPage() {
           {/* 셋째 문단 — 강조 인용 블록 */}
           <div className="mt-12 rounded-[var(--radius-panel)] border-l-4 border-[var(--color-warm)] bg-[var(--color-bg-warm)] px-6 py-8 sm:px-10">
             <p className="break-keep text-lg leading-loose text-[var(--color-text)] sm:text-xl">
-              주민들은 2019년부터 7년 동안 680번 넘게 거리에 섰습니다. 예순에서 여든의 손들이
+              주민들은 2019년부터 7년 동안 705번 넘게 거리에 섰습니다. 예순에서 여든의 손들이
               팻말을 들었고, 그 가운데 일곱 분은 지금 재판을 받고 있습니다. 이제 음악가 열네
               팀이 그 손을 마주 잡으러 청와대 앞에 섭니다. 숲이 사라지기 전에, 우리 노래가
               가닿아야 할 곳이 있습니다.

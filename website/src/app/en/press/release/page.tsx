@@ -103,7 +103,7 @@ export default function EnglishPressReleasePage() {
           <div>
             <h2 className="text-lg font-bold text-[var(--color-text)] mb-3">Seven Years of Resistance</h2>
             <p className="text-base text-[var(--color-text-muted)] leading-relaxed">
-              Residents have opposed the project unanimously since March 2019. More than 680 weekly protests later, the campaign has become exceptional in South Korea&apos;s environmental movement, especially because many residents are in their 60s, 70s, and 80s.
+              Residents have opposed the project unanimously since March 2019. More than 705 weekly protests later, the campaign has become exceptional in South Korea&apos;s environmental movement, especially because many residents are in their 60s, 70s, and 80s.
             </p>
           </div>
 
@@ -139,7 +139,7 @@ export default function EnglishPressReleasePage() {
         <section className="mb-8">
           <blockquote className="border-l-4 border-[var(--color-forest)] pl-5 py-3 bg-[var(--color-bg)] rounded-r-xl">
             <p className="text-base text-[var(--color-text)] leading-relaxed italic">
-              &ldquo;We were born with this forest and have lived with it all our lives. If 110,000 pine trees are cut, our lives are being uprooted with them. We have protested more than 680 times, and we will not stop now.&rdquo;
+              &ldquo;We were born with this forest and have lived with it all our lives. If 110,000 pine trees are cut, our lives are being uprooted with them. We have protested more than 705 times, and we will not stop now.&rdquo;
             </p>
             <cite className="text-sm text-[var(--color-text-muted)] mt-2 block not-italic">Pungcheon-ri Residents Committee</cite>
           </blockquote>

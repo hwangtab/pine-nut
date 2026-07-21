@@ -13,9 +13,9 @@ export const CARD_NEWS_TEXT = {
     copyFailure: "링크 복사에 실패했습니다.",
     downloadFailure: "이미지 다운로드에 실패했습니다. 카드를 길게 눌러 저장해주세요.",
     card1Eyebrow: "강원도 홍천 풍천리",
-    card1Title: "680번의 외침",
+    card1Title: "705번의 외침",
     card1Stats: [
-      { num: "680+", label: "집회 횟수" },
+      { num: "705+", label: "집회 횟수" },
       { num: "140+", label: "연대 단체" },
       { num: "11만", label: "잣나무" },
     ],
@@ -60,7 +60,7 @@ export const CARD_NEWS_TEXT = {
       { date: "2026.01", event: "본공사 착공 예정" },
     ],
     cardTitles: [
-      "7년, 680번의 외침",
+      "7년, 705번의 외침",
       "11만 그루 잣나무가 사라집니다",
       "70대 어르신이 전과자가 되었습니다",
       "당신도 함께해주세요",
@@ -80,9 +80,9 @@ export const CARD_NEWS_TEXT = {
     downloadFailure:
       "Download failed. Please long-press the card image to save it.",
     card1Eyebrow: "Pungcheon-ri, Hongcheon, South Korea",
-    card1Title: "680 Cries of Resistance",
+    card1Title: "705 Cries of Resistance",
     card1Stats: [
-      { num: "680+", label: "Weekly protests" },
+      { num: "705+", label: "Weekly protests" },
       { num: "140+", label: "Allied groups" },
       { num: "110K", label: "Pine trees" },
     ],
@@ -129,7 +129,7 @@ export const CARD_NEWS_TEXT = {
       { date: "2026.01", event: "Main construction scheduled" },
     ],
     cardTitles: [
-      "680 cries of resistance",
+      "705 cries of resistance",
       "110,000 pine trees at risk",
       "Elderly residents face charges",
       "Stand with Pungcheon-ri",

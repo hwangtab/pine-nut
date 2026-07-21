@@ -15,7 +15,7 @@ const factSheetData = [
   { label: "Livelihood reliance", value: "About 70% of residents rely on pine nut production" },
   { label: "Endangered species", value: "Goral, black woodpecker, and otter habitat" },
   { label: "Length of struggle", value: "March 2019 to present (7+ years)" },
-  { label: "Weekly protests", value: "More than 680" },
+  { label: "Weekly protests", value: "More than 705" },
   { label: "Resident position", value: "Unanimous opposition" },
   { label: "Core concerns", value: "Ecological destruction, dust and noise, livelihood loss, community breakup" },
 ];

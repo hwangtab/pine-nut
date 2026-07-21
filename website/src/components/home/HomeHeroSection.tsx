@@ -37,7 +37,7 @@ export default function HomeHeroSection({
         <div className="rise-in">
           <EditableText
             contentKey="home.hero.title"
-            defaultValue="7년, 680번의 외침"
+            defaultValue="7년, 705번의 외침"
             as="h1"
             page="home"
             section="hero"
@@ -61,7 +61,7 @@ export default function HomeHeroSection({
             contentKey="home.hero.counters"
             defaultItems={[
               { target: "7", suffix: "년+", label: "투쟁 기간" },
-              { target: "680", suffix: "회+", label: "집회 횟수" },
+              { target: "705", suffix: "회+", label: "집회 횟수" },
               { target: "140", suffix: "개+", label: "연대 단체" },
             ]}
             page="home"

@@ -15,7 +15,7 @@ const factSheetData = [
   { label: "주민 생계", value: "약 70%가 잣 생산으로 생계 유지" },
   { label: "멸종위기종", value: "산양(천연기념물), 까막딱다구리, 수달 서식" },
   { label: "투쟁 기간", value: "2019년 3월 ~ 현재 (7년+)" },
-  { label: "집회 횟수", value: "680회 이상" },
+  { label: "집회 횟수", value: "705회 이상" },
   { label: "주민 참여", value: "만장일치 반대" },
   {
     label: "주요 쟁점",

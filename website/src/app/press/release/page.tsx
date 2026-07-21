@@ -87,7 +87,7 @@ export default function PressReleasePage() {
 
         <PressRichCallout
           contentKey="press.release.lead"
-          defaultValue="[홍천, 강원도] 강원도 홍천군 화촌면 풍천리 주민들이 한국수력원자력(한수원)의 양수발전소 건설 계획의 전면 백지화를 촉구하고 나섰다. 2019년 3월 첫 반대 집회 이후 7년이 넘도록 이어진 주민 투쟁은 680회가 넘는 집회를 기록하며, 대한민국 환경·에너지 정책의 근본적 전환을 요구하고 있다."
+          defaultValue="[홍천, 강원도] 강원도 홍천군 화촌면 풍천리 주민들이 한국수력원자력(한수원)의 양수발전소 건설 계획의 전면 백지화를 촉구하고 나섰다. 2019년 3월 첫 반대 집회 이후 7년이 넘도록 이어진 주민 투쟁은 705회가 넘는 집회를 기록하며, 대한민국 환경·에너지 정책의 근본적 전환을 요구하고 있다."
           section="release"
         />
 
@@ -121,7 +121,7 @@ export default function PressReleasePage() {
             />
             <EditableRichText
               contentKey="press.release.struggleBody"
-              defaultValue="풍천리 주민들은 2019년 3월부터 현재까지 만장일치로 양수발전소 건설에 반대하고 있다. 7년이 넘는 기간 동안 680회가 넘는 집회를 이어왔으며, 이는 대한민국 환경 운동사에서 유례를 찾기 어려운 기록이다. 주민 대부분이 70대 이상의 고령임에도 불구하고 한결같은 의지로 투쟁을 계속하고 있다."
+              defaultValue="풍천리 주민들은 2019년 3월부터 현재까지 만장일치로 양수발전소 건설에 반대하고 있다. 7년이 넘는 기간 동안 705회가 넘는 집회를 이어왔으며, 이는 대한민국 환경 운동사에서 유례를 찾기 어려운 기록이다. 주민 대부분이 70대 이상의 고령임에도 불구하고 한결같은 의지로 투쟁을 계속하고 있다."
               page="press"
               section="release"
             >
@@ -221,7 +221,7 @@ export default function PressReleasePage() {
           <blockquote className="border-l-4 border-[var(--color-forest)] pl-5 py-3 bg-[var(--color-bg)] rounded-r-xl">
             <EditableRichText
               contentKey="press.release.quote"
-              defaultValue="우리는 이 숲과 함께 태어나 이 숲과 함께 살아왔습니다. 잣나무 11만 그루가 베어지는 것은 우리의 삶이 뿌리째 뽑히는 것과 같습니다. 7년 넘게 680번이 넘는 집회를 해왔고, 끝까지 싸울 것입니다."
+              defaultValue="우리는 이 숲과 함께 태어나 이 숲과 함께 살아왔습니다. 잣나무 11만 그루가 베어지는 것은 우리의 삶이 뿌리째 뽑히는 것과 같습니다. 7년 넘게 705번이 넘는 집회를 해왔고, 끝까지 싸울 것입니다."
               page="press"
               section="release"
             >

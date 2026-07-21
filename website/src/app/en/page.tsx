@@ -70,7 +70,7 @@ export default function EnglishPage() {
 
 In 2019, Korea Hydro & Nuclear Power (KHNP) selected the area for a 600MW pumped-storage hydroelectric power plant (2 x 300MW) after Hongcheon County applied to host the project. The total cost is 1.59 trillion KRW (~$1.1 billion USD), covering 153 hectares of project area. Construction is contracted to the Daewoo E&C consortium (Daewoo E&C, DL E&C, Hyosung) at 615.5 billion KRW. An estimated ~110,000 pine nut trees are slated for felling, and 51 households face submersion and relocation.
 
-The villagers voted unanimously to oppose the project. Since then, they have held over 680 weekly protests in front of the county office, traveled to Seoul to petition the National Assembly and government ministries, and built alliances with over 140 organizations nationwide.
+The villagers voted unanimously to oppose the project. Since then, they have held over 705 weekly protests in front of the county office, traveled to Seoul to petition the National Assembly and government ministries, and built alliances with over 140 organizations nationwide.
 
 7 residents (ages 60-80) have been criminally charged with refusal to vacate after a standoff at Hongcheon County Hall in July 2024. Despite the personal cost, they have not backed down. Their fight is conducted entirely through lawful, democratic means.`}
               page="en"

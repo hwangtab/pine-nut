@@ -83,7 +83,7 @@ export default function GalleryPage() {
               titleKey="gallery.struggle.title"
               titleDefault="투쟁의 현장"
               descriptionKey="gallery.struggle.description"
-              descriptionDefault="2019년부터 7년이 넘도록 매주 이어온 정기 집회, 680여 차의 기록. 60~80대 어르신들이 마을을 지키기 위해 걸어온 길입니다."
+              descriptionDefault="2019년부터 7년이 넘도록 매주 이어온 정기 집회, 705여 차의 기록. 60~80대 어르신들이 마을을 지키기 위해 걸어온 길입니다."
               section="struggle"
               defaultItems={defaultStrugglePhotos}
               indexOffset={defaultBeautyPhotos.length}

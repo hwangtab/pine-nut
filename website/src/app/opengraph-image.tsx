@@ -116,7 +116,7 @@ export default async function Image() {
               }}
             >
               {[
-                "680여 차례 집회",
+                "705여 차례 집회",
                 "140여 개 단체 연대",
                 "51가구 수몰 위기",
               ].map((label) => (
