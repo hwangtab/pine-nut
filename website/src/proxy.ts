@@ -1,6 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
+// getUser()가 토큰을 갱신하면 그 Set-Cookie가 `response`에 실린다.
+// redirect로 새 응답을 만들면 갱신된 쿠키가 유실되어(다음 요청이 무효 refresh 토큰을 써서)
+// 간헐적 강제 로그아웃이 발생하므로, 갱신 쿠키를 redirect 응답으로 복사한다.
+function redirectPreservingCookies(pathname: string, request: NextRequest, response: NextResponse) {
+  const redirect = NextResponse.redirect(new URL(pathname, request.url));
+  response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+  return redirect;
+}
+
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -37,7 +46,7 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user && !isAdminPublicPage) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return redirectPreservingCookies("/login", request, response);
   }
 
   if (!user) {
@@ -50,13 +59,13 @@ export async function proxy(request: NextRequest) {
 
   if (isAdminPublicPage) {
     return canAccessAdmin
-      ? NextResponse.redirect(new URL("/admin", request.url))
+      ? redirectPreservingCookies("/admin", request, response)
       : response;
   }
 
   if (!canAccessAdmin) {
     // 로그인했지만 관리자(기획단)가 아닌 일반 회원 → 마이페이지로
-    return NextResponse.redirect(new URL("/mypage", request.url));
+    return redirectPreservingCookies("/mypage", request, response);
   }
 
   return response;

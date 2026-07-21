@@ -77,11 +77,16 @@ export async function removeAdminMemberAction(id: number): Promise<ActionState> 
     // board_posts/board_comments.author_user_id가 ON DELETE CASCADE라, auth 계정을 지우면
     // 본인 글은 물론 그 글에 달린 타인의 댓글·좋아요까지 함께 삭제되기 때문이다.
     // 콘텐츠가 있으면 명부에서만 제거되어(회원 자격만 상실) 기존 글은 보존된다.
-    const [{ count: postCount }, { count: commentCount }] = await Promise.all([
+    const [postRes, commentRes] = await Promise.all([
       supabase.from("board_posts").select("id", { count: "exact", head: true }).eq("author_user_id", t.user_id),
       supabase.from("board_comments").select("id", { count: "exact", head: true }).eq("author_user_id", t.user_id),
     ]);
-    if ((postCount ?? 0) === 0 && (commentCount ?? 0) === 0) {
+    // 카운트를 확정하지 못하면(쿼리 오류) fail-closed: 콘텐츠가 없다고 오판해 되돌릴 수 없는
+    // auth 삭제(+CASCADE)를 강행하지 않도록, 확실히 0건일 때만 삭제한다.
+    const hasNoContent =
+      !postRes.error && !commentRes.error &&
+      (postRes.count ?? 0) === 0 && (commentRes.count ?? 0) === 0;
+    if (hasNoContent) {
       const service = createSupabaseServiceClient();
       if (service) {
         const { error: authErr } = await service.auth.admin.deleteUser(t.user_id);

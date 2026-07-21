@@ -36,12 +36,16 @@ assert(
   "admin login/signup must stay reachable for non-admin or unclaimed users.",
 );
 assert(
-  proxySource.includes('NextResponse.redirect(new URL("/login", request.url))'),
+  proxySource.includes('redirectPreservingCookies("/login"'),
   "unauthenticated users must be redirected to /login from protected admin pages.",
 );
 assert(
-  proxySource.includes('NextResponse.redirect(new URL("/mypage", request.url))'),
+  proxySource.includes('redirectPreservingCookies("/mypage"'),
   "authenticated non-admins must be redirected to /mypage from protected admin pages.",
+);
+assert(
+  proxySource.includes("response.cookies.getAll().forEach"),
+  "redirects must preserve refreshed Supabase session cookies (avoid silent logout).",
 );
 assert(
   migrationSql.includes("idx_admin_members_email_normalized_unique") &&
