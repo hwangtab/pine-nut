@@ -87,9 +87,10 @@ export async function getBoardPost(id: number): Promise<BoardPostDetail | null> 
   // 숨김/삭제 글의 이미지는 storage RLS(부모 상태 필터)에 막혀 signed URL이 생성되지 않는다.
   let images: BoardImage[] = [];
   if (rawImages.length > 0) {
-    const { data: signed } = await supabase.storage
+    const { data: signed, error: signErr } = await supabase.storage
       .from("board-images")
       .createSignedUrls(rawImages.map((im) => im.storage_path), 60 * 60);
+    if (signErr) console.error("getBoardPost signed urls", id, signErr);
     images = rawImages
       .map((im, i) => ({ id: im.id, sortOrder: im.sort_order, url: signed?.[i]?.signedUrl ?? "" }))
       .filter((im) => im.url);

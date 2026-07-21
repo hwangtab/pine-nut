@@ -73,10 +73,20 @@ export async function removeAdminMemberAction(id: number): Promise<ActionState> 
   //   (실제 기획단원은 명부에서만 제거해 auth 계정/게시글을 보존한다.)
   const t = target as { user_id: string | null; role: string } | null;
   if (t?.role === "pending" && t.user_id) {
-    const service = createSupabaseServiceClient();
-    if (service) {
-      const { error: authErr } = await service.auth.admin.deleteUser(t.user_id);
-      if (authErr) console.error("removeAdminMemberAction: auth user delete failed", t.user_id, authErr.message);
+    // 이 사용자가 남긴 게시판 콘텐츠가 있으면 auth 계정을 지우지 않는다.
+    // board_posts/board_comments.author_user_id가 ON DELETE CASCADE라, auth 계정을 지우면
+    // 본인 글은 물론 그 글에 달린 타인의 댓글·좋아요까지 함께 삭제되기 때문이다.
+    // 콘텐츠가 있으면 명부에서만 제거되어(회원 자격만 상실) 기존 글은 보존된다.
+    const [{ count: postCount }, { count: commentCount }] = await Promise.all([
+      supabase.from("board_posts").select("id", { count: "exact", head: true }).eq("author_user_id", t.user_id),
+      supabase.from("board_comments").select("id", { count: "exact", head: true }).eq("author_user_id", t.user_id),
+    ]);
+    if ((postCount ?? 0) === 0 && (commentCount ?? 0) === 0) {
+      const service = createSupabaseServiceClient();
+      if (service) {
+        const { error: authErr } = await service.auth.admin.deleteUser(t.user_id);
+        if (authErr) console.error("removeAdminMemberAction: auth user delete failed", t.user_id, authErr.message);
+      }
     }
   }
   await logAudit(supabase, "admin_members", id, "delete", {});
