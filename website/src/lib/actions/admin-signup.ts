@@ -77,6 +77,13 @@ export async function claimAdminAccount(_prev: ActionState, formData: FormData):
     created_by: "self-signup",
   });
   if (insertErr) {
+    // 동시 가입 레이스 방어: 같은 이메일의 다른 요청이 healOrphanMember 경로로 방금 이
+    // user_id를 명부에 이미 연결했을 수 있다. 그 상태에서 auth 계정을 지우면 user_id가
+    // NULL인 고아 명부 행이 남아(ON DELETE SET NULL) 이메일이 가입·로그인 모두 막히는
+    // 영구 잠김이 된다. 따라서 이 user_id로 연결된 명부 행이 없을 때만 계정을 정리한다.
+    const { data: linked } = await service
+      .from("admin_members").select("id").eq("user_id", created.user.id).maybeSingle();
+    if (linked) return null; // 이미 명부에 연결됨(계정+행 정상) → 가입 성공으로 처리
     // 등록 실패 시 생성한 계정 정리(고아 방지). 정리마저 실패하면 고스트 계정이 남으므로
     // 로그를 남긴다(재가입 시 healOrphanMember가 명부를 복구한다).
     const { error: cleanupErr } = await service.auth.admin.deleteUser(created.user.id);
