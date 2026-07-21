@@ -81,10 +81,19 @@ export async function getBoardPost(id: number): Promise<BoardPostDetail | null> 
   if (error) { console.error("getBoardPost", error); return null; }
   if (!data) return null;
   const p = data as Omit<PostRow, "board_comments"> & { board_comments: CommentRow[] };
-  const rawImages = (p as unknown as { board_post_images?: { id: number; storage_path: string; sort_order: number }[] }).board_post_images ?? [];
-  const images: BoardImage[] = rawImages
-    .sort((a, b) => a.sort_order - b.sort_order)
-    .map((im) => ({ id: im.id, sortOrder: im.sort_order, url: supabase.storage.from("board-images").getPublicUrl(im.storage_path).data.publicUrl }));
+  const rawImages = ((p as unknown as { board_post_images?: { id: number; storage_path: string; sort_order: number }[] }).board_post_images ?? [])
+    .sort((a, b) => a.sort_order - b.sort_order);
+  // board-images는 private 버킷 → CDN 공개 URL 대신 만료 signed URL을 발급한다.
+  // 숨김/삭제 글의 이미지는 storage RLS(부모 상태 필터)에 막혀 signed URL이 생성되지 않는다.
+  let images: BoardImage[] = [];
+  if (rawImages.length > 0) {
+    const { data: signed } = await supabase.storage
+      .from("board-images")
+      .createSignedUrls(rawImages.map((im) => im.storage_path), 60 * 60);
+    images = rawImages
+      .map((im, i) => ({ id: im.id, sortOrder: im.sort_order, url: signed?.[i]?.signedUrl ?? "" }))
+      .filter((im) => im.url);
+  }
   return {
     id: p.id, authorUserId: p.author_user_id, authorNickname: p.author_nickname, title: p.title, content: p.content,
     category: p.category, createdAt: p.created_at, updatedAt: p.updated_at, isHidden: p.is_hidden, isDeleted: p.is_deleted,

@@ -13,6 +13,7 @@ const inputCls = "px-4 py-3 text-base border border-[var(--color-admin-border)] 
 export default function MembersManager({ members }: { members: AdminMember[] }) {
   const [pending, startTransition] = useTransition();
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const signupUrl = typeof window !== "undefined" ? `${window.location.origin}/admin/signup` : "/admin/signup";
   async function copySignupUrl() {
     try {
@@ -25,14 +26,26 @@ export default function MembersManager({ members }: { members: AdminMember[] }) 
   }
 
   function changeRole(id: number, role: string) {
-    startTransition(() => { updateAdminRoleAction(id, role); });
+    setError(null);
+    startTransition(async () => {
+      const r = await updateAdminRoleAction(id, role);
+      if (r?.error) setError(r.error);
+    });
   }
   function toggleActive(id: number, active: boolean) {
-    startTransition(() => { setAdminActiveAction(id, active); });
+    setError(null);
+    startTransition(async () => {
+      const r = await setAdminActiveAction(id, active);
+      if (r?.error) setError(r.error);
+    });
   }
   function remove(id: number) {
     if (!confirm("이 관리자를 명부에서 삭제할까요?")) return;
-    startTransition(() => { removeAdminMemberAction(id); });
+    setError(null);
+    startTransition(async () => {
+      const r = await removeAdminMemberAction(id);
+      if (r?.error) setError(r.error);
+    });
   }
 
   return (
@@ -42,6 +55,9 @@ export default function MembersManager({ members }: { members: AdminMember[] }) 
         <p className="mb-3 text-sm text-[var(--color-admin-muted)]">
           이 주소를 공유하세요. 가입한 사람은 아래 목록에 &apos;대기중&apos;으로 나타나며, 역할을 지정하면 관리자가 됩니다.
         </p>
+        <p className="rounded-lg bg-[var(--color-warm)]/10 px-3 py-2 text-sm text-[var(--color-warm)]">
+          ⚠️ 가입 시 이메일 소유 확인 절차가 없습니다. 역할을 부여하기 전에 목록의 이메일이 실제 본인이 신청한 것인지 별도 경로(전화·메신저)로 반드시 확인하세요.
+        </p>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <code className="flex-1 truncate rounded-lg bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-admin-text)]">{signupUrl}</code>
           <button type="button" onClick={copySignupUrl}
@@ -50,6 +66,12 @@ export default function MembersManager({ members }: { members: AdminMember[] }) 
           </button>
         </div>
       </div>
+
+      {error && (
+        <div className="rounded-xl border border-[var(--color-danger-border)] bg-[var(--color-danger-bg)] px-4 py-3 text-base text-[var(--color-danger)]">
+          {error}
+        </div>
+      )}
 
       <div className="space-y-3">
         {members.map((m) => (

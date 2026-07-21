@@ -36,8 +36,12 @@ assert(
   "admin login/signup must stay reachable for non-admin or unclaimed users.",
 );
 assert(
-  proxySource.includes('NextResponse.redirect(new URL("/admin/login", request.url))'),
-  "non-active users must be redirected away from protected admin pages.",
+  proxySource.includes('NextResponse.redirect(new URL("/login", request.url))'),
+  "unauthenticated users must be redirected to /login from protected admin pages.",
+);
+assert(
+  proxySource.includes('NextResponse.redirect(new URL("/mypage", request.url))'),
+  "authenticated non-admins must be redirected to /mypage from protected admin pages.",
 );
 assert(
   migrationSql.includes("idx_admin_members_email_normalized_unique") &&

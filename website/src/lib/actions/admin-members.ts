@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireOwner } from "./auth";
 import { logAudit } from "./audit";
+import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import type { ActionState } from "./state";
 
 const ASSIGNABLE_ROLES = ["owner", "editor", "viewer", "pending"] as const;
@@ -62,8 +63,22 @@ export async function removeAdminMemberAction(id: number): Promise<ActionState> 
   if (await wouldRemoveLastOwner(supabase, id)) {
     return { error: "마지막 owner는 삭제할 수 없습니다." };
   }
+  // 삭제 전 대상 정보 확보(pending 거부 시 auth 계정도 함께 정리)
+  const { data: target } = await supabase
+    .from("admin_members").select("user_id, role").eq("id", id).maybeSingle();
   const { error } = await supabase.from("admin_members").delete().eq("id", id);
   if (error) return { error: "삭제에 실패했습니다." };
+  // 대기(pending) 계정을 거부할 때만 auth 계정도 제거한다.
+  // → 잘못 선점된 이메일의 재가입을 허용하고 고스트 계정을 방지한다.
+  //   (실제 기획단원은 명부에서만 제거해 auth 계정/게시글을 보존한다.)
+  const t = target as { user_id: string | null; role: string } | null;
+  if (t?.role === "pending" && t.user_id) {
+    const service = createSupabaseServiceClient();
+    if (service) {
+      const { error: authErr } = await service.auth.admin.deleteUser(t.user_id);
+      if (authErr) console.error("removeAdminMemberAction: auth user delete failed", t.user_id, authErr.message);
+    }
+  }
   await logAudit(supabase, "admin_members", id, "delete", {});
   revalidateMembers();
   return null;
