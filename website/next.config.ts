@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
     root: workspaceRoot,
   },
   images: {
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       ...allowedImageHosts.map((hostname) => ({
         protocol: "https" as const,
@@ -31,6 +32,17 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "6mb",
     },
+  },
+  async headers() {
+    return [
+      {
+        // 셀프호스팅 폰트는 파일명이 고정이므로 1년 불변 캐시
+        source: "/fonts/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+    ];
   },
 };
 

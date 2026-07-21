@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Nanum_Myeongjo } from "next/font/google";
 import "./globals.css";
 import PublicShell from "@/components/PublicShell";
 
-// Pretendard 셀프호스팅(외부 CDN 의존 제거). 변수 폰트 1개로 전 weight 커버.
-// preload:false + display:swap + next/font 자동 size-adjust 폴백으로 렌더 비차단·CLS 최소화.
-const pretendard = localFont({
-  src: "./fonts/PretendardVariable.woff2",
-  variable: "--font-pretendard",
+// 나눔명조 셀프호스팅(next/font가 빌드 시 다운로드해 자체 서빙 — 구글 CSS 체인 제거).
+// Pretendard는 globals.css의 동적 서브셋(@font-face + unicode-range 92분할)로 서빙:
+// 페이지에 실제 쓰인 글자 범위의 조각만 내려받아 전송량이 2MB → 수십 KB로 줄어든다.
+const nanumMyeongjo = Nanum_Myeongjo({
+  weight: ["400", "700", "800"],
+  variable: "--font-nanum-myeongjo",
   display: "swap",
-  weight: "100 900",
   preload: false,
 });
 import Analytics from "@/components/Analytics";
@@ -84,7 +84,7 @@ export default async function RootLayout({
     ]);
 
   return (
-    <html lang="ko" className={pretendard.variable}>
+    <html lang="ko" className={nanumMyeongjo.variable}>
       <body className="antialiased">
         <Analytics />
         <AdminEditShell

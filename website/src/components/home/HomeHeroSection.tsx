@@ -32,19 +32,11 @@ export default function HomeHeroSection({
       <div className="relative z-10 w-full max-w-3xl mx-auto">
        <div className="glass rounded-[var(--radius-panel)] px-6 py-9 sm:px-12 sm:py-12">
         <div className="relative z-[1]">
-        <motion.div
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
+        <div className="rise-in">
           <HomeConcertBanner />
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-        >
+        <div className="rise-in">
           <EditableText
             contentKey="home.hero.title"
             defaultValue="7년, 680번의 외침"
@@ -53,13 +45,9 @@ export default function HomeHeroSection({
             section="hero"
             className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.14] mb-5 sm:mb-6"
           />
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
-        >
+        <div className="rise-in rise-in-1">
           <EditableText
             contentKey="home.hero.subtitle"
             defaultValue="강원도 홍천, 잣나무 숲이 품은 작은 마을 풍천리. 주민들은 7년 넘게 양수발전소 건설에 맞서 삶의 터전과 숲을 지켜오고 있습니다"
@@ -68,14 +56,9 @@ export default function HomeHeroSection({
             section="hero"
             className="text-balance text-base sm:text-xl md:text-2xl text-white/84 max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-10 md:mb-12"
           />
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="grid w-full max-w-[22rem] grid-cols-3 items-start gap-3 mx-auto mb-8 sm:max-w-2xl sm:gap-6 sm:mb-12 md:mb-14"
-        >
+        <div className="rise-in rise-in-2 grid w-full max-w-[22rem] grid-cols-3 items-start gap-3 mx-auto mb-8 sm:max-w-2xl sm:gap-6 sm:mb-12 md:mb-14">
           <EditableList
             contentKey="home.hero.counters"
             defaultItems={[
@@ -104,17 +87,15 @@ export default function HomeHeroSection({
               ))
             }
           </EditableList>
-        </motion.div>
+        </div>
 
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.45 }}
+        <button
+          type="button"
           onClick={onScrollToStory}
-          className="glass-btn glass-btn--glass text-base sm:text-lg cursor-pointer"
+          className="rise-in rise-in-3 glass-btn glass-btn--glass text-base sm:text-lg cursor-pointer"
         >
           <EditableText contentKey="home.story.cta" defaultValue="이야기 보기 ↓" as="span" page="home" section="hero" />
-        </motion.button>
+        </button>
         </div>
        </div>
       </div>
