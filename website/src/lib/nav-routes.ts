@@ -22,6 +22,28 @@ export function hasPageHero(pathname: string): boolean {
   );
 }
 
+// 어두운 풀블리드 사진 히어로가 있어 내비를 '투명 유리(흰 잉크)'로 띄우는 라우트.
+// padding 판정(hasPageHero, prefix)과 달리 exact 매칭이다:
+// 목록 페이지(/news)는 사진 SubHero지만, 하위 상세(/news/[slug])는 밝은
+// UtilityHeader를 쓰므로 투명 내비(흰 글씨)가 아니라 frost 내비여야 읽힌다.
+const TRANSPARENT_NAV_ROUTES = [
+  "/",
+  "/story",
+  "/timeline",
+  "/news",
+  "/gallery",
+  "/press",
+  "/share",
+  "/petition",
+  "/donate",
+  "/concert",
+  "/en",
+];
+
+export function hasTransparentNavHero(pathname: string): boolean {
+  return TRANSPARENT_NAV_ROUTES.includes(pathname);
+}
+
 // 자체 풀스크린 레이아웃(인증)이라 상단 여백이 불필요한 라우트.
 const FULLSCREEN_ROUTES = ["/login", "/signup"];
 

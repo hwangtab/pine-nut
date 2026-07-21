@@ -25,14 +25,14 @@ export default function NavigationAuthLinks({
 
   const linkClassName = isMobile
     ? `px-4 py-3 rounded-xl text-lg font-medium min-h-[48px] flex items-center transition-colors ${mutedColor}`
-    : `px-4 py-2 rounded-lg text-[15px] font-medium min-h-[44px] flex items-center transition-colors duration-300 ${mutedColor}`;
+    : `px-3 py-2 rounded-lg text-[15px] font-medium whitespace-nowrap min-h-[44px] flex items-center transition-colors duration-300 ${mutedColor}`;
 
   // 색 다이어트: warm "함께하기"만 유일한 솔리드 CTA. 회원가입은 아웃라인으로 강등
   const signupClassName = isMobile
     ? "px-4 py-3 rounded-xl text-lg font-bold min-h-[48px] flex items-center justify-center transition-colors text-white bg-[var(--color-forest)] hover:opacity-90"
     : onDark
-      ? "px-4 py-2 rounded-full text-[15px] font-bold min-h-[44px] flex items-center transition-colors text-white border border-white/55 hover:bg-white/15"
-      : "px-4 py-2 rounded-full text-[15px] font-bold min-h-[44px] flex items-center transition-colors text-[var(--color-forest)] border border-[var(--color-forest)]/45 hover:bg-[var(--color-forest)]/10";
+      ? "px-3 py-2 rounded-full text-[15px] font-bold whitespace-nowrap min-h-[44px] flex items-center transition-colors text-white border border-white/55 hover:bg-white/15"
+      : "px-3 py-2 rounded-full text-[15px] font-bold whitespace-nowrap min-h-[44px] flex items-center transition-colors text-[var(--color-forest)] border border-[var(--color-forest)]/45 hover:bg-[var(--color-forest)]/10";
 
   const buttonClassName = isMobile
     ? `px-4 py-3 rounded-xl text-lg font-medium min-h-[48px] flex items-center transition-colors text-left ${mutedColor}`
@@ -40,7 +40,7 @@ export default function NavigationAuthLinks({
 
   const containerClassName = isMobile
     ? "flex flex-col gap-1 mt-3 pt-3 border-t border-[var(--color-border)]"
-    : `flex items-center gap-1 ml-3 pl-3 border-l ${
+    : `flex items-center gap-0.5 ml-2 pl-2 border-l shrink-0 ${
         onDark ? "border-white/30" : "border-[var(--color-border)]"
       }`;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { EditableImage, EditableList, EditableText } from "@/components/editable";
 import HomeConcertBanner from "@/components/home/HomeConcertBanner";
@@ -12,6 +12,7 @@ export default function HomeHeroSection({
 }: {
   onScrollToStory: () => void;
 }) {
+  const reduceMotion = useReducedMotion();
   return (
     <>
       <EditableImage
@@ -25,7 +26,7 @@ export default function HomeHeroSection({
         sizes="100vw"
         className="absolute inset-0 object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/55 to-black/75 z-[1]" />
       <MountainSilhouette />
 
       <div className="relative z-10 w-full max-w-3xl mx-auto">
@@ -130,8 +131,8 @@ export default function HomeHeroSection({
       </div>
 
       <motion.div
-        animate={{ y: [0, 12, 0] }}
-        transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+        animate={reduceMotion ? undefined : { y: [0, 12, 0] }}
+        transition={reduceMotion ? undefined : { repeat: Infinity, duration: 2, ease: "easeInOut" }}
         className="absolute bottom-8 z-10 hidden sm:block"
       >
         <ChevronDown className="w-8 h-8 text-white/40" />

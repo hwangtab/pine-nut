@@ -21,7 +21,7 @@ export default function HomeQuotesSection() {
           as="p"
           page="home"
           section="quotes"
-          className="text-balance text-white/60 text-lg"
+          className="text-balance text-white/75 text-lg"
         />
       </FadeIn>
 
@@ -62,7 +62,7 @@ export default function HomeQuotesSection() {
                   <p className="font-serif-display text-xl sm:text-2xl md:text-3xl leading-relaxed mb-4">
                     {item.quote}
                   </p>
-                  <footer className="text-white/50 text-base md:text-lg">
+                  <footer className="text-white/70 text-base md:text-lg">
                     — {item.name}
                   </footer>
                 </blockquote>

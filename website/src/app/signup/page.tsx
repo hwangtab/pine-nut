@@ -120,7 +120,7 @@ export default function SignupPage() {
           onChange={(e) => setEmail(e.target.value)}
           required
           placeholder="등록된 이메일"
-          className="frost-field outline-none focus:ring-2 focus:ring-[var(--color-forest)]/50"
+          className="frost-field"
         />
         <input
           name="password"
@@ -130,7 +130,7 @@ export default function SignupPage() {
           required
           minLength={8}
           placeholder="비밀번호 (8자 이상)"
-          className="frost-field outline-none focus:ring-2 focus:ring-[var(--color-forest)]/50"
+          className="frost-field"
         />
         <button
           type="submit"

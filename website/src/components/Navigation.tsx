@@ -47,7 +47,7 @@ export default function Navigation() {
         >
           <div className="relative z-[1] flex w-full items-center justify-between">
             <NavigationLogo isTransparent={isTransparent} />
-            <div className="hidden xl:flex items-center">
+            <div className="hidden nav:flex items-center min-w-0">
               <DesktopNavigation
                 navLinks={navLinks}
                 isTransparent={isTransparent}

@@ -1,20 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-
-const HERO_PAGES = [
-  "/",
-  "/story",
-  "/timeline",
-  "/news",
-  "/gallery",
-  "/press",
-  "/share",
-  "/petition",
-  "/donate",
-  "/concert",
-  "/en",
-];
+import { hasTransparentNavHero } from "@/lib/nav-routes";
 
 export default function useNavigationChrome(pathname: string) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -24,7 +11,7 @@ export default function useNavigationChrome(pathname: string) {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
 
-  const isTransparent = HERO_PAGES.includes(pathname) && scrollY < 80 && !mobileMenuOpen;
+  const isTransparent = hasTransparentNavHero(pathname) && scrollY < 80 && !mobileMenuOpen;
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -84,12 +71,17 @@ export default function useNavigationChrome(pathname: string) {
     const menuElement = mobileMenuRef.current;
     if (!menuElement) return;
 
-    const getFocusableElements = () =>
-      Array.from(
+    // 시트 내부 요소 + 헤더의 열기/닫기(X) 버튼을 함께 트랩에 포함해
+    // 키보드 사용자가 우상단 닫기 버튼에도 도달할 수 있게 한다.
+    const getFocusableElements = () => {
+      const inSheet = Array.from(
         menuElement.querySelectorAll<HTMLElement>(
           "a[href], button:not([disabled]), [tabindex]:not([tabindex='-1'])",
         ),
       );
+      const toggle = mobileMenuButtonRef.current;
+      return toggle ? [toggle, ...inSheet] : inSheet;
+    };
 
     const focusable = getFocusableElements();
     focusable[0]?.focus();
@@ -112,8 +104,10 @@ export default function useNavigationChrome(pathname: string) {
       const first = currentFocusable[0];
       const last = currentFocusable[currentFocusable.length - 1];
       const active = document.activeElement as HTMLElement | null;
+      const activeIndex = active ? currentFocusable.indexOf(active) : -1;
 
-      if (!active || !menuElement.contains(active)) {
+      // 포커스가 트랩 링(시트 + 토글 버튼) 밖으로 나가면 첫 요소로 되돌린다.
+      if (activeIndex === -1) {
         event.preventDefault();
         first.focus();
         return;

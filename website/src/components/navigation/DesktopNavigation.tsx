@@ -16,7 +16,7 @@ export default function DesktopNavigation({
   isActive,
 }: DesktopNavigationProps) {
   return (
-    <div className="hidden xl:flex items-center gap-1">
+    <div className="hidden nav:flex items-center gap-0.5 min-w-0">
       {navLinks.map((link) => {
         const active = isActive(link.href);
         // 기간 한정 이벤트(공연) 링크는 warm 색으로 강조
@@ -26,7 +26,7 @@ export default function DesktopNavigation({
           <span key={link.id}>
             <NavigationLink
               href={link.href}
-              className={`px-4 py-2 rounded-lg text-[15px] min-h-[44px] flex items-center transition-colors duration-300 ${
+              className={`px-3 py-2 rounded-lg text-[15px] whitespace-nowrap min-h-[44px] flex items-center transition-colors duration-300 ${
                 isEvent ? "font-bold" : "font-medium"
               } ${
                 isTransparent
@@ -54,8 +54,8 @@ export default function DesktopNavigation({
         defaultHref="/petition"
         page="nav"
         section="header"
-        className="px-5 py-2 rounded-full text-[15px] font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center transition-colors"
-        containerClassName="ml-3"
+        className="px-4 py-2 rounded-full text-[15px] font-bold whitespace-nowrap text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[44px] flex items-center transition-colors"
+        containerClassName="ml-2 shrink-0"
       >
         <EditableText
           contentKey="nav.cta"

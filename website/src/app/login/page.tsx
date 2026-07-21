@@ -144,7 +144,7 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="frost-field outline-none focus:ring-2 focus:ring-[var(--color-forest)]/50"
+            className="frost-field"
             placeholder="example@email.com"
           />
         </div>
@@ -159,7 +159,7 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="frost-field outline-none focus:ring-2 focus:ring-[var(--color-forest)]/50"
+            className="frost-field"
             placeholder="비밀번호를 입력하세요"
           />
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView, animate } from "framer-motion";
+import { motion, useInView, useReducedMotion, animate } from "framer-motion";
 
 export function AnimatedCounter({
   target,
@@ -14,10 +14,12 @@ export function AnimatedCounter({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+  const reduceMotion = useReducedMotion();
   const [displayed, setDisplayed] = useState(0);
 
   useEffect(() => {
-    if (!inView) return;
+    // 동작 줄이기 설정 시 카운트업 없이 최종값을 바로 렌더(아래 참조)
+    if (!inView || reduceMotion) return;
     const controls = animate(0, target, {
       duration,
       ease: "easeOut",
@@ -26,11 +28,11 @@ export function AnimatedCounter({
       },
     });
     return () => controls.stop();
-  }, [inView, target, duration]);
+  }, [inView, target, duration, reduceMotion]);
 
   return (
     <span ref={ref}>
-      {displayed}
+      {reduceMotion ? target : displayed}
       {suffix}
     </span>
   );

@@ -1,6 +1,17 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
 import PublicShell from "@/components/PublicShell";
+
+// Pretendard 셀프호스팅(외부 CDN 의존 제거). 변수 폰트 1개로 전 weight 커버.
+// preload:false + display:swap + next/font 자동 size-adjust 폴백으로 렌더 비차단·CLS 최소화.
+const pretendard = localFont({
+  src: "./fonts/PretendardVariable.woff2",
+  variable: "--font-pretendard",
+  display: "swap",
+  weight: "100 900",
+  preload: false,
+});
 import Analytics from "@/components/Analytics";
 import AdminEditShell from "@/components/admin/AdminEditShell";
 import { SITE_URL } from "@/lib/site-config";
@@ -73,7 +84,7 @@ export default async function RootLayout({
     ]);
 
   return (
-    <html lang="ko">
+    <html lang="ko" className={pretendard.variable}>
       <body className="antialiased">
         <Analytics />
         <AdminEditShell
