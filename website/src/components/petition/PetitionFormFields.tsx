@@ -66,7 +66,7 @@ export default function PetitionFormFields({
           aria-invalid={!!errors.name}
           aria-describedby={errors.name ? `${nameId}-error` : undefined}
           placeholder={formNamePlaceholder}
-          className="w-full min-h-[48px] px-4 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-warm)] transition"
+          className="w-full min-h-[48px] px-4 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-warm)]/30 transition"
         />
         {errors.name && (
           <p id={`${nameId}-error`} className="mt-1 text-sm text-red-600" role="alert">
@@ -95,7 +95,7 @@ export default function PetitionFormFields({
           aria-invalid={!!errors.email}
           aria-describedby={errors.email ? `${emailId}-error` : undefined}
           placeholder={formEmailPlaceholder}
-          className="w-full min-h-[48px] px-4 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-warm)] transition"
+          className="w-full min-h-[48px] px-4 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-warm)]/30 transition"
         />
         {errors.email && (
           <p id={`${emailId}-error`} className="mt-1 text-sm text-red-600" role="alert">
@@ -126,7 +126,7 @@ export default function PetitionFormFields({
           rows={3}
           placeholder={formMessagePlaceholder}
           aria-describedby={messageCountId}
-          className="w-full px-4 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-warm)] resize-none transition"
+          className="w-full px-4 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-warm)]/30 resize-none transition"
         />
         <p
           id={messageCountId}

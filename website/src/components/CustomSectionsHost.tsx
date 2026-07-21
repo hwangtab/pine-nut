@@ -137,7 +137,7 @@ export default function CustomSectionsHost() {
               </div>
 
               {section.imageUrl && section.align !== "center" && (
-                <div className="relative overflow-hidden rounded-3xl border border-[var(--color-border)]/60 shadow-xl">
+                <div className="relative overflow-hidden rounded-[var(--radius-panel)] border border-[var(--color-border)]/60 shadow-card">
                   <Image
                     src={section.imageUrl}
                     alt={section.imageAlt || section.title}
@@ -149,7 +149,7 @@ export default function CustomSectionsHost() {
               )}
 
               {section.imageUrl && section.align === "center" && (
-                <div className="mx-auto mt-2 max-w-4xl overflow-hidden rounded-3xl border border-[var(--color-border)]/60 shadow-xl">
+                <div className="mx-auto mt-2 max-w-4xl overflow-hidden rounded-[var(--radius-panel)] border border-[var(--color-border)]/60 shadow-card">
                   <Image
                     src={section.imageUrl}
                     alt={section.imageAlt || section.title}

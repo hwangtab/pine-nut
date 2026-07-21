@@ -17,7 +17,7 @@ function Toast({ message, visible }: { message: string; visible: boolean }) {
       role="status"
       aria-live="polite"
     >
-      <div className="flex items-center gap-2 bg-[var(--color-text)] text-white px-5 py-3 rounded-xl shadow-lg text-[15px] font-medium">
+      <div className="flex items-center gap-2 bg-[var(--color-text)]/95 backdrop-blur-md border border-white/10 text-white px-5 py-3 rounded-2xl shadow-lg text-[15px] font-medium">
         <Check className="w-4 h-4 shrink-0" />
         {message}
       </div>
@@ -59,7 +59,7 @@ export default function EnglishDonatePage() {
       />
 
       <div className="bg-[var(--color-bg-warm)] py-8 px-4">
-        <blockquote className="max-w-xl mx-auto bg-white/80 backdrop-blur-sm border border-[var(--color-border)] rounded-2xl px-6 py-5 text-[var(--color-text)] text-center">
+        <blockquote className="max-w-xl mx-auto bg-white border border-[var(--color-border)] rounded-[var(--radius-card)] shadow-card px-6 py-5 text-[var(--color-text)] text-center">
           <EditableText
             contentKey="en.donate.quote.text"
             defaultValue="Your support helps elderly residents travel to Seoul for protests and hearings."
@@ -82,7 +82,7 @@ export default function EnglishDonatePage() {
       <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 space-y-12">
         <section aria-label="Donate by bank transfer">
           <EditableText contentKey="en.donate.bank.heading" defaultValue="Donate by bank transfer" as="h2" page="en/donate" section="bank" className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)] text-center" />
-          <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 shadow-sm">
+          <div className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] p-6 sm:p-8 shadow-card">
             <div className="text-center mb-5">
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[var(--color-bg-warm)] mb-3">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--color-warm)]">
@@ -95,7 +95,7 @@ export default function EnglishDonatePage() {
               <EditableText contentKey="en.donate.bank.label" defaultValue="NongHyup | Lee Chang-hoo" as="p" page="en/donate" section="bank" className="text-sm text-[var(--color-text-muted)] font-medium" />
             </div>
 
-            <div className="bg-[var(--color-bg)] rounded-xl px-5 py-4 mb-4 text-center">
+            <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] px-5 py-4 mb-4 text-center">
               <EditableText contentKey="en.donate.bank.accountLabel" defaultValue="Donation account" as="p" page="en/donate" section="bank" className="text-sm text-[var(--color-text-muted)] mb-1" />
               <p className="text-2xl sm:text-3xl font-black text-[var(--color-text)] tracking-wide">
                 {BANK_ACCOUNT}
@@ -104,7 +104,7 @@ export default function EnglishDonatePage() {
 
             <button
               onClick={copyAccount}
-              className="w-full min-h-[56px] rounded-xl bg-[var(--color-warm)] hover:brightness-110 active:scale-[0.98] text-white font-bold text-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
+              className="w-full min-h-[56px] rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] active:scale-[0.98] text-white font-bold text-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <Copy className="w-5 h-5" />
               <EditableText contentKey="en.donate.bank.copy" defaultValue="Copy account number" as="span" page="en/donate" section="bank" />
@@ -117,9 +117,9 @@ export default function EnglishDonatePage() {
         </section>
 
         <section aria-label="Alternative donation path">
-          <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 text-center">
+          <div className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] shadow-card p-6 sm:p-8 text-center">
             <EditableText contentKey="en.donate.campaign.text" defaultValue="You can also donate or contact the campaign through the official campaigns.do page." as="p" page="en/donate" section="campaign" className="text-[15px] text-[var(--color-text)] font-medium mb-4" />
-            <EditableLink contentKey="en.donate.campaign.href" defaultHref="https://campaigns.do/campaigns/1328" page="en/donate" section="campaign" className="inline-flex items-center justify-center gap-2 min-h-[48px] px-8 rounded-xl bg-[var(--color-text)] hover:bg-[var(--color-text)]/90 text-white font-bold text-base transition-colors">
+            <EditableLink contentKey="en.donate.campaign.href" defaultHref="https://campaigns.do/campaigns/1328" page="en/donate" section="campaign" className="inline-flex items-center justify-center gap-2 min-h-[48px] px-8 rounded-full bg-[var(--color-text)] hover:bg-[var(--color-text)]/90 text-white font-bold text-base transition-colors">
               <ExternalLink className="w-5 h-5" />
               <EditableText contentKey="en.donate.campaign.link" defaultValue="Open campaign page" as="span" page="en/donate" section="campaign" />
             </EditableLink>
@@ -128,7 +128,7 @@ export default function EnglishDonatePage() {
 
         <section aria-label="How donations will be used">
           <EditableText contentKey="en.donate.funds.heading" defaultValue="How donations are used" as="h2" page="en/donate" section="funds" className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]" />
-          <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6 sm:p-8">
+          <div className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] shadow-card p-6 sm:p-8">
             <EditableText contentKey="en.donate.funds.disclaimer" defaultValue="The breakdown below is a proposed plan and may change depending on actual campaign needs." as="p" page="en/donate" section="funds" className="text-sm text-[var(--color-text-muted)] mb-6" />
             <EditableList
               contentKey="en.donate.funds.items"

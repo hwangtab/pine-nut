@@ -92,7 +92,7 @@ export default function HomeImpactSection() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
             {items.map((card, i) => (
               <FadeIn key={card.title} delay={i * 0.1}>
-                <div className="bg-white rounded-2xl border border-[var(--color-border)] hover:shadow-lg transition-shadow h-full overflow-hidden">
+                <div className="bg-white rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card h-full overflow-hidden">
                   <div className={`w-full h-48 bg-gradient-to-br ${gradients[i] || gradients[0]} flex items-center justify-center`}>
                     {svgIcons[i] || svgIcons[0]}
                   </div>

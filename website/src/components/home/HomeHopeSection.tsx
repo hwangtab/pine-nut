@@ -78,7 +78,7 @@ export default function HomeHopeSection() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 mt-14">
             {items.map((card, i) => (
               <FadeIn key={card.title} delay={i * 0.1}>
-                <div className="bg-white rounded-2xl p-8 border border-[var(--color-border)] text-center h-full flex flex-col items-center shadow-sm">
+                <div className="bg-white rounded-[var(--radius-card)] p-8 border border-[var(--color-border)] text-center h-full flex flex-col items-center shadow-card">
                   <div className="text-[var(--color-forest)] mb-5">
                     {icons[i] || icons[0]}
                   </div>
@@ -103,7 +103,7 @@ export default function HomeHopeSection() {
             section="hope"
             width={1200}
             height={800}
-            className="w-full rounded-2xl shadow-lg"
+            className="w-full rounded-[var(--radius-card)] border border-black/5 shadow-card"
           />
           <EditableText
             contentKey="home.hope.protestPhotoCredit"

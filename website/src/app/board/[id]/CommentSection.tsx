@@ -81,7 +81,7 @@ function CommentItem({
   return (
     <li
       className={`rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card px-4 py-3 ${
-        isHiddenOrDeleted ? "bg-[var(--color-bg)]" : ""
+        isHiddenOrDeleted ? "bg-[var(--color-bg)]" : "bg-white"
       }`}
     >
       <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--color-text-muted)]">
