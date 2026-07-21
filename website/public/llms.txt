@@ -36,7 +36,7 @@
 - [풍천리를 지켜주세요 (홈)](https://pungcheonri.vercel.app/): 사업 개요, 주민들의 목소리, 서명 현황을 한눈에 볼 수 있는 메인 페이지.
 - [풍천리 이야기](https://pungcheonri.vercel.app/story): 마을 소개, 양수발전소의 구조와 규모, 반대 이유 4가지, 주민들의 요구사항을 정리한 핵심 설명 페이지.
 - [타임라인](https://pungcheonri.vercel.app/timeline): 2019년 후보지 선정부터 현재 착공 연기 국면까지, 주요 사건의 날짜별 기록.
-- [8·1 공연 「베어지기 전에 풍천리」](https://pungcheonri.vercel.app/concert): 2026년 8월 1일(토) 오후 1~8시 청와대 앞에서 열리는 연대 공연. 강민정·물장구클럽·종이코트 등 음악가 13팀의 타임테이블(팀당 30분), 오시는 길, 포스터.
+- [8·1 공연 「베어지기 전에 풍천리」](https://pungcheonri.vercel.app/concert): 2026년 8월 1일(토) 오후 1~8시 청와대 앞에서 열리는 연대 공연. 강민정·물장구클럽·종이코트 등 음악가 14팀의 타임테이블(팀당 30분), 오시는 길, 포스터.
 - [서명 참여](https://pungcheonri.vercel.app/petition): 양수발전소 건설 백지화를 요구하는 온라인 서명.
 - [후원하기](https://pungcheonri.vercel.app/donate): 대책위 활동비·법률 대응 비용 후원 안내.
 - [뉴스](https://pungcheonri.vercel.app/news): 풍천리 관련 최신 소식과 언론 보도 모음.
