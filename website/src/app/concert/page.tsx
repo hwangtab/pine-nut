@@ -395,6 +395,26 @@ export default function ConcertPage() {
         </div>
       </section>
 
+      {/* 공연 개최 후원 */}
+      <section id="support" className="scroll-mt-20 bg-[var(--color-bg-warm)] px-6 py-16 sm:py-24">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="font-serif text-3xl font-bold sm:text-4xl">공연 개최를 후원해주세요</h2>
+          <p className="mt-4 text-lg leading-relaxed text-[var(--color-text)]">
+            음악가 14팀은 개런티 없이 무대에 오릅니다. 악기 운반, 생수와 그늘막, 현수막 — 공연을
+            여는 실비를 함께 만들어주세요. 2만원 이상 후원하시면 공연 포스터(A2)를 현장에서
+            드립니다.
+          </p>
+          <a
+            href="https://www.saf2026.com/funding/pungcheonri"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-8 inline-block rounded-full bg-[var(--color-forest)] px-8 py-4 text-lg font-bold text-white transition hover:opacity-90"
+          >
+            후원하러 가기 →
+          </a>
+        </div>
+      </section>
+
       {/* 포스터 */}
       <section id="poster" className="scroll-mt-20 bg-[var(--color-bg-warm)] px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-2xl text-center">
