@@ -87,7 +87,7 @@ const FAQ = [
   },
   {
     q: "무엇을 준비하면 좋나요?",
-    a: "한여름 야외 공연입니다. 물, 양산이나 모자, 앉을 자리(돗자리)를 챙기시면 편하게 즐길 수 있어요.",
+    a: "한여름 야외 공연입니다. 물, 양산이나 모자, 앉을 자리(돗자리)를 챙기시면 편하게 즐길 수 있어요. 강원녹색당 부스에서 실크스크린 체험을 하고 싶다면 하얀색 티셔츠를 가져오세요.",
   },
   {
     q: "날씨가 궂으면 어떻게 되나요?",
@@ -322,12 +322,15 @@ export default function ConcertPage() {
             </span>
             <div>
               <h3 className="text-lg font-bold text-[var(--color-text)]">
-                강원녹색당 — 실크스크린 · 티셔츠 판매 부스
+                강원녹색당 — 실크스크린 · 풍천리 티셔츠 판매 부스
               </h3>
               <p className="mt-2 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
                 강원녹색당이 공연에 함께해 실크스크린 체험과 티셔츠 판매 부스를 운영합니다.
-                직접 찍어보는 실크스크린과 풍천리를 담은 티셔츠로, 공연장에서 또 하나의
-                연대를 만나보세요.
+                풍천리를 담아 새로 만든 티셔츠를 현장에서 바로 만나고 구매할 수 있습니다.
+                부스는 공연 시간 내내(13:00~20:00) 운영됩니다.
+              </p>
+              <p className="mt-3 break-keep rounded-xl bg-white/70 px-4 py-3 text-sm font-semibold text-[var(--color-forest)]">
+                💡 실크스크린 체험을 하고 싶다면, <b>하얀색 티셔츠</b>를 미리 챙겨오시면 좋아요.
               </p>
             </div>
           </div>
