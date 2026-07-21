@@ -5,6 +5,7 @@ import {
   deleteMediaLibraryItemAction,
   uploadMediaLibraryAction,
 } from "@/lib/actions/media-library";
+import { validateImageFile } from "@/lib/image-upload-limits";
 import type { MediaItem } from "@/lib/data/media-library";
 
 export function useMediaLibraryManager(initialItems: MediaItem[]) {
@@ -24,6 +25,14 @@ export function useMediaLibraryManager(initialItems: MediaItem[]) {
     const file = fileInputRef.current?.files?.[0];
     if (!file) {
       setError("업로드할 이미지를 선택해주세요.");
+      return;
+    }
+
+    // 서버로 보내기 전에 형식·용량을 즉시 검사해 안내(용량 초과 시 실제 크기 표시)
+    const validation = validateImageFile(file);
+    if (!validation.ok) {
+      alert(validation.error);
+      setError(validation.error);
       return;
     }
 

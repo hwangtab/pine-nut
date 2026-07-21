@@ -1,12 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
-const EXT_MAP: Record<string, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-};
+import { IMAGE_EXT_BY_TYPE, validateImageFile } from "@/lib/image-upload-limits";
 
 export interface UploadResult {
   url: string | null;
@@ -22,15 +15,13 @@ export async function uploadImageFromFormData(
     return { url: null, error: null };
   }
 
-  if (!ALLOWED_TYPES.has(file.type)) {
-    return { url: null, error: "JPG, PNG, WebP 형식의 사진만 올릴 수 있습니다." };
+  // 클라이언트와 동일한 규칙으로 최종 방어(클라 검증이 우회돼도 서버가 거른다)
+  const validation = validateImageFile(file);
+  if (!validation.ok) {
+    return { url: null, error: validation.error };
   }
 
-  if (file.size > MAX_FILE_SIZE) {
-    return { url: null, error: "사진 크기는 5MB 이하만 가능합니다." };
-  }
-
-  const ext = EXT_MAP[file.type] ?? "jpg";
+  const ext = IMAGE_EXT_BY_TYPE[file.type] ?? "jpg";
   const uuid = crypto.randomUUID();
   const path = `${folder}/${uuid}.${ext}`;
 

@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import { validateImageFile } from "@/lib/image-upload-limits";
 import {
   adminFileInputClassName,
   adminNoticeTextClassName,
@@ -25,6 +29,25 @@ export default function AdminImageFileField({
   currentImageUrl,
   currentNotice,
 }: AdminImageFileFieldProps) {
+  const [error, setError] = useState<string | null>(null);
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setError(null);
+      return;
+    }
+    const result = validateImageFile(file);
+    if (!result.ok) {
+      // 서버까지 보내지 않고 즉시 안내 + 선택 취소(용량 초과/형식 오류를 바로 알림)
+      alert(result.error);
+      setError(result.error);
+      e.target.value = "";
+      return;
+    }
+    setError(null);
+  }
+
   return (
     <div>
       <label
@@ -57,11 +80,18 @@ export default function AdminImageFileField({
         name={name}
         type="file"
         accept="image/jpeg,image/png,image/webp"
+        onChange={handleChange}
         className={adminFileInputClassName(variant)}
       />
-      <p className="mt-1.5 text-sm text-[var(--color-admin-muted)]">
-        {helperText}
-      </p>
+      {error ? (
+        <p className="mt-1.5 text-sm font-semibold text-[var(--color-danger)]">
+          {error}
+        </p>
+      ) : (
+        <p className="mt-1.5 text-sm text-[var(--color-admin-muted)]">
+          {helperText}
+        </p>
+      )}
     </div>
   );
 }

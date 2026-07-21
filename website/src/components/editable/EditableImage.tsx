@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 import { uploadEditableImageAction } from "@/lib/actions/page-content";
 import { validateOptionalImageUrl } from "@/lib/validation/url";
+import { validateImageFile } from "@/lib/image-upload-limits";
 
 interface EditableImageProps {
   contentKey: string;
@@ -47,14 +48,10 @@ export default function EditableImage({
       const file = e.target.files?.[0];
       if (!file) return;
 
-      const MAX_SIZE = 5 * 1024 * 1024;
-      if (file.size > MAX_SIZE) {
-        alert("파일 크기는 5MB 이하여야 합니다.");
-        return;
-      }
-      const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
-      if (!ALLOWED_TYPES.includes(file.type)) {
-        alert("JPG, PNG, WebP만 업로드 가능합니다.");
+      const validation = validateImageFile(file);
+      if (!validation.ok) {
+        alert(validation.error);
+        e.target.value = "";
         return;
       }
 
