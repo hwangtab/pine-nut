@@ -27,7 +27,7 @@ import ConcertHero from "./ConcertHero";
 export const metadata: Metadata = {
   title: "베어지기 전에 풍천리 — 8·1 청와대 앞 공연",
   description:
-    "2026년 8월 1일(토) 오후 1시–8시, 청와대 앞. 잣나무 11만 그루가 베어지기 전에, 풍천리를 지키려는 음악가 14팀이 모입니다. 강민정·강상석·경하와 세민과 멍구와 흑염소·길가는 밴드·김민정(알마즈)·남수·물장구클럽·삼각전파사·아나자오·이서영·자이·종이코트·치핵·하늘소년.",
+    "2026년 8월 1일(토) 오후 1시–8시, 청와대 앞. 잣나무 11만 그루가 베어지기 전에, 풍천리를 지키려는 음악가 14팀이 모입니다. 강민정·강상석·경하와 세민과 멍구와 흑염소·길가는밴드 장현호·김민정(알마즈)·남수·물장구클럽·삼각전파사·아나자오·이서영·자이·종이코트·치핵·하늘소년.",
   openGraph: {
     title: "베어지기 전에 풍천리 — 8·1 청와대 앞 공연",
     description:
@@ -430,9 +430,9 @@ export default function ConcertPage() {
           <div className="mt-8 overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card">
             <Image
               src="/images/concert/poster.jpg"
-              alt="베어지기 전에 풍천리 공연 포스터 — 2026년 8월 1일 토요일 오후 1시부터 8시, 청와대 앞. 출연: 강민정, 경하와 세민과 멍구와 흑염소, 길가는 밴드, 김민정(알마즈), 남수, 물장구클럽, 삼각전파사, 아나자오, 이서영, 자이, 종이코트, 치핵, 하늘소년"
+              alt="베어지기 전에 풍천리 공연 포스터 — 2026년 8월 1일 토요일 오후 1시부터 8시, 청와대 앞. 출연: 강민정, 강상석, 경하와 세민과 멍구와 흑염소, 길가는밴드 장현호, 김민정(알마즈), 남수, 물장구클럽, 삼각전파사, 아나자오, 이서영, 자이, 종이코트, 치핵, 하늘소년"
               width={1200}
-              height={1697}
+              height={1500}
               sizes="(max-width: 768px) 100vw, 672px"
               className="h-auto w-full"
             />
