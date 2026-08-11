@@ -18,7 +18,7 @@ export function StoryDemandsSection() {
           contentKey="story.demands.items"
           defaultItems={[
             { text: "양수발전소 건설 계획 전면 백지화" },
-            { text: "2025년 8월 29일 기후에너지환경부 실시계획인가 고시(제2025-151호) 취소" },
+            { text: "2025년 8월 29일 산업통상자원부 실시계획인가 고시(제2025-151호) 취소" },
             { text: "잣나무 숲과 생태계 보전" },
             { text: "주민 생존권 보장" },
           ]}
