@@ -191,39 +191,38 @@ const timelineTranslations: Record<number, EnglishTimelineTranslation> = {
   },
 };
 
-// 번역표는 DB id로 키잉되어 있고, 각 항목은 "번역을 만들 당시의 한국어 원문"에
-// 대응한다. 관리자가 그 뒤 한국어를 수정하면 그 필드의 번역은 더 이상 같은 내용이
-// 아니므로, 시드(= 번역 시점 스냅샷)와 대조해 달라진 필드만 한국어로 폴백한다.
+// 번역표는 시드 파일의 id로 작성돼 있지만, **DB의 id는 시드 id와 다르다.**
+// 시드가 두 번 삽입되면서 실제 행은 22번부터 시작하고, 그 뒤 관리자가 추가한
+// 항목까지 섞였다. id로 조회하면 단 한 건도 맞지 않아 영문 페이지가 통째로
+// 한국어로 나갔다. id 대신 한국어 제목으로 잇는다 — DB 재삽입에도 견딘다.
 //
-// 필드 단위로 판정하는 이유: 제목만 손봤는데 본문 번역까지 통째로 버리면
-// 영문 페이지가 통째로 한국어가 된다. 실제로 그런 사고가 한 번 있었다.
-const seedSnapshot = new Map(koreanSeed.map((event) => [event.id, event]));
-
-/** 해당 필드의 한국어가 번역 시점 원문 그대로인지(= 번역을 그대로 써도 되는지). */
-function isFieldFresh(
-  event: TimelineEvent,
-  field: "title" | "description",
-): boolean {
-  const seed = seedSnapshot.get(event.id);
-  if (!seed) return false; // 관리자가 새로 만든 항목 → 번역 없음
-  return seed[field] === event[field];
+// 제목이 바뀌면 그 항목은 자연히 번역 없음으로 떨어지는데, 그게 맞는 동작이다.
+// 본문만 수정된 경우에는 제목 번역까지 버리지 않도록 필드 단위로 판정한다.
+const translationByTitle = new Map<
+  string,
+  { translation: EnglishTimelineTranslation; seed: TimelineEvent }
+>();
+for (const seed of koreanSeed) {
+  const translation = timelineTranslations[seed.id];
+  if (translation) translationByTitle.set(seed.title, { translation, seed });
 }
 
 export function translateTimelineEventToEnglish(
   event: TimelineEvent,
 ): EnglishTimelineEvent {
-  const translated = timelineTranslations[event.id];
+  const matched = translationByTitle.get(event.title);
+  const translated = matched?.translation;
+  // 본문이 번역 시점 원문 그대로일 때만 번역 본문을 쓴다(수정됐으면 한국어 폴백).
+  const descriptionFresh = matched ? matched.seed.description === event.description : false;
 
   return {
     id: event.id,
     // date/category/imageAlt는 표기 변환에 가까워 본문 수정과 함께 상하지 않는다.
     date: translated?.date ?? event.date,
     year: event.year,
-    title: translated && isFieldFresh(event, "title") ? translated.title : event.title,
+    title: translated?.title ?? event.title,
     description:
-      translated && isFieldFresh(event, "description")
-        ? translated.description
-        : event.description,
+      translated && descriptionFresh ? translated.description : event.description,
     category: translated?.category ?? categoryMap[event.category],
     imageUrl: event.imageUrl,
     imageAlt: translated?.imageAlt ?? event.imageAlt,
