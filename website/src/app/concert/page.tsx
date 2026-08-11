@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { localeAlternates } from "@/lib/seo-alternates";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -25,6 +26,7 @@ import {
 import ConcertHero from "./ConcertHero";
 
 export const metadata: Metadata = {
+  alternates: localeAlternates("/concert"),
   title: "베어지기 전에 풍천리 — 8·1 청와대 앞 공연",
   description:
     "2026년 8월 1일(토) 오후 1시–8시, 청와대 앞. 잣나무 11만 그루가 베어지기 전에, 풍천리를 지키려는 음악가 14팀이 모입니다. 강민정·강상석·경하와 세민과 멍구와 흑염소·길가는밴드 장현호·김민정(알마즈)·남수·물장구클럽·삼각전파사·아나자오·이서영·자이·종이코트·치핵·하늘소년.",

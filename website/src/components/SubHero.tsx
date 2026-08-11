@@ -70,6 +70,7 @@ export default function SubHero({
           sizes="100vw"
           priority
           className="object-cover"
+          fallbackSrc={fallbackImageUrl || defaultFallbackImageUrl}
         />
       ) : (
         currentImage && (

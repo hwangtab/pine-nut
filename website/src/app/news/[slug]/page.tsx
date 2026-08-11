@@ -5,6 +5,7 @@ import { getNewsBySlug, getPublishedNews } from "@/lib/data/news";
 import ShareButtons from "@/components/ShareButtons";
 import UtilityHeader from "@/components/UtilityHeader";
 import type { Metadata } from "next";
+import { localeAlternates } from "@/lib/seo-alternates";
 import { EditableLink, EditableText } from "@/components/editable";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +22,7 @@ export async function generateMetadata({
   if (!item) return { title: "소식을 찾을 수 없습니다" };
 
   return {
+    alternates: localeAlternates(`/news/${slug}`),
     title: `${item.title} — 풍천리를 지켜주세요`,
     description: item.summary,
     openGraph: {

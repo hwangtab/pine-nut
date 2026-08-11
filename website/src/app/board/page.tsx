@@ -1,8 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import { getBoardPosts } from "@/lib/data/board";
 import { getMyMemberProfile } from "@/lib/data/member";
 import { BOARD_CATEGORIES } from "@/lib/board-categories";
+
+import { localeAlternates } from "@/lib/seo-alternates";
+
+export const metadata: Metadata = {
+  alternates: localeAlternates("/board"),
+  title: "회원 게시판 — 풍천리를 지켜주세요",
+  description: "풍천리 양수발전소 반대 활동에 함께하는 회원들의 이야기 공간입니다.",
+};
 
 const PER_PAGE = 20;
 

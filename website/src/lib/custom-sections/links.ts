@@ -33,6 +33,36 @@ export function defaultNavLinks(): BuilderLinkItem[] {
   ];
 }
 
+/**
+ * 영문 구간(/en/*) 전용 링크. 한국어 링크를 그대로 쓰면 영문 사용자가 첫 클릭에
+ * 한국어 사이트로 빠져나가고, /en 하위 페이지로 갈 경로가 아예 없다.
+ * 영문판이 없는 페이지(공연·게시판)는 제외한다.
+ */
+export function defaultEnNavLinks(): BuilderLinkItem[] {
+  return [
+    { id: "en-nav-story", label: "Story", href: "/en/story" },
+    { id: "en-nav-timeline", label: "Timeline", href: "/en/timeline" },
+    { id: "en-nav-news", label: "News", href: "/en/news" },
+    { id: "en-nav-gallery", label: "Gallery", href: "/en/gallery" },
+    { id: "en-nav-press", label: "Press", href: "/en/press" },
+    { id: "en-nav-share", label: "Share", href: "/en/share" },
+    { id: "en-nav-ko", label: "한국어", href: "/" },
+  ];
+}
+
+export function defaultEnFooterLinks(): BuilderLinkItem[] {
+  return [
+    { id: "en-footer-story", label: "Story", href: "/en/story" },
+    { id: "en-footer-timeline", label: "Timeline", href: "/en/timeline" },
+    { id: "en-footer-news", label: "News", href: "/en/news" },
+    { id: "en-footer-gallery", label: "Gallery", href: "/en/gallery" },
+    { id: "en-footer-press", label: "Press", href: "/en/press" },
+    { id: "en-footer-petition", label: "Sign the petition", href: "/en/petition" },
+    { id: "en-footer-privacy", label: "Privacy", href: "/en/privacy" },
+    { id: "en-footer-ko", label: "한국어", href: "/" },
+  ];
+}
+
 export function defaultFooterLinks(): BuilderLinkItem[] {
   return [
     { id: "footer-story", label: "이야기", href: "/story" },

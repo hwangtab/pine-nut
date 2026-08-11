@@ -8,15 +8,17 @@ import NavigationAuthLinks from "@/components/navigation/NavigationAuthLinks";
 import NavigationLogo from "@/components/navigation/NavigationLogo";
 import useNavigationChrome from "@/components/navigation/useNavigationChrome";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
-import { defaultNavLinks, parseBuilderLinks } from "@/lib/custom-sections";
+import { defaultEnNavLinks, defaultNavLinks, parseBuilderLinks } from "@/lib/custom-sections";
 
 export default function Navigation() {
   const { getContent, isActiveAdmin, isLoggedIn } = useAdminEdit();
   const pathname = usePathname();
-  const navLinks = parseBuilderLinks(
-    getContent("builder.global.navLinks"),
-    defaultNavLinks(),
-  );
+  // 영문 구간에서는 영문 링크 세트를 쓴다. 한국어 링크를 그대로 두면 영문 사용자가
+  // 첫 클릭에 한국어 사이트로 이탈하고, /en 하위 페이지로 갈 경로가 없다.
+  const isEnglish = pathname === "/en" || pathname.startsWith("/en/");
+  const navLinks = isEnglish
+    ? defaultEnNavLinks()
+    : parseBuilderLinks(getContent("builder.global.navLinks"), defaultNavLinks());
   const {
     visible,
     isTransparent,

@@ -75,8 +75,8 @@ export default function MeetingAttachments({ meetingId, attachments }: { meeting
         </ul>
       )}
 
-      {(state?.error || actionError) && (
-        <p className="text-sm text-[var(--color-danger)]">{state?.error ?? actionError}</p>
+      {(actionError || state?.error) && (
+        <p className="text-sm text-[var(--color-danger)]">{actionError ?? state?.error}</p>
       )}
 
       <form action={formAction} className="flex flex-col sm:flex-row gap-2 items-start">

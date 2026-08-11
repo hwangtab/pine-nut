@@ -42,14 +42,10 @@ export const metadata: Metadata = {
       },
     ],
   },
-  alternates: {
-    canonical: SITE_URL,
-    // 영문 쪽에서만 선언하면 단방향이라 검색엔진이 언어 대체 관계를 무시한다.
-    languages: {
-      ko: SITE_URL,
-      en: `${SITE_URL}/en`,
-    },
-  },
+  // alternates(canonical·hreflang)를 여기 두면 안 된다. Next의 메타데이터 병합은
+  // 하위가 선언하지 않은 필드를 그대로 상속시키므로, 모든 하위 페이지가
+  // canonical=홈을 내보내 검색엔진이 전부 홈의 중복으로 판단한다.
+  // 각 페이지가 자기 경로를 선언한다(홈은 src/app/page.tsx).
 };
 
 async function checkAdminFlags(): Promise<{

@@ -30,6 +30,11 @@ export default function useNavigationChrome(pathname: string) {
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll, { passive: true });
+    // 브라우저가 스크롤 위치를 복원한 채 새로고침되면 scrollY 초기값 0 때문에
+    // 투명 내비(흰 글씨)로 그려져 밝은 배경 위에서 읽히지 않는다. 리스너 등록 직후
+    // 스크롤 이벤트를 한 번 흘려 실제 위치를 반영시킨다.
+    // (effect 본문에서 setState를 직접 부르면 연쇄 렌더를 유발하므로 이벤트로 전달한다)
+    window.dispatchEvent(new Event("scroll"));
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 

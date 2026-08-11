@@ -214,18 +214,21 @@ export function translateTimelineEventToEnglish(
   const translated = matched?.translation;
   // 본문이 번역 시점 원문 그대로일 때만 번역 본문을 쓴다(수정됐으면 한국어 폴백).
   const descriptionFresh = matched ? matched.seed.description === event.description : false;
+  // date·imageAlt도 관리자가 고칠 수 있다. 바뀌었는데 번역표의 옛 표기를 그대로
+  // 쓰면 한국어와 영문이 서로 다른 날짜를 보여준다.
+  const dateFresh = matched ? matched.seed.date === event.date : false;
+  const imageAltFresh = matched ? matched.seed.imageAlt === event.imageAlt : false;
 
   return {
     id: event.id,
-    // date/category/imageAlt는 표기 변환에 가까워 본문 수정과 함께 상하지 않는다.
-    date: translated?.date ?? event.date,
+    date: translated && dateFresh ? translated.date : event.date,
     year: event.year,
     title: translated?.title ?? event.title,
     description:
       translated && descriptionFresh ? translated.description : event.description,
     category: translated?.category ?? categoryMap[event.category],
     imageUrl: event.imageUrl,
-    imageAlt: translated?.imageAlt ?? event.imageAlt,
+    imageAlt: translated && imageAltFresh ? translated.imageAlt : event.imageAlt,
   };
 }
 

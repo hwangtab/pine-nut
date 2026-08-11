@@ -38,6 +38,14 @@ export default function EditableText({
 
   const handleBlur = useCallback(() => {
     const newValue = ref.current?.textContent?.trim() ?? "";
+    // 빈 값은 스테이징하지 않는다. 저장 단계에서 거부하면 배치 전체가 막히는데,
+    // 정작 비워진 요소는 폭이 0이 되어 다시 클릭할 수도 없어 되돌릴 방법이 없다.
+    // 여기서 화면을 원래 값으로 돌려놓는 것이 가장 확실한 차단이다.
+    // (기본 문구로 되돌리려면 툴바의 '기본값 복원'을 쓴다)
+    if (!newValue) {
+      if (ref.current) ref.current.textContent = value;
+      return;
+    }
     if (newValue !== value) {
       stageChange({
         content_key: contentKey,

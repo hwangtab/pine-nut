@@ -78,6 +78,7 @@ export default function TimelineForm({
         variant="sky"
       />
       <AdminImageFileField
+        submitFailed={Boolean(state?.error)}
         label="사진 올리기 (선택)"
         variant="sky"
         helperText="사진을 직접 올릴 수 있습니다. JPG, PNG, WebP (5MB 이하)"

@@ -50,7 +50,9 @@ async function verifyPassword(email: string, password: string): Promise<boolean>
   });
   const { data, error } = await probe.auth.signInWithPassword({ email, password });
   if (error || !data.session) return false;
-  await probe.auth.signOut();
+  // scope를 지정하지 않으면 global이라, 이 검증만으로 그 사용자의 다른 기기
+  // 세션까지 끊긴다. 방금 발급받은 probe 토큰만 폐기하면 충분하다.
+  await probe.auth.signOut({ scope: "local" });
   return true;
 }
 

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { localeAlternates } from "@/lib/seo-alternates";
 
 export const metadata: Metadata = {
+  alternates: localeAlternates("/petition", "/en/petition"),
   title: "서명하기 — 풍천리를 지켜주세요",
   description:
     "양수발전소 건설 반대 서명에 참여해주세요. 당신의 이름 하나가 풍천리 주민들에게 큰 힘이 됩니다.",

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { localeAlternates } from "@/lib/seo-alternates";
 import UtilityHeader from "@/components/UtilityHeader";
 import { EditableLink, EditableText, EditableRichText } from "@/components/editable";
 import { PrivacyPurposeList, PrivacyRightsList } from "./PrivacySectionsClient";
 
 export const metadata: Metadata = {
+  alternates: localeAlternates("/privacy", "/en/privacy"),
   title: "개인정보처리방침 — 풍천리를 지켜주세요",
   description:
     "풍천리를 지켜주세요 웹사이트의 개인정보 수집, 이용, 보관에 관한 안내입니다.",

@@ -86,6 +86,7 @@ export default function NewsForm({
       </div>
 
       <AdminImageFileField
+        submitFailed={Boolean(state?.error)}
         label="사진 올리기 (선택)"
         variant="forest"
         helperText="사진을 올리면 기사 이미지 대신 사용됩니다. JPG, PNG, WebP (5MB 이하)"

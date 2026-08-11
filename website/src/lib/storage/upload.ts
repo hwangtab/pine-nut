@@ -38,8 +38,10 @@ export async function uploadImageFromFormData(
   }
 
   // 선언된 MIME은 확장자에서 유추된 값이라 위조가 쉽다. 실제 바이트로 확인한다.
+  // 단, 선언값과의 "완전 일치"를 요구하면 PNG를 .jpg로 이름만 바꾼 정상 이미지까지
+  // 거부된다. 실제 형식이 허용 목록에 있으면 통과시키고, 저장은 실제 형식 기준으로 한다.
   const sniffed = await sniffImageType(file);
-  if (!sniffed || sniffed !== file.type) {
+  if (!sniffed) {
     return { url: null, error: "이미지 파일이 아니거나 형식이 올바르지 않습니다." };
   }
 

@@ -16,7 +16,7 @@ import {
   getStoredMetadata,
   mergeStagedChanges,
   removeContentOverride,
-  removeSavedChanges,
+  reconcileSavedChanges,
   removeStagedChange,
   stageContentChange,
 } from "@/lib/contexts/admin-edit/content-store";
@@ -170,8 +170,10 @@ export function AdminEditProvider({
       }
 
       setDbContent((prev) => mergeStagedChanges(prev, changes));
-      // 저장 중에 사용자가 추가로 편집했을 수 있다. 방금 저장한 항목만 걷어낸다.
-      setStagedChanges((prev) => removeSavedChanges(prev, changes));
+      // 저장 중에 사용자가 추가로 편집했을 수 있다. 저장된 항목은 걷어내고,
+      // 재편집된 항목은 base_value를 방금 저장한 값으로 맞춰 둔다
+      // (그러지 않으면 다음 저장이 충돌로 영구 거부된다).
+      setStagedChanges((prev) => reconcileSavedChanges(prev, changes));
       setSaveError(null);
       return true;
     } catch (err) {

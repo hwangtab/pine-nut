@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { localeAlternates } from "@/lib/seo-alternates";
 import CardNews from "@/components/CardNews";
 import SubHero from "@/components/SubHero";
 import { EditableText } from "@/components/editable";
 
 export const metadata: Metadata = {
+  alternates: localeAlternates("/share", "/en/share"),
   title: "공유용 카드뉴스 — 풍천리를 지켜주세요",
   description:
     "풍천리 이야기를 카드뉴스로 만들었습니다. 이미지를 다운로드해서 SNS에 공유해주세요.",

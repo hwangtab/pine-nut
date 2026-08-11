@@ -7,15 +7,18 @@ import FooterContact from "@/components/footer/FooterContact";
 import FooterPrivacyPanel from "@/components/footer/FooterPrivacyPanel";
 import FooterQuickLinks from "@/components/footer/FooterQuickLinks";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
-import { defaultFooterLinks, parseBuilderLinks } from "@/lib/custom-sections";
+import { usePathname } from "next/navigation";
+import { defaultEnFooterLinks, defaultFooterLinks, parseBuilderLinks } from "@/lib/custom-sections";
 
 export default function Footer() {
   const { getContent } = useAdminEdit();
   const [showPrivacy, setShowPrivacy] = useState(false);
-  const quickLinks = parseBuilderLinks(
-    getContent("builder.global.footerLinks"),
-    defaultFooterLinks(),
-  );
+  const pathname = usePathname();
+  // 영문 구간에서는 영문 링크 세트(Navigation과 동일한 이유).
+  const isEnglish = pathname === "/en" || pathname.startsWith("/en/");
+  const quickLinks = isEnglish
+    ? defaultEnFooterLinks()
+    : parseBuilderLinks(getContent("builder.global.footerLinks"), defaultFooterLinks());
 
   return (
     <footer className="bg-[var(--color-forest)] text-white" role="contentinfo">

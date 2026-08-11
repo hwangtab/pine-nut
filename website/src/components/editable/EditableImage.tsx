@@ -19,6 +19,8 @@ interface EditableImageProps {
   sizes?: string;
   priority?: boolean;
   className?: string;
+  /** 원본 이미지 로드가 실패하면 대신 쓸 주소(외부 호스트 이미지 대비). */
+  fallbackSrc?: string;
   [key: string]: unknown;
 }
 
@@ -34,10 +36,19 @@ export default function EditableImage({
   sizes,
   priority,
   className = "",
+  fallbackSrc,
   ...rest
 }: EditableImageProps) {
   const { isEditMode, getContent, stageChange } = useAdminEdit();
-  const src = getContent(contentKey) ?? defaultSrc;
+  const stored = getContent(contentKey) ?? defaultSrc;
+  // 외부 호스트 이미지는 언제든 사라질 수 있다. 실패하면 폴백으로 한 번 교체한다.
+  // (SubHero가 fallbackImageUrl을 넘겨도 이 컴포넌트가 onError를 다루지 않아
+  //  폴백이 한 번도 동작하지 않던 문제를 여기서 해결한다)
+  const [failed, setFailed] = useState(false);
+  const src = failed && fallbackSrc ? fallbackSrc : stored;
+  const handleError = useCallback(() => {
+    if (fallbackSrc && !failed) setFailed(true);
+  }, [fallbackSrc, failed]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [showUrlInput, setShowUrlInput] = useState(false);
@@ -108,7 +119,7 @@ export default function EditableImage({
     : { width, height, sizes, priority, className };
 
   if (!isEditMode) {
-    return <Image src={src} alt={alt} {...imageProps} {...rest} />;
+    return <Image src={src} alt={alt} onError={handleError} {...imageProps} {...rest} />;
   }
 
   // fill 이미지는 크기를 부모에게서 받는다. 편집 모드에서 relative 래퍼를 끼우면
@@ -119,7 +130,7 @@ export default function EditableImage({
       className={`${fill ? "absolute inset-0" : "relative"} group`}
       data-editable-key={contentKey}
     >
-      <Image src={src} alt={alt} {...imageProps} {...rest} />
+      <Image src={src} alt={alt} onError={handleError} {...imageProps} {...rest} />
 
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 rounded-inherit">

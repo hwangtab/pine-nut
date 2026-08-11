@@ -186,7 +186,7 @@ export async function uploadEditableImageAction(
   if (!validation.ok) return { url: null, error: validation.error };
 
   const sniffed = await sniffImageType(file);
-  if (!sniffed || sniffed !== file.type) {
+  if (!sniffed) {
     return { url: null, error: "이미지 파일이 아니거나 형식이 올바르지 않습니다." };
   }
 

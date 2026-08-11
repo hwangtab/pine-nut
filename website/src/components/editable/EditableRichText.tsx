@@ -62,8 +62,16 @@ export default function EditableRichText({
     setEditing(true);
   }, [value, setLocalValue]);
 
+  const [emptyWarning, setEmptyWarning] = useState(false);
+
   const handleSave = useCallback(() => {
     const trimmed = localValue.trim();
+    // 빈 값은 저장 단계에서 거부되어 배치 전체를 막는다. 모달 안에서 바로 알린다.
+    if (!trimmed) {
+      setEmptyWarning(true);
+      return;
+    }
+    setEmptyWarning(false);
     if (trimmed !== value) {
       stageChange({
         content_key: contentKey,
@@ -78,6 +86,7 @@ export default function EditableRichText({
 
   const handleCancel = useCallback(() => {
     setLocalValue(value);
+    setEmptyWarning(false);
     setEditing(false);
   }, [value, setLocalValue]);
 
@@ -158,10 +167,18 @@ export default function EditableRichText({
             <div className="flex-1 p-6 overflow-auto">
               <textarea
                 value={localValue}
-                onChange={(e) => setLocalValue(e.target.value)}
+                onChange={(e) => {
+                  setLocalValue(e.target.value);
+                  if (emptyWarning) setEmptyWarning(false);
+                }}
                 className="w-full h-64 p-4 border border-gray-300 rounded-lg text-base leading-relaxed resize-y outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-gray-900"
                 autoFocus
               />
+              {emptyWarning && (
+                <p className="mt-2 text-sm text-red-600">
+                  내용을 비울 수는 없습니다. 기본 문구로 되돌리려면 툴바의 &lsquo;기본값 복원&rsquo;을 사용해주세요.
+                </p>
+              )}
             </div>
             <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200">
               <button

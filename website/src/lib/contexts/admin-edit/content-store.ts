@@ -50,18 +50,27 @@ export function removeStagedChange(
 }
 
 /**
- * 저장이 끝난 변경만 스테이징에서 제거한다.
- * 통째로 비우면 저장이 진행되는 동안 사용자가 추가로 편집한 내용까지 사라진다.
- * 같은 키를 다시 편집했다면(값이 다르면) 그 편집은 남겨 둔다.
+ * 저장이 끝난 변경을 스테이징에서 정리한다.
+ *
+ * - 그대로 남아 있는 항목(참조 동일) → 제거
+ * - 저장 중에 다시 편집된 항목 → 남기되, base_value를 **방금 저장한 값**으로 갱신
+ *
+ * 두 번째가 중요하다. base_value를 낡은 채로 두면 서버의 동시 편집 검사가
+ * "다른 관리자가 먼저 저장했다"고 영구히 거부해, 그 키가 섞인 배치가 다시는
+ * 저장되지 않는다(자기 회복 경로가 없음).
  */
-export function removeSavedChanges(
+export function reconcileSavedChanges(
   current: Map<string, StagedChange>,
   saved: StagedChange[],
 ): Map<string, StagedChange> {
   const next = new Map(current);
   for (const change of saved) {
-    if (next.get(change.content_key) === change) {
+    const staged = next.get(change.content_key);
+    if (!staged) continue;
+    if (staged === change) {
       next.delete(change.content_key);
+    } else {
+      next.set(change.content_key, { ...staged, base_value: change.value });
     }
   }
   return next;
