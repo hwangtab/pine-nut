@@ -30,7 +30,9 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: "6mb",
+      // 회의록 첨부 한도(20MB, src/lib/attachment-limits.ts)보다 커야 한다.
+      // 작으면 앱의 용량 검증에 닿기 전에 요청이 잘려 아무 안내 없이 실패한다.
+      bodySizeLimit: "24mb",
     },
   },
   async headers() {

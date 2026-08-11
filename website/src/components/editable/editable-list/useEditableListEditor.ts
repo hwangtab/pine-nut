@@ -48,15 +48,22 @@ export function useEditableListEditor<T extends EditableListItem>({
   }, []);
 
   const handleSave = useCallback(() => {
+    const nextValue = JSON.stringify(stripEditableListIds(localItems));
+    // 아무것도 바꾸지 않고 '적용'만 눌러도 스테이징하면, 하드코딩 기본값이 그대로
+    // DB override로 굳어 이후 코드에서 문구를 고쳐도 화면에 반영되지 않는다.
+    if (nextValue === getContent(contentKey)) {
+      setEditing(false);
+      return;
+    }
     stageChange({
       content_key: contentKey,
       content_type: "list",
-      value: JSON.stringify(stripEditableListIds(localItems)),
+      value: nextValue,
       page,
       section,
     });
     setEditing(false);
-  }, [contentKey, localItems, page, section, stageChange]);
+  }, [contentKey, getContent, localItems, page, section, stageChange]);
 
   const handleCancel = useCallback(() => {
     setLocalItems(withEditableListIds(items));

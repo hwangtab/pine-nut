@@ -111,8 +111,14 @@ export default function EditableImage({
     return <Image src={src} alt={alt} {...imageProps} {...rest} />;
   }
 
+  // fill 이미지는 크기를 부모에게서 받는다. 편집 모드에서 relative 래퍼를 끼우면
+  // 그 래퍼의 높이가 0이 되어 이미지가 사라지고 오버레이도 클릭할 수 없다.
+  // fill일 때는 래퍼가 원래 부모를 그대로 덮도록 absolute inset-0으로 띄운다.
   return (
-    <div className="relative group" data-editable-key={contentKey}>
+    <div
+      className={`${fill ? "absolute inset-0" : "relative"} group`}
+      data-editable-key={contentKey}
+    >
       <Image src={src} alt={alt} {...imageProps} {...rest} />
 
       {/* Overlay */}

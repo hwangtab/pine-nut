@@ -12,14 +12,19 @@ interface AuthenticatedActionContext {
 
 export type AuthenticatedActionClient = AuthenticatedActionContext["supabase"];
 
-async function getAuthenticatedActionContext(): Promise<AuthenticatedActionContext> {
+// 여기서 redirect()를 던지면 안 된다. 이 함수는 "에러를 반환한다"고 약속한
+// requireEditor/requireOwner/requireActiveAdmin의 호출 경로에 있고, 그 호출은
+// 대부분 액션의 try/catch 안에 있다. NEXT_REDIRECT 예외가 그 catch에 잡히면
+// 로그인 이동이 사라지고 사용자에게는 원인 모를 실패만 반복된다.
+// 페이지 진입 시의 redirect는 getAdminContext가 담당한다.
+async function getAuthenticatedActionContext(): Promise<AuthenticatedActionContext | null> {
   const supabase = await createSupabaseServerClient();
-  if (!supabase) throw new Error("Supabase not configured");
+  if (!supabase) return null;
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/admin/login");
+  if (!user) return null;
 
   return { supabase, user };
 }
@@ -49,7 +54,9 @@ function pickHighestAdminMember(rows: AdminMemberCandidate[]): RankedAdminMember
 }
 
 async function loadAdminContext(): Promise<AdminContext | null> {
-  const { supabase, user } = await getAuthenticatedActionContext();
+  const context = await getAuthenticatedActionContext();
+  if (!context) return null;
+  const { supabase, user } = context;
   const email = (user.email ?? "").toLowerCase();
 
   const cols = "id, email, display_name, role";

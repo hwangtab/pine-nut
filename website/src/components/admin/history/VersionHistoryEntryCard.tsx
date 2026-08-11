@@ -2,10 +2,17 @@ import type { AuditEntry } from "@/lib/data/audit";
 import { summarizePayload } from "./summarize-payload";
 
 function isRestorable(entry: AuditEntry): boolean {
-  return (
-    ["page_content", "news", "timeline_events"].includes(entry.table_name) &&
-    Boolean(entry.payload?.before)
-  );
+  if (!["page_content", "news", "timeline_events"].includes(entry.table_name)) {
+    return false;
+  }
+  const before = entry.payload?.before;
+  // 빈 배열도 truthy다. 그대로 두면 "최초 편집" 기록에 복원 버튼이 뜨고,
+  // 누르면 되돌릴 이전 값이 없어 항상 실패한다.
+  // 단, page_content는 after만 있어도 "새로 생긴 override 삭제"로 복원할 수 있다.
+  if (Array.isArray(before)) {
+    return before.length > 0 || (entry.table_name === "page_content" && Boolean(entry.payload?.after));
+  }
+  return Boolean(before);
 }
 
 export function VersionHistoryEntryCard({

@@ -1,9 +1,25 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { IMAGE_EXT_BY_TYPE, validateImageFile } from "@/lib/image-upload-limits";
+import {
+  IMAGE_EXT_BY_TYPE,
+  sniffImageType,
+  validateImageFile,
+} from "@/lib/image-upload-limits";
 
 export interface UploadResult {
   url: string | null;
   error: string | null;
+  /** 업로드된 스토리지 경로. 후속 DB 저장이 실패하면 이 경로를 지워 고아 파일을 막는다. */
+  path?: string;
+}
+
+/** 업로드했다가 후속 처리가 실패했을 때 파일을 되돌린다. */
+export async function removeUploadedImage(
+  supabase: SupabaseClient,
+  path: string | undefined,
+): Promise<void> {
+  if (!path) return;
+  const { error } = await supabase.storage.from("images").remove([path]);
+  if (error) console.error("removeUploadedImage failed:", path, error.message);
 }
 
 export async function uploadImageFromFormData(
@@ -21,13 +37,19 @@ export async function uploadImageFromFormData(
     return { url: null, error: validation.error };
   }
 
-  const ext = IMAGE_EXT_BY_TYPE[file.type] ?? "jpg";
+  // 선언된 MIME은 확장자에서 유추된 값이라 위조가 쉽다. 실제 바이트로 확인한다.
+  const sniffed = await sniffImageType(file);
+  if (!sniffed || sniffed !== file.type) {
+    return { url: null, error: "이미지 파일이 아니거나 형식이 올바르지 않습니다." };
+  }
+
+  const ext = IMAGE_EXT_BY_TYPE[sniffed] ?? "jpg";
   const uuid = crypto.randomUUID();
   const path = `${folder}/${uuid}.${ext}`;
 
   const { error } = await supabase.storage
     .from("images")
-    .upload(path, file, { contentType: file.type, upsert: false });
+    .upload(path, file, { contentType: sniffed, upsert: false });
 
   if (error) {
     return { url: null, error: "사진 업로드에 실패했습니다. 다시 시도해주세요." };
@@ -41,5 +63,5 @@ export async function uploadImageFromFormData(
     return { url: null, error: "사진 주소를 가져오지 못했습니다. 다시 시도해주세요." };
   }
 
-  return { url: publicUrlData.publicUrl, error: null };
+  return { url: publicUrlData.publicUrl, error: null, path };
 }

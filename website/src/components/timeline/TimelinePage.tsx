@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import SubHero from "@/components/SubHero";
 import { EditableText } from "@/components/editable";
 import { TimelineCard } from "./TimelineCard";
@@ -22,6 +22,14 @@ export function TimelinePage({
   const [selectedYear, setSelectedYear] = useState<TimelineYearValue>(
     timelineConfig.allYear,
   );
+  // 연도 탭은 실제 데이터에서 만든다. 설정에 하드코딩하면 관리자가 새 연도의
+  // 사건을 등록했을 때 어떤 탭에서도 보이지 않는 항목이 생긴다.
+  const years = useMemo<TimelineYearValue[]>(() => {
+    const present = [...new Set(timelineEvents.map((event) => event.year))]
+      .filter((year) => Number.isFinite(year))
+      .sort((a, b) => a - b);
+    return [timelineConfig.allYear, ...present];
+  }, [timelineEvents, timelineConfig.allYear]);
   const filteredEvents =
     selectedYear === timelineConfig.allYear
       ? timelineEvents
@@ -76,6 +84,7 @@ export function TimelinePage({
 
       <TimelineYearFilter
         timelineConfig={timelineConfig}
+        years={years}
         selectedYear={selectedYear}
         onSelectYear={setSelectedYear}
       />

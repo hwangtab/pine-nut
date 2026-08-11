@@ -53,7 +53,11 @@ export function validateMeetingForm(
           ? attendee.role.trim()
           : null,
     }))
-    .filter((attendee) => attendee.name !== "");
+    .filter((attendee) => attendee.name !== "" || attendee.role !== null);
+  // 이름 없이 역할만 적힌 행은 조용히 버리면 입력한 내용이 사라진다. 저장을 막고 알린다.
+  if (attendees.some((attendee) => attendee.name === "")) {
+    return { data: null, error: "참석자 이름을 입력해주세요. (역할만 입력된 행이 있습니다)" };
+  }
 
   const agendas = parseJsonArray<{ title?: unknown; discussion?: unknown }>(
     formData,
@@ -67,7 +71,10 @@ export function validateMeetingForm(
           ? agenda.discussion.trim()
           : null,
     }))
-    .filter((agenda) => agenda.title !== "");
+    .filter((agenda) => agenda.title !== "" || agenda.discussion !== null);
+  if (agendas.some((agenda) => agenda.title === "")) {
+    return { data: null, error: "안건 제목을 입력해주세요. (논의내용만 입력된 행이 있습니다)" };
+  }
 
   const decisions = parseJsonArray<{ content?: unknown }>(formData, "decisions")
     .map((decision) => ({
@@ -94,7 +101,10 @@ export function validateMeetingForm(
           : null,
       is_done: item.is_done === true,
     }))
-    .filter((item) => item.task !== "");
+    .filter((item) => item.task !== "" || item.owner !== null || item.due_text !== null);
+  if (actionItems.some((item) => item.task === "")) {
+    return { data: null, error: "할 일 내용을 입력해주세요. (담당자·기한만 입력된 행이 있습니다)" };
+  }
 
   return {
     data: {

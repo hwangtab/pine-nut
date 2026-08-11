@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { redirect, unstable_rethrow } from "next/navigation";
 import { logAudit } from "@/lib/actions/audit";
 import { requireEditor } from "@/lib/actions/auth";
 import {
@@ -13,7 +13,7 @@ import {
 } from "@/lib/actions/news/form";
 import { revalidateNewsPaths } from "@/lib/actions/news/revalidation";
 import type { ActionState } from "@/lib/actions/state";
-import { uploadImageFromFormData } from "@/lib/storage/upload";
+import { removeUploadedImage, uploadImageFromFormData } from "@/lib/storage/upload";
 
 export async function createNews(formData: FormData): Promise<ActionState> {
   const { data: validatedForm, error: validationError } =
@@ -52,7 +52,11 @@ export async function createNews(formData: FormData): Promise<ActionState> {
     .select(NEWS_AUDIT_SELECT)
     .single();
 
-  if (error) return { error: friendlyNewsError(error.message) };
+  if (error) {
+    // 업로드는 됐는데 행 저장이 실패하면 참조되지 않는 파일만 남는다. 되돌린다.
+    await removeUploadedImage(supabase, uploadResult.path);
+    return { error: friendlyNewsError(error.message) };
+  }
   if (data) {
     await logAudit(supabase, "news", data.id, "create", {
       entityKey: data.slug,
@@ -106,7 +110,10 @@ export async function updateNews(
     .select(NEWS_AUDIT_SELECT)
     .single();
 
-  if (error) return { error: friendlyNewsError(error.message) };
+  if (error) {
+    await removeUploadedImage(supabase, uploadResult.path);
+    return { error: friendlyNewsError(error.message) };
+  }
   await logAudit(supabase, "news", id, "update", {
     entityKey: afterRow?.slug ?? beforeRow?.slug ?? undefined,
     payload: {
@@ -142,7 +149,9 @@ export async function deleteNews(id: number): Promise<ActionState> {
     });
     revalidateNewsPaths(beforeRow?.slug, afterRow?.slug);
     return null;
-  } catch {
+  } catch (e) {
+    // redirect()/notFound()는 예외로 동작한다. 여기서 삼키면 로그인 이동이 사라진다.
+    unstable_rethrow(e);
     return { error: "삭제에 실패했습니다. 다시 시도해주세요." };
   }
 }
@@ -170,7 +179,9 @@ export async function restoreNews(id: number): Promise<ActionState> {
     });
     revalidateNewsPaths(beforeRow?.slug, afterRow?.slug);
     return null;
-  } catch {
+  } catch (e) {
+    // redirect()/notFound()는 예외로 동작한다. 여기서 삼키면 로그인 이동이 사라진다.
+    unstable_rethrow(e);
     return { error: "복원에 실패했습니다. 다시 시도해주세요." };
   }
 }
@@ -188,9 +199,12 @@ export async function restoreNewsVersion(
     if ("error" in gate) return { error: gate.error };
     const supabase = gate.supabase;
     const currentRow = await getNewsAuditRow(supabase, row.id);
-    const { error } = await supabase.from("news").upsert(
-      {
-        id: row.id,
+    // news.id는 GENERATED ALWAYS AS IDENTITY다. upsert는 INSERT ... ON CONFLICT로
+    // 전송되므로 id를 본문에 담으면 충돌 분기에 닿기 전에 Postgres가 거부한다.
+    // 소식은 소프트 삭제만 하므로 대상 행은 항상 존재한다 → update로 처리한다.
+    const { data: updated, error } = await supabase
+      .from("news")
+      .update({
         slug: row.slug,
         title: row.title,
         summary: row.summary,
@@ -201,12 +215,16 @@ export async function restoreNewsVersion(
         source_name: row.source_name,
         thumbnail_url: row.thumbnail_url,
         is_deleted: row.is_deleted,
-      },
-      { onConflict: "id" },
-    );
+      })
+      .eq("id", row.id)
+      .select("id")
+      .maybeSingle();
 
     if (error) {
       return { error: friendlyNewsError(error.message) };
+    }
+    if (!updated) {
+      return { error: "복원 대상 소식을 찾을 수 없습니다." };
     }
 
     await logAudit(supabase, "news", row.id, "restore", {
@@ -219,7 +237,9 @@ export async function restoreNewsVersion(
 
     revalidateNewsPaths(row.slug);
     return null;
-  } catch {
+  } catch (e) {
+    // redirect()/notFound()는 예외로 동작한다. 여기서 삼키면 로그인 이동이 사라진다.
+    unstable_rethrow(e);
     return { error: "복원에 실패했습니다. 다시 시도해주세요." };
   }
 }

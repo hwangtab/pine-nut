@@ -3,9 +3,17 @@ import type { ValidatedTimelineForm } from "@/lib/actions/timeline/types";
 
 const TIMELINE_CATEGORIES = ["회의", "집회", "법률", "연대", "기타"];
 
-function extractYearFromDate(dateText: string): number {
-  const match = dateText.match(/(\d{4})/);
-  return match ? parseInt(match[1], 10) : new Date().getFullYear();
+const MIN_YEAR = 2000;
+const MAX_YEAR = 2100;
+
+// "2024년 3월" 같은 자유 형식에서 연도를 뽑는다. 연도로 볼 수 없는 4자리 숫자
+// (예: "주민 1500명 집회")를 연도로 오인하지 않도록 19xx/20xx로 좁히고,
+// 어느 것도 못 찾으면 현재 연도로 얼버무리지 않고 null을 돌려준다.
+function extractYearFromDate(dateText: string): number | null {
+  const match = dateText.match(/\b(19|20)\d{2}\b/);
+  if (!match) return null;
+  const year = parseInt(match[0], 10);
+  return year >= MIN_YEAR && year <= MAX_YEAR ? year : null;
 }
 
 export function validateTimelineForm(
@@ -27,10 +35,15 @@ export function validateTimelineForm(
     return { data: null, error: "분류를 선택해주세요." };
   }
 
+  // 날짜 텍스트에서 읽은 연도를 우선한다. hidden year를 우선하면 수정 화면에서
+  // 날짜를 바꿔도 예전 연도가 그대로 재전송되어 연도별 필터에서 엉뚱한 곳에 남는다.
   const parsedYear = parseInt(yearStr, 10);
-  const year = (!isNaN(parsedYear) && parsedYear >= 2000 && parsedYear <= 2100)
-    ? parsedYear
-    : extractYearFromDate(date);
+  const fallbackYear =
+    !isNaN(parsedYear) && parsedYear >= MIN_YEAR && parsedYear <= MAX_YEAR ? parsedYear : null;
+  const year = extractYearFromDate(date) ?? fallbackYear;
+  if (year === null) {
+    return { data: null, error: "날짜에서 연도를 인식하지 못했습니다. 예: 2026년 3월" };
+  }
 
   const sortOrder = parseInt(sortOrderStr, 10) || 0;
 

@@ -31,9 +31,12 @@ export default function OrderedSectionGroup({
     defaultOrder,
   );
 
-  const orderedChildren = useMemo(() => {
+  const { orderedChildren, passthrough } = useMemo(() => {
     const childArray = Children.toArray(children).filter(isSectionChild);
     const childMap = new Map<string, ReactNode>();
+    // sectionId가 없는 자식(토스트·편집 컨트롤 등)은 정렬 대상이 아닐 뿐,
+    // 버려야 할 대상이 아니다. 예전에는 통째로 사라져 영영 렌더되지 않았다.
+    const extras: ReactNode[] = [];
 
     childArray.forEach((child) => {
       const sectionId =
@@ -41,13 +44,23 @@ export default function OrderedSectionGroup({
 
       if (sectionId) {
         childMap.set(sectionId, child);
+      } else {
+        extras.push(child);
       }
     });
 
-    return sectionOrder
-      .map((sectionId) => childMap.get(sectionId))
-      .filter((child): child is ReactNode => child !== undefined);
+    return {
+      orderedChildren: sectionOrder
+        .map((sectionId) => childMap.get(sectionId))
+        .filter((child): child is ReactNode => child !== undefined),
+      passthrough: extras,
+    };
   }, [children, sectionOrder]);
 
-  return <>{orderedChildren}</>;
+  return (
+    <>
+      {orderedChildren}
+      {passthrough}
+    </>
+  );
 }

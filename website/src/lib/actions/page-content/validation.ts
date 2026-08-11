@@ -4,6 +4,12 @@ import type { ContentChange } from "@/lib/actions/page-content/types";
 
 const KEY_PATTERN = /^[a-zA-Z0-9._-]+$/;
 
+// 리스트 항목에서 이미지 URL로 취급할 필드명(src, imageUrl, thumbnail, photo_url …)
+const IMAGE_FIELD_PATTERN = /(^|_|\b)(src|image|img|thumbnail|photo|cover)(_?url)?$/i;
+
+const MAX_TEXT_LENGTH = 2_000;
+const MAX_RICHTEXT_LENGTH = 20_000;
+
 const CONTENT_TYPES = new Set([
   "text",
   "richtext",
@@ -54,19 +60,37 @@ function normalizeChange(change: ContentChange): { row: ContentChange; error: st
   }
 
   if (change.content_type === "list") {
+    let parsed: unknown;
     try {
-      const parsed = JSON.parse(change.value);
-      if (!Array.isArray(parsed)) {
-        return {
-          row: change,
-          error: `리스트 값은 배열 JSON이어야 합니다: ${change.content_key}`,
-        };
-      }
+      parsed = JSON.parse(change.value);
     } catch {
       return {
         row: change,
         error: `리스트 값 JSON이 올바르지 않습니다: ${change.content_key}`,
       };
+    }
+    if (!Array.isArray(parsed)) {
+      return {
+        row: change,
+        error: `리스트 값은 배열 JSON이어야 합니다: ${change.content_key}`,
+      };
+    }
+    // 리스트 항목 안의 이미지 URL도 단일 image 값과 같은 규칙을 적용한다.
+    // 여기서 거르지 않으면 허용되지 않은 호스트가 저장되고, 공개 페이지의
+    // next/image가 런타임 에러를 내며 화면 전체가 죽는다.
+    for (const item of parsed) {
+      if (!item || typeof item !== "object") continue;
+      for (const [field, value] of Object.entries(item as Record<string, unknown>)) {
+        if (typeof value !== "string") continue;
+        if (!IMAGE_FIELD_PATTERN.test(field)) continue;
+        const validation = validateOptionalImageUrl(value, `${field} 이미지 URL`);
+        if (validation.error) {
+          return {
+            row: change,
+            error: `${change.content_key}: ${validation.error}`,
+          };
+        }
+      }
     }
   }
 
@@ -97,6 +121,26 @@ function normalizeChange(change: ContentChange): { row: ContentChange; error: st
       row: change,
       error: `섹션 값은 hidden 또는 visible 이어야 합니다: ${change.content_key}`,
     };
+  }
+
+  if (change.content_type === "text" || change.content_type === "richtext") {
+    const trimmed = change.value.trim();
+    // 빈 값을 저장하면 요소가 화면에서 사라지고, 그 뒤에는 클릭할 대상이 없어
+    // 되돌리기조차 어렵다. 기본값으로 돌리려면 '되돌리기'를 쓰게 안내한다.
+    if (!trimmed) {
+      return {
+        row: change,
+        error: "빈 값은 저장할 수 없습니다. 기본 문구로 되돌리려면 '되돌리기'를 사용해주세요.",
+      };
+    }
+    const limit = change.content_type === "text" ? MAX_TEXT_LENGTH : MAX_RICHTEXT_LENGTH;
+    if (trimmed.length > limit) {
+      return {
+        row: change,
+        error: `내용이 너무 깁니다. ${limit.toLocaleString()}자 이내로 입력해주세요.`,
+      };
+    }
+    return { row: { ...change, value: trimmed }, error: null };
   }
 
   return { row: change, error: null };

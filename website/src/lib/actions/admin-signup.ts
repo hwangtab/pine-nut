@@ -1,35 +1,84 @@
 "use server";
 
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import type { ActionState } from "./state";
 
-// listUsers 페이지를 순회해 이메일로 auth 사용자 id를 찾는다(admin API에 이메일 직접 조회가 없음).
-async function findAuthUserIdByEmail(service: SupabaseClient, email: string): Promise<string | null> {
+// 보상 삭제 실패로 생긴 고스트는 "방금 만들어진" 계정이다. 그보다 오래된 계정은
+// owner가 명부에서 제거한 정상 계정으로 보고 자동 복구 대상에서 제외한다.
+const ORPHAN_HEAL_WINDOW_MS = 30 * 60 * 1000;
+
+// listUsers 페이지를 순회해 이메일로 auth 사용자를 찾는다(admin API에 이메일 직접 조회가 없음).
+async function findAuthUserByEmail(
+  service: SupabaseClient,
+  email: string,
+): Promise<{ id: string; created_at: string } | null> {
   for (let page = 1; page <= 20; page++) {
     const { data, error } = await service.auth.admin.listUsers({ page, perPage: 200 });
     const users = data?.users ?? [];
     if (error || users.length === 0) return null;
     const hit = users.find((u) => (u.email ?? "").toLowerCase() === email);
-    if (hit) return hit.id;
+    if (hit) return { id: hit.id, created_at: hit.created_at };
     if (users.length < 200) return null;
   }
   return null;
 }
 
+// owner가 이 이메일을 명부에서 제거한 이력이 있는지 확인한다.
+// 이력이 있으면 "고스트"가 아니라 의도적으로 자격을 박탈한 계정이므로 복구하면 안 된다.
+async function wasRemovedByOwner(service: SupabaseClient, email: string): Promise<boolean> {
+  const { data, error } = await service
+    .from("audit_log")
+    .select("id")
+    .eq("table_name", "admin_members")
+    .eq("action", "delete")
+    .eq("entity_key", email)
+    .limit(1);
+  // 조회 자체가 실패하면 판단할 수 없다 → fail-closed(제거된 것으로 간주해 복구 차단).
+  if (error) return true;
+  return (data ?? []).length > 0;
+}
+
+// 제출한 비밀번호가 실제 그 계정의 비밀번호인지 확인한다.
+// service-role 클라이언트가 아니라 anon 키로 로그인을 시도해야 실제 검증이 된다.
+async function verifyPassword(email: string, password: string): Promise<boolean> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) return false;
+  const probe = createClient(url, anonKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const { data, error } = await probe.auth.signInWithPassword({ email, password });
+  if (error || !data.session) return false;
+  await probe.auth.signOut();
+  return true;
+}
+
 // "auth.users에는 있으나 admin_members 행이 없는" 고스트 계정을 명부에 복구한다.
-// (과거 가입 시 보상 삭제가 실패해 생긴 상태) 비밀번호는 건드리지 않으므로,
-// 원 가입자가 자기 비밀번호로 로그인하면 회원으로 인식된다.
-async function healOrphanMember(service: SupabaseClient, email: string): Promise<boolean> {
+// (가입 도중 보상 삭제가 실패해 생긴 상태)
+//
+// 이 경로는 비로그인 요청이 도달할 수 있으므로, 세 가지를 모두 만족할 때만 복구한다:
+//   1) owner가 제거한 이력이 없을 것 — 자격 박탈을 무효화하지 않기 위해
+//   2) auth 계정이 방금 생성됐을 것 — 진짜 고스트는 가입 실패 직후 상태다
+//   3) 제출한 비밀번호가 실제로 맞을 것 — 이메일만 아는 제3자를 배제
+async function healOrphanMember(
+  service: SupabaseClient,
+  email: string,
+  password: string,
+): Promise<boolean> {
   const { data: existing } = await service.from("admin_members").select("id").eq("email", email).maybeSingle();
   if (existing) return false; // 명부에 이미 있음 → 정상적인 "이미 가입" 상태
-  const userId = await findAuthUserIdByEmail(service, email);
-  if (!userId) return false;
+  if (await wasRemovedByOwner(service, email)) return false;
+  const user = await findAuthUserByEmail(service, email);
+  if (!user) return false;
+  const age = Date.now() - new Date(user.created_at).getTime();
+  if (!Number.isFinite(age) || age > ORPHAN_HEAL_WINDOW_MS) return false;
+  if (!(await verifyPassword(email, password))) return false;
   const { error } = await service.from("admin_members").insert({
     email,
     role: "pending",
     active: true,
-    user_id: userId,
+    user_id: user.id,
     created_by: "self-heal",
   });
   return !error;
@@ -61,8 +110,8 @@ export async function claimAdminAccount(_prev: ActionState, formData: FormData):
   });
   if (createErr || !created.user) {
     if ((createErr?.message ?? "").toLowerCase().includes("already")) {
-      // auth엔 있으나 명부에 없을 수 있음(과거 보상 삭제 실패로 인한 고스트) → 명부만 복구
-      if (await healOrphanMember(service, email)) return null;
+      // auth엔 있으나 명부에 없을 수 있음(가입 중 보상 삭제 실패로 인한 고스트) → 명부만 복구
+      if (await healOrphanMember(service, email, password)) return null;
       return { error: "이미 가입된 이메일입니다. 로그인해주세요." };
     }
     return { error: "계정 생성에 실패했습니다. 잠시 후 다시 시도해주세요." };

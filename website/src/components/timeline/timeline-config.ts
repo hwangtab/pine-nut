@@ -19,7 +19,6 @@ export interface TimelineCategoryStyle {
 
 export interface TimelineConfig {
   page: string;
-  years: readonly TimelineYearValue[];
   allYear: TimelineYearValue;
   imageSourceLabel: string;
   formatYear: (year: TimelineYearValue) => string;
@@ -96,7 +95,6 @@ const heroImageUrl =
 
 export const koreanTimelineConfig: TimelineConfig = {
   page: "timeline",
-  years: ["전체", 2019, 2021, 2022, 2023, 2024, 2025, 2026],
   allYear: "전체",
   imageSourceLabel: "사진 출처: 언론 보도",
   formatYear: (year) => (year === "전체" ? "전체" : `${year}년`),
@@ -137,7 +135,6 @@ export const koreanTimelineConfig: TimelineConfig = {
 
 export const englishTimelineConfig: TimelineConfig = {
   page: "en/timeline",
-  years: ["All", 2019, 2021, 2022, 2023, 2024, 2025, 2026],
   allYear: "All",
   imageSourceLabel: "Photo source: media report",
   formatYear: (year) => (year === "All" ? "All" : `${year}`),

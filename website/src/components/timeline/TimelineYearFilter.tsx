@@ -3,10 +3,13 @@ import type { TimelineConfig, TimelineYearValue } from "./timeline-config";
 
 export function TimelineYearFilter({
   timelineConfig,
+  years,
   selectedYear,
   onSelectYear,
 }: {
   timelineConfig: TimelineConfig;
+  /** 실제 데이터에서 만든 연도 탭 목록(맨 앞은 "전체"). */
+  years: TimelineYearValue[];
   selectedYear: TimelineYearValue;
   onSelectYear: (year: TimelineYearValue) => void;
 }) {
@@ -14,7 +17,7 @@ export function TimelineYearFilter({
     <div className="sticky top-20 z-30 bg-white/90 backdrop-blur-md border-b border-[var(--color-border)] shadow-sm">
       <div className="max-w-4xl mx-auto px-4 py-3">
         <div className="flex w-full gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 justify-start sm:justify-center">
-          {timelineConfig.years.map((year) => (
+          {years.map((year) => (
             <button
               key={year}
               onClick={() => onSelectYear(year)}

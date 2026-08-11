@@ -151,7 +151,7 @@ export default async function EnglishNewsDetailPage({
           {paragraphs.map((paragraph, index) => (
             <p
               key={index}
-              className="text-[var(--color-text-muted)] leading-relaxed mb-6 text-base md:text-lg"
+              className="whitespace-pre-line text-[var(--color-text-muted)] leading-relaxed mb-6 text-base md:text-lg"
             >
               {paragraph}
             </p>

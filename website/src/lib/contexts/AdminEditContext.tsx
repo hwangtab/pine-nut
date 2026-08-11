@@ -16,6 +16,7 @@ import {
   getStoredMetadata,
   mergeStagedChanges,
   removeContentOverride,
+  removeSavedChanges,
   removeStagedChange,
   stageContentChange,
 } from "@/lib/contexts/admin-edit/content-store";
@@ -32,6 +33,7 @@ const AdminEditContext = createContext<AdminEditContextType>({
   isLoggedIn: false,
   isEditMode: false,
   toggleEditMode: () => {},
+  exitEditMode: () => {},
   getContent: () => undefined,
   getMetadata: () => undefined,
   stageChange: () => {},
@@ -66,16 +68,22 @@ export function AdminEditProvider({
   const [saveError, setSaveError] = useState<string | null>(null);
   const { selectedKey, resetSelectedKey } = useEditableSelection(isEditMode);
 
+  // 저장하지 않은 변경이 있을 때의 확인 다이얼로그는 툴바(useAdminToolbar)가 담당한다.
+  // 여기서 다시 막으면, 다이얼로그의 "저장 후 종료"/"버리기"가 이 가드에 걸려
+  // 편집 모드가 꺼지지 않는다(호출 시점의 stagedChanges를 클로저로 읽기 때문).
+  const exitEditMode = useCallback(() => {
+    setSaveError(null);
+    resetSelectedKey();
+    setIsEditMode(false);
+  }, [resetSelectedKey]);
+
   const toggleEditMode = useCallback(() => {
-    if (isEditMode && stagedChanges.size > 0) {
+    if (isEditMode) {
+      exitEditMode();
       return;
     }
-    if (isEditMode) {
-      setSaveError(null);
-      resetSelectedKey();
-    }
-    setIsEditMode((prev) => !prev);
-  }, [isEditMode, resetSelectedKey, stagedChanges.size]);
+    setIsEditMode(true);
+  }, [isEditMode, exitEditMode]);
 
   const getContent = useCallback(
     (key: string): string | undefined =>
@@ -89,10 +97,24 @@ export function AdminEditProvider({
     [stagedChanges, dbContent],
   );
 
-  const stageChange = useCallback((change: StagedChange) => {
-    setStagedChanges((prev) => stageContentChange(prev, change));
-    setSaveError(null);
-  }, []);
+  const stageChange = useCallback(
+    (change: StagedChange) => {
+      // 편집을 시작한 시점의 DB 값을 함께 실어 둔다. 저장할 때 서버가 이 값과
+      // 현재 DB 값을 대조해, 그 사이 다른 관리자가 저장했으면 덮어쓰지 않는다.
+      // 같은 키를 여러 번 고쳐도 최초 스테이징 때의 기준값을 유지해야 한다.
+      setStagedChanges((prev) =>
+        stageContentChange(prev, {
+          ...change,
+          base_value:
+            prev.get(change.content_key)?.base_value ??
+            dbContent[change.content_key]?.value ??
+            null,
+        }),
+      );
+      setSaveError(null);
+    },
+    [dbContent],
+  );
 
   const discardChanges = useCallback(() => {
     setStagedChanges(new Map());
@@ -148,7 +170,8 @@ export function AdminEditProvider({
       }
 
       setDbContent((prev) => mergeStagedChanges(prev, changes));
-      setStagedChanges(new Map());
+      // 저장 중에 사용자가 추가로 편집했을 수 있다. 방금 저장한 항목만 걷어낸다.
+      setStagedChanges((prev) => removeSavedChanges(prev, changes));
       setSaveError(null);
       return true;
     } catch (err) {
@@ -166,6 +189,7 @@ export function AdminEditProvider({
       isLoggedIn,
       isEditMode,
       toggleEditMode,
+      exitEditMode,
       getContent,
       getMetadata,
       stageChange,
@@ -185,6 +209,7 @@ export function AdminEditProvider({
       isLoggedIn,
       isEditMode,
       toggleEditMode,
+      exitEditMode,
       getContent,
       getMetadata,
       stageChange,

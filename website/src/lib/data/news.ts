@@ -56,7 +56,10 @@ export async function getPublishedNews(): Promise<NewsItem[]> {
     .from("news")
     .select("*")
     .eq("is_deleted", false)
-    .order("date", { ascending: false });
+    // date는 같은 날짜가 흔하다. id를 2차 키로 두어 순서를 결정적으로 만든다
+    // (그러지 않으면 페이지네이션이 같은 행을 중복 노출하거나 건너뛴다).
+    .order("date", { ascending: false })
+    .order("id", { ascending: false });
 
   if (error || !data) {
     console.error("Failed to fetch published news:", error);
@@ -105,7 +108,12 @@ export async function getAllNews(options?: { page?: number; perPage?: number; qu
   }
 
   let countQuery = supabase.from("news").select("*", { count: "exact", head: true });
-  let dataQuery = supabase.from("news").select("*").order("date", { ascending: false }).range(from, to);
+  let dataQuery = supabase
+    .from("news")
+    .select("*")
+    .order("date", { ascending: false })
+    .order("id", { ascending: false })
+    .range(from, to);
 
   if (query) {
     countQuery = countQuery.ilike("title", `%${query}%`);

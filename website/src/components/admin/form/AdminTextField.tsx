@@ -13,6 +13,7 @@ interface AdminTextFieldProps {
   placeholder?: string;
   required?: boolean;
   type?: string;
+  maxLength?: number;
 }
 
 export default function AdminTextField({
@@ -25,6 +26,7 @@ export default function AdminTextField({
   placeholder,
   required = false,
   type = "text",
+  maxLength,
 }: AdminTextFieldProps) {
   return (
     <div>
@@ -40,6 +42,7 @@ export default function AdminTextField({
         type={type}
         required={required}
         defaultValue={defaultValue}
+        maxLength={maxLength}
         className={adminInputClassName(variant)}
         placeholder={placeholder}
       />

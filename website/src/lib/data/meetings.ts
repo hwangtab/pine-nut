@@ -55,14 +55,20 @@ function rowToMeeting(row: MeetingRow): Meeting {
   };
 }
 
-export async function getAllMeetings(): Promise<MeetingListItem[]> {
+export async function getAllMeetings(
+  options?: { includeDeleted?: boolean },
+): Promise<MeetingListItem[]> {
   const supabase = await createSupabaseServerClient();
   if (!supabase) return [];
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("meetings")
-    .select("*, meeting_attendees(count)")
-    .eq("is_deleted", false)
+    .select("*, meeting_attendees(count)");
+  // 삭제된 회의록을 아예 조회하지 않으면 목록의 '복원' 버튼이 영영 렌더되지 않아
+  // 삭제가 사실상 되돌릴 수 없게 된다. 토글로 볼 수 있어야 복원이 성립한다.
+  if (!options?.includeDeleted) query = query.eq("is_deleted", false);
+
+  const { data, error } = await query
     .order("meeting_date", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false });
 

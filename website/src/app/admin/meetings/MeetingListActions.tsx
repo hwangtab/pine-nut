@@ -9,7 +9,7 @@ export default function MeetingListActions({ id, isDeleted }: { id: number; isDe
   const [error, setError] = useState<string | null>(null);
 
   function handleDelete() {
-    if (!confirm("이 회의록을 삭제할까요? (히스토리에서 복원 가능)")) return;
+    if (!confirm("이 회의록을 삭제할까요?\n목록 상단 '삭제됨 보기'에서 다시 복원할 수 있습니다.")) return;
     startTransition(async () => {
       const res = await deleteMeetingAction(id);
       if (res?.error) setError(res.error);

@@ -8,7 +8,9 @@ type Params = Promise<{ id: string }>;
 
 export default async function AdminTimelineEditPage({ params }: { params: Params }) {
   const { id } = await params;
-  const eventId = parseInt(id, 10);
+  // 숫자가 아닌 id면 DB 쿼리가 22P02로 터져 프로덕션에서 500이 난다. 404가 맞다.
+  const eventId = Number.parseInt(id, 10);
+  if (!Number.isInteger(eventId) || eventId <= 0) notFound();
   const event = await getTimelineById(eventId);
 
   if (!event) notFound();

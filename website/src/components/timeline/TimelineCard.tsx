@@ -61,7 +61,7 @@ export function TimelineCard({
             <h3 className="text-lg md:text-xl font-bold text-[var(--color-text)] mb-2 leading-snug">
               {event.title}
             </h3>
-            <p className="text-[var(--color-text-muted)] text-sm md:text-base leading-relaxed mb-3">
+            <p className="whitespace-pre-line text-[var(--color-text-muted)] text-sm md:text-base leading-relaxed mb-3">
               {event.description}
             </p>
             <span

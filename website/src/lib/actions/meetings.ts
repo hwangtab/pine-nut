@@ -6,13 +6,18 @@ import {
   restoreMeeting,
   updateMeeting,
 } from "@/lib/actions/meetings/mutations";
-import type { ActionState } from "./state";
+import { formValues, type ActionState } from "./state";
+
+// 실패 시 제출값을 함께 돌려준다(React 19 폼 자동 리셋 대비). news.ts와 동일한 이유.
+function withValues(state: ActionState, formData: FormData): ActionState {
+  return state?.error ? { ...state, values: formValues(formData) } : state;
+}
 
 export async function createMeetingAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  return createMeeting(formData);
+  return withValues(await createMeeting(formData), formData);
 }
 
 export async function updateMeetingAction(
@@ -20,7 +25,7 @@ export async function updateMeetingAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  return updateMeeting(id, formData);
+  return withValues(await updateMeeting(id, formData), formData);
 }
 
 export async function deleteMeetingAction(id: number): Promise<ActionState> {

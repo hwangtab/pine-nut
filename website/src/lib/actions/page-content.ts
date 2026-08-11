@@ -2,8 +2,16 @@
 
 import { requireEditor } from "./auth";
 import { logAudit } from "./audit";
+import {
+  IMAGE_EXT_BY_TYPE,
+  sniffImageType,
+  validateImageFile,
+} from "@/lib/image-upload-limits";
 import { revalidatePageContentPages } from "@/lib/actions/page-content/revalidation";
-import { parsePageContentRestoreRows } from "@/lib/actions/page-content/restore-payload";
+import {
+  parsePageContentCreatedKeys,
+  parsePageContentRestoreRows,
+} from "@/lib/actions/page-content/restore-payload";
 import type {
   ContentChange,
   PageContentActionResult,
@@ -36,6 +44,25 @@ export async function savePageContentAction(
     .from("page_content")
     .select("content_key, content_type, value, metadata, page, section")
     .in("content_key", keys);
+
+  // 동시 편집 방어: 편집을 시작할 때 본 값과 지금 DB 값이 다르면, 그 사이 다른
+  // 관리자가 저장한 것이다. 그대로 upsert하면 상대의 변경이 흔적 없이 사라진다.
+  const currentByKey = new Map(
+    ((beforeRows ?? []) as { content_key: string; value: string }[]).map((row) => [
+      row.content_key,
+      row.value,
+    ]),
+  );
+  const conflicted = normalizedChanges.filter((change) => {
+    if (change.base_value === undefined) return false; // 기준값을 모르면 검사하지 않는다
+    const current = currentByKey.get(change.content_key) ?? null;
+    return current !== (change.base_value ?? null);
+  });
+  if (conflicted.length > 0) {
+    return {
+      error: `다른 관리자가 먼저 저장한 항목이 있습니다(${conflicted.length}개). 새로고침 후 다시 편집해주세요.`,
+    };
+  }
 
   const rows = normalizedChanges.map((change) => ({
     content_key: change.content_key,
@@ -113,11 +140,32 @@ export async function restorePageContentVersionAction(
   payload: Record<string, unknown> | null | undefined,
 ): Promise<PageContentActionResult> {
   const parsed = parsePageContentRestoreRows(payload);
-  if (parsed.error) {
+  // 그 저장으로 처음 생긴 키는 되돌릴 "이전 값"이 없다. override 자체를 지워야
+  // 하드코딩 기본값으로 돌아간다. before만 복원하면 새로 덮어쓴 문구가 그대로 남는다.
+  const createdKeys = parsePageContentCreatedKeys(payload);
+
+  if (parsed.error && createdKeys.length === 0) {
     return { error: parsed.error };
   }
 
-  return savePageContentAction(parsed.rows);
+  const failed: string[] = [];
+  for (const key of createdKeys) {
+    const page = parsed.rows.find((row) => row.content_key === key)?.page;
+    const result = await deletePageContentAction(key, page);
+    if (result.error) failed.push(key);
+  }
+
+  if (parsed.rows.length > 0) {
+    const saveResult = await savePageContentAction(parsed.rows);
+    if (saveResult.error) return saveResult;
+  }
+
+  if (failed.length > 0) {
+    return {
+      error: `일부 항목(${failed.length}개)을 되돌리지 못했습니다. 새로고침 후 다시 시도해주세요.`,
+    };
+  }
+  return { error: null };
 }
 
 /**
@@ -133,28 +181,22 @@ export async function uploadEditableImageAction(
   const file = formData.get("file") as File | null;
   if (!file) return { url: null, error: "파일이 없습니다." };
 
-  const MAX_SIZE = 5 * 1024 * 1024;
-  if (file.size > MAX_SIZE) {
-    return { url: null, error: "파일 크기는 5MB 이하여야 합니다." };
+  // 용량·형식 검증은 뉴스/타임라인 업로드와 같은 규칙을 쓴다(선언 타입 + 실제 바이트).
+  const validation = validateImageFile(file);
+  if (!validation.ok) return { url: null, error: validation.error };
+
+  const sniffed = await sniffImageType(file);
+  if (!sniffed || sniffed !== file.type) {
+    return { url: null, error: "이미지 파일이 아니거나 형식이 올바르지 않습니다." };
   }
 
-  const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
-  if (!ALLOWED_TYPES.includes(file.type)) {
-    return { url: null, error: "JPG, PNG, WebP만 업로드 가능합니다." };
-  }
-
-  const MIME_TO_EXT: Record<string, string> = {
-    "image/jpeg": "jpg",
-    "image/png": "png",
-    "image/webp": "webp",
-  };
-  const ext = MIME_TO_EXT[file.type] || "jpg";
+  const ext = IMAGE_EXT_BY_TYPE[sniffed] || "jpg";
   const uuid = crypto.randomUUID();
   const path = `page-content/${uuid}.${ext}`;
 
   const { error: uploadError } = await supabase.storage
     .from("images")
-    .upload(path, file);
+    .upload(path, file, { contentType: sniffed });
 
   if (uploadError) {
     console.error("page_content upload error:", uploadError.message);
@@ -164,6 +206,13 @@ export async function uploadEditableImageAction(
   const {
     data: { publicUrl },
   } = supabase.storage.from("images").getPublicUrl(path);
+
+  // 다른 업로드 경로와 달리 여기만 기록이 없어, 인라인 편집으로 올린 이미지는
+  // 누가 언제 올렸는지 추적할 수 없었다.
+  await logAudit(supabase, "storage.images", 0, "create", {
+    entityKey: publicUrl,
+    payload: { folder: "page-content", url: publicUrl, file_name: file.name },
+  });
 
   return { url: publicUrl, error: null };
 }

@@ -70,7 +70,7 @@ export default function TimelineListActions({ id, isDeleted }: { id: number; isD
       <ConfirmModal
         open={showConfirm}
         title="타임라인 삭제"
-        message="이 타임라인을 삭제하시겠습니까?\n나중에 복원할 수 있습니다."
+        message={"이 타임라인을 삭제하시겠습니까?\n나중에 복원할 수 있습니다."}
         confirmLabel="삭제"
         onConfirm={doDelete}
         onCancel={() => setShowConfirm(false)}

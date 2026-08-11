@@ -162,10 +162,31 @@ export async function deleteBoardImage(imageId: number, postId: number): Promise
 
 const REPORT_REASONS = ["스팸/광고", "욕설/비방", "부적절한 내용", "기타"];
 
+// 한 사람이 하루에 넣을 수 있는 신고 수. 검토 큐를 임의로 채워 마비시키는 것을 막는다.
+const MAX_REPORTS_PER_DAY = 20;
+
 export async function reportTarget(targetType: "post" | "comment", targetId: number, reason: string): Promise<ActionState> {
   if (!REPORT_REASONS.includes(reason)) return { error: "신고 사유를 선택해주세요." };
+  if (!Number.isInteger(targetId) || targetId <= 0) return { error: "잘못된 신고 대상입니다." };
   const gate = await requireMember();
   if ("error" in gate) return { error: gate.error };
+
+  // 존재하지 않는 대상에 대한 신고는 검토 화면에서 내용을 볼 수 없는 유령 항목이 된다.
+  const targetTable = targetType === "post" ? "board_posts" : "board_comments";
+  const { data: target } = await gate.supabase
+    .from(targetTable).select("id").eq("id", targetId).eq("is_deleted", false).maybeSingle();
+  if (!target) return { error: "신고 대상을 찾을 수 없습니다." };
+
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { count } = await gate.supabase
+    .from("board_reports")
+    .select("id", { count: "exact", head: true })
+    .eq("reporter_user_id", gate.user.id)
+    .gte("created_at", since);
+  if ((count ?? 0) >= MAX_REPORTS_PER_DAY) {
+    return { error: "하루 신고 가능 횟수를 초과했습니다. 내일 다시 시도해주세요." };
+  }
+
   const { error } = await gate.supabase
     .from("board_reports")
     .insert({ target_type: targetType, target_id: targetId, reporter_user_id: gate.user.id, reason });

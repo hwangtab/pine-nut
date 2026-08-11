@@ -8,6 +8,8 @@ export interface StagedChange {
   metadata?: Record<string, string>;
   page: string;
   section?: string;
+  /** 편집 시작 시점의 DB 값. 저장 시 동시 편집 충돌 감지에 쓴다. */
+  base_value?: string | null;
 }
 
 export interface AdminEditContextType {
@@ -21,6 +23,8 @@ export interface AdminEditContextType {
   isEditMode: boolean;
   /** Toggle edit mode on/off */
   toggleEditMode: () => void;
+  /** Force-exit edit mode (used after the unsaved-changes dialog resolves) */
+  exitEditMode: () => void;
   /** Get the current value for a content key (staged change > DB override > undefined) */
   getContent: (key: string) => string | undefined;
   /** Get metadata for a content key */

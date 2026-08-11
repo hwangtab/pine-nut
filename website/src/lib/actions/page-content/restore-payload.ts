@@ -1,5 +1,31 @@
 import type { ContentChange } from "@/lib/actions/page-content/types";
 
+/**
+ * 그 저장으로 "새로 생긴" 키 목록을 뽑는다(after에는 있고 before에는 없는 키).
+ * 복원은 before를 되돌리는 것만으로는 부족하다. 새로 생긴 override는 지워야
+ * 편집 이전 상태(하드코딩 기본값)로 실제로 돌아간다.
+ */
+export function parsePageContentCreatedKeys(
+  payload: Record<string, unknown> | null | undefined,
+): string[] {
+  if (!payload || typeof payload !== "object") return [];
+
+  const keysOf = (value: unknown): Set<string> => {
+    const list = Array.isArray(value) ? value : value && typeof value === "object" ? [value] : [];
+    const keys = new Set<string>();
+    for (const row of list) {
+      if (row && typeof row === "object") {
+        const key = (row as Record<string, unknown>).content_key;
+        if (typeof key === "string" && key) keys.add(key);
+      }
+    }
+    return keys;
+  };
+
+  const before = keysOf(payload.before);
+  return [...keysOf(payload.after)].filter((key) => !before.has(key));
+}
+
 export function parsePageContentRestoreRows(
   payload: Record<string, unknown> | null | undefined,
 ): { rows: ContentChange[]; error: string | null } {

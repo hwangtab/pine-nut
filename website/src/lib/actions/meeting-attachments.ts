@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { requireActiveAdmin, requireEditor } from "./auth";
 import { logAudit } from "./audit";
+import { validateAttachmentSize } from "@/lib/attachment-limits";
 import type { ActionState } from "./state";
 
-const MAX_SIZE = 20 * 1024 * 1024; // 20MB
 const BUCKET = "meeting-files";
 
 export async function uploadMeetingAttachmentAction(
@@ -17,9 +17,8 @@ export async function uploadMeetingAttachmentAction(
   if (!(file instanceof File) || file.size === 0) {
     return { error: "업로드할 파일을 선택해주세요." };
   }
-  if (file.size > MAX_SIZE) {
-    return { error: "파일 용량은 20MB 이하만 가능합니다." };
-  }
+  const sizeCheck = validateAttachmentSize(file);
+  if (!sizeCheck.ok) return { error: sizeCheck.error };
 
   const gate = await requireEditor();
   if ("error" in gate) return { error: gate.error };
@@ -76,15 +75,20 @@ export async function deleteMeetingAttachmentAction(
       return { error: "첨부 파일을 찾을 수 없습니다." };
     }
 
+    // DB 행을 먼저 지운다. 스토리지를 먼저 지우면, 뒤이은 DB 삭제가 실패했을 때
+    // 목록에는 남아 있는데 실제 파일은 없는 상태(다운로드 불가)가 된다.
+    const { data: deleted, error } = await supabase
+      .from("meeting_attachments").delete().eq("id", attachmentId).select("id").maybeSingle();
+    if (error) return { error: "첨부 삭제에 실패했습니다. 다시 시도해주세요." };
+    if (!deleted) return { error: "첨부 파일을 찾을 수 없거나 권한이 없습니다." };
+
     if (row.file_path) {
       const { error: storageError } = await supabase.storage.from(BUCKET).remove([row.file_path]);
+      // 여기서 실패하면 참조되지 않는 파일이 남을 뿐, 사용자 작업은 이미 성공했다.
       if (storageError) {
-        console.error("meeting attachment storage removal failed:", storageError);
+        console.error("meeting attachment storage removal failed:", row.file_path, storageError);
       }
     }
-
-    const { error } = await supabase.from("meeting_attachments").delete().eq("id", attachmentId);
-    if (error) return { error: "첨부 삭제에 실패했습니다. 다시 시도해주세요." };
 
     await logAudit(supabase, "meetings", meetingId, "update", {
       entityKey: row.file_name ?? undefined,

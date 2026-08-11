@@ -86,7 +86,7 @@ export default function EditableRichText({
       if (children) return children(nextValue);
 
       if (renderMode === "paragraph") {
-        return <p className={className}>{nextValue}</p>;
+        return <p className={`whitespace-pre-line ${className}`}>{nextValue}</p>;
       }
 
       if (renderMode === "lines") {
@@ -105,7 +105,9 @@ export default function EditableRichText({
       return (
         <div className={className}>
           {nextValue.split("\n\n").map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
+            <p key={index} className="whitespace-pre-line">
+              {paragraph}
+            </p>
           ))}
         </div>
       );

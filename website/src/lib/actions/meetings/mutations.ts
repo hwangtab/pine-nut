@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { redirect, unstable_rethrow } from "next/navigation";
 import { logAudit } from "@/lib/actions/audit";
 import { requireEditor } from "@/lib/actions/auth";
 import { replaceMeetingChildren } from "@/lib/actions/meetings/children";
@@ -48,7 +48,12 @@ export async function createMeeting(formData: FormData): Promise<ActionState> {
   }
 
   const childResult = await replaceMeetingChildren(supabase, meeting.id, form);
-  if (childResult.error) return { error: childResult.error };
+  if (childResult.error) {
+    // 자식 저장이 실패했는데 부모만 남겨두면, 사용자가 재시도할 때마다 내용이 빈
+    // 회의록이 계속 쌓인다. 방금 만든 부모를 되돌린다(자식은 ON DELETE CASCADE).
+    await supabase.from("meetings").delete().eq("id", meeting.id);
+    return { error: childResult.error };
+  }
 
   await logAudit(supabase, "meetings", meeting.id, "create", {
     entityKey: meeting.title,
@@ -115,7 +120,9 @@ export async function deleteMeeting(id: number): Promise<ActionState> {
     });
     revalidateMeetingPaths(id);
     return null;
-  } catch {
+  } catch (e) {
+    // redirect()/notFound()는 예외로 동작한다. 여기서 삼키면 로그인 이동이 사라진다.
+    unstable_rethrow(e);
     return { error: "삭제에 실패했습니다. 다시 시도해주세요." };
   }
 }
@@ -138,7 +145,9 @@ export async function restoreMeeting(id: number): Promise<ActionState> {
     });
     revalidateMeetingPaths(id);
     return null;
-  } catch {
+  } catch (e) {
+    // redirect()/notFound()는 예외로 동작한다. 여기서 삼키면 로그인 이동이 사라진다.
+    unstable_rethrow(e);
     return { error: "복원에 실패했습니다. 다시 시도해주세요." };
   }
 }

@@ -26,6 +26,8 @@ export default function TimelineForm({
   submitLabel,
 }: TimelineFormProps) {
   const [state, formAction] = useActionState(action, null);
+  // 저장 실패 시 서버가 돌려준 제출값을 우선 사용한다(React 19 폼 자동 리셋 대비).
+  const sent = state?.values;
 
   return (
     <form action={formAction} className="space-y-6">
@@ -36,7 +38,8 @@ export default function TimelineForm({
         name="title"
         label="무슨 일이 있었나요? *"
         required
-        defaultValue={initialData?.title}
+        maxLength={200}
+        defaultValue={sent?.title ?? initialData?.title}
         placeholder="예: 풍천리 주민 설명회 개최"
         variant="sky"
       />
@@ -46,7 +49,7 @@ export default function TimelineForm({
         label="자세한 내용 *"
         required
         rows={4}
-        defaultValue={initialData?.description}
+        defaultValue={sent?.description ?? initialData?.description}
         placeholder="어떤 일이 있었는지 자세히 적어주세요"
         variant="sky"
       />
@@ -55,9 +58,9 @@ export default function TimelineForm({
         name="date"
         label="언제 있었던 일인가요? *"
         required
-        defaultValue={initialData?.date}
+        defaultValue={sent?.date ?? initialData?.date}
         placeholder="예: 2024년 3월, 2019년 여름"
-        helperText="화면에 그대로 표시됩니다."
+        helperText="화면에 그대로 표시됩니다. 연도는 이 날짜에서 읽어 연도별 필터에 사용합니다."
         variant="sky"
       />
 
@@ -71,7 +74,7 @@ export default function TimelineForm({
         label="카테고리 *"
         required
         options={CATEGORIES}
-        defaultValue={initialData?.category || ""}
+        defaultValue={sent?.category ?? initialData?.category ?? ""}
         variant="sky"
       />
       <AdminImageFileField
@@ -89,7 +92,7 @@ export default function TimelineForm({
         name="image_url"
         type="url"
         label="또는 사진 주소 입력 (선택)"
-        defaultValue={initialData?.imageUrl}
+        defaultValue={sent?.image_url ?? initialData?.imageUrl}
         placeholder="사진의 인터넷 주소를 붙여넣으세요"
         helperText="위에서 사진을 올리면 이 주소는 무시됩니다."
         variant="sky"

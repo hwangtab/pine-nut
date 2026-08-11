@@ -38,6 +38,8 @@ interface MeetingFormProps {
 
 export default function MeetingForm({ action, initialData, submitLabel, meetingId }: MeetingFormProps) {
   const [state, formAction] = useActionState(action, null);
+  // 저장 실패 시 서버가 돌려준 제출값을 우선 사용한다(React 19 폼 자동 리셋 대비).
+  const sent = state?.values;
 
   const [attendees, setAttendees] = useState<AttendeeRow[]>(
     initialData?.attendees.map((a) => ({ name: a.name, role: a.role ?? "" })) ?? [],
@@ -67,29 +69,29 @@ export default function MeetingForm({ action, initialData, submitLabel, meetingI
         <section className="space-y-6">
           <div>
             <label htmlFor="title" className={labelCls}>회의 제목 *</label>
-            <input id="title" name="title" required defaultValue={initialData?.title} className={inputCls} placeholder="예: 풍천리 연대 음악행동 기획 회의 #2" />
+            <input id="title" name="title" required defaultValue={sent?.title ?? initialData?.title} className={inputCls} placeholder="예: 풍천리 연대 음악행동 기획 회의 #2" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <label htmlFor="meeting_no" className={labelCls}>회차</label>
-              <input id="meeting_no" name="meeting_no" type="number" defaultValue={initialData?.meetingNo ?? ""} className={inputCls} placeholder="예: 2" />
+              <input id="meeting_no" name="meeting_no" type="number" defaultValue={sent?.meeting_no ?? initialData?.meetingNo ?? ""} className={inputCls} placeholder="예: 2" />
             </div>
             <div>
               <label htmlFor="meeting_date" className={labelCls}>날짜</label>
-              <input id="meeting_date" name="meeting_date" type="date" defaultValue={initialData?.meetingDate ?? ""} className={inputCls} />
+              <input id="meeting_date" name="meeting_date" type="date" defaultValue={sent?.meeting_date ?? initialData?.meetingDate ?? ""} className={inputCls} />
             </div>
             <div>
               <label htmlFor="meeting_time" className={labelCls}>시간/소요</label>
-              <input id="meeting_time" name="meeting_time" defaultValue={initialData?.meetingTime ?? ""} className={inputCls} placeholder="예: 14:00~16:00 (약 2시간)" />
+              <input id="meeting_time" name="meeting_time" defaultValue={sent?.meeting_time ?? initialData?.meetingTime ?? ""} className={inputCls} placeholder="예: 14:00~16:00 (약 2시간)" />
             </div>
             <div>
               <label htmlFor="location" className={labelCls}>장소</label>
-              <input id="location" name="location" defaultValue={initialData?.location ?? ""} className={inputCls} placeholder="예: 온라인 화상회의" />
+              <input id="location" name="location" defaultValue={sent?.location ?? initialData?.location ?? ""} className={inputCls} placeholder="예: 온라인 화상회의" />
             </div>
             <div>
               <label htmlFor="format" className={labelCls}>형식</label>
-              <select id="format" name="format" defaultValue={initialData?.format ?? ""} className={`${inputCls} bg-[var(--color-admin-surface)]`}>
+              <select id="format" name="format" defaultValue={sent?.format ?? initialData?.format ?? ""} className={`${inputCls} bg-[var(--color-admin-surface)]`}>
                 <option value="">-- 선택 --</option>
                 <option value="online">온라인</option>
                 <option value="offline">오프라인</option>
@@ -98,7 +100,7 @@ export default function MeetingForm({ action, initialData, submitLabel, meetingI
             </div>
             <div>
               <label htmlFor="status" className={labelCls}>상태 *</label>
-              <select id="status" name="status" defaultValue={initialData?.status ?? "scheduled"} className={`${inputCls} bg-[var(--color-admin-surface)]`}>
+              <select id="status" name="status" defaultValue={sent?.status ?? initialData?.status ?? "scheduled"} className={`${inputCls} bg-[var(--color-admin-surface)]`}>
                 <option value="scheduled">예정</option>
                 <option value="completed">완료</option>
               </select>
@@ -107,11 +109,11 @@ export default function MeetingForm({ action, initialData, submitLabel, meetingI
 
           <div>
             <label htmlFor="purpose" className={labelCls}>목적</label>
-            <textarea id="purpose" name="purpose" rows={2} defaultValue={initialData?.purpose ?? ""} className={`${inputCls} resize-y`} placeholder="회의 목적" />
+            <textarea id="purpose" name="purpose" rows={2} defaultValue={sent?.purpose ?? initialData?.purpose ?? ""} className={`${inputCls} resize-y`} placeholder="회의 목적" />
           </div>
           <div>
             <label htmlFor="notes" className={labelCls}>비고</label>
-            <textarea id="notes" name="notes" rows={2} defaultValue={initialData?.notes ?? ""} className={`${inputCls} resize-y`} placeholder="추가 메모" />
+            <textarea id="notes" name="notes" rows={2} defaultValue={sent?.notes ?? initialData?.notes ?? ""} className={`${inputCls} resize-y`} placeholder="추가 메모" />
           </div>
         </section>
 

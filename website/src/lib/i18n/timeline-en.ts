@@ -1,4 +1,4 @@
-import type { TimelineEvent } from "@/data/timeline";
+import { timelineEvents as koreanSeed, type TimelineEvent } from "@/data/timeline";
 
 export type EnglishTimelineCategory =
   | "Meetings"
@@ -191,10 +191,22 @@ const timelineTranslations: Record<number, EnglishTimelineTranslation> = {
   },
 };
 
+// 번역표는 DB id로 키잉되어 있고, 각 항목은 "번역을 만들 당시의 한국어 원문"에
+// 대응한다. 관리자가 그 뒤 한국어를 수정하면 번역은 더 이상 같은 내용이 아니다.
+// 시드(= 번역 시점 스냅샷)와 현재 한국어를 대조해, 달라졌으면 번역을 버리고
+// 한국어로 폴백한다. 그래야 영문 페이지가 옛 내용을 계속 보여주지 않는다.
+const seedSnapshot = new Map(koreanSeed.map((event) => [event.id, event]));
+
+function isTranslationStale(event: TimelineEvent): boolean {
+  const seed = seedSnapshot.get(event.id);
+  if (!seed) return true; // 관리자가 새로 만든 항목 → 번역 없음
+  return seed.title !== event.title || seed.description !== event.description;
+}
+
 export function translateTimelineEventToEnglish(
   event: TimelineEvent,
 ): EnglishTimelineEvent {
-  const translated = timelineTranslations[event.id];
+  const translated = isTranslationStale(event) ? undefined : timelineTranslations[event.id];
 
   return {
     id: event.id,

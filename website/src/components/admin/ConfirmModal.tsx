@@ -23,22 +23,36 @@ export default function ConfirmModal({
 }: ConfirmModalProps) {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   // Auto-focus cancel button when modal opens (safer default for destructive actions)
   useEffect(() => {
-    if (open) {
-      cancelRef.current?.focus();
-    }
+    if (!open) return;
+    previousFocusRef.current = document.activeElement as HTMLElement | null;
+    cancelRef.current?.focus();
+    // 배경 스크롤 잠금
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      previousFocusRef.current?.focus?.();
+    };
   }, [open]);
+
+  // ESC는 문서 레벨에서 듣는다. onKeyDown만 쓰면 모달 안의 비포커스 영역(텍스트 등)을
+  // 클릭한 순간 포커스가 다이얼로그 밖으로 나가 ESC가 먹지 않는다.
+  useEffect(() => {
+    if (!open) return;
+    const onEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCancel();
+    };
+    document.addEventListener("keydown", onEscape);
+    return () => document.removeEventListener("keydown", onEscape);
+  }, [open, onCancel]);
 
   // Trap focus within the modal
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onCancel();
-        return;
-      }
-
       if (e.key === "Tab" && dialogRef.current) {
         const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -55,7 +69,7 @@ export default function ConfirmModal({
         }
       }
     },
-    [onCancel]
+    []
   );
 
   if (!open) return null;
@@ -74,7 +88,8 @@ export default function ConfirmModal({
         aria-modal="true"
         aria-labelledby="confirm-modal-title"
         aria-describedby="confirm-modal-message"
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-5 sm:p-6"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-5 sm:p-6 outline-none"
+        tabIndex={-1}
         onKeyDown={handleKeyDown}
       >
         <h3 id="confirm-modal-title" className="text-lg font-bold text-gray-900 mb-2">

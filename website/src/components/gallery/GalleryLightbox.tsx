@@ -114,7 +114,7 @@ export default function GalleryLightbox({
             </h3>
             <p
               id="gallery-lightbox-description"
-              className="text-[var(--color-overlay-text-muted)] text-sm mt-1 break-words"
+              className="whitespace-pre-line text-[var(--color-overlay-text-muted)] text-sm mt-1 break-words"
             >
               {photo.description}
             </p>

@@ -87,7 +87,10 @@ export async function getPublishedTimeline(): Promise<TimelineEvent[]> {
     .from("timeline_events")
     .select("*")
     .eq("is_deleted", false)
-    .order("sort_order", { ascending: true });
+    // sort_order는 동시 등록 시 값이 겹칠 수 있다. id를 2차 키로 두어 순서를
+    // 결정적으로 만든다(그러지 않으면 페이지네이션이 행을 중복/누락한다).
+    .order("sort_order", { ascending: true })
+    .order("id", { ascending: true });
 
   if (error || !data) {
     console.error("Failed to fetch published timeline:", error);
@@ -117,7 +120,12 @@ export async function getAllTimeline(
   }
 
   let countQuery = supabase.from("timeline_events").select("*", { count: "exact", head: true });
-  let dataQuery = supabase.from("timeline_events").select("*").order("sort_order", { ascending: true }).range(from, to);
+  let dataQuery = supabase
+    .from("timeline_events")
+    .select("*")
+    .order("sort_order", { ascending: true })
+    .order("id", { ascending: true })
+    .range(from, to);
 
   if (query) {
     countQuery = countQuery.ilike("title", `%${query}%`);

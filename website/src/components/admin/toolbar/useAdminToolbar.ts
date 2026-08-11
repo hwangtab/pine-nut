@@ -9,6 +9,7 @@ export function useAdminToolbar(): AdminToolbarState {
     isAdmin,
     isEditMode,
     toggleEditMode,
+    exitEditMode,
     hasChanges,
     changeCount,
     saveChanges,
@@ -32,21 +33,21 @@ export function useAdminToolbar(): AdminToolbarState {
     toggleEditMode();
   }, [hasChanges, isEditMode, toggleEditMode]);
 
+  // toggleEditMode 대신 exitEditMode를 쓴다. toggleEditMode는 호출 시점의 상태를
+  // 클로저로 읽어, 방금 저장/폐기한 것이 아직 반영되지 않은 상태에서 종료를 거부한다.
   const handleSaveAndExit = useCallback(async () => {
     const didSave = await saveChanges();
     if (didSave) {
-      setTimeout(() => {
-        setShowConfirmDiscard(false);
-        toggleEditMode();
-      }, 100);
+      setShowConfirmDiscard(false);
+      exitEditMode();
     }
-  }, [saveChanges, toggleEditMode]);
+  }, [saveChanges, exitEditMode]);
 
   const handleDiscardAndExit = useCallback(() => {
     discardChanges();
     setShowConfirmDiscard(false);
-    toggleEditMode();
-  }, [discardChanges, toggleEditMode]);
+    exitEditMode();
+  }, [discardChanges, exitEditMode]);
 
   const handleShowRevertConfirm = useCallback(() => {
     if (!selectedKeyHasOverride || saving) return;

@@ -4,6 +4,26 @@ import {
   isMissingSupabaseRelationError,
 } from "@/lib/supabase-errors";
 
+const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
+
+/** 기준 시각에서 daysAgo일 전의 "KST 자정"에 해당하는 UTC 시각. */
+function kstDayStart(base: Date, daysAgo = 0): Date {
+  const kst = new Date(base.getTime() + KST_OFFSET_MS);
+  const midnightKst = Date.UTC(
+    kst.getUTCFullYear(),
+    kst.getUTCMonth(),
+    kst.getUTCDate() - daysAgo,
+  );
+  return new Date(midnightKst - KST_OFFSET_MS);
+}
+
+/** UTC 시각을 KST 기준 YYYY-MM-DD로 바꾼다. */
+function kstDateKey(iso: string): string {
+  return new Date(new Date(iso).getTime() + KST_OFFSET_MS)
+    .toISOString()
+    .split("T")[0];
+}
+
 export interface SignatureStats {
   totalCount: number;
   recentSignatures: { name: string; email: string; message: string | null; createdAt: string }[];
@@ -27,8 +47,9 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
   if (!supabase) return fallback;
 
   // Daily counts for chart
-  const sinceDate = new Date();
-  sinceDate.setDate(sinceDate.getDate() - (periodDays - 1));
+  // 서명자도 운영진도 한국에 있다. UTC 기준으로 날짜를 자르면 KST 00:00~09:00의
+  // 서명이 전날 막대에 들어가고, 오전에는 '오늘' 막대가 통째로 비어 보인다.
+  const since = kstDayStart(new Date(), periodDays - 1);
   const [countResult, recentResult, dailyResult] = await Promise.all([
     supabase.from("signatures").select("*", { count: "exact", head: true }),
     supabase
@@ -39,7 +60,9 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
     supabase
       .from("signatures")
       .select("created_at")
-      .gte("created_at", sinceDate.toISOString())
+      // 구간 시작을 KST 자정으로 내림한다. 그러지 않으면 가장 왼쪽 날짜가
+      // '하루치'가 아니라 '조회 시각 이후분'만 집계되어 항상 작게 나온다.
+      .gte("created_at", since.toISOString())
       .order("created_at", { ascending: true }),
   ]);
 
@@ -61,14 +84,14 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
   const dailyRaw = dailyResult.data;
 
   const dailyMap = new Map<string, number>();
+  const now = new Date();
   for (let i = periodDays - 1; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    dailyMap.set(d.toISOString().split("T")[0], 0);
+    dailyMap.set(kstDateKey(kstDayStart(now, i).toISOString()), 0);
   }
   dailyRaw?.forEach((row: { created_at: string }) => {
-    const day = row.created_at.split("T")[0];
-    dailyMap.set(day, (dailyMap.get(day) ?? 0) + 1);
+    const day = kstDateKey(row.created_at);
+    // 버킷에 없는 날짜(경계 밖)는 무시한다. 새 키를 추가하면 차트 축이 어긋난다.
+    if (dailyMap.has(day)) dailyMap.set(day, (dailyMap.get(day) ?? 0) + 1);
   });
 
   return {
