@@ -17,6 +17,12 @@ export interface EnglishNewsItem {
   sourceUrl: string;
   sourceName: string;
   thumbnailUrl?: string;
+  /**
+   * 영문 번역이 존재하는지. 번역표는 slug로 키잉돼 있어, 관리자가 새로 등록한
+   * 소식은 여기에 없다. 그 경우 한국어 원문이 en_US 메타와 함께 나가므로
+   * 화면에서 "번역 준비 중"임을 밝혀야 한다.
+   */
+  isTranslated: boolean;
 }
 
 interface EnglishNewsTranslation {
@@ -164,6 +170,7 @@ export function translateNewsItemToEnglish(item: NewsItem): EnglishNewsItem {
     sourceUrl: item.sourceUrl,
     sourceName: item.sourceName,
     thumbnailUrl: item.thumbnailUrl,
+    isTranslated: Boolean(translated),
   };
 }
 

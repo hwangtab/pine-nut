@@ -6,7 +6,53 @@ export const alt = "풍천리를 지켜주세요";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+// 이 카드에 실제로 찍히는 글자들. Google Fonts의 text= 서브셋에 그대로 넘긴다.
+const EYEBROW = "강원도 홍천 화촌면 풍천리";
+const TITLE = "풍천리를 지켜주세요";
+const SUBTITLE = "잣나무 숲과 마을을 지키려는 7년의 싸움";
+const STATS = ["705여 차례 집회", "140여 개 단체 연대", "51가구 수몰 위기"];
+const CAPTION = "양수발전소 건설 반대 캠페인";
+const CAPTION_SUB = "주민 생존권, 산림 생태계, 마을 공동체를 지키기 위한 기록";
+
+const OG_TEXT = [EYEBROW, TITLE, SUBTITLE, ...STATS, CAPTION, CAPTION_SUB, SITE_HOST].join("");
+
+/**
+ * satori(next/og)는 fonts를 주지 않으면 라틴 기본 폰트만 쓴다. 한글 글리프가 없으면
+ * 그 글자를 조용히 건너뛰어, 텍스트가 통째로 빈 카드가 만들어진다.
+ *
+ * public/fonts의 Pretendard는 woff2라 satori가 읽지 못하므로(ttf/otf/woff만 지원),
+ * 이 카드에 쓰이는 글자만 담은 TTF 서브셋을 Google Fonts에서 받아 쓴다.
+ * 실패하면 폰트 없이 렌더한다 — 한글은 비지만 이미지 생성 자체는 깨지지 않는다.
+ */
+async function loadKoreanFont(weight: 400 | 700): Promise<ArrayBuffer | null> {
+  try {
+    const cssUrl =
+      `https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@${weight}` +
+      `&text=${encodeURIComponent(OG_TEXT)}`;
+    // User-Agent를 보내지 않으면 Google이 truetype을 준다(브라우저 UA를 보내면 woff2가
+    // 오는데, satori는 woff2를 읽지 못한다). woff/otf도 satori가 처리하므로 함께 허용한다.
+    const cssRes = await fetch(cssUrl);
+    if (!cssRes.ok) return null;
+    const css = await cssRes.text();
+    const match = css.match(
+      /src:\s*url\((https:\/\/[^)]+)\)\s*format\('(?:truetype|opentype|woff)'\)/,
+    );
+    if (!match) return null;
+    const fontRes = await fetch(match[1]);
+    if (!fontRes.ok) return null;
+    return await fontRes.arrayBuffer();
+  } catch {
+    return null;
+  }
+}
+
 export default async function Image() {
+  const [bold, regular] = await Promise.all([loadKoreanFont(700), loadKoreanFont(400)]);
+  const fonts = [
+    bold ? { name: "NotoSansKR", data: bold, weight: 700 as const, style: "normal" as const } : null,
+    regular ? { name: "NotoSansKR", data: regular, weight: 400 as const, style: "normal" as const } : null,
+  ].filter((f) => f !== null);
+
   return new ImageResponse(
     (
       <div
@@ -18,6 +64,7 @@ export default async function Image() {
           overflow: "hidden",
           backgroundColor: "#111111",
           color: "#FFFFFF",
+          fontFamily: "NotoSansKR",
         }}
       >
         <img
@@ -65,7 +112,7 @@ export default async function Image() {
               letterSpacing: "-0.02em",
             }}
           >
-            강원도 홍천 화촌면 풍천리
+            {EYEBROW}
           </div>
 
           <div
@@ -92,7 +139,7 @@ export default async function Image() {
                   textShadow: "0 8px 32px rgba(0,0,0,0.28)",
                 }}
               >
-                풍천리를 지켜주세요
+                {TITLE}
               </div>
               <div
                 style={{
@@ -103,7 +150,7 @@ export default async function Image() {
                   letterSpacing: "-0.02em",
                 }}
               >
-                잣나무 숲과 마을을 지키려는 7년의 싸움
+                {SUBTITLE}
               </div>
             </div>
 
@@ -115,11 +162,7 @@ export default async function Image() {
                 maxWidth: "1000px",
               }}
             >
-              {[
-                "705여 차례 집회",
-                "140여 개 단체 연대",
-                "51가구 수몰 위기",
-              ].map((label) => (
+              {STATS.map((label) => (
                 <div
                   key={label}
                   style={{
@@ -163,7 +206,7 @@ export default async function Image() {
                     color: "rgba(255,255,255,0.92)",
                   }}
                 >
-                  양수발전소 건설 반대 캠페인
+                  {CAPTION}
                 </div>
                 <div
                   style={{
@@ -171,7 +214,7 @@ export default async function Image() {
                     color: "rgba(255,255,255,0.70)",
                   }}
                 >
-                  주민 생존권, 산림 생태계, 마을 공동체를 지키기 위한 기록
+                  {CAPTION_SUB}
                 </div>
               </div>
               <div
@@ -190,6 +233,7 @@ export default async function Image() {
     ),
     {
       ...size,
+      ...(fonts.length > 0 ? { fonts } : {}),
     }
   );
 }

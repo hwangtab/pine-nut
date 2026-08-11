@@ -65,6 +65,16 @@ export default function useNavigationChrome(pathname: string) {
     setMobileMenuOpen(false);
   }, []);
 
+  // 링크 클릭 외의 경로(브라우저 뒤로/앞으로)로 라우트가 바뀌면 메뉴가 열린 채 남아
+  // 새 페이지를 덮고 body 스크롤까지 잠긴다. Navigation은 라우트 전환에도
+  // 언마운트되지 않으므로 pathname 변화를 직접 감지해 닫는다.
+  // (EditableRichText와 같은 파생 상태 패턴 — effect + setState의 연쇄 렌더를 피한다)
+  const [lastPathname, setLastPathname] = useState(pathname);
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname);
+    setMobileMenuOpen(false);
+  }
+
   useEffect(() => {
     if (!mobileMenuOpen) return;
 

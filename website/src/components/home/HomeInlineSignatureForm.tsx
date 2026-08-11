@@ -22,6 +22,8 @@ export default function HomeInlineSignatureForm({
     isEditMode,
     onNameChange,
     onEmailChange,
+    agreed,
+    onAgreedChange,
     handleSubmit,
   } = useHomeInlineSignatureForm({ onSignatureCountChange });
 
@@ -47,7 +49,7 @@ export default function HomeInlineSignatureForm({
                 {error}
               </p>
             )}
-            <HomeInlineSignaturePrivacyNotice />
+            <HomeInlineSignaturePrivacyNotice agreed={agreed} onAgreedChange={onAgreedChange} />
             {isEditMode && <HomeInlineSignatureEditControls />}
           </form>
         )}

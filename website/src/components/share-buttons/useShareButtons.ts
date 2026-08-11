@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { events } from "@/lib/analytics";
 
 export function useShareButtons({ title, url }: { title: string; url?: string }) {
   const [copied, setCopied] = useState(false);
@@ -21,6 +22,7 @@ export function useShareButtons({ title, url }: { title: string; url?: string })
 
     try {
       await navigator.clipboard.writeText(shareUrl);
+      events.shareClick("copy_url");
       markCopied();
     } catch {
       const textarea = document.createElement("textarea");
@@ -29,6 +31,7 @@ export function useShareButtons({ title, url }: { title: string; url?: string })
       textarea.select();
       document.execCommand("copy");
       document.body.removeChild(textarea);
+      events.shareClick("copy_url");
       markCopied();
     }
   }, [getUrl, markCopied]);
@@ -40,6 +43,7 @@ export function useShareButtons({ title, url }: { title: string; url?: string })
           title,
           url: getUrl(),
         });
+        events.shareClick("native");
       } catch {
         // 사용자가 공유를 취소한 경우
       }
@@ -53,6 +57,7 @@ export function useShareButtons({ title, url }: { title: string; url?: string })
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
       title,
     )}&url=${encodeURIComponent(getUrl())}`;
+    events.shareClick("twitter");
     window.open(shareUrl, "_blank", "noopener,noreferrer");
   }, [getUrl, title]);
 
@@ -60,6 +65,7 @@ export function useShareButtons({ title, url }: { title: string; url?: string })
     const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
       getUrl(),
     )}`;
+    events.shareClick("facebook");
     window.open(shareUrl, "_blank", "noopener,noreferrer");
   }, [getUrl]);
 

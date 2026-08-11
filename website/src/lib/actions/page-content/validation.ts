@@ -4,8 +4,12 @@ import type { ContentChange } from "@/lib/actions/page-content/types";
 
 const KEY_PATTERN = /^[a-zA-Z0-9._-]+$/;
 
-// 리스트 항목에서 이미지 URL로 취급할 필드명(src, imageUrl, thumbnail, photo_url …)
-const IMAGE_FIELD_PATTERN = /(^|_|\b)(src|image|img|thumbnail|photo|cover)(_?url)?$/i;
+// 리스트 항목에서 이미지 URL로 취급할 필드명.
+// 갤러리(gallery-data.ts photoFields)의 이미지 필드는 키가 그냥 "url"이라, 접두사를
+// 요구하는 패턴만으로는 잡히지 않는다. "url" 단독도 포함시킨다.
+// 링크용 필드(en 섹션의 "linkUrl")는 이미지가 아니므로 제외한다.
+const IMAGE_FIELD_PATTERN =
+  /^(url|(src|image|img|thumbnail|photo|cover)(_?url)?|.*_(image|img|photo|thumbnail|cover)(_?url)?)$/i;
 
 const MAX_TEXT_LENGTH = 2_000;
 const MAX_RICHTEXT_LENGTH = 20_000;

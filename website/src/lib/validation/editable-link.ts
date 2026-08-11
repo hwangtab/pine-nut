@@ -7,7 +7,11 @@ export interface EditableHrefValidationResult {
 }
 
 export function isInternalEditableHref(href: string): boolean {
-  return href.startsWith("/") || href.startsWith("#");
+  if (href.startsWith("#")) return true;
+  if (!href.startsWith("/")) return false;
+  // "//evil.com"은 프로토콜 상대 URL이라 브라우저가 외부 사이트로 이동시킨다.
+  // "/\evil.com"도 일부 브라우저가 "//"로 해석한다. 둘 다 내부 경로가 아니다.
+  return !href.startsWith("//") && !href.startsWith("/\\");
 }
 
 export function isExternalEditableHref(href: string): boolean {

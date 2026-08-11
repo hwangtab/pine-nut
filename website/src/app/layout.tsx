@@ -29,7 +29,8 @@ export const metadata: Metadata = {
     description:
       "7년간 705번의 외침. 강원도 홍천 풍천리 주민들의 양수발전소 반대 투쟁에 함께해주세요.",
     siteName: "풍천리를 지켜주세요",
-    url: SITE_URL,
+    // og:url을 여기서 고정하면 모든 하위 페이지의 공유 링크가 홈으로 수렴한다.
+    // 각 페이지가 자기 경로를 openGraph.url / alternates.canonical로 선언한다.
     type: "website",
     locale: "ko_KR",
     images: [
@@ -40,6 +41,14 @@ export const metadata: Metadata = {
         alt: "드론 촬영 풍천리 전경",
       },
     ],
+  },
+  alternates: {
+    canonical: SITE_URL,
+    // 영문 쪽에서만 선언하면 단방향이라 검색엔진이 언어 대체 관계를 무시한다.
+    languages: {
+      ko: SITE_URL,
+      en: `${SITE_URL}/en`,
+    },
   },
 };
 

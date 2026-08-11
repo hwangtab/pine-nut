@@ -106,6 +106,18 @@ export default async function EnglishNewsDetailPage({
           />
         </EditableLink>
 
+        {!translatedItem.isTranslated && (
+          // 번역표에 없는 소식(관리자가 새로 등록한 글)은 한국어 원문이 그대로 나간다.
+          // 영어 독자가 깨진 페이지로 오인하지 않도록 사실을 밝힌다.
+          <p
+            lang="en"
+            className="mb-8 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-sm text-[var(--color-text-muted)]"
+          >
+            An English translation of this article is not available yet. The original
+            Korean text is shown below.
+          </p>
+        )}
+
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--color-text-muted)] font-medium mb-10">
           <time dateTime={translatedItem.date}>{formattedDate}</time>
           {translatedItem.sourceName && (
@@ -166,6 +178,7 @@ export default async function EnglishNewsDetailPage({
             page="en/news"
             section="detail"
             contentPrefix="en.news.detail.share"
+            locale="en"
           />
         </div>
 

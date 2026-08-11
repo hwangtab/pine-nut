@@ -37,10 +37,23 @@ export function useCardNewsActions({
   const handleDownload = useCallback(async () => {
     if (!cardRef.current) return;
     try {
-      const dataUrl = await toPng(cardRef.current, {
-        pixelRatio: 2,
-        cacheBust: true,
-      });
+      // 편집 모드의 파란 링(ring/outline)이 PNG에 그대로 구워지는 것을 막는다.
+      // html-to-image는 실제 DOM의 computed style을 읽으므로, 캡처 동안만
+      // 편집 UI 스타일을 무력화하는 스타일 시트를 끼워 넣었다가 걷어낸다.
+      const suppress = document.createElement("style");
+      suppress.textContent =
+        "[data-editable-key]{outline:none !important;box-shadow:none !important;}";
+      document.head.appendChild(suppress);
+
+      let dataUrl: string;
+      try {
+        dataUrl = await toPng(cardRef.current, {
+          pixelRatio: 2,
+          cacheBust: true,
+        });
+      } finally {
+        suppress.remove();
+      }
       const link = document.createElement("a");
       link.download = `${text.downloadPrefix}${cardId}.png`;
       link.href = dataUrl;

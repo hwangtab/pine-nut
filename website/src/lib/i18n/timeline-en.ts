@@ -192,28 +192,38 @@ const timelineTranslations: Record<number, EnglishTimelineTranslation> = {
 };
 
 // 번역표는 DB id로 키잉되어 있고, 각 항목은 "번역을 만들 당시의 한국어 원문"에
-// 대응한다. 관리자가 그 뒤 한국어를 수정하면 번역은 더 이상 같은 내용이 아니다.
-// 시드(= 번역 시점 스냅샷)와 현재 한국어를 대조해, 달라졌으면 번역을 버리고
-// 한국어로 폴백한다. 그래야 영문 페이지가 옛 내용을 계속 보여주지 않는다.
+// 대응한다. 관리자가 그 뒤 한국어를 수정하면 그 필드의 번역은 더 이상 같은 내용이
+// 아니므로, 시드(= 번역 시점 스냅샷)와 대조해 달라진 필드만 한국어로 폴백한다.
+//
+// 필드 단위로 판정하는 이유: 제목만 손봤는데 본문 번역까지 통째로 버리면
+// 영문 페이지가 통째로 한국어가 된다. 실제로 그런 사고가 한 번 있었다.
 const seedSnapshot = new Map(koreanSeed.map((event) => [event.id, event]));
 
-function isTranslationStale(event: TimelineEvent): boolean {
+/** 해당 필드의 한국어가 번역 시점 원문 그대로인지(= 번역을 그대로 써도 되는지). */
+function isFieldFresh(
+  event: TimelineEvent,
+  field: "title" | "description",
+): boolean {
   const seed = seedSnapshot.get(event.id);
-  if (!seed) return true; // 관리자가 새로 만든 항목 → 번역 없음
-  return seed.title !== event.title || seed.description !== event.description;
+  if (!seed) return false; // 관리자가 새로 만든 항목 → 번역 없음
+  return seed[field] === event[field];
 }
 
 export function translateTimelineEventToEnglish(
   event: TimelineEvent,
 ): EnglishTimelineEvent {
-  const translated = isTranslationStale(event) ? undefined : timelineTranslations[event.id];
+  const translated = timelineTranslations[event.id];
 
   return {
     id: event.id,
+    // date/category/imageAlt는 표기 변환에 가까워 본문 수정과 함께 상하지 않는다.
     date: translated?.date ?? event.date,
     year: event.year,
-    title: translated?.title ?? event.title,
-    description: translated?.description ?? event.description,
+    title: translated && isFieldFresh(event, "title") ? translated.title : event.title,
+    description:
+      translated && isFieldFresh(event, "description")
+        ? translated.description
+        : event.description,
     category: translated?.category ?? categoryMap[event.category],
     imageUrl: event.imageUrl,
     imageAlt: translated?.imageAlt ?? event.imageAlt,

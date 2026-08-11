@@ -12,11 +12,18 @@ function parseCategory(formData: FormData): BoardCategory {
   return (BOARD_CATEGORIES as readonly string[]).includes(raw) ? (raw as BoardCategory) : "자유";
 }
 
+const MAX_POST_CONTENT = 20_000;
+
 function parseTitleContent(formData: FormData): { title: string; content: string } | { error: string } {
   const title = (formData.get("title") as string | null)?.trim() ?? "";
   const content = (formData.get("content") as string | null)?.trim() ?? "";
   if (!title || title.length > 200) return { error: "제목을 1~200자로 입력해주세요." };
   if (!content) return { error: "내용을 입력해주세요." };
+  // 댓글에는 2000자 상한이 있는데 본문에는 어디에도 없었다. 초장문 하나로
+  // 목록·상세 렌더와 감사 로그 payload가 함께 무거워진다.
+  if (content.length > MAX_POST_CONTENT) {
+    return { error: `내용은 ${MAX_POST_CONTENT.toLocaleString()}자 이내로 입력해주세요.` };
+  }
   return { title, content };
 }
 
@@ -129,10 +136,18 @@ export async function uploadBoardImage(postId: number, _prev: ActionState, formD
     .upload(path, file, { contentType: file.type, upsert: false });
   if (upErr) return { error: "이미지 업로드에 실패했습니다." };
 
-  // 정렬 순서: 현재 개수
-  const { count } = await gate.supabase.from("board_post_images").select("id", { count: "exact", head: true }).eq("post_id", postId);
+  // 정렬 순서: 현재 최대값 + 1.
+  // '개수'로 매기면 중간 이미지를 지운 뒤 새로 올릴 때 기존 값과 겹쳐 순서가 뒤섞인다.
+  const { data: maxRow } = await gate.supabase
+    .from("board_post_images")
+    .select("sort_order")
+    .eq("post_id", postId)
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const nextOrder = (maxRow?.sort_order ?? -1) + 1;
   const { error: insErr } = await gate.supabase.from("board_post_images")
-    .insert({ post_id: postId, storage_path: path, sort_order: count ?? 0 });
+    .insert({ post_id: postId, storage_path: path, sort_order: nextOrder });
   if (insErr) {
     // 작성자 아님(RLS) 등 실패 시 업로드한 파일 정리
     await gate.supabase.storage.from(BOARD_IMAGE_BUCKET).remove([path]);
@@ -162,8 +177,14 @@ export async function deleteBoardImage(imageId: number, postId: number): Promise
 
 const REPORT_REASONS = ["스팸/광고", "욕설/비방", "부적절한 내용", "기타"];
 
-// 한 사람이 하루에 넣을 수 있는 신고 수. 검토 큐를 임의로 채워 마비시키는 것을 막는다.
-const MAX_REPORTS_PER_DAY = 20;
+const REPORT_ERRORS: Record<string, string> = {
+  forbidden: "회원만 신고할 수 있습니다.",
+  invalid_target: "잘못된 신고 대상입니다.",
+  invalid_reason: "신고 사유를 선택해주세요.",
+  not_found: "신고 대상을 찾을 수 없습니다.",
+  rate_limited: "하루 신고 가능 횟수를 초과했습니다. 내일 다시 시도해주세요.",
+  duplicate: "이미 신고하셨습니다.",
+};
 
 export async function reportTarget(targetType: "post" | "comment", targetId: number, reason: string): Promise<ActionState> {
   if (!REPORT_REASONS.includes(reason)) return { error: "신고 사유를 선택해주세요." };
@@ -171,28 +192,21 @@ export async function reportTarget(targetType: "post" | "comment", targetId: num
   const gate = await requireMember();
   if ("error" in gate) return { error: gate.error };
 
-  // 존재하지 않는 대상에 대한 신고는 검토 화면에서 내용을 볼 수 없는 유령 항목이 된다.
-  const targetTable = targetType === "post" ? "board_posts" : "board_comments";
-  const { data: target } = await gate.supabase
-    .from(targetTable).select("id").eq("id", targetId).eq("is_deleted", false).maybeSingle();
-  if (!target) return { error: "신고 대상을 찾을 수 없습니다." };
+  // 대상 확인·건수 제한·삽입을 SECURITY DEFINER 함수 하나로 처리한다.
+  // 앱에서 board_reports를 count하면 SELECT 정책(admin_can_edit)에 걸려 일반 회원은
+  // 언제나 0이 나오고, 제한이 정확히 반대로(editor에게만) 걸린다.
+  const { data, error } = await gate.supabase.rpc("report_board_target", {
+    p_target_type: targetType,
+    p_target_id: targetId,
+    p_reason: reason,
+  });
 
-  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  const { count } = await gate.supabase
-    .from("board_reports")
-    .select("id", { count: "exact", head: true })
-    .eq("reporter_user_id", gate.user.id)
-    .gte("created_at", since);
-  if ((count ?? 0) >= MAX_REPORTS_PER_DAY) {
-    return { error: "하루 신고 가능 횟수를 초과했습니다. 내일 다시 시도해주세요." };
-  }
-
-  const { error } = await gate.supabase
-    .from("board_reports")
-    .insert({ target_type: targetType, target_id: targetId, reporter_user_id: gate.user.id, reason });
   if (error) {
-    if (error.code === "23505") return { error: "이미 신고하셨습니다." };
+    console.error("reportTarget: rpc failed", error.message);
     return { error: "신고에 실패했습니다." };
+  }
+  if (data !== "ok") {
+    return { error: REPORT_ERRORS[data as string] ?? "신고에 실패했습니다." };
   }
   return null;
 }
