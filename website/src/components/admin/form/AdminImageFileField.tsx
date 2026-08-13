@@ -39,12 +39,25 @@ export default function AdminImageFileField({
 }: AdminImageFileFieldProps) {
   const [error, setError] = useState<string | null>(null);
   const [picked, setPicked] = useState<string | null>(null);
+  // 저장 실패로 "해제된" 파일명 스냅샷. picked를 그대로 쓰면 사진을 다시 고른 뒤에도
+  // 안내가 남고, 심지어 새로 고른 파일 이름으로 "해제됐다"고 잘못 알린다.
+  const [clearedName, setClearedName] = useState<string | null>(null);
+  const [lastSubmitFailed, setLastSubmitFailed] = useState(submitFailed);
+  if (submitFailed !== lastSubmitFailed) {
+    setLastSubmitFailed(submitFailed);
+    // false → true로 넘어가는 순간의 선택 파일을 붙잡는다(폼 리셋으로 곧 사라진다).
+    if (submitFailed) {
+      setClearedName(picked);
+      setPicked(null);
+    }
+  }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) {
       setError(null);
       setPicked(null);
+      setClearedName(null);
       return;
     }
     const result = validateImageFile(file);
@@ -58,6 +71,7 @@ export default function AdminImageFileField({
     }
     setError(null);
     setPicked(file.name);
+    setClearedName(null);
   }
 
   return (
@@ -95,9 +109,9 @@ export default function AdminImageFileField({
         onChange={handleChange}
         className={adminFileInputClassName(variant)}
       />
-      {submitFailed && picked && (
+      {clearedName && (
         <p className="mt-1.5 text-sm font-semibold text-[var(--color-danger)]">
-          저장에 실패해 선택했던 사진(&lsquo;{picked}&rsquo;)이 해제됐습니다. 사진을 다시 골라주세요.
+          저장에 실패해 선택했던 사진(&lsquo;{clearedName}&rsquo;)이 해제됐습니다. 사진을 다시 골라주세요.
         </p>
       )}
       {error ? (

@@ -31,6 +31,7 @@ export default function EditableRichText({
   const { isEditMode, getContent, stageChange } = useAdminEdit();
   const value = getContent(contentKey) ?? defaultValue;
   const [editing, setEditing] = useState(false);
+  const [emptyWarning, setEmptyWarning] = useState(false);
   const [localState, setLocalState] = useState({ value: value, localValue: value });
 
   // Sync localValue when the external value changes (outside of editing)
@@ -59,10 +60,9 @@ export default function EditableRichText({
 
   const handleOpen = useCallback(() => {
     setLocalValue(value);
+    setEmptyWarning(false);
     setEditing(true);
   }, [value, setLocalValue]);
-
-  const [emptyWarning, setEmptyWarning] = useState(false);
 
   const handleSave = useCallback(() => {
     const trimmed = localValue.trim();
@@ -154,7 +154,7 @@ export default function EditableRichText({
         <div
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4"
           onClick={(e) => {
-            if (e.target === e.currentTarget) setEditing(false);
+            if (e.target === e.currentTarget) handleCancel();
           }}
         >
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">

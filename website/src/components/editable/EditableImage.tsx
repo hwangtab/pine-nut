@@ -44,11 +44,14 @@ export default function EditableImage({
   // 외부 호스트 이미지는 언제든 사라질 수 있다. 실패하면 폴백으로 한 번 교체한다.
   // (SubHero가 fallbackImageUrl을 넘겨도 이 컴포넌트가 onError를 다루지 않아
   //  폴백이 한 번도 동작하지 않던 문제를 여기서 해결한다)
-  const [failed, setFailed] = useState(false);
-  const src = failed && fallbackSrc ? fallbackSrc : stored;
+  // "실패한 URL"을 기억한다. boolean으로 두면 한 번 실패한 뒤 관리자가 새 이미지를
+  // 지정해도 폴백에 고정돼, 방금 올린 사진이 편집 화면에 영영 나타나지 않는다.
+  // URL을 비교하면 stored가 바뀌는 순간 폴백이 자동으로 풀린다.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const src = fallbackSrc && failedSrc === stored ? fallbackSrc : stored;
   const handleError = useCallback(() => {
-    if (fallbackSrc && !failed) setFailed(true);
-  }, [fallbackSrc, failed]);
+    if (fallbackSrc && failedSrc !== stored) setFailedSrc(stored);
+  }, [fallbackSrc, failedSrc, stored]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [showUrlInput, setShowUrlInput] = useState(false);
