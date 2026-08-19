@@ -15,7 +15,7 @@
 - 모든 npm 명령은 `website/` 디렉터리에서 실행한다.
 - 각 태스크 종료 조건: `npm run lint` 통과 + `npm run build` 통과. 시각 태스크는 dev 서버(`PORT=3001 npm run dev`)에서 chrome-devtools MCP로 데스크톱(1440×900)·모바일(390×844) 스크린샷 확인까지.
 - 커밋 메시지는 한국어, "변경 요약 + 영향 범위" 패턴.
-- **콘텐츠 불변**: `EditableText`/`EditableList`의 `contentKey`와 `defaultValue`/`defaultItems`의 문안·수치·사진 URL은 그대로 둔다. 기존 contentKey의 이름 변경·삭제 금지(새 키 추가는 허용 — getContent 미등록 키는 defaultValue로 폴백되므로 안전). 문안 예외는 spec §8이 허용한 딱 2곳: Task 4의 히어로 CTA(`home.story.cta` 레이블 + 행선지 신규 키 `home.hero.ctaLink`), Task 9의 CTA 제목(`home.cta.heading`).
+- **콘텐츠 불변**: `EditableText`/`EditableList`의 `contentKey`와 `defaultValue`/`defaultItems`의 문안·수치·사진 URL은 그대로 둔다. 기존 contentKey의 이름 변경·삭제·신규 추가 모두 금지. 문안 예외는 spec §8이 허용한 딱 1곳: Task 9의 CTA 제목(`home.cta.heading` → "숲에 답장을 보내주세요"). 그 외 모든 `defaultValue`/`defaultItems`는 한 글자도 바꾸지 않는다.
 - **빌더 보존**: `ManagedSection`의 `page`/`sectionId`/`visibilityContentKey`/`section` prop 불변. `defaultClassName`만 교체 가능.
 - **접근성 보존**: `prefers-reduced-motion`/`prefers-reduced-transparency` 폴백, `:focus-visible` 스타일, skip 링크, `word-break: keep-all`, 최소 터치 타깃 44px.
 - **성능 보존**: LCP 요소(히어로 이미지·타이틀)는 CSS 애니메이션만 사용(초기 `opacity:0` 금지), `priority`/`sizes` prop 유지, 폰트는 `font-display: swap`.
@@ -344,6 +344,8 @@ git add -A && git commit -m "한지·숲 팔레트로 토큰 교체 + 종이 재
 ```tsx
 "use client";
 
+import { useId } from "react";
+
 /* "숲의 편지" SVG 모티프 모음. 전부 장식 요소 — aria-hidden 고정, 색은 currentColor/토큰만 사용 */
 
 export function ContourBackground({ className = "" }: { className?: string }) {
@@ -398,6 +400,8 @@ export function PostmarkStamp({
   label?: string;
   sublabel?: string;
 }) {
+  // 한 페이지에 2개 이상 렌더될 수 있으므로 arc path의 DOM id는 인스턴스마다 고유해야 한다
+  const arcId = `postmark-arc-${useId().replace(/:/g, "")}`;
   return (
     <svg viewBox="0 0 120 120" fill="none" className={className} aria-hidden="true">
       <g stroke="currentColor" opacity="0.75">
@@ -406,10 +410,10 @@ export function PostmarkStamp({
         <path d="M76 30 Q104 44 108 76 M12 44 Q16 24 40 14" strokeWidth="1.5" strokeLinecap="round" />
       </g>
       <defs>
-        <path id="postmark-arc" d="M 60,60 m -34,0 a 34,34 0 1,1 68,0" />
+        <path id={arcId} d="M 60,60 m -34,0 a 34,34 0 1,1 68,0" />
       </defs>
       <text fontSize="11" fontWeight="700" letterSpacing="2.5" fill="currentColor" opacity="0.85">
-        <textPath href="#postmark-arc" startOffset="8%">{label}</textPath>
+        <textPath href={`#${arcId}`} startOffset="8%">{label}</textPath>
       </text>
       <text x="60" y="66" textAnchor="middle" fontSize="10" fontStyle="italic" fill="currentColor" opacity="0.7">
         {sublabel}
@@ -465,7 +469,7 @@ git add -A && git commit -m "숲의 편지 SVG 모티프 라이브러리 추가 
 **Interfaces:**
 - Consumes: Task 2의 `letter-btn`/`ink-chip`, Task 3의 `RidgeDivider`, Task 1의 `font-serif-display`
 - Produces: 홈 섹션 배경 규칙 — about/impact/hope/quotes는 `bg-[var(--color-bg)]`, cta는 `bg-[var(--color-bg-moss)]`, stats는 `bg-[var(--color-deep)]`. 이후 Task 5–10은 이 배경 위에서 작업한다.
-- **허용된 콘텐츠 변경(spec §8, §4-1 근거)**: 히어로 버튼을 스크롤 버튼에서 서명 링크로 전환 — `home.story.cta`의 defaultValue를 "숲에 답장 보내기"로, 행선지는 신규 키 `home.hero.ctaLink`(기본 `/petition`). 스크롤 유도는 셰브론 버튼이 담당.
+- **콘텐츠 변경 없음**: 히어로 CTA는 기존 스크롤 버튼과 `home.story.cta`("이야기 보기 ↓")를 그대로 두고 클래스만 감빛(`letter-btn--primary`)으로 바꾼다. `EditableLink` 중첩·신규 키 생성 금지(편집 모드 어포던스 충돌 방지).
 
 - [ ] **Step 1: HomeClient.tsx의 defaultClassName 교체**
 
@@ -494,7 +498,7 @@ defaultClassName="py-16 md:py-20 px-6 bg-[var(--color-deep)] text-[#FFFDF7]"
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { EditableImage, EditableLink, EditableList, EditableText } from "@/components/editable";
+import { EditableImage, EditableList, EditableText } from "@/components/editable";
 import HomeConcertBanner from "@/components/home/HomeConcertBanner";
 import { AnimatedCounter } from "@/components/home/HomeMotion";
 import { RidgeDivider } from "@/components/visuals/ForestLetterMotifs";
@@ -588,21 +592,19 @@ export default function HomeHeroSection({
         </div>
 
         <div className="rise-in rise-in-3 flex justify-center">
-          <EditableLink
-            contentKey="home.hero.ctaLink"
-            defaultHref="/petition"
-            page="home"
-            section="hero"
+          <button
+            type="button"
+            onClick={onScrollToStory}
             className="letter-btn letter-btn--primary text-base sm:text-lg"
           >
             <EditableText
               contentKey="home.story.cta"
-              defaultValue="숲에 답장 보내기"
+              defaultValue="이야기 보기 ↓"
               as="span"
               page="home"
               section="hero"
             />
-          </EditableLink>
+          </button>
         </div>
       </div>
 
@@ -1072,7 +1074,8 @@ git add -A && git commit -m "SubHero 유리 패널 제거 — 사진 직접 타�
 ```tsx
 return (
   <footer role="contentinfo">
-    <RidgeDivider className="text-[var(--color-deep)] bg-[var(--color-bg)] -mb-px" />
+    {/* 배경은 투명 — 앞 섹션 배경이 비쳐야 한다 */}
+    <RidgeDivider className="text-[var(--color-deep)] -mb-px" />
     <div className="bg-[var(--color-deep)] text-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 md:py-16">
         {/* 기존 grid + FooterBottomBar + FooterPrivacyPanel 그대로 */}
@@ -1082,7 +1085,7 @@ return (
 );
 ```
 
-주의: stats 섹션(deep) 바로 아래 홈에서는 능선이 deep 위 deep이라 안 보이는데, 그건 의도된 자연스러운 연결이다. 능선의 `bg-[var(--color-bg)]`가 서브페이지(한지 위)에서 경계를 만든다.
+**능선에 배경색을 넣지 말 것.** 투명이어야 한지 페이지에서는 크림 위에 능선이 찍히고, 홈(위가 deep인 stats 섹션)에서는 deep 위 deep이라 자연히 사라진다. `bg-[var(--color-bg)]`를 넣으면 홈에서 stats와 푸터 사이에 크림색 띠가 생긴다.
 
 - [ ] **Step 2: 하위 푸터 컴포넌트 잉크 확인**
 
@@ -1158,19 +1161,19 @@ git add -A && git commit -m "푸터를 깊은 숲 그린·능선 경계로 — �
 
 **페이지 지시:**
 - 폼 카드 → `paper p-8 md:p-12`(편지지), 필드 → `paper-field`, 제출 버튼 → `letter-btn letter-btn--primary`
-- 카운터 블록 → 우표 뱃지 패턴(+ `PostmarkStamp` 장식 1개를 인접 배치, `import { PostmarkStamp } from "@/components/visuals/ForestLetterMotifs"`):
+- 카운터 블록: **/petition의 서명 수는 이미 SubHero의 `metric` prop으로 히어로에 렌더되고 있다. 새 카운터를 추가하지 말고 그 기존 카운터에 우표 뱃지를 입힌다**(중복 카운터 금지). 사진 위 잡음을 피해 `PostmarkStamp` 장식은 히어로에 넣지 않는다 — 필요하면 폼 카드 주변에 1개까지.
 
 ```tsx
+{/* /petition의 metric prop에 넘기는 기존 카운터를 이 껍데기로 감싼다 */}
 <div className="stamp-badge inline-block">
   <div className="stamp-badge__inner">
-    <p className="text-sm text-[var(--color-text-muted)]">{기존 프리픽스 문안}</p>
+    <p className="text-sm text-[var(--color-text-muted)]">{기존 프리픽스 문안 그대로}</p>
     <p className="font-serif-display font-bold text-4xl sm:text-5xl text-[var(--color-warm)] my-1">
       {/* 기존 PetitionAnimatedCounter 그대로 */}
     </p>
-    <p className="text-sm text-[var(--color-text-muted)]">{기존 서픽스 문안}</p>
+    <p className="text-sm text-[var(--color-text-muted)]">{기존 서픽스 문안 그대로}</p>
   </div>
 </div>
-<PostmarkStamp className="w-20 h-20 text-[var(--color-forest)]/35 rotate-12" />
 ```
 - RecentSignatures 카드 → `paper` + 교대 tilt, 서명 메시지는 본문체 유지(신뢰 요소 — 손글씨 금지), 날짜만 `text-[var(--color-text-muted)]`
 - 액션 카드 3종 → Task 9의 카드 패턴과 동일(`paper` + `letter-btn`)
