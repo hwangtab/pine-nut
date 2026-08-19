@@ -4,6 +4,7 @@ import type { RefObject } from "react";
 import { EditableImage, EditableText } from "@/components/editable";
 import { FadeIn } from "@/components/home/HomeMotion";
 import { PineTreeIcon } from "@/components/home/HomeVisuals";
+import { ContourBackground } from "@/components/visuals/ForestLetterMotifs";
 
 interface HomeAboutSectionProps {
   storyRef: RefObject<HTMLDivElement | null>;
@@ -12,9 +13,10 @@ interface HomeAboutSectionProps {
 export default function HomeAboutSection({ storyRef }: HomeAboutSectionProps) {
   return (
     <div ref={storyRef}>
-      <div className="max-w-3xl mx-auto text-center">
+      <ContourBackground />
+      <div className="relative max-w-3xl mx-auto">
         <FadeIn>
-          <PineTreeIcon className="w-16 h-16 mx-auto mb-8 text-[var(--color-forest)]" />
+          <PineTreeIcon className="w-12 h-12 mb-6 text-[var(--color-forest)]" />
         </FadeIn>
 
         <FadeIn delay={0.1}>
@@ -24,7 +26,7 @@ export default function HomeAboutSection({ storyRef }: HomeAboutSectionProps) {
             as="h2"
             page="home"
             section="about"
-            className="text-3xl sm:text-4xl md:text-5xl font-black mb-8 text-[var(--color-text)]"
+            className="font-serif-display font-bold text-3xl sm:text-4xl md:text-5xl mb-8 text-[var(--color-text)]"
           />
         </FadeIn>
 
@@ -41,7 +43,7 @@ export default function HomeAboutSection({ storyRef }: HomeAboutSectionProps) {
         </FadeIn>
 
         <FadeIn delay={0.2}>
-          <div className="my-10">
+          <figure className="photo-frame paper-tilt-l my-12">
             <EditableImage
               contentKey="home.about.forestImage"
               defaultSrc="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003499236_std.jpg"
@@ -51,17 +53,19 @@ export default function HomeAboutSection({ storyRef }: HomeAboutSectionProps) {
               section="about"
               width={1200}
               height={800}
-              className="w-full rounded-card border border-black/5 shadow-card"
+              className="w-full rounded-[2px]"
             />
-            <EditableText
-              contentKey="home.about.forestPhotoCredit"
-              defaultValue="사진: 오마이뉴스"
-              as="p"
-              page="home"
-              section="about"
-              className="text-xs text-[var(--color-text-muted)] mt-1"
-            />
-          </div>
+            <figcaption>
+              <EditableText
+                contentKey="home.about.forestPhotoCredit"
+                defaultValue="사진: 오마이뉴스"
+                as="p"
+                page="home"
+                section="about"
+                className="font-hand text-lg text-[var(--color-text-muted)] mt-2 text-right pr-1"
+              />
+            </figcaption>
+          </figure>
         </FadeIn>
 
         <FadeIn delay={0.2}>
