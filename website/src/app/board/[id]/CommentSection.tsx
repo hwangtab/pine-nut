@@ -80,10 +80,13 @@ function CommentItem({
 
   return (
     <li
-      className={`rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card px-4 py-3 ${
-        isHiddenOrDeleted ? "bg-[var(--color-bg)]" : "bg-white"
-      }`}
+      className={
+        isHiddenOrDeleted
+          ? "rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3"
+          : "paper px-4 py-3"
+      }
     >
+      <div className={isHiddenOrDeleted ? "" : "relative z-[1]"}>
       <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--color-text-muted)]">
         <span>{comment.authorNickname}</span>
         <span>·</span>
@@ -130,6 +133,7 @@ function CommentItem({
         {!isHiddenOrDeleted && meUserId !== comment.authorUserId && (
           <ReportButton targetType="comment" targetId={comment.id} canReport={canWrite} />
         )}
+      </div>
       </div>
     </li>
   );
@@ -188,7 +192,7 @@ export default function CommentSection({
               required
               rows={3}
               placeholder="댓글을 입력하세요"
-              className="w-full resize-y rounded-xl border border-[var(--color-border)] px-4 py-3 text-base outline-none focus:border-[var(--color-forest)] focus:ring-2 focus:ring-[var(--color-forest)]/30"
+              className="paper-field w-full resize-y focus:outline-none focus:ring-2 focus:ring-[var(--color-forest)]/30"
             />
             <SubmitCommentButton />
           </form>

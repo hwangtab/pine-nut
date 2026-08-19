@@ -2,8 +2,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 
 /**
- * 로그인·회원가입 공용 셸. 숲 사진 위에 읽는 유리(frost) 카드를 띄운다.
- * frost 재질이 제대로 빛나는 자리 — 사진 위, 어두운 잉크로 가독성 보장.
+ * 로그인·회원가입 공용 셸. 숲 사진 위에 종이 카드를 띄운다.
  */
 export default function AuthShell({
   title,
@@ -36,19 +35,19 @@ export default function AuthShell({
         aria-hidden="true"
       />
       <div className="relative z-[1] w-full max-w-md">
-        <div className="frost rounded-[var(--radius-panel)] p-8 md:p-10">
+        <div className="paper p-8 md:p-10">
           <div className="relative z-[1]">
-            <h1 className="mb-2 text-center text-2xl font-black text-[var(--frost-ink)]">
+            <h1 className="mb-2 text-center font-serif-display text-2xl font-bold text-[var(--color-text)]">
               {title}
             </h1>
             {subtitle && (
-              <p className="mb-8 text-center text-sm leading-relaxed text-[var(--frost-muted)]">
+              <p className="mb-8 text-center text-sm leading-relaxed text-[var(--color-text-muted)]">
                 {subtitle}
               </p>
             )}
             {children}
             {footer && (
-              <div className="mt-6 text-center text-sm text-[var(--frost-muted)]">{footer}</div>
+              <div className="mt-6 text-center text-sm text-[var(--color-text-muted)]">{footer}</div>
             )}
           </div>
         </div>

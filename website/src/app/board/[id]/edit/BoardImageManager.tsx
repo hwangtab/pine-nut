@@ -43,7 +43,8 @@ export default function BoardImageManager({
   }
 
   return (
-    <div className="mt-8 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-bg)] shadow-card p-4">
+    <div className="paper mt-8 p-4">
+     <div className="relative z-[1]">
       <h2 className="text-lg font-bold text-[var(--color-text)]">이미지</h2>
       <p className="mt-1 text-sm text-[var(--color-text-muted)]">
         JPG/PNG/WebP, 5MB 이하
@@ -85,6 +86,7 @@ export default function BoardImageManager({
           ))}
         </div>
       )}
+     </div>
     </div>
   );
 }

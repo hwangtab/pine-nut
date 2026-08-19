@@ -31,7 +31,7 @@ export default function SharePage() {
       </section>
 
       {/* Mobile tip */}
-      <section className="py-12 md:py-16 px-4 sm:px-6 bg-[var(--color-bg-warm)]">
+      <section className="py-12 md:py-16 px-4 sm:px-6 bg-[var(--color-bg)]">
         <div className="max-w-xl mx-auto text-center">
           <EditableText
             contentKey="share.tip.text"

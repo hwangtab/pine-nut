@@ -50,7 +50,7 @@ export default function BoardPostForm({
           id="category"
           name="category"
           defaultValue={initial?.category ?? "자유"}
-          className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-admin-surface)] px-4 py-3.5 text-base outline-none focus:border-[var(--color-forest)] focus:ring-2 focus:ring-[var(--color-forest)]/30"
+          className="paper-field focus:outline-none focus:ring-2 focus:ring-[var(--color-forest)]/30"
         >
           <option value="자유">자유</option>
           <option value="질문">질문</option>
@@ -74,7 +74,7 @@ export default function BoardPostForm({
           maxLength={200}
           defaultValue={initial?.title}
           placeholder="제목을 입력하세요"
-          className="w-full rounded-xl border border-[var(--color-border)] px-4 py-3.5 text-base outline-none focus:border-[var(--color-forest)] focus:ring-2 focus:ring-[var(--color-forest)]/30"
+          className="paper-field focus:outline-none focus:ring-2 focus:ring-[var(--color-forest)]/30"
         />
       </div>
 
@@ -92,7 +92,7 @@ export default function BoardPostForm({
           rows={10}
           defaultValue={initial?.content}
           placeholder="내용을 입력하세요"
-          className="w-full resize-y rounded-xl border border-[var(--color-border)] px-4 py-3.5 text-base outline-none focus:border-[var(--color-forest)] focus:ring-2 focus:ring-[var(--color-forest)]/30"
+          className="paper-field w-full resize-y focus:outline-none focus:ring-2 focus:ring-[var(--color-forest)]/30"
         />
       </div>
 

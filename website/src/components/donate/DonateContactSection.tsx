@@ -6,9 +6,10 @@ import { EditableLink, EditableText } from "@/components/editable";
 export default function DonateContactSection() {
   return (
     <section
-      className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] p-6 sm:p-8 space-y-6 shadow-card"
+      className="paper p-6 sm:p-8 space-y-6"
       aria-label="안내사항"
     >
+     <div className="relative z-[1] space-y-6">
       <div>
         <EditableText
           contentKey="donate.contact.heading"
@@ -24,7 +25,7 @@ export default function DonateContactSection() {
             defaultHref="tel:010-8918-8933"
             page="donate"
             section="contact"
-            className="flex items-center gap-3 text-[15px] text-[var(--color-text)] hover:text-[var(--color-warm)] transition-colors min-h-[44px]"
+            className="flex items-center gap-3 text-[15px] text-[var(--color-text)] hover:text-[var(--color-forest)] transition-colors min-h-[44px]"
           >
             <svg
               className="w-4 h-4 shrink-0"
@@ -51,6 +52,7 @@ export default function DonateContactSection() {
           </EditableLink>
         </div>
       </div>
+     </div>
     </section>
   );
 }

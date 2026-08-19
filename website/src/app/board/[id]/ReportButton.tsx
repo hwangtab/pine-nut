@@ -72,7 +72,7 @@ export default function ReportButton({ targetType, targetId, canReport }: Report
             type="button"
             onClick={handleSubmit}
             disabled={pending}
-            className="rounded-full bg-[var(--color-warm)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
+            className="rounded-full bg-[var(--color-forest)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--color-forest-light)] disabled:opacity-50"
           >
             {pending ? "제출 중..." : "제출"}
           </button>

@@ -19,7 +19,7 @@ const toneStyles: Record<NonNullable<UtilityHeaderProps["tone"]>, {
     section:
       "bg-gradient-to-b from-[var(--color-bg-warm)] via-[#f8f4ea] to-[var(--color-bg)] text-[var(--color-text)]",
     subtitle: "text-[var(--color-text-muted)]",
-    eyebrow: "text-[var(--color-warm)]/80",
+    eyebrow: "text-[var(--color-forest)]/80",
     overlay:
       "radial-gradient(circle at 15% 12%, rgba(255, 176, 89, 0.14), transparent 45%), radial-gradient(circle at 84% 18%, rgba(33, 77, 56, 0.14), transparent 46%)",
   },
@@ -66,7 +66,7 @@ export default function UtilityHeader({
             {eyebrow}
           </p>
         )}
-        <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-4 break-words">
+        <h1 className="font-serif-display text-3xl md:text-5xl font-bold tracking-tight mb-4 break-words">
           {title}
         </h1>
         {subtitle && (

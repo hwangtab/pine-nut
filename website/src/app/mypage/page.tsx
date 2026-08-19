@@ -23,23 +23,24 @@ export default async function MyPage() {
 
   return (
     <div className="mx-auto max-w-2xl p-6 md:p-10">
-      <div className="rounded-[var(--radius-panel)] border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-6 shadow-card md:p-10">
-        <h1 className="mb-2 text-2xl font-bold text-[var(--color-admin-text)]">
+      <div className="paper p-6 md:p-10">
+       <div className="relative z-[1]">
+        <h1 className="mb-2 font-serif-display text-2xl font-bold text-[var(--color-text)]">
           마이페이지
         </h1>
-        <p className="mb-6 text-[var(--color-admin-muted)]">
+        <p className="mb-6 text-[var(--color-text-muted)]">
           환영합니다, {user.email}
         </p>
 
-        <p className="mb-8 text-[var(--color-admin-text)]">
+        <p className="mb-8 text-[var(--color-text)]">
           {me
             ? `기획단 · ${me.role}`
             : "일반 회원 · 게시판 기능이 곧 추가됩니다."}
         </p>
 
         <div className="mb-8">
-          <h2 className="mb-2 text-lg font-semibold text-[var(--color-admin-text)]">닉네임</h2>
-          <p className="mb-3 text-sm text-[var(--color-admin-muted)]">
+          <h2 className="mb-2 font-serif-display text-lg font-bold text-[var(--color-text)]">닉네임</h2>
+          <p className="mb-3 text-sm text-[var(--color-text-muted)]">
             게시판 글쓰기 전에 닉네임을 설정하세요.
           </p>
           <NicknameForm current={profile?.nickname ?? null} />
@@ -56,12 +57,13 @@ export default async function MyPage() {
           )}
           <Link
             href="/"
-            className="px-5 py-3 text-base font-semibold text-[var(--color-admin-muted)] border border-[var(--color-admin-border)] rounded-full hover:bg-[var(--color-bg)] transition-colors"
+            className="px-5 py-3 text-base font-semibold text-[var(--color-text-muted)] border border-[var(--color-border)] rounded-full hover:bg-[var(--color-bg)] transition-colors"
           >
             홈으로
           </Link>
           <LogoutButton />
         </div>
+       </div>
       </div>
     </div>
   );

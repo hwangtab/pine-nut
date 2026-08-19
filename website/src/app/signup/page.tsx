@@ -88,7 +88,7 @@ export default function SignupPage() {
 
   if (checking) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-[var(--color-admin-muted)]">
+      <div className="flex items-center justify-center min-h-screen text-[var(--color-text-muted)]">
         불러오는 중…
       </div>
     );
@@ -120,7 +120,7 @@ export default function SignupPage() {
           onChange={(e) => setEmail(e.target.value)}
           required
           placeholder="등록된 이메일"
-          className="frost-field"
+          className="paper-field"
         />
         <input
           name="password"
@@ -130,12 +130,12 @@ export default function SignupPage() {
           required
           minLength={8}
           placeholder="비밀번호 (8자 이상)"
-          className="frost-field"
+          className="paper-field"
         />
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-full bg-[var(--color-forest)] px-6 py-4 text-lg font-bold text-white transition-colors hover:bg-[var(--color-forest-light)] disabled:opacity-50"
+          className="letter-btn letter-btn--primary w-full disabled:opacity-50"
         >
           {loading ? "가입 중..." : "가입하기"}
         </button>

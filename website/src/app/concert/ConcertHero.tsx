@@ -8,6 +8,7 @@ import {
   CONCERT_TIME_LABEL,
 } from "@/lib/concert";
 import { useConcertStatus } from "@/lib/use-concert-status";
+import { RidgeDivider } from "@/components/visuals/ForestLetterMotifs";
 
 export default function ConcertHero() {
   const dday = useConcertStatus()?.label ?? null;
@@ -22,10 +23,18 @@ export default function ConcertHero() {
         sizes="100vw"
         className="absolute inset-0 object-cover"
       />
-      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-black/75 via-black/60 to-black/80" />
+      <div
+        className="absolute inset-0 z-[1]"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(12,20,12,0.62) 0%, rgba(12,20,12,0.38) 55%, rgba(12,20,12,0.25) 100%)",
+        }}
+        aria-hidden="true"
+      />
+      <RidgeDivider className="absolute bottom-0 left-0 z-[2] text-[var(--color-bg)]" />
 
-      <div className="relative z-10 mx-auto w-full max-w-4xl">
-        <p className="rise-in glass-dark mb-6 inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full px-5 py-2 text-sm font-semibold text-white/90 sm:text-base">
+      <div className="relative z-[3] mx-auto w-full max-w-4xl">
+        <p className="rise-in mb-6 inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm font-semibold text-white/90 [text-shadow:0_1px_12px_rgba(0,0,0,0.6)] sm:text-base">
           <span>{CONCERT_DATE_LABEL}</span>
           <span aria-hidden>·</span>
           <span>{CONCERT_PLACE}</span>

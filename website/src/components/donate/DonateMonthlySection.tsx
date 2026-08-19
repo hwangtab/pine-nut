@@ -11,9 +11,10 @@ export default function DonateMonthlySection() {
         as="h2"
         page="donate"
         section="monthly"
-        className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]"
+        className="font-serif-display font-bold text-xl sm:text-2xl mb-6 text-[var(--color-text)]"
       />
-      <div className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] p-6 sm:p-8 shadow-card">
+      <div className="paper p-6 sm:p-8">
+       <div className="relative z-[1]">
         <div className="bg-[var(--color-bg-warm)] rounded-[var(--radius-card)] px-5 py-4 text-center">
           <EditableText
             contentKey="donate.monthly.statusTitle"
@@ -32,6 +33,7 @@ export default function DonateMonthlySection() {
             className="text-sm text-[var(--color-text-muted)] mt-1"
           />
         </div>
+       </div>
       </div>
     </section>
   );

@@ -5,7 +5,7 @@ import { EditableList, EditableText } from "@/components/editable";
 
 const fundIcons = [Bus, Scale, Megaphone, Settings];
 const fundColors = [
-  "var(--color-warm)",
+  "var(--color-forest-light)",
   "var(--color-forest)",
   "var(--color-sky)",
   "var(--color-earth)",
@@ -20,9 +20,10 @@ export default function DonateFundsSection() {
         as="h2"
         page="donate"
         section="funds"
-        className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]"
+        className="font-serif-display font-bold text-xl sm:text-2xl mb-6 text-[var(--color-text)]"
       />
-      <div className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] p-6 sm:p-8 shadow-card">
+      <div className="paper p-6 sm:p-8">
+       <div className="relative z-[1]">
         <EditableText
           contentKey="donate.funds.disclaimer"
           defaultValue="* 아래는 후원금 사용 계획(안)이며, 실제 집행 시 변동될 수 있습니다."
@@ -102,6 +103,7 @@ export default function DonateFundsSection() {
             className="text-sm text-[var(--color-text-muted)] mt-1"
           />
         </div>
+       </div>
       </div>
     </section>
   );

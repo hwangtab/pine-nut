@@ -114,7 +114,7 @@ export default function LoginPage() {
 
   if (checking) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-[var(--color-admin-muted)]">
+      <div className="flex items-center justify-center min-h-screen text-[var(--color-text-muted)]">
         불러오는 중…
       </div>
     );
@@ -135,7 +135,7 @@ export default function LoginPage() {
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="flex flex-col gap-1.5 text-left">
-          <label htmlFor="email" className="text-sm font-bold text-[var(--frost-muted)]">
+          <label htmlFor="email" className="text-sm font-bold text-[var(--color-text)]">
             이메일
           </label>
           <input
@@ -144,13 +144,13 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="frost-field"
+            className="paper-field"
             placeholder="example@email.com"
           />
         </div>
 
         <div className="flex flex-col gap-1.5 text-left">
-          <label htmlFor="password" className="text-sm font-bold text-[var(--frost-muted)]">
+          <label htmlFor="password" className="text-sm font-bold text-[var(--color-text)]">
             비밀번호
           </label>
           <input
@@ -159,7 +159,7 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="frost-field"
+            className="paper-field"
             placeholder="비밀번호를 입력하세요"
           />
         </div>
@@ -173,7 +173,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading || countdown > 0}
-          className="w-full rounded-full bg-[var(--color-forest)] py-4 text-lg font-bold text-white transition-colors hover:bg-[var(--color-forest-light)] disabled:opacity-60"
+          className="letter-btn letter-btn--primary w-full disabled:opacity-60"
         >
           {countdown > 0
             ? `${countdown}초 후 재시도`

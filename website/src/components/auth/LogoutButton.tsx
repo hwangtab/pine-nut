@@ -14,7 +14,7 @@ export default function LogoutButton({ className }: { className?: string }) {
       onClick={handleLogout}
       className={
         className ??
-        "px-5 py-3 text-base font-semibold text-[var(--color-admin-muted)] border border-[var(--color-admin-border)] rounded-xl hover:bg-[var(--color-bg)] transition-colors"
+        "px-5 py-3 text-base font-semibold text-[var(--color-text-muted)] border border-[var(--color-border)] rounded-xl hover:bg-[var(--color-bg)] transition-colors"
       }
     >
       로그아웃

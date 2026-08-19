@@ -21,9 +21,10 @@ export default function DonateBankTransferSection({
         as="h2"
         page="donate"
         section="bank"
-        className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)] text-center"
+        className="font-serif-display font-bold text-xl sm:text-2xl mb-6 text-[var(--color-text)]"
       />
-      <div className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] p-6 sm:p-8 shadow-card">
+      <div className="paper p-6 sm:p-8">
+       <div className="relative z-[1]">
         <div className="text-center mb-5">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[var(--color-bg-warm)] mb-3">
             <svg
@@ -85,6 +86,7 @@ export default function DonateBankTransferSection({
         <p className="text-center text-xs text-[var(--color-text-muted)] mt-3">
           {DONATION_BANK_ACCOUNT_FULL}
         </p>
+       </div>
       </div>
     </section>
   );

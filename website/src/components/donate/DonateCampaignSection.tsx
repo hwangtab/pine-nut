@@ -6,7 +6,8 @@ import { EditableLink, EditableText } from "@/components/editable";
 export default function DonateCampaignSection() {
   return (
     <section aria-label="다른 후원 경로">
-      <div className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] p-6 sm:p-8 text-center shadow-card">
+      <div className="paper p-6 sm:p-8 text-center">
+       <div className="relative z-[1]">
         <EditableText
           contentKey="donate.campaign.text"
           defaultValue="빠띠 캠페인 페이지에서도 후원 및 문의가 가능합니다"
@@ -31,6 +32,7 @@ export default function DonateCampaignSection() {
             section="campaign"
           />
         </EditableLink>
+       </div>
       </div>
     </section>
   );

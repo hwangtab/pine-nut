@@ -9,7 +9,8 @@ export default async function NewBoardPostPage() {
   if (!profile) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-10">
-        <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-card p-10 text-center">
+        <div className="paper p-10 text-center">
+         <div className="relative z-[1]">
           <p className="mb-4 text-[var(--color-text)]">
             회원만 글을 쓸 수 있습니다.
           </p>
@@ -19,6 +20,7 @@ export default async function NewBoardPostPage() {
           >
             로그인
           </Link>
+         </div>
         </div>
       </div>
     );
@@ -27,7 +29,8 @@ export default async function NewBoardPostPage() {
   if (!profile.nickname) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-10">
-        <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-card p-10 text-center">
+        <div className="paper p-10 text-center">
+         <div className="relative z-[1]">
           <p className="mb-4 text-[var(--color-text)]">
             먼저 닉네임을 설정해주세요.
           </p>
@@ -37,6 +40,7 @@ export default async function NewBoardPostPage() {
           >
             마이페이지
           </Link>
+         </div>
         </div>
       </div>
     );

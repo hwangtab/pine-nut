@@ -91,7 +91,7 @@ export default async function BoardPage({
           name="q"
           defaultValue={q}
           placeholder="검색..."
-          className="flex-1 rounded-xl border border-[var(--color-border)] px-4 py-2 text-sm text-[var(--color-text)] outline-none focus:border-[var(--color-forest)]"
+          className="paper-field flex-1 focus:outline-none focus:ring-2 focus:ring-[var(--color-forest)]/30"
         />
         <button
           type="submit"
@@ -106,7 +106,8 @@ export default async function BoardPage({
           {q ? "검색 결과가 없습니다." : "글이 없습니다."}
         </p>
       ) : (
-        <div className="divide-y divide-[var(--color-border)] overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-card">
+        <div className="paper overflow-hidden">
+         <div className="relative z-[1] divide-y divide-[var(--color-border)]">
           {items.map((item) => (
             <Link
               key={item.id}
@@ -139,6 +140,7 @@ export default async function BoardPage({
               </p>
             </Link>
           ))}
+         </div>
         </div>
       )}
 
