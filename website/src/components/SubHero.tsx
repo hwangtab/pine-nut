@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { EditableImage } from "@/components/editable";
+import { RidgeDivider } from "@/components/visuals/ForestLetterMotifs";
 
 interface SubHeroProps {
   /** Background image URL */
@@ -39,8 +40,8 @@ export default function SubHero({
   const hasEyebrow = Boolean(eyebrow);
   const sectionSpacingClass =
     variant === "emphasis"
-      ? "pt-32 md:pt-40 pb-24 md:pb-32"
-      : "pt-32 md:pt-40 pb-20 md:pb-28";
+      ? "pt-32 md:pt-40 pb-28 md:pb-36"
+      : "pt-32 md:pt-40 pb-24 md:pb-32";
   useEffect(() => {
     setCurrentImage(imageUrl);
   }, [imageUrl]);
@@ -90,30 +91,27 @@ export default function SubHero({
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(circle at 16% 20%, rgba(255, 173, 76, 0.2), transparent 48%), radial-gradient(circle at 82% 16%, rgba(74, 122, 46, 0.22), transparent 52%), linear-gradient(180deg, rgba(12, 20, 18, 0.8), rgba(9, 16, 15, 0.72) 42%, rgba(9, 16, 15, 0.82) 100%)",
+            "linear-gradient(180deg, rgba(12,20,12,0.62) 0%, rgba(12,20,12,0.38) 55%, rgba(12,20,12,0.25) 100%)",
         }}
         aria-hidden="true"
       />
-      <div className="absolute -top-28 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-white/8 blur-3xl" aria-hidden="true" />
-      <div className="relative mx-auto max-w-2xl">
-        <div className="glass rounded-[var(--radius-panel)] px-6 py-8 sm:px-10 sm:py-10">
-          <div className="relative z-[1] flex flex-col items-center">
-            {hasEyebrow && (
-              <span className="glass-dark mb-4 inline-block max-w-full overflow-hidden text-ellipsis whitespace-nowrap rounded-full px-3.5 py-1 text-xs font-bold uppercase tracking-[0.12em] text-white">
-                {eyebrow}
-              </span>
-            )}
-            <h1 className="mb-4 text-3xl sm:text-4xl font-black tracking-tight text-white md:text-5xl">
-              {title}
-            </h1>
-            {subtitle && (
-              <p className="mx-auto max-w-xl text-base leading-relaxed text-white/84 md:text-lg">
-                {subtitle}
-              </p>
-            )}
-            {metric && <div className="mt-8 md:mt-10">{metric}</div>}
-          </div>
-        </div>
+      <RidgeDivider className="absolute bottom-0 left-0 z-[2] text-[var(--color-bg)]" />
+
+      <div className="relative z-[3] mx-auto max-w-3xl">
+        {hasEyebrow && (
+          <span className="ink-chip mb-5 max-w-full overflow-hidden text-ellipsis whitespace-nowrap uppercase tracking-[0.12em]">
+            {eyebrow}
+          </span>
+        )}
+        <h1 className="font-serif-display mb-4 text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight text-white [text-shadow:0_2px_24px_rgba(0,0,0,0.5)]">
+          {title}
+        </h1>
+        {subtitle && (
+          <p className="mx-auto max-w-xl text-base leading-relaxed text-white/88 md:text-lg [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]">
+            {subtitle}
+          </p>
+        )}
+        {metric && <div className="mt-8 md:mt-10">{metric}</div>}
       </div>
     </section>
   );
