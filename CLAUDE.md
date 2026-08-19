@@ -60,7 +60,7 @@ Server-side metadata via Next.js Metadata API on each page. Open Graph images, r
 
 ### Image config
 
-`next.config.ts` allows remote images only from hostnames listed in `src/lib/allowed-image-hosts.json` (currently `ojsfile.ohmynews.com`, `www.pressian.com`, `img1.newsis.com`). Use Next.js `<Image>` component for all images.
+`next.config.ts` allows remote images only from hostnames listed in `src/lib/allowed-image-hosts.json` (press hosts + the project's Supabase storage host). The Supabase host must stay in that static list — mirrored image URLs are hardcoded in content, and local dev has no `NEXT_PUBLIC_SUPABASE_URL`, so relying on the env-derived hostname alone 500s the home page on a fresh clone. Use Next.js `<Image>` component for all images.
 
 ## Environment Variables
 
