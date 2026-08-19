@@ -26,10 +26,10 @@ export default function HomeStatsSection() {
             {items.map((stat, i) => (
               <FadeIn key={stat.label} delay={i * 0.1}>
                 <div>
-                  <div className="text-3xl sm:text-4xl md:text-5xl font-black text-[var(--color-earth-light)] mb-2">
+                  <div className="font-serif-display text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-earth-light)] mb-2">
                     {stat.number}
                   </div>
-                  <div className="text-sm sm:text-base text-white/50">
+                  <div className="text-sm sm:text-base text-[#FFFDF7]/60">
                     {stat.label}
                   </div>
                 </div>
