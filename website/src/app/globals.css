@@ -1,4 +1,5 @@
 @import './fonts/pretendard.css';
+@import './fonts/maruburi.css';
 @import "tailwindcss";
 
 /*
@@ -51,7 +52,8 @@
   --color-text: var(--color-text);
   --color-text-muted: var(--color-text-muted);
   --color-border: var(--color-border);
-  --font-serif-display: var(--font-nanum-myeongjo), 'Nanum Myeongjo', serif;
+  --font-serif-display: 'MaruBuri', var(--font-nanum-myeongjo), 'Nanum Myeongjo', serif;
+  --font-hand: var(--font-nanum-pen), 'Nanum Pen Script', cursive;
   /* 데스크톱 가로 내비가 캡슐에 안전히 들어가는 최소 폭(≈1152px) */
   --breakpoint-nav: 72rem;
   --radius-panel: 1.75rem;

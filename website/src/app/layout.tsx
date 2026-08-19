@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Nanum_Myeongjo } from "next/font/google";
+import { Nanum_Myeongjo, Nanum_Pen_Script } from "next/font/google";
 import "./globals.css";
 import PublicShell from "@/components/PublicShell";
 
@@ -9,6 +9,14 @@ import PublicShell from "@/components/PublicShell";
 const nanumMyeongjo = Nanum_Myeongjo({
   weight: ["400", "700", "800"],
   variable: "--font-nanum-myeongjo",
+  display: "swap",
+  preload: false,
+});
+
+// 나눔 펜 스크립트 셀프호스팅(손글씨 포인트 요소 전용, --font-hand)
+const nanumPen = Nanum_Pen_Script({
+  weight: "400",
+  variable: "--font-nanum-pen",
   display: "swap",
   preload: false,
 });
@@ -89,7 +97,7 @@ export default async function RootLayout({
     ]);
 
   return (
-    <html lang="ko" className={nanumMyeongjo.variable}>
+    <html lang="ko" className={`${nanumMyeongjo.variable} ${nanumPen.variable}`}>
       <body className="antialiased">
         <Analytics />
         <AdminEditShell
