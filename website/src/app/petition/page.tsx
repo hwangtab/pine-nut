@@ -202,7 +202,7 @@ export default function PetitionPage() {
                   {items.map((item, i) => (
                     <div key={i} className="flex gap-4 items-start">
                       <span
-                        className="shrink-0 w-10 h-10 rounded-full bg-[var(--color-warm)]/10 flex items-center justify-center text-[var(--color-warm)] font-bold"
+                        className="shrink-0 w-10 h-10 rounded-full bg-[var(--color-forest)]/10 flex items-center justify-center text-[var(--color-forest)] font-bold"
                         aria-hidden="true"
                       >
                         {i + 1}

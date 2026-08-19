@@ -24,7 +24,7 @@ export default function PublicError({
   return (
     <main className="min-h-[60vh] flex items-center justify-center px-4 py-20">
       <div className="max-w-lg text-center">
-        <p className="text-sm font-semibold text-[var(--color-warm)] mb-3">
+        <p className="text-sm font-semibold text-[var(--color-forest)] mb-3">
           일시적인 오류
         </p>
         <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-4">
@@ -43,7 +43,7 @@ export default function PublicError({
           <button
             type="button"
             onClick={reset}
-            className="min-h-[48px] px-6 py-3 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold transition-colors"
+            className="min-h-[48px] px-6 py-3 rounded-full bg-[var(--color-forest)] hover:bg-[var(--color-forest-light)] text-white font-bold transition-colors"
           >
             다시 시도
           </button>

@@ -122,7 +122,7 @@ export default function GalleryPage() {
               ref={ctaRef}
               className={`reveal ${ctaInView ? "is-visible" : ""} max-w-lg mx-auto`}
             >
-              <Camera className="w-10 h-10 text-[var(--color-warm)] mx-auto mb-4" />
+              <Camera className="w-10 h-10 text-[var(--color-forest)] mx-auto mb-4" />
               <EditableText
                 contentKey="gallery.cta.title"
                 defaultValue="사진을 제보해주세요"

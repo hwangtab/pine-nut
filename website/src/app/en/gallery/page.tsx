@@ -109,7 +109,7 @@ export default function EnglishGalleryPage() {
             ref={ctaRef}
             className={`reveal ${ctaInView ? "is-visible" : ""} max-w-lg mx-auto`}
           >
-            <Camera className="w-10 h-10 text-[var(--color-warm)] mx-auto mb-4" />
+            <Camera className="w-10 h-10 text-[var(--color-forest)] mx-auto mb-4" />
             <EditableText
               contentKey="en.gallery.cta.title"
               defaultValue="Share more images"

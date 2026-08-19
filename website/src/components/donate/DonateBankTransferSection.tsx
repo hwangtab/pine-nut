@@ -36,7 +36,7 @@ export default function DonateBankTransferSection({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="text-[var(--color-warm)]"
+              className="text-[var(--color-forest)]"
             >
               <rect x="2" y="6" width="20" height="14" rx="2" />
               <path d="M2 10h20" />

@@ -33,7 +33,7 @@ export default function NotFound() {
           defaultHref="/"
           page="not-found"
           section="primary"
-          className="inline-flex items-center justify-center bg-[var(--color-warm)] text-white font-semibold px-8 py-3 rounded-lg hover:opacity-90 transition-opacity min-h-[44px]"
+          className="inline-flex items-center justify-center bg-[var(--color-forest)] text-white font-semibold px-8 py-3 rounded-lg hover:bg-[var(--color-forest-light)] transition-colors min-h-[44px]"
         >
           <EditableText
             contentKey="notfound.primary.label"
