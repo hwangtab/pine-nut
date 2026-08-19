@@ -12,7 +12,6 @@
 :root {
   --color-forest: #2D5016;
   --color-forest-light: #4A7A2E;
-  --color-forest-on-photo: #C6DFB9; /* 사진 위에서 쓰는 옅은 forest 톤 — 히어로 배경 위 강조용 */
   --color-earth: #8B6914;
   --color-earth-light: #D4A843;
   --color-sky: #1B4965;
@@ -45,7 +44,6 @@
 @theme inline {
   --color-forest: var(--color-forest);
   --color-forest-light: var(--color-forest-light);
-  --color-forest-on-photo: var(--color-forest-on-photo);
   --color-earth: var(--color-earth);
   --color-earth-light: var(--color-earth-light);
   --color-sky: var(--color-sky);
