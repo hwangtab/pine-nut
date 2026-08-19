@@ -126,7 +126,7 @@ export default function HomeHeroSection({
         type="button"
         onClick={onScrollToStory}
         aria-label="이야기로 스크롤"
-        className="chevron-bounce absolute bottom-8 z-10 hidden sm:block cursor-pointer"
+        className="chevron-bounce absolute bottom-8 z-10 hidden p-1.5 sm:block cursor-pointer"
       >
         <ChevronDown className="w-8 h-8 text-white/50" />
       </button>
