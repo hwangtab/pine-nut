@@ -62,6 +62,7 @@ export default function EnglishGalleryPage() {
             fields={englishPhotoFields}
             creditLabel="Photo:"
             openAriaLabel={englishOpenAriaLabel}
+            latinCaptions
           />
         </div>
 
@@ -80,6 +81,7 @@ export default function EnglishGalleryPage() {
             fields={englishPhotoFields}
             creditLabel="Photo:"
             openAriaLabel={englishOpenAriaLabel}
+            latinCaptions
           />
         </div>
 
@@ -98,6 +100,7 @@ export default function EnglishGalleryPage() {
             fields={englishPhotoFields}
             creditLabel="Photo:"
             openAriaLabel={englishOpenAriaLabel}
+            latinCaptions
           />
         </div>
 

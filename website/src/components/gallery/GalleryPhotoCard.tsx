@@ -10,12 +10,14 @@ export default function GalleryPhotoCard({
   onOpen,
   creditLabel = "사진:",
   openAriaLabel = (title) => `${title} 이미지 크게 보기`,
+  latinCaptions = false,
 }: {
   photo: GalleryPhoto;
   index: number;
   onOpen: (photo: GalleryPhoto, trigger: HTMLButtonElement) => void;
   creditLabel?: string;
   openAriaLabel?: (title: string) => string;
+  latinCaptions?: boolean;
 }) {
   const { ref, inView } = useReveal<HTMLButtonElement>();
   const tiltClass =
@@ -40,10 +42,10 @@ export default function GalleryPhotoCard({
       </div>
 
       <div className="pt-3 px-1">
-        <p className="font-hand text-lg text-[var(--color-text-muted)] leading-snug">
+        <p className={`${latinCaptions ? "font-serif-display italic" : "font-hand"} text-lg text-[var(--color-text-muted)] leading-snug`}>
           {photo.title}
         </p>
-        <p className="font-hand text-sm text-[var(--color-text-muted)]/70 mt-0.5">
+        <p className={`${latinCaptions ? "font-serif-display italic" : "font-hand"} text-sm text-[var(--color-text-muted)]/70 mt-0.5`}>
           {creditLabel} {photo.credit}
         </p>
       </div>

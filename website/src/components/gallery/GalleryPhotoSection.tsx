@@ -24,6 +24,7 @@ export default function GalleryPhotoSection({
   fields = photoFields,
   creditLabel = "사진:",
   openAriaLabel = (title) => `${title} 이미지 크게 보기`,
+  latinCaptions = false,
 }: {
   contentKey: string;
   titleKey: string;
@@ -38,6 +39,7 @@ export default function GalleryPhotoSection({
   fields?: typeof photoFields;
   creditLabel?: string;
   openAriaLabel?: (title: string) => string;
+  latinCaptions?: boolean;
 }) {
   const { ref, inView } = useReveal<HTMLDivElement>();
   return (
@@ -81,6 +83,7 @@ export default function GalleryPhotoSection({
                 onOpen={onOpen}
                 creditLabel={creditLabel}
                 openAriaLabel={openAriaLabel}
+                latinCaptions={latinCaptions}
               />
             ))}
           </div>
