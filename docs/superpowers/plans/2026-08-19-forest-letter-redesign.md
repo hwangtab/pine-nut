@@ -492,7 +492,7 @@ defaultClassName="py-16 md:py-20 px-6 bg-[var(--color-deep)] text-[#FFFDF7]"
 
 - [ ] **Step 2: HomeHeroSection.tsx 전면 재작성**
 
-`glass` 패널·`glass-btn--glass`를 제거하고 사진 위 직접 타이포로 바꾼다. `EditableImage`/`EditableText`/`EditableList`의 contentKey·defaultValue·counters는 그대로(단, `home.story.cta`의 defaultValue만 "숲에 답장 보내기"로). 전체 코드:
+`glass` 패널·`glass-btn--glass`를 제거하고 사진 위 직접 타이포로 바꾼다. `EditableImage`/`EditableText`/`EditableList`의 contentKey·defaultValue·counters는 **전부 그대로**(히어로 CTA 문안 `home.story.cta` = "이야기 보기 ↓"도 불변). 전체 코드:
 
 ```tsx
 "use client";
