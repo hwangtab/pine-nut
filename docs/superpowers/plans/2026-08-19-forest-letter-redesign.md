@@ -1186,7 +1186,7 @@ git add -A && git commit -m "푸터를 깊은 숲 그린·능선 경계로 — �
 **Files:** `website/src/app/gallery/page.tsx` + `website/src/components/gallery/` 전체
 
 **페이지 지시:**
-- 그리드 아이템 → `photo-frame` + 인덱스 기반 교대 tilt(`i % 3 === 0 ? "paper-tilt-l" : i % 3 === 2 ? "paper-tilt-r" : ""` — 전부 기울이면 유치해진다, 1/3만)
+- 그리드 아이템 → `photo-frame` + 인덱스 기반 교대 tilt. **3장 중 1장만** 기울인다(전부 기울이면 유치해진다): `i % 6 === 1 ? "paper-tilt-l" : i % 6 === 4 ? "paper-tilt-r" : ""` → 없음·좌·없음·없음·우·없음
 - 캡션·날짜 → `font-hand text-lg text-[var(--color-text-muted)]`
 - 라이트박스/모달이 있으면 배경 오버레이만 `rgba(30,51,23,0.9)`로, 동작 불변
 
