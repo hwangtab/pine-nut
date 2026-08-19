@@ -98,7 +98,7 @@ export default function HomeHeroSection({
           <button
             type="button"
             onClick={onScrollToStory}
-            className="letter-btn letter-btn--primary text-base sm:text-lg"
+            className="letter-btn letter-btn--outline text-base sm:text-lg"
           >
             <EditableText
               contentKey="home.story.cta"

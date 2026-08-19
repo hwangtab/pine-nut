@@ -31,23 +31,23 @@ export default function Navigation() {
     dismissMobileMenu,
   } = useNavigationChrome(pathname);
 
-  // 사진 위(투명)에서는 보는 유리 + 흰 잉크, 콘텐츠 위에서는 읽는 유리 + 어두운 잉크
-  const material = isTransparent ? "glass" : "frost";
+  // 사진 위(투명)에서는 투명 배경 + 흰 잉크, 콘텐츠 위(스크롤 후)에서는 불투명 한지 + 어두운 잉크
+  const chrome = isTransparent
+    ? "bg-transparent text-white"
+    : "paper-sheet border-b border-[var(--color-border)] shadow-[0_2px_12px_rgb(34_48_31/0.06)]";
 
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-2 sm:top-3 z-50 flex justify-center px-3 sm:px-4 pointer-events-none transition-transform duration-300 ${
-          visible ? "translate-y-0" : "-translate-y-[160%]"
+        className={`fixed inset-x-0 top-0 z-50 transition-transform duration-300 ${
+          visible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
         <nav
           aria-label="주요 내비게이션"
-          className={`${material} pointer-events-auto w-full max-w-6xl rounded-full transition-all duration-300 ${
-            isTransparent ? "px-4 sm:px-5 py-2.5" : "px-3 sm:px-4 py-2"
-          }`}
+          className={`${chrome} px-4 sm:px-6 py-3 transition-colors duration-300`}
         >
-          <div className="relative z-[1] flex w-full items-center justify-between">
+          <div className="mx-auto flex w-full max-w-6xl items-center justify-between">
             <NavigationLogo isTransparent={isTransparent} />
             <div className="hidden nav:flex items-center min-w-0">
               <DesktopNavigation

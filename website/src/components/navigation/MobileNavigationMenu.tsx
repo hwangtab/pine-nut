@@ -29,7 +29,7 @@ export default function MobileNavigationMenu({
     <div
       id="mobile-menu"
       ref={menuRef}
-      className="frost-sheet fixed inset-0 z-40 flex flex-col overflow-hidden pt-20"
+      className="paper-sheet fixed inset-0 z-40 flex flex-col overflow-hidden pt-20"
       role="dialog"
       aria-modal="true"
       aria-labelledby="mobile-menu-title"
@@ -41,7 +41,7 @@ export default function MobileNavigationMenu({
         <button
           type="button"
           onClick={onClose}
-          className="min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold text-[var(--frost-muted)] hover:text-[var(--color-text)] hover:bg-black/5 transition-colors"
+          className="min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-black/5 transition-colors"
         >
           메뉴 닫기
         </button>
