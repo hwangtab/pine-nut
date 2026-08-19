@@ -4,7 +4,7 @@ import { ChevronDown } from "lucide-react";
 import { EditableImage, EditableList, EditableText } from "@/components/editable";
 import HomeConcertBanner from "@/components/home/HomeConcertBanner";
 import { AnimatedCounter } from "@/components/home/HomeMotion";
-import { MountainSilhouette } from "@/components/home/HomeVisuals";
+import { RidgeDivider } from "@/components/visuals/ForestLetterMotifs";
 
 export default function HomeHeroSection({
   onScrollToStory,
@@ -25,12 +25,18 @@ export default function HomeHeroSection({
         sizes="100vw"
         className="absolute inset-0 object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/55 to-black/75 z-[1]" />
-      <MountainSilhouette />
+      {/* 사진을 살리는 얇은 잉크 그라디언트 — 하단은 한지 배경으로 이어진다 */}
+      <div
+        className="absolute inset-0 z-[1]"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(12,20,12,0.55) 0%, rgba(12,20,12,0.32) 48%, rgba(12,20,12,0.18) 72%, rgba(12,20,12,0.05) 88%, transparent 100%)",
+        }}
+        aria-hidden="true"
+      />
+      <RidgeDivider className="absolute bottom-0 left-0 z-[2] text-[var(--color-bg)]" />
 
       <div className="relative z-10 w-full max-w-3xl mx-auto">
-       <div className="glass rounded-[var(--radius-panel)] px-6 py-9 sm:px-12 sm:py-12">
-        <div className="relative z-[1]">
         <div className="rise-in">
           <HomeConcertBanner />
         </div>
@@ -42,7 +48,7 @@ export default function HomeHeroSection({
             as="h1"
             page="home"
             section="hero"
-            className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.14] mb-5 sm:mb-6"
+            className="font-serif-display font-bold text-4xl sm:text-6xl md:text-7xl tracking-tight leading-[1.16] mb-5 sm:mb-6 [text-shadow:0_2px_28px_rgba(0,0,0,0.55)]"
           />
         </div>
 
@@ -53,7 +59,7 @@ export default function HomeHeroSection({
             as="p"
             page="home"
             section="hero"
-            className="text-balance text-base sm:text-xl md:text-2xl text-white/84 max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-10 md:mb-12"
+            className="text-balance text-base sm:text-xl md:text-2xl text-white/90 max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-10 md:mb-12 [text-shadow:0_1px_14px_rgba(0,0,0,0.55)]"
           />
         </div>
 
@@ -76,10 +82,10 @@ export default function HomeHeroSection({
             {(items) =>
               items.map((item) => (
                 <div key={item.label} className="flex min-w-0 flex-col items-center">
-                  <span className="whitespace-nowrap text-2xl sm:text-4xl md:text-5xl font-black leading-none text-white">
+                  <span className="font-serif-display whitespace-nowrap text-2xl sm:text-4xl md:text-5xl font-bold leading-none text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.5)]">
                     <AnimatedCounter target={Number(item.target)} suffix={item.suffix} />
                   </span>
-                  <span className="mt-2 text-[11px] leading-tight text-white/64 sm:text-base">
+                  <span className="mt-2 text-[11px] leading-tight text-white/70 sm:text-base">
                     {item.label}
                   </span>
                 </div>
@@ -88,15 +94,21 @@ export default function HomeHeroSection({
           </EditableList>
         </div>
 
-        <button
-          type="button"
-          onClick={onScrollToStory}
-          className="rise-in rise-in-3 glass-btn glass-btn--glass text-base sm:text-lg cursor-pointer"
-        >
-          <EditableText contentKey="home.story.cta" defaultValue="이야기 보기 ↓" as="span" page="home" section="hero" />
-        </button>
+        <div className="rise-in rise-in-3 flex justify-center">
+          <button
+            type="button"
+            onClick={onScrollToStory}
+            className="letter-btn letter-btn--primary text-base sm:text-lg"
+          >
+            <EditableText
+              contentKey="home.story.cta"
+              defaultValue="이야기 보기 ↓"
+              as="span"
+              page="home"
+              section="hero"
+            />
+          </button>
         </div>
-       </div>
       </div>
 
       <div className="absolute bottom-4 right-4 z-10 sm:bottom-16 sm:right-6">
@@ -110,9 +122,14 @@ export default function HomeHeroSection({
         />
       </div>
 
-      <div className="chevron-bounce absolute bottom-8 z-10 hidden sm:block">
-        <ChevronDown className="w-8 h-8 text-white/40" />
-      </div>
+      <button
+        type="button"
+        onClick={onScrollToStory}
+        aria-label="이야기로 스크롤"
+        className="chevron-bounce absolute bottom-8 z-10 hidden sm:block cursor-pointer"
+      >
+        <ChevronDown className="w-8 h-8 text-white/50" />
+      </button>
     </>
   );
 }

@@ -54,7 +54,7 @@ export default function HomeClient() {
         sectionId="about"
         visibilityContentKey="home.about.visibility"
         section="about"
-        defaultClassName="py-24 md:py-36 px-6 bg-[var(--color-bg-warm)]"
+        defaultClassName="relative overflow-hidden py-24 md:py-36 px-6 bg-[var(--color-bg)]"
       >
         <HomeAboutSection storyRef={storyRef} />
       </ManagedSection>
@@ -74,7 +74,7 @@ export default function HomeClient() {
         sectionId="hope"
         visibilityContentKey="home.hope.visibility"
         section="hope"
-        defaultClassName="py-24 md:py-36 px-6 bg-[var(--color-bg-warm)]"
+        defaultClassName="relative overflow-hidden py-24 md:py-36 px-6 bg-[var(--color-bg)]"
       >
         <HomeHopeSection />
       </ManagedSection>
@@ -84,7 +84,7 @@ export default function HomeClient() {
         sectionId="quotes"
         visibilityContentKey="home.quotes.visibility"
         section="quotes"
-        defaultClassName="py-24 md:py-36 px-6 bg-[var(--color-sky)] text-white"
+        defaultClassName="py-24 md:py-36 px-6 bg-[var(--color-bg)]"
       >
         <HomeQuotesSection />
       </ManagedSection>
@@ -94,7 +94,7 @@ export default function HomeClient() {
         sectionId="cta"
         visibilityContentKey="home.cta.visibility"
         section="cta"
-        defaultClassName="py-24 md:py-36 px-6 bg-[var(--color-bg-warm)]"
+        defaultClassName="py-24 md:py-36 px-6 bg-[var(--color-bg-moss)]"
       >
         <HomeCtaSection
           signatureCount={signatureCount}
@@ -107,7 +107,7 @@ export default function HomeClient() {
         sectionId="stats"
         visibilityContentKey="home.stats.visibility"
         section="stats"
-        defaultClassName="py-16 md:py-20 px-6 bg-[#0a0a0a] text-white"
+        defaultClassName="py-16 md:py-20 px-6 bg-[var(--color-deep)] text-[#FFFDF7]"
       >
         <HomeStatsSection />
       </ManagedSection>
