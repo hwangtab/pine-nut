@@ -14,7 +14,7 @@ export default function FooterContact() {
             as="span"
             page="footer"
             section="contact"
-            className="block text-white/50 text-xs mb-0.5"
+            className="block text-white/60 text-xs mb-0.5"
           />
           <EditableLink
             contentKey="footer.contact.phoneHref"
@@ -39,7 +39,7 @@ export default function FooterContact() {
             as="span"
             page="footer"
             section="contact"
-            className="block text-white/50 text-xs mb-0.5"
+            className="block text-white/60 text-xs mb-0.5"
           />
           <EditableText
             contentKey="footer.contact.bankAccount"
@@ -56,7 +56,7 @@ export default function FooterContact() {
             as="span"
             page="footer"
             section="contact"
-            className="block text-white/50 text-xs mb-0.5"
+            className="block text-white/60 text-xs mb-0.5"
           />
           <EditableLink
             contentKey="footer.contact.campaignHref"

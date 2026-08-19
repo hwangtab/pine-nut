@@ -20,7 +20,7 @@ export default function FooterPrivacyPanel({ onClose }: FooterPrivacyPanelProps)
         <button
           type="button"
           onClick={onClose}
-          className="min-h-[44px] inline-flex items-center text-white/50 hover:text-white transition-colors text-xs"
+          className="min-h-[44px] inline-flex items-center text-white/60 hover:text-white transition-colors text-xs"
         >
           닫기
         </button>
