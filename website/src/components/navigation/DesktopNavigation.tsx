@@ -33,7 +33,7 @@ export default function DesktopNavigation({
                   ? active
                     ? "text-white bg-white/20"
                     : isEvent
-                      ? "text-[#B7E4C7] hover:text-white hover:bg-white/10"
+                      ? "text-[var(--color-forest-on-photo)] hover:text-white hover:bg-white/10"
                       : "text-white/80 hover:text-white hover:bg-white/10"
                   : active
                     ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"

@@ -52,7 +52,7 @@ export default function MobileNavigationMenu({
       >
         {navLinks.map((link) => {
           const active = isActive(link.href);
-          // 기간 한정 이벤트(공연) 링크는 warm 색으로 강조
+          // 기간 한정 이벤트(공연) 링크는 forest 색으로 강조 — warm은 "함께하기" CTA 전용
           const isEvent = link.href === "/concert";
 
           return (
@@ -63,11 +63,9 @@ export default function MobileNavigationMenu({
                   isEvent ? "font-bold" : "font-medium"
                 } ${
                   active
-                    ? isEvent
-                      ? "text-[var(--color-warm)] bg-[var(--color-warm)]/10"
-                      : "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
+                    ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
                     : isEvent
-                      ? "text-[var(--color-warm)] hover:bg-[var(--color-warm)]/10"
+                      ? "text-[var(--color-forest)] hover:bg-[var(--color-forest)]/10"
                       : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]"
                 }`}
                 label={link.label}
