@@ -817,7 +817,7 @@ git add -A && git commit -m "홈 희망 섹션을 오솔길 발자취로 — 점
 
 - [ ] **Step 1: 재작성**
 
-헤딩 블록 좌정렬 + 잉크 토큰(`text-[var(--color-text)]` / subtitle `text-[var(--color-text-muted)]`). 인용 렌더러:
+헤딩 블록 좌정렬 + 잉크 토큰. h2는 치환표대로 **`font-serif-display font-bold`**(기존 `font-black` 제거) + `text-[var(--color-text)]`, subtitle은 `text-[var(--color-text-muted)]`. 인용 렌더러:
 
 ```tsx
 {(items) => (
