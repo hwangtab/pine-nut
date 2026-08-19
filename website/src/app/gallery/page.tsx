@@ -129,7 +129,7 @@ export default function GalleryPage() {
                 as="h2"
                 page="gallery"
                 section="cta"
-                className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3"
+                className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3"
               />
               <EditableText
                 contentKey="gallery.cta.description"

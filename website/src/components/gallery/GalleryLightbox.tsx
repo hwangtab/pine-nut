@@ -77,7 +77,7 @@ export default function GalleryLightbox({
   return (
     <div
       className="fade-in fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: "var(--color-overlay-strong)" }}
+      style={{ backgroundColor: "rgba(30, 51, 23, 0.9)" }}
       onClick={onClose}
     >
       <div

@@ -52,7 +52,7 @@ export default function GalleryPhotoSection({
           as="h2"
           page={page}
           section={section}
-          className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3"
+          className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3"
         />
         <EditableText
           contentKey={descriptionKey}
