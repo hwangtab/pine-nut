@@ -64,9 +64,9 @@ const koreanCategoryStyles: TimelineConfig["categoryStyles"] = {
     pillText: "text-[var(--color-forest)]",
   },
   집회: {
-    dot: "bg-[var(--color-warm)]",
-    pill: "bg-[var(--color-warm)]/10",
-    pillText: "text-[var(--color-warm)]",
+    dot: "bg-[var(--color-forest-light)]",
+    pill: "bg-[var(--color-forest-light)]/10",
+    pillText: "text-[var(--color-forest-light)]",
   },
   법률: { dot: "bg-red-500", pill: "bg-red-100", pillText: "text-red-800" },
   연대: {

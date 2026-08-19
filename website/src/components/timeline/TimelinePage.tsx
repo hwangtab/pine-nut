@@ -71,14 +71,14 @@ export function TimelinePage({
         }
       />
 
-      <div className="border-t border-b border-white/10 bg-[var(--color-bg-warm)] py-6 px-4">
+      <div className="border-t border-b border-[var(--color-border)] bg-[var(--color-bg)] py-6 px-4">
         <EditableText
           contentKey={timelineConfig.quote.contentKey}
           defaultValue={timelineConfig.quote.defaultValue}
           as="p"
           page={timelineConfig.page}
           section="quote"
-          className="text-center text-lg italic text-[var(--color-text-muted)] max-w-2xl mx-auto"
+          className="text-center text-lg font-serif-display text-[var(--color-text-muted)] max-w-2xl mx-auto"
         />
       </div>
 
@@ -89,19 +89,13 @@ export function TimelinePage({
         onSelectYear={setSelectedYear}
       />
 
-      <section className="max-w-4xl mx-auto px-4 py-12 md:py-16 relative">
-        <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-[var(--color-border)] md:hidden" />
-        <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-[var(--color-border)] -translate-x-1/2" />
-
+      <section className="max-w-3xl mx-auto px-4 py-12 md:py-16">
         {filteredEvents.length > 0 ? (
-          filteredEvents.map((event, index) => (
-            <TimelineCard
-              key={event.id}
-              event={event}
-              index={index}
-              timelineConfig={timelineConfig}
-            />
-          ))
+          <div className="trail-line relative ml-2 pl-10 space-y-8 md:space-y-10">
+            {filteredEvents.map((event) => (
+              <TimelineCard key={event.id} event={event} timelineConfig={timelineConfig} />
+            ))}
+          </div>
         ) : (
           <p className="text-center text-[var(--color-text-muted)] py-20 text-lg">
             <EditableText

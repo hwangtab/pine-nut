@@ -13,14 +13,14 @@ export function TimelineCta({ timelineConfig }: { timelineConfig: TimelineConfig
           as="h2"
           page={timelineConfig.page}
           section="cta"
-          className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-6"
+          className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-6"
         />
         <EditableLink
           contentKey={timelineConfig.cta.hrefKey}
           defaultHref={timelineConfig.cta.defaultHref}
           page={timelineConfig.page}
           section="cta"
-          className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[var(--color-warm)] px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all duration-200 hover:bg-[var(--color-warm-light)] hover:shadow-xl"
+          className="letter-btn letter-btn--primary"
         >
           <EditableText
             contentKey={timelineConfig.cta.buttonKey}
