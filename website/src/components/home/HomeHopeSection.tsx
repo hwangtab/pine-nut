@@ -2,36 +2,19 @@
 
 import { EditableImage, EditableList, EditableText } from "@/components/editable";
 import { FadeIn } from "@/components/home/HomeMotion";
-
-const icons = [
-  <svg key="prayer" viewBox="0 0 48 48" fill="none" className="w-10 h-10" aria-hidden="true">
-    <path d="M24 4C24 4 14 18 14 26a10 10 0 0020 0C34 18 24 4 24 4z" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M24 18v12M20 28l4 4 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
-  </svg>,
-  <svg key="solidarity" viewBox="0 0 48 48" fill="none" className="w-10 h-10" aria-hidden="true">
-    <circle cx="24" cy="16" r="6" stroke="currentColor" strokeWidth="2.5" fill="none" />
-    <circle cx="12" cy="20" r="4" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6" />
-    <circle cx="36" cy="20" r="4" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6" />
-    <path d="M16 34c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-    <path d="M6 36c0-3.3 2.7-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.6" />
-    <path d="M42 36c0-3.3-2.7-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.6" />
-  </svg>,
-  <svg key="award" viewBox="0 0 48 48" fill="none" className="w-10 h-10" aria-hidden="true">
-    <polygon points="24,4 29,18 44,18 32,27 36,42 24,33 12,42 16,27 4,18 19,18" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" fill="none" />
-  </svg>,
-];
+import { PineConeIcon } from "@/components/visuals/ForestLetterMotifs";
 
 export default function HomeHopeSection() {
   return (
     <div className="max-w-5xl mx-auto">
-      <FadeIn className="text-center mb-6">
+      <FadeIn className="mb-6">
         <EditableText
           contentKey="home.hope.eyebrow"
           defaultValue="그러나 이야기는 여기서 끝나지 않습니다"
           as="p"
           page="home"
           section="hope"
-          className="text-sm font-semibold tracking-widest uppercase text-[var(--color-forest)] opacity-60 mb-4"
+          className="font-hand text-xl normal-case tracking-normal text-[var(--color-forest)] mb-4"
         />
         <EditableText
           contentKey="home.hope.heading"
@@ -47,7 +30,7 @@ export default function HomeHopeSection() {
           as="p"
           page="home"
           section="hope"
-          className="text-balance text-lg md:text-xl text-[var(--color-text-muted)] leading-relaxed max-w-2xl mx-auto"
+          className="text-balance text-lg md:text-xl text-[var(--color-text-muted)] leading-relaxed max-w-2xl"
         />
       </FadeIn>
 
@@ -75,17 +58,13 @@ export default function HomeHopeSection() {
         ]}
       >
         {(items) => (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 mt-14">
+          <div className="trail-line relative mt-14 ml-2 space-y-12 pl-10">
             {items.map((card, i) => (
               <FadeIn key={card.title} delay={i * 0.1}>
-                <div className="bg-white rounded-[var(--radius-card)] p-8 border border-[var(--color-border)] text-center h-full flex flex-col items-center shadow-card">
-                  <div className="text-[var(--color-forest)] mb-5">
-                    {icons[i] || icons[0]}
-                  </div>
-                  <h3 className="text-xl font-bold mb-3">{card.title}</h3>
-                  <p className="text-[var(--color-text-muted)] leading-relaxed">
-                    {card.desc}
-                  </p>
+                <div className="relative">
+                  <PineConeIcon className="absolute -left-[52px] top-0 w-6 h-8 text-[var(--color-forest)]" />
+                  <h3 className="font-serif-display font-bold text-2xl mb-2 text-[var(--color-text)]">{card.title}</h3>
+                  <p className="max-w-xl leading-relaxed text-[var(--color-text-muted)]">{card.desc}</p>
                 </div>
               </FadeIn>
             ))}
@@ -94,7 +73,7 @@ export default function HomeHopeSection() {
       </EditableList>
 
       <FadeIn delay={0.3}>
-        <div className="mt-14">
+        <figure className="photo-frame paper-tilt-r mt-14">
           <EditableImage
             contentKey="home.hope.protestPhoto"
             defaultSrc="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/2025111117101271238_l.png"
@@ -104,17 +83,19 @@ export default function HomeHopeSection() {
             section="hope"
             width={1200}
             height={800}
-            className="w-full rounded-[var(--radius-card)] border border-black/5 shadow-card"
+            className="w-full rounded-[2px]"
           />
-          <EditableText
-            contentKey="home.hope.protestPhotoCredit"
-            defaultValue="사진: 풍천리양수발전소반대대책위 / 프레시안"
-            as="p"
-            page="home"
-            section="hope"
-            className="text-xs text-[var(--color-text-muted)] mt-2"
-          />
-        </div>
+          <figcaption>
+            <EditableText
+              contentKey="home.hope.protestPhotoCredit"
+              defaultValue="사진: 풍천리양수발전소반대대책위 / 프레시안"
+              as="p"
+              page="home"
+              section="hope"
+              className="font-hand text-lg text-[var(--color-text-muted)] mt-2 text-right pr-1"
+            />
+          </figcaption>
+        </figure>
       </FadeIn>
     </div>
   );
