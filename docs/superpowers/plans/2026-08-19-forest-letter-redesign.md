@@ -1255,6 +1255,14 @@ grep -rn "font-black" src/app src/components --include="*.tsx" | grep -v "card-n
 
 남은 각 줄이 **섹션 제목인지** 아니면 뱃지·계좌번호·숫자 강조 같은 비제목 요소인지 판정한다. 섹션 제목(h1/h2/h3)이면 `font-serif-display font-bold`로 고치고, 비제목이면 그대로 두되 보고서에 이유를 남긴다. 카드뉴스와 콘서트 페이지는 의도된 예외라 위 grep에서 제외돼 있다.
 
+감빛 감사도 함께 돌린다. 이 프로젝트에서 가장 자주 새어나간 규칙이고(6개 태스크에서 적발), 앞의 두 grep으로는 잡히지 않는다:
+
+```bash
+grep -rn "color-warm" src/app src/components --include="*.tsx" | grep -v "card-news/cards" | grep -v "app/concert"
+```
+
+각 줄이 **서명·후원·공유 CTA이거나 실시간 서명 카운터인지** 판정한다. 맞으면 그대로 두고, 아니면(필터 pill·탭·태그·장식 악센트·일반 링크·아이콘 뱃지) `--color-forest` 계열로 옮긴다. 판정 결과를 줄 단위로 보고서에 남긴다.
+
 - [ ] **Step 2: globals.css에서 글래스 삭제**
 
 다음을 삭제한다: `@theme` 내 `--glass-*`/`--frost-*` 토큰 전부, "리퀴드 글래스 재질" 주석 블록부터 `.glass`/`.glass-strong`/`.glass-subtle`/`.frost`/`.frost-sheet`/`.frost-field`/`.glass-dark`/`.glass-btn` 계열/`.glass-chip` 정의 전부, "폴백 1"/"폴백 2" `@supports`·`@media (prefers-reduced-transparency)` 블록 중 글래스 대상 규칙. 이때 `prefers-reduced-transparency` 대응이 필요한 신규 클래스는 없는지 확인한다(종이 재질은 불투명이라 원래 불필요 — 그 사실을 주석 한 줄로 남긴다).
