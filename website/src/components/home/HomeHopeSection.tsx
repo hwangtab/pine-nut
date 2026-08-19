@@ -22,7 +22,7 @@ export default function HomeHopeSection() {
           as="h2"
           page="home"
           section="hope"
-          className="text-3xl sm:text-4xl md:text-5xl font-black mb-6 text-[var(--color-forest)]"
+          className="text-3xl sm:text-4xl md:text-5xl font-serif-display font-bold mb-6 text-[var(--color-forest)]"
         />
         <EditableText
           contentKey="home.hope.subtitle"
