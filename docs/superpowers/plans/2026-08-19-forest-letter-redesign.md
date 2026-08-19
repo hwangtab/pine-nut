@@ -1205,9 +1205,11 @@ git add -A && git commit -m "푸터를 깊은 숲 그린·능선 경계로 — �
 
 ### Task 19: concert·donate·board·share·인증 — 치환표 일괄
 
-**Files:** `website/src/app/concert/ConcertHero.tsx` 및 `concert/` 전체, `website/src/app/donate/` + `website/src/components/donate/`, `website/src/app/board/` + `website/src/components/board/`, `website/src/app/share/`, `website/src/app/login/page.tsx`, `website/src/app/signup/page.tsx`, `website/src/app/mypage/`, `website/src/components/auth/AuthShell.tsx`, `website/src/components/card-news/`, `website/src/components/ShareButtons.tsx`, `website/src/components/CardNews.tsx`
+**Files:** `website/src/app/concert/ConcertHero.tsx` 및 `concert/` 전체, `website/src/app/donate/` + `website/src/components/donate/`, `website/src/app/board/` + `website/src/components/board/`, `website/src/app/share/`, `website/src/app/login/page.tsx`, `website/src/app/signup/page.tsx`, `website/src/app/mypage/`, `website/src/components/auth/AuthShell.tsx`, `website/src/components/card-news/`, `website/src/components/ShareButtons.tsx`, `website/src/components/CardNews.tsx`, **`website/src/components/UtilityHeader.tsx`**, **`website/src/components/CustomSectionsHost.tsx`**
 
 **페이지 지시:**
+- **`UtilityHeader.tsx`**(not-found·privacy·news 상세·보도자료 문서 셸이 공유하는 페이지 타이틀)와 **`CustomSectionsHost.tsx`**(PublicShell을 통해 전 페이지의 관리자 커스텀 섹션을 렌더)의 `font-black` 제목을 치환표대로 `font-serif-display font-bold`로. 두 파일은 어느 페이지에도 속하지 않아 다른 태스크의 검증에 잡히지 않는다.
+- `card-news/cards/*`와 `concert/`의 `font-black`은 **예외로 남긴다** — 카드뉴스는 다운로드용 독립 그래픽이고 콘서트 페이지는 포스터 타이포그래피가 의도된 정체성이다. 본문 페이지의 섹션 제목 규칙과 다른 문제이므로 건드리지 않는다.
 - 전부 치환표 기계 적용이 기본. ConcertHero는 유리 패널을 제거하고 사진 위 직접 타이포로 — 오버레이는 `linear-gradient(180deg, rgba(12,20,12,0.62) 0%, rgba(12,20,12,0.38) 55%, rgba(12,20,12,0.25) 100%)`, 하단에 `<RidgeDivider className="absolute bottom-0 left-0 z-[2] text-[var(--color-bg)]" />`, 제목은 `font-serif-display font-bold text-white [text-shadow:0_2px_24px_rgba(0,0,0,0.5)]`
 - AuthShell: `frost` 카드 → `paper p-8`, 필드 → `paper-field`, 제출 → `letter-btn letter-btn--primary`(로그인/가입도 행동 유도 버튼이므로 허용)
 - donate 계좌·후원 안내 카드 → `paper`, 후원 버튼 감빛 유지
@@ -1244,6 +1246,14 @@ grep -rn "glass\|frost" src --include="*.tsx" | grep -v paper
 ```
 
 0줄이어야 한다. 나오면 해당 파일을 치환표로 마저 이주하고 다시 확인한다. **0줄이 되기 전에 Step 2로 넘어가지 않는다.**
+
+이어서 제목 규칙 감사도 함께 돌린다. 유리 grep만으로는 잡히지 않는 이탈이기 때문이다:
+
+```bash
+grep -rn "font-black" src/app src/components --include="*.tsx" | grep -v "card-news/cards" | grep -v "app/concert"
+```
+
+남은 각 줄이 **섹션 제목인지** 아니면 뱃지·계좌번호·숫자 강조 같은 비제목 요소인지 판정한다. 섹션 제목(h1/h2/h3)이면 `font-serif-display font-bold`로 고치고, 비제목이면 그대로 두되 보고서에 이유를 남긴다. 카드뉴스와 콘서트 페이지는 의도된 예외라 위 grep에서 제외돼 있다.
 
 - [ ] **Step 2: globals.css에서 글래스 삭제**
 
