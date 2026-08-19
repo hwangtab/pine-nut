@@ -53,11 +53,12 @@ for (const clientPath of clientPaths) {
 }
 
 const configSource = read("src/components/news-list/news-list-config.ts");
+// 페이퍼 리디자인에서 카테고리별 무지개색 뱃지(categoryFilterStyles, categoryTagColors)는
+// 삭제되고 단일 톤의 .ink-chip 뱃지로 통일되었다. 죽은 상수를 되살리지 않도록
+// 이 목록에 다시 추가하지 말 것.
 for (const required of [
   "koreanNewsListConfig",
   "englishNewsListConfig",
-  "categoryFilterStyles",
-  "categoryTagColors",
   "dateLocale",
   "news.hero.title",
   "en.news.hero.title",
@@ -77,7 +78,9 @@ for (const required of [
 }
 
 const cardSource = read("src/components/news-list/NewsCard.tsx");
-for (const required of ["Image", "Newspaper", "dateLocale", "categoryTagColors", "detailPathPrefix"]) {
+// categoryTagColors도 같은 이유(우측 주석 참고)로 여기서 제외됨: NewsCard는 이제
+// .ink-chip 하나로 카테고리를 표시하며 카테고리별 색상 매핑을 참조하지 않는다.
+for (const required of ["Image", "Newspaper", "dateLocale", "detailPathPrefix"]) {
   assert(cardSource.includes(required), `NewsCard.tsx must contain ${required}.`);
 }
 assert(!cardSource.includes("<svg"), "NewsCard must not use inline SVG for the empty thumbnail icon.");
