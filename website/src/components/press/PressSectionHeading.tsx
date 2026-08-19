@@ -6,13 +6,12 @@ interface PressSectionHeadingProps {
   contentKey: string;
   defaultValue: string;
   section: string;
-  accent?: "forest" | "warm" | "sky";
+  accent?: "forest" | "sky";
   className?: string;
 }
 
 const accentClassNames = {
   forest: "bg-[var(--color-forest)]",
-  warm: "bg-[var(--color-warm)]",
   sky: "bg-[var(--color-sky)]",
 };
 

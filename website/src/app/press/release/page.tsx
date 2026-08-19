@@ -138,7 +138,6 @@ export default function PressReleasePage() {
               contentKey="press.release.damageTitle"
               defaultValue="피해 규모"
               section="release"
-              accent="warm"
             />
             <EditableRichText
               contentKey="press.release.damageIntro"
@@ -166,7 +165,7 @@ export default function PressReleasePage() {
                 <ul className="space-y-2 text-base text-[var(--color-text-muted)] leading-relaxed">
                   {items.map((item, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <span className="text-[var(--color-warm)] font-bold mt-0.5">--</span>
+                      <span className="text-[var(--color-forest)] font-bold mt-0.5">--</span>
                       <span>
                         <strong>{item.label}:</strong> {item.description}
                       </span>

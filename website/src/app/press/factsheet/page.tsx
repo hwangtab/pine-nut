@@ -147,7 +147,6 @@ export default function FactsheetPage() {
             contentKey="press.factsheet.keyNumbersTitle"
             defaultValue="핵심 수치"
             section="factsheet"
-            accent="warm"
             className="mb-4"
           />
           <EditableList
