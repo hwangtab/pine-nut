@@ -235,7 +235,7 @@ export default function StoryPage() {
               as="h2"
               page="story"
               section="cta"
-              className="text-3xl md:text-4xl font-black mb-6"
+              className="font-serif-display font-bold text-3xl md:text-4xl mb-6"
             />
             <EditableRichText
               contentKey="story.cta.body"
