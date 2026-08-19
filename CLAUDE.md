@@ -73,6 +73,15 @@ NEXT_PUBLIC_SITE_URL
 
 See `.env.example`.
 
+## Browser Tooling (MCP)
+
+Two browser MCP servers with distinct roles — use both, not either/or:
+
+- **aside** (`mcp__aside__repl`, requires [Aside Browser](https://aside.computer) installed locally): flow automation and behavior checks. Persistent-scope Playwright JS REPL — open→fill→submit→verify in a single call, loops/conditionals allowed. `attachBrowserTab()` reuses the user's logged-in Aside Browser session (e.g. `/admin` pages). Caveat: partial Playwright API — no `waitForTimeout`; use `waitForSelector` etc.
+- **chrome-devtools**: measurement and diagnostics. Performance traces (LCP/INP/CLS), Lighthouse audits, network request inspection, heap snapshots, viewport/network-throttling emulation. Separate profile — no login session.
+
+Rule of thumb: E2E flows, login-required pages, repetitive multi-page checks → aside. Performance/SEO audits, network debugging → chrome-devtools. (Note: GitHub's egozverev/aside is an unrelated research repo with the same name.)
+
 ## Git Conventions
 
 - Commit messages in Korean
