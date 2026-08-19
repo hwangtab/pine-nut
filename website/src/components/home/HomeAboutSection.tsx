@@ -44,7 +44,8 @@ export default function HomeAboutSection({ storyRef }: HomeAboutSectionProps) {
           <div className="my-10">
             <EditableImage
               contentKey="home.about.forestImage"
-              defaultSrc="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499236_STD.jpg"
+              defaultSrc="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003499236_std.jpg"
+              fallbackSrc="/images/pine-forest-1.jpg"
               alt="풍천리 잣나무 숲 실제 풍경"
               page="home"
               section="about"

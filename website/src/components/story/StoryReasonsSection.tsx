@@ -178,7 +178,7 @@ export function StoryReasonsSection() {
         <div className="mt-12 max-w-3xl mx-auto">
           <EditableImage
             contentKey="story.reasons.photo"
-            defaultSrc="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535385_STD.jpg"
+            defaultSrc="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535385_std.jpg"
             alt="이설 공사로 훼손되고 있는 가리산 현장"
             page="story"
             section="reasons"

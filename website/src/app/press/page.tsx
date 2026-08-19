@@ -42,8 +42,8 @@ export default function PressPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] to-white">
       <SubHero
-        imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
-        fallbackImageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+        imageUrl="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535383_std.jpg"
+        fallbackImageUrl="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535387_std.jpg"
         imageContentKey="press.hero.image"
         imagePage="press"
         imageSection="hero"

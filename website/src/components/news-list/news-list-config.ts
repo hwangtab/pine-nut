@@ -90,7 +90,7 @@ const fallbackFilterStyle = {
   activeColor: "bg-[var(--color-text)] text-white",
 };
 const heroImageUrl =
-  "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499236_STD.jpg";
+  "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003499236_std.jpg";
 
 export const koreanNewsListConfig: NewsListConfig = {
   page: "news",

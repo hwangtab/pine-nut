@@ -40,7 +40,7 @@ export default function GalleryPage() {
     <div className="min-h-screen bg-gradient-to-b from-[var(--color-bg)] via-white to-[var(--color-bg-warm)]/30">
       {/* Hero */}
       <SubHero
-        imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+        imageUrl="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535387_std.jpg"
         imageContentKey="gallery.hero.image"
         imagePage="gallery"
         imageSection="hero"

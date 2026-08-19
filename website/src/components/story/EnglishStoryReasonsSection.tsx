@@ -133,7 +133,7 @@ export function EnglishStoryReasonsSection() {
         <div className="mt-12 max-w-3xl mx-auto">
           <EditableImage
             contentKey="en.storyPage.reasons.photo"
-            defaultSrc="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535385_STD.jpg"
+            defaultSrc="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535385_std.jpg"
             alt="Damage on Mt. Gari from advance construction"
             page="en/story"
             section="reasons"

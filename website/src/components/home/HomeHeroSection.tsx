@@ -15,7 +15,8 @@ export default function HomeHeroSection({
     <>
       <EditableImage
         contentKey="home.hero.bgImage"
-        defaultSrc="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+        defaultSrc="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535387_std.jpg"
+        fallbackSrc="/images/forest-aerial.jpg"
         alt="풍천리 마을과 잣나무 숲 드론 항공 사진"
         page="home"
         section="hero"

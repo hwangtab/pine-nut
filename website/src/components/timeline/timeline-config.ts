@@ -91,7 +91,7 @@ const englishCategoryStyles: TimelineConfig["categoryStyles"] = {
 
 const fallbackCategoryStyle = koreanCategoryStyles.기타;
 const heroImageUrl =
-  "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg";
+  "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535383_std.jpg";
 
 export const koreanTimelineConfig: TimelineConfig = {
   page: "timeline",

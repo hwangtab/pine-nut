@@ -31,7 +31,7 @@ export const newsItems: NewsItem[] = [
       "https://www.pressian.com/pages/articles/2025111117201617280",
     sourceName: "프레시안",
     thumbnailUrl:
-      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535384_STD.jpg",
+      "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535384_std.jpg",
   },
   {
     id: 10,
@@ -51,7 +51,7 @@ export const newsItems: NewsItem[] = [
       "https://www.ohmynews.com/NWS_Web/Series/series_premium_pg.aspx?CNTN_CD=A0003174314",
     sourceName: "오마이뉴스",
     thumbnailUrl:
-      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535385_STD.jpg",
+      "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535385_std.jpg",
   },
   {
     id: 6,
@@ -72,7 +72,7 @@ export const newsItems: NewsItem[] = [
       "https://www.hcsinmoon.co.kr/news/articleView.html?idxno=78735",
     sourceName: "홍천신문",
     thumbnailUrl:
-      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535382_STD.jpg",
+      "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535382_std.jpg",
   },
   {
     id: 3,
@@ -93,7 +93,7 @@ export const newsItems: NewsItem[] = [
       "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003153731",
     sourceName: "오마이뉴스",
     thumbnailUrl:
-      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535381_STD.jpg",
+      "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535381_std.jpg",
   },
   {
     id: 2,
@@ -115,7 +115,7 @@ export const newsItems: NewsItem[] = [
       "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003150780",
     sourceName: "오마이뉴스",
     thumbnailUrl:
-      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499236_STD.jpg",
+      "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003499236_std.jpg",
   },
   {
     id: 5,
@@ -136,7 +136,7 @@ export const newsItems: NewsItem[] = [
       "https://www.ikpnews.net/news/articleView.html?idxno=67812",
     sourceName: "한국농정신문",
     thumbnailUrl:
-      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg",
+      "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535383_std.jpg",
   },
   {
     id: 7,
@@ -157,7 +157,7 @@ export const newsItems: NewsItem[] = [
       "https://www.womennews.co.kr/news/articleView.html?idxno=249863",
     sourceName: "여성신문",
     thumbnailUrl:
-      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/0722/IE003499234_STD.jpg",
+      "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003499234_std.jpg",
   },
   {
     id: 8,
@@ -178,7 +178,7 @@ export const newsItems: NewsItem[] = [
       "https://www.newsis.com/view/NISX20241024_0002931932",
     sourceName: "뉴시스",
     thumbnailUrl:
-      "https://img1.newsis.com/2024/10/24/NISI20241024_0001684437_web.jpg",
+      "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/nisi20241024_0001684437_web.jpg",
   },
   {
     id: 4,
@@ -199,7 +199,7 @@ export const newsItems: NewsItem[] = [
       "https://www.newsis.com/view/NISX20240722_0002820126",
     sourceName: "뉴시스",
     thumbnailUrl:
-      "https://img1.newsis.com/2024/07/22/NISI20240722_0001608612_web.jpg",
+      "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/nisi20240722_0001608612_web.jpg",
   },
   {
     id: 9,
@@ -220,6 +220,6 @@ export const newsItems: NewsItem[] = [
       "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0002856920",
     sourceName: "오마이뉴스",
     thumbnailUrl:
-      "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535377_STD.jpg",
+      "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535377_std.jpg",
   },
 ];

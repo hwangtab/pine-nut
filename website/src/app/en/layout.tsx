@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     // 대체해버려, 명시하지 않으면 영문 페이지에는 og:image가 아예 남지 않는다.
     images: [
       {
-        url: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg",
+        url: "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535387_std.jpg",
         width: 1200,
         height: 630,
         alt: "Aerial view of Pungcheon-ri",

@@ -71,7 +71,7 @@ export function StoryBattleSection() {
           <div>
             <EditableImage
               contentKey="story.battle.photo1"
-              defaultSrc="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535381_STD.jpg"
+              defaultSrc="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535381_std.jpg"
               alt="풍천리 주민들의 대통령실 앞 기자회견 현장"
               page="story"
               section="battle"
@@ -91,7 +91,7 @@ export function StoryBattleSection() {
           <div>
             <EditableImage
               contentKey="story.battle.photo2"
-              defaultSrc="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535384_STD.jpg"
+              defaultSrc="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535384_std.jpg"
               alt="풍천리 마을에 설치된 양수발전소 반대 플래카드"
               page="story"
               section="battle"

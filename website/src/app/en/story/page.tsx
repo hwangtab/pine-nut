@@ -25,7 +25,7 @@ export default function EnglishStoryPage() {
   return (
     <article>
       <SubHero
-        imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535387_STD.jpg"
+        imageUrl="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535387_std.jpg"
         imageContentKey="en.storyPage.hero.image"
         imagePage="en/story"
         imageSection="hero"

@@ -16,7 +16,7 @@ export default function SharePage() {
     <article>
       {/* Hero */}
       <SubHero
-        imageUrl="https://www.pressian.com/_resources/10/2025/11/12/2025111117101271238_l.png"
+        imageUrl="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/2025111117101271238_l.png"
         imageContentKey="share.hero.image"
         imagePage="share"
         imageSection="hero"

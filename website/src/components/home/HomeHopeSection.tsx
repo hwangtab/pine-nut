@@ -97,7 +97,8 @@ export default function HomeHopeSection() {
         <div className="mt-14">
           <EditableImage
             contentKey="home.hope.protestPhoto"
-            defaultSrc="https://www.pressian.com/_resources/10/2025/11/12/2025111117101271238_l.png"
+            defaultSrc="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/2025111117101271238_l.png"
+            fallbackSrc="/images/mountain-village.jpg"
             alt="672차 결의대회 사진"
             page="home"
             section="hope"

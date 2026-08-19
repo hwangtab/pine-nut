@@ -49,7 +49,7 @@ export default function EnglishDonatePage() {
       <Toast message={toastMessage} visible={toastVisible} />
 
       <SubHero
-        imageUrl="https://ojsfile.ohmynews.com/STD_IMG_FILE/2025/1016/IE003535383_STD.jpg"
+        imageUrl="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535383_std.jpg"
         imageContentKey="en.donate.hero.image"
         imagePage="en/donate"
         imageSection="hero"
