@@ -144,7 +144,7 @@ export default function GalleryPage() {
                 defaultHref="https://campaigns.do"
                 page="gallery"
                 section="cta"
-                className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[var(--color-warm)] px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all duration-200 hover:bg-[var(--color-warm-light)] hover:shadow-xl"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[var(--color-forest)] px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all duration-200 hover:bg-[var(--color-forest-light)] hover:shadow-xl"
               >
                 <EditableText
                   contentKey="gallery.cta.submit"

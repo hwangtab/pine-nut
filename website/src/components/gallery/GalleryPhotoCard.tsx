@@ -19,7 +19,7 @@ export default function GalleryPhotoCard({
 }) {
   const { ref, inView } = useReveal<HTMLButtonElement>();
   const tiltClass =
-    index % 3 === 0 ? "paper-tilt-l" : index % 3 === 2 ? "paper-tilt-r" : "";
+    index % 6 === 1 ? "paper-tilt-l" : index % 6 === 4 ? "paper-tilt-r" : "";
   return (
     <button
       ref={ref}
