@@ -58,7 +58,10 @@ export default function HomeImpactSection() {
               <FadeIn key={card.title} delay={i * 0.1}>
                 <div className="paper h-full p-8">
                   <div className="relative z-[1]">
-                    <span className="font-serif-display text-sm font-bold tracking-[0.25em] text-[var(--color-forest)]">
+                    <span
+                      aria-hidden="true"
+                      className="font-serif-display text-sm font-bold tracking-[0.25em] text-[var(--color-forest)]"
+                    >
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <h3 className="font-serif-display font-bold text-2xl mt-3 mb-4 text-[var(--color-text)]">

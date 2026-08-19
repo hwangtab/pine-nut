@@ -20,6 +20,9 @@ export default function DesktopNavigation({
       {navLinks.map((link) => {
         const active = isActive(link.href);
         // 기간 한정 이벤트(공연) 링크는 forest 색으로 강조 — warm은 "함께하기" CTA 전용
+        // amber(warm)는 서명·후원·공유 등 사이트 전역 CTA 전용 색이라, 내비 안에
+        // amber가 두 개 생기면 주요 액션의 시선 쏠림이 분산된다. 그래서 이벤트 링크는
+        // 의도적으로 amber를 쓰지 않는다 — "복원"하지 말 것.
         const isEvent = link.href === "/concert";
 
         return (

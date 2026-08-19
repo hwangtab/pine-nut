@@ -113,25 +113,37 @@ export default function SignupPage() {
         </div>
       )}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          placeholder="등록된 이메일"
-          className="paper-field"
-        />
-        <input
-          name="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          minLength={8}
-          placeholder="비밀번호 (8자 이상)"
-          className="paper-field"
-        />
+        <div className="flex flex-col gap-1.5 text-left">
+          <label htmlFor="signup-email" className="text-sm font-bold text-[var(--color-text)]">
+            등록된 이메일
+          </label>
+          <input
+            id="signup-email"
+            name="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="등록된 이메일"
+            className="paper-field"
+          />
+        </div>
+        <div className="flex flex-col gap-1.5 text-left">
+          <label htmlFor="signup-password" className="text-sm font-bold text-[var(--color-text)]">
+            비밀번호 (8자 이상)
+          </label>
+          <input
+            id="signup-password"
+            name="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={8}
+            placeholder="비밀번호 (8자 이상)"
+            className="paper-field"
+          />
+        </div>
         <button
           type="submit"
           disabled={loading}
