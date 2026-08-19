@@ -11,7 +11,7 @@ export function StoryTransportSection() {
         as="h3"
         page="story"
         section="transport"
-        className="text-xl md:text-2xl font-bold text-[var(--color-forest)] mb-8 text-center"
+        className="font-serif-display text-xl md:text-2xl font-bold text-[var(--color-forest)] mb-8"
       />
       <EditableList
         contentKey="story.transport.car"
@@ -37,43 +37,45 @@ export function StoryTransportSection() {
       >
         {(items) => (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-[var(--radius-card)] p-6 md:p-8 border-2 border-[var(--color-forest)]/15 shadow-card">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 rounded-xl bg-[var(--color-forest)]/10 flex items-center justify-center">
-                  <svg
-                    className="w-5 h-5 text-[var(--color-forest)]"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8 17h.01M16 17h.01M5.2 17H4a1 1 0 01-1-1v-3.6a1 1 0 01.1-.44l1.5-3.2A2 2 0 016.4 7.5h11.2a2 2 0 011.8 1.3l1.5 3.2a1 1 0 01.1.44V16a1 1 0 01-1 1h-1.2M7 17a1 1 0 102 0 1 1 0 00-2 0zm8 0a1 1 0 102 0 1 1 0 00-2 0z"
-                    />
-                  </svg>
+            <div className="paper p-6 md:p-8">
+              <div className="relative z-[1]">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--color-forest)]/10 flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5 text-[var(--color-forest)]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M8 17h.01M16 17h.01M5.2 17H4a1 1 0 01-1-1v-3.6a1 1 0 01.1-.44l1.5-3.2A2 2 0 016.4 7.5h11.2a2 2 0 011.8 1.3l1.5 3.2a1 1 0 01.1.44V16a1 1 0 01-1 1h-1.2M7 17a1 1 0 102 0 1 1 0 00-2 0zm8 0a1 1 0 102 0 1 1 0 00-2 0z"
+                      />
+                    </svg>
+                  </div>
+                  <h4 className="font-serif-display text-lg font-bold text-[var(--color-text)]">
+                    자가용
+                  </h4>
                 </div>
-                <h4 className="text-lg font-bold text-[var(--color-text)]">
-                  자가용
-                </h4>
-              </div>
-              <ul className="space-y-4 text-sm md:text-base text-[var(--color-text-muted)] leading-relaxed">
-                {items.map((item, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <span className="shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--color-forest)]" />
-                    <span>
-                      <strong className="text-[var(--color-text)]">{item.title}</strong>
-                      <br />
-                      {item.route}
-                      <br />
-                      <span className="text-[var(--color-forest)] font-semibold">
-                        {item.duration}
+                <ul className="space-y-4 text-sm md:text-base text-[var(--color-text-muted)] leading-relaxed">
+                  {items.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--color-forest)]" />
+                      <span>
+                        <strong className="text-[var(--color-text)]">{item.title}</strong>
+                        <br />
+                        {item.route}
+                        <br />
+                        <span className="text-[var(--color-forest)] font-semibold">
+                          {item.duration}
+                        </span>
                       </span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
             <EditableList
@@ -104,47 +106,49 @@ export function StoryTransportSection() {
               ]}
             >
               {(publicItems) => (
-                <div className="bg-white rounded-[var(--radius-card)] p-6 md:p-8 border-2 border-[var(--color-forest)]/15 shadow-card">
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="w-10 h-10 rounded-xl bg-[var(--color-forest)]/10 flex items-center justify-center">
-                      <svg
-                        className="w-5 h-5 text-[var(--color-forest)]"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M8 7v10M16 7v10M6 7h12a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V9a2 2 0 012-2zm0 10v2m12-2v2M9 4h6"
-                        />
-                      </svg>
+                <div className="paper p-6 md:p-8">
+                  <div className="relative z-[1]">
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="w-10 h-10 rounded-xl bg-[var(--color-forest)]/10 flex items-center justify-center">
+                        <svg
+                          className="w-5 h-5 text-[var(--color-forest)]"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M8 7v10M16 7v10M6 7h12a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V9a2 2 0 012-2zm0 10v2m12-2v2M9 4h6"
+                          />
+                        </svg>
+                      </div>
+                      <h4 className="font-serif-display text-lg font-bold text-[var(--color-text)]">
+                        대중교통
+                      </h4>
                     </div>
-                    <h4 className="text-lg font-bold text-[var(--color-text)]">
-                      대중교통
-                    </h4>
+                    <ul className="space-y-4 text-sm md:text-base text-[var(--color-text-muted)] leading-relaxed">
+                      {publicItems.map((item, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <span className="shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--color-forest)]" />
+                          <span>
+                            <strong className="text-[var(--color-text)]">{item.title}</strong>
+                            <br />
+                            {item.route}
+                            {item.duration && (
+                              <>
+                                <br />
+                                <span className="text-[var(--color-forest)] font-semibold">
+                                  {item.duration}
+                                </span>
+                              </>
+                            )}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <ul className="space-y-4 text-sm md:text-base text-[var(--color-text-muted)] leading-relaxed">
-                    {publicItems.map((item, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <span className="shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--color-forest)]" />
-                        <span>
-                          <strong className="text-[var(--color-text)]">{item.title}</strong>
-                          <br />
-                          {item.route}
-                          {item.duration && (
-                            <>
-                              <br />
-                              <span className="text-[var(--color-forest)] font-semibold">
-                                {item.duration}
-                              </span>
-                            </>
-                          )}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
               )}
             </EditableList>

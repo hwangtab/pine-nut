@@ -1,6 +1,7 @@
 "use client";
 
 import { EditableImage, EditableList, EditableText } from "@/components/editable";
+import { PineConeIcon } from "@/components/visuals/ForestLetterMotifs";
 
 export function StoryBattleSection() {
   return (
@@ -12,7 +13,7 @@ export function StoryBattleSection() {
           as="h2"
           page="story"
           section="battle"
-          className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
+          className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
         />
         <EditableList
           contentKey="story.battle.timeline"
@@ -50,15 +51,16 @@ export function StoryBattleSection() {
           ]}
         >
           {(items) => (
-            <div className="space-y-8">
+            <div className="trail-line relative ml-2 space-y-12 pl-10">
               {items.map((item, index) => (
-                <div key={index} className="flex gap-5 md:gap-8">
-                  <div className="shrink-0 w-20 md:w-24">
-                    <span className="inline-block bg-[var(--color-forest)] text-white text-xs md:text-sm font-bold px-2 md:px-3 py-1.5 rounded-full whitespace-nowrap">
-                      {item.year}
-                    </span>
-                  </div>
-                  <p className="text-[var(--color-text)] leading-relaxed text-base md:text-lg pt-0.5 [overflow-wrap:anywhere]">
+                <div key={index} className="relative">
+                  <PineConeIcon
+                    className="absolute -left-[52px] top-0 w-6 h-8 text-[var(--color-forest)]"
+                  />
+                  <h3 className="font-serif-display font-bold text-2xl mb-2 text-[var(--color-text)]">
+                    {item.year}
+                  </h3>
+                  <p className="max-w-xl leading-relaxed text-[var(--color-text-muted)] [overflow-wrap:anywhere]">
                     {item.text}
                   </p>
                 </div>
@@ -67,8 +69,8 @@ export function StoryBattleSection() {
           )}
         </EditableList>
 
-        <div className="mt-12 space-y-8">
-          <div>
+        <div className="mt-14 space-y-10">
+          <figure className="photo-frame paper-tilt-r">
             <EditableImage
               contentKey="story.battle.photo1"
               defaultSrc="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535381_std.jpg"
@@ -77,18 +79,20 @@ export function StoryBattleSection() {
               section="battle"
               width={1200}
               height={800}
-              className="w-full rounded-[var(--radius-card)] shadow-card my-6"
+              className="w-full rounded-[2px]"
             />
-            <EditableText
-              contentKey="story.battle.photo1Caption"
-              defaultValue="사진: 오마이뉴스"
-              as="p"
-              page="story"
-              section="battle"
-              className="text-xs text-[var(--color-text-muted)] mt-1"
-            />
-          </div>
-          <div>
+            <figcaption>
+              <EditableText
+                contentKey="story.battle.photo1Caption"
+                defaultValue="사진: 오마이뉴스"
+                as="p"
+                page="story"
+                section="battle"
+                className="font-hand text-lg text-[var(--color-text-muted)] mt-2 text-right pr-1"
+              />
+            </figcaption>
+          </figure>
+          <figure className="photo-frame paper-tilt-l">
             <EditableImage
               contentKey="story.battle.photo2"
               defaultSrc="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535384_std.jpg"
@@ -97,17 +101,19 @@ export function StoryBattleSection() {
               section="battle"
               width={1200}
               height={800}
-              className="w-full rounded-[var(--radius-card)] shadow-card my-6"
+              className="w-full rounded-[2px]"
             />
-            <EditableText
-              contentKey="story.battle.photo2Caption"
-              defaultValue="사진: 오마이뉴스"
-              as="p"
-              page="story"
-              section="battle"
-              className="text-xs text-[var(--color-text-muted)] mt-1"
-            />
-          </div>
+            <figcaption>
+              <EditableText
+                contentKey="story.battle.photo2Caption"
+                defaultValue="사진: 오마이뉴스"
+                as="p"
+                page="story"
+                section="battle"
+                className="font-hand text-lg text-[var(--color-text-muted)] mt-2 text-right pr-1"
+              />
+            </figcaption>
+          </figure>
         </div>
       </div>
     </section>

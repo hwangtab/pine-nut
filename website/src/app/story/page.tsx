@@ -71,7 +71,7 @@ export default function StoryPage() {
               as="h2"
               page="story"
               section="village"
-              className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
+              className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
             />
             <EditableRichText
               contentKey="story.village.body"
@@ -79,7 +79,7 @@ export default function StoryPage() {
               page="story"
               section="village"
               renderMode="paragraphs"
-              className="space-y-5 text-[var(--color-text)] leading-relaxed text-base md:text-lg"
+              className="max-w-2xl space-y-5 text-[var(--color-text)] leading-loose text-base md:text-lg"
             />
           </div>
       </ManagedSection>
@@ -98,7 +98,7 @@ export default function StoryPage() {
               as="h2"
               page="story"
               section="plant"
-              className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
+              className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
             />
             <EditableRichText
               contentKey="story.plant.body"
@@ -106,7 +106,7 @@ export default function StoryPage() {
               page="story"
               section="plant"
               renderMode="paragraphs"
-              className="space-y-5 text-[var(--color-text)] leading-relaxed text-base md:text-lg"
+              className="max-w-2xl space-y-5 text-[var(--color-text)] leading-loose text-base md:text-lg"
             />
           </div>
       </ManagedSection>
@@ -155,7 +155,7 @@ export default function StoryPage() {
               as="h2"
               page="story"
               section="video"
-              className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10 text-center"
+              className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
             />
             <EditableText
               contentKey="story.video.description"
@@ -163,17 +163,19 @@ export default function StoryPage() {
               as="p"
               page="story"
               section="video"
-              className="text-center text-[var(--color-text-muted)] mb-8 text-base md:text-lg"
+              className="text-[var(--color-text-muted)] mb-8 text-base md:text-lg"
             />
-            <div className="aspect-video w-full rounded-[var(--radius-panel)] overflow-hidden shadow-card border-2 border-[var(--color-forest)]/15">
-              <iframe
-                src="https://www.youtube.com/embed/MtmOKKpkGMk"
-                title="풍천리 양수발전소 반대 — 생명의 편에 선 당신에게"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                className="w-full h-full border-0"
-                loading="lazy"
-              />
+            <div className="paper p-3 md:p-4">
+              <div className="relative z-[1] aspect-video w-full rounded-[10px] overflow-hidden">
+                <iframe
+                  src="https://www.youtube.com/embed/MtmOKKpkGMk"
+                  title="풍천리 양수발전소 반대 — 생명의 편에 선 당신에게"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="w-full h-full border-0"
+                  loading="lazy"
+                />
+              </div>
             </div>
           </div>
       </ManagedSection>
@@ -192,15 +194,17 @@ export default function StoryPage() {
               as="h2"
               page="story"
               section="location"
-              className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
+              className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
             />
-            <div className="rounded-[var(--radius-panel)] overflow-hidden border-2 border-[var(--color-forest)]/15 shadow-card">
-              <iframe
-                src="https://www.openstreetmap.org/export/embed.html?bbox=127.93,37.78,128.04,37.85&layer=mapnik&marker=37.8167,127.9833"
-                className="w-full h-[300px] md:h-[400px] lg:h-[450px] border-0"
-                loading="lazy"
-                title="풍천리 위치 지도"
-              />
+            <div className="paper p-3 md:p-4">
+              <div className="relative z-[1] rounded-[10px] overflow-hidden">
+                <iframe
+                  src="https://www.openstreetmap.org/export/embed.html?bbox=127.93,37.78,128.04,37.85&layer=mapnik&marker=37.8167,127.9833"
+                  className="w-full h-[300px] md:h-[400px] lg:h-[450px] border-0"
+                  loading="lazy"
+                  title="풍천리 위치 지도"
+                />
+              </div>
             </div>
             <EditableText
               contentKey="story.location.description"
