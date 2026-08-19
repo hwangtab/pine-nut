@@ -46,7 +46,7 @@ export function HomeInlineSignatureFields({
       <button
         type="submit"
         disabled={submitting}
-        className="min-h-[48px] px-8 py-3 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold text-base transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+        className="letter-btn letter-btn--primary min-h-[48px]! whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed!"
       >
         <EditableText
           contentKey={submitting ? "home.cta.inlineSubmitting" : "home.cta.inlineSubmit"}
