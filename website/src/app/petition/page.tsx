@@ -11,6 +11,7 @@ import PetitionSuccess from "@/components/petition/PetitionSuccess";
 import RecentSignatures from "@/components/petition/RecentSignatures";
 import SignatureConfetti from "@/components/petition/SignatureConfetti";
 import { usePetitionSignatureSummary } from "@/components/petition/usePetitionSignatureSummary";
+import { PostmarkStamp } from "@/components/visuals/ForestLetterMotifs";
 import { events } from "@/lib/analytics";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 
@@ -109,16 +110,18 @@ export default function PetitionPage() {
         eyebrow={<EditableText contentKey="petition.hero.eyebrow" defaultValue="참여하기" as="span" page="petition" section="hero" />}
         variant="emphasis"
         metric={
-          <div className="flex flex-col items-center gap-1">
-            <PetitionAnimatedCounter target={signatureCount} />
-            <EditableText
-              contentKey="petition.hero.metricLabel"
-              defaultValue="명이 함께하고 있습니다"
-              as="span"
-              page="petition"
-              section="hero"
-              className="text-white/80 text-lg mt-1"
-            />
+          <div className="stamp-badge inline-block">
+            <div className="stamp-badge__inner">
+              <PetitionAnimatedCounter target={signatureCount} />
+              <EditableText
+                contentKey="petition.hero.metricLabel"
+                defaultValue="명이 함께하고 있습니다"
+                as="p"
+                page="petition"
+                section="hero"
+                className="text-sm text-[var(--color-text-muted)] mt-1"
+              />
+            </div>
           </div>
         }
       />
@@ -127,14 +130,17 @@ export default function PetitionPage() {
         <PetitionActionCards onScrollToForm={handleScrollToForm} />
 
         {/* Emotional prompt */}
-        <EditableText
-          contentKey="petition.emotional.prompt"
-          defaultValue="705번의 외침에 당신의 이름을 더해주세요"
-          as="p"
-          page="petition"
-          section="emotional"
-          className="text-center text-xl font-serif-display text-[var(--color-text-muted)] mb-6"
-        />
+        <div className="relative">
+          <PostmarkStamp className="absolute -top-6 right-0 hidden w-16 h-16 text-[var(--color-forest)]/30 rotate-6 sm:block" />
+          <EditableText
+            contentKey="petition.emotional.prompt"
+            defaultValue="705번의 외침에 당신의 이름을 더해주세요"
+            as="p"
+            page="petition"
+            section="emotional"
+            className="text-center text-xl font-serif-display text-[var(--color-text-muted)] mb-6"
+          />
+        </div>
 
         {/* ── Form / Success ── */}
         {!submitted ? (
@@ -174,7 +180,7 @@ export default function PetitionPage() {
             as="h2"
             page="petition"
             section="reasons"
-            className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]"
+            className="text-left font-serif-display font-bold text-xl sm:text-2xl mb-6 text-[var(--color-text)]"
           />
           <EditableList
             contentKey="petition.reasons.items"
@@ -191,25 +197,27 @@ export default function PetitionPage() {
             ]}
           >
             {(items) => (
-              <div className="bg-white border border-[var(--color-border)] rounded-[var(--radius-panel)] shadow-card p-6 sm:p-8 space-y-5">
-                {items.map((item, i) => (
-                  <div key={i} className="flex gap-4 items-start">
-                    <span
-                      className="shrink-0 w-10 h-10 rounded-full bg-[var(--color-warm)]/10 flex items-center justify-center text-[var(--color-warm)] font-bold"
-                      aria-hidden="true"
-                    >
-                      {i + 1}
-                    </span>
-                    <div>
-                      <h3 className="font-semibold text-[var(--color-text)] mb-1">
-                        {item.title}
-                      </h3>
-                      <p className="text-[var(--color-text-muted)] text-[15px]">
-                        {item.desc}
-                      </p>
+              <div className="paper p-6 sm:p-8">
+                <div className="relative z-[1] space-y-5">
+                  {items.map((item, i) => (
+                    <div key={i} className="flex gap-4 items-start">
+                      <span
+                        className="shrink-0 w-10 h-10 rounded-full bg-[var(--color-warm)]/10 flex items-center justify-center text-[var(--color-warm)] font-bold"
+                        aria-hidden="true"
+                      >
+                        {i + 1}
+                      </span>
+                      <div>
+                        <h3 className="font-semibold text-[var(--color-text)] mb-1">
+                          {item.title}
+                        </h3>
+                        <p className="text-[var(--color-text-muted)] text-[15px]">
+                          {item.desc}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
           </EditableList>

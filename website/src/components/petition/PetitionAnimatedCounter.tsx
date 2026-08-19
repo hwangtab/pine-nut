@@ -37,7 +37,7 @@ export default function PetitionAnimatedCounter({
   const shown = prefersReducedMotion() ? target : value;
 
   return (
-    <span className="rise-in text-5xl sm:text-6xl font-black text-[var(--color-warm)]">
+    <span className="rise-in font-serif-display font-bold text-4xl sm:text-5xl text-[var(--color-warm)]">
       {shown.toLocaleString(locale)}
     </span>
   );

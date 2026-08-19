@@ -67,7 +67,7 @@ export default function RecentSignatures({
         as="h2"
         page={page}
         section="recent"
-        className="text-xl sm:text-2xl font-bold mb-6 text-[var(--color-text)]"
+        className="text-left font-serif-display font-bold text-xl sm:text-2xl mb-6 text-[var(--color-text)]"
       />
       {loading ? (
         <div className="flex items-center justify-center py-12 text-[var(--color-text-muted)]">
@@ -94,19 +94,21 @@ export default function RecentSignatures({
           {ordered.slice(0, 5).map((sig, i) => (
             <div
               key={`${sig.name}-${(offset + i) % signatures.length}`}
-              className="fade-in bg-white border border-[var(--color-border)] rounded-[var(--radius-card)] shadow-card px-5 py-4"
+              className={`fade-in paper px-5 py-4 ${i % 2 === 0 ? "paper-tilt-l" : "paper-tilt-r"}`}
             >
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-[var(--color-text)]">{sig.name}</span>
-                <time dateTime={sig.created_at} className="text-sm text-[var(--color-text-muted)]">
-                  {formatSignatureDate(sig.created_at, dateLocale)}
-                </time>
+              <div className="relative z-[1]">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-[var(--color-text)]">{sig.name}</span>
+                  <time dateTime={sig.created_at} className="text-sm text-[var(--color-text-muted)]">
+                    {formatSignatureDate(sig.created_at, dateLocale)}
+                  </time>
+                </div>
+                {sig.message && (
+                  <p className="mt-1 text-[var(--color-text-muted)] text-[15px]">
+                    &ldquo;{sig.message}&rdquo;
+                  </p>
+                )}
               </div>
-              {sig.message && (
-                <p className="mt-1 text-[var(--color-text-muted)] text-[15px]">
-                  &ldquo;{sig.message}&rdquo;
-                </p>
-              )}
             </div>
           ))}
         </div>

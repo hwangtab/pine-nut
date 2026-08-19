@@ -57,9 +57,9 @@ export default function PetitionActionCards({
                 key="cta-0"
                 type="button"
                 onClick={onScrollToForm}
-                className="text-left bg-white border border-[var(--color-border)] rounded-[var(--radius-card)] shadow-card hover-lift p-6 cursor-pointer"
+                className="paper hover-lift p-6 text-left cursor-pointer"
               >
-                {children}
+                <div className="relative z-[1]">{children}</div>
               </button>
             ),
             (children: ReactNode) => (
@@ -69,9 +69,9 @@ export default function PetitionActionCards({
                 defaultHref={donateDefaultHref}
                 page={page}
                 section="cta"
-                className="block rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-card hover-lift"
+                className="paper hover-lift p-6 block"
               >
-                {children}
+                <div className="relative z-[1]">{children}</div>
               </EditableLink>
             ),
             (children: ReactNode) => (
@@ -81,9 +81,9 @@ export default function PetitionActionCards({
                 defaultHref={shareDefaultHref}
                 page={page}
                 section="cta"
-                className="block rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-card hover-lift"
+                className="paper hover-lift p-6 block"
               >
-                {children}
+                <div className="relative z-[1]">{children}</div>
               </EditableLink>
             ),
           ];
