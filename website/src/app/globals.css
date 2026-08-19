@@ -6,7 +6,7 @@
  * 색 역할 (color diet):
  * - warm: 유일한 액션 컬러. CTA·서명 버튼에만 사용
  * - forest: 브랜드 보조색. 아이콘·로고·포인트 그래픽
- * - sky / earth: 기능적 용도(뱃지, 인용 배경 등)로만 사용
+ * - sky / earth: 기능적 용도(뱃지, 인용 배경 등)로만 사용(대형 배경 사용 금지 — 뱃지 등 소형 기능 요소만)
  * - 본문·제목은 text / text-muted 무채색 계열
  */
 :root {
@@ -17,11 +17,13 @@
   --color-sky: #1B4965;
   --color-warm: #C75000;
   --color-warm-light: #FF6B1A;
-  --color-bg: #FAFAF5;
-  --color-bg-warm: #F5F0E8;
-  --color-text: #1A1A1A;
-  --color-text-muted: #5A5A5A;
-  --color-border: #E0DDD5;
+  --color-bg: #FAF7EF;          /* 한지 크림 */
+  --color-bg-warm: #F3EFE2;     /* 옅은 모래빛 — 한지와 이어지는 톤 */
+  --color-bg-moss: #EFF2E4;     /* 옅은 이끼 세이지 — 보조 배경 */
+  --color-deep: #1E3317;        /* 깊은 숲 그린 — 어두운 밴드 전용 */
+  --color-text: #22301F;        /* 침엽수 차콜 (순검정 금지) */
+  --color-text-muted: #5C6653;  /* 이끼 회녹 */
+  --color-border: #E3DFD0;
   --color-admin-bg: #F6F6F2;
   --color-admin-surface: #FFFFFF;
   --color-admin-text: var(--color-text);
@@ -49,6 +51,8 @@
   --color-warm-light: var(--color-warm-light);
   --color-bg: var(--color-bg);
   --color-bg-warm: var(--color-bg-warm);
+  --color-bg-moss: var(--color-bg-moss);
+  --color-deep: var(--color-deep);
   --color-text: var(--color-text);
   --color-text-muted: var(--color-text-muted);
   --color-border: var(--color-border);
@@ -456,4 +460,133 @@ html {
   .frost-field {
     background: #fff;
   }
+}
+
+/* ────────────────────────────────────────────────────────────
+   종이 재질 시스템 ("숲의 편지")
+   컴포넌트는 아래 클래스 하나만 고른다. 값은 직접 만지지 않는다.
+   ──────────────────────────────────────────────────────────── */
+
+/* 종이 카드 — 본문·폼·증언 편지지의 기본 표면 */
+.paper {
+  position: relative;
+  background: #FFFDF7;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: 0 1px 2px rgb(34 48 31 / 0.05), 0 10px 28px rgb(34 48 31 / 0.08);
+}
+/* 옅은 섬유 질감 (SVG feTurbulence 노이즈) */
+.paper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+}
+/* 앨범에 붙인 사진처럼 살짝 기울인 변형 */
+.paper-tilt-l { transform: rotate(-1.1deg); }
+.paper-tilt-r { transform: rotate(1.1deg); }
+@media (prefers-reduced-motion: reduce) {
+  .paper-tilt-l, .paper-tilt-r { transform: none; }
+}
+
+/* 종이 위 입력 필드 */
+.paper-field {
+  font: inherit;
+  font-size: 15px;
+  color: var(--color-text);
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
+  box-shadow: inset 0 1px 2px rgb(34 48 31 / 0.04);
+  width: 100%;
+}
+.paper-field::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+/* 전체 화면 시트 (모바일 메뉴) — 불투명 한지 */
+.paper-sheet {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* 앨범 사진 프레임 — 흰 두꺼운 테두리 + 그림자 */
+.photo-frame {
+  background: #FFFDF7;
+  padding: 10px;
+  padding-bottom: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgb(34 48 31 / 0.08), 0 14px 32px rgb(34 48 31 / 0.1);
+}
+.photo-frame > img { border-radius: 2px; }
+
+/* 사진 위 소형 칩 (기존 glass-dark/glass-chip 대체) — 잉크 배경 */
+.ink-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px;
+  border-radius: var(--radius-pill);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #FFFDF7;
+  background: rgb(30 51 23 / 0.82);
+}
+
+/* 편지 버튼 */
+.letter-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 12px 24px;
+  border-radius: var(--radius-pill);
+  border: 0;
+  font: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform var(--motion-press), box-shadow var(--motion-hover), background var(--motion-hover);
+}
+.letter-btn:active { transform: scale(0.97); }
+.letter-btn--primary {
+  background: var(--color-warm);
+  color: #fff;
+  box-shadow: 0 8px 24px rgb(199 80 0 / 0.3);
+}
+.letter-btn--primary:hover { background: var(--color-warm-light); }
+/* 사진 위·어두운 배경 위에서 쓰는 보조 버튼 */
+.letter-btn--outline {
+  background: rgb(255 253 247 / 0.12);
+  border: 1.5px solid rgb(255 253 247 / 0.65);
+  color: #FFFDF7;
+}
+.letter-btn--outline:hover { background: rgb(255 253 247 / 0.22); }
+
+/* 우표 뱃지 — 이중 점선 테두리로 천공 은유 */
+.stamp-badge {
+  background: #FFFDF7;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 6px;
+  box-shadow: 0 2px 8px rgb(34 48 31 / 0.1);
+}
+.stamp-badge__inner {
+  border: 2px dashed rgb(92 102 83 / 0.45);
+  border-radius: 2px;
+  padding: 10px 14px;
+  text-align: center;
+}
+
+/* 오솔길 점선 (타임라인·발자취 연결선) */
+.trail-line {
+  border-left: 3px dotted rgb(45 80 22 / 0.4);
 }
