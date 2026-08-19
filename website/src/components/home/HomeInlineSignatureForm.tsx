@@ -29,30 +29,32 @@ export default function HomeInlineSignatureForm({
 
   return (
     <FadeIn className="mb-12">
-      <div className="max-w-2xl mx-auto rounded-[var(--radius-panel)] border border-[var(--color-border)] bg-white p-6 shadow-card sm:p-8">
-        {success ? (
-          <HomeInlineSignatureSuccess />
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <HomeInlineSignatureFields
-              name={name}
-              email={email}
-              namePlaceholder={namePlaceholder}
-              emailPlaceholder={emailPlaceholder}
-              submitting={submitting}
-              error={error}
-              onNameChange={onNameChange}
-              onEmailChange={onEmailChange}
-            />
-            {error && (
-              <p id="inline-signature-error" className="text-sm text-red-600 text-center">
-                {error}
-              </p>
-            )}
-            <HomeInlineSignaturePrivacyNotice agreed={agreed} onAgreedChange={onAgreedChange} />
-            {isEditMode && <HomeInlineSignatureEditControls />}
-          </form>
-        )}
+      <div className="paper max-w-2xl mx-auto p-6 sm:p-8">
+        <div className="relative z-[1]">
+          {success ? (
+            <HomeInlineSignatureSuccess />
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <HomeInlineSignatureFields
+                name={name}
+                email={email}
+                namePlaceholder={namePlaceholder}
+                emailPlaceholder={emailPlaceholder}
+                submitting={submitting}
+                error={error}
+                onNameChange={onNameChange}
+                onEmailChange={onEmailChange}
+              />
+              {error && (
+                <p id="inline-signature-error" className="text-sm text-red-600 text-center">
+                  {error}
+                </p>
+              )}
+              <HomeInlineSignaturePrivacyNotice agreed={agreed} onAgreedChange={onAgreedChange} />
+              {isEditMode && <HomeInlineSignatureEditControls />}
+            </form>
+          )}
+        </div>
       </div>
     </FadeIn>
   );

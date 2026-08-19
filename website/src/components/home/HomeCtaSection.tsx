@@ -5,6 +5,7 @@ import { Heart, PenLine, Share2 } from "lucide-react";
 import { EditableLink, EditableList, EditableText } from "@/components/editable";
 import HomeInlineSignatureForm from "@/components/home/HomeInlineSignatureForm";
 import { AnimatedCounter, FadeIn } from "@/components/home/HomeMotion";
+import { PostmarkStamp } from "@/components/visuals/ForestLetterMotifs";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 
 interface HomeCtaSectionProps {
@@ -44,14 +45,15 @@ export default function HomeCtaSection({
 
   return (
     <div className="max-w-5xl mx-auto">
-      <FadeIn className="text-center mb-16">
+      <FadeIn className="relative text-center mb-16 max-w-2xl mx-auto">
+        <PostmarkStamp className="absolute -top-6 right-0 w-20 h-20 text-[var(--color-forest)]/35 rotate-12 hidden sm:block" />
         <EditableText
           contentKey="home.cta.heading"
-          defaultValue="함께해주세요"
+          defaultValue="숲에 답장을 보내주세요"
           as="h2"
           page="home"
           section="cta"
-          className="text-3xl sm:text-4xl md:text-5xl font-black mb-4"
+          className="font-serif-display font-bold text-3xl sm:text-4xl md:text-5xl mb-4 text-[var(--color-text)]"
         />
         <EditableText
           contentKey="home.cta.subtitle"
@@ -64,26 +66,30 @@ export default function HomeCtaSection({
       </FadeIn>
 
       {signatureCount !== null && (
-        <FadeIn className="text-center mb-12">
-          <EditableText
-            contentKey="home.cta.countPrefix"
-            defaultValue="현재"
-            as="p"
-            page="home"
-            section="cta"
-            className="text-lg text-[var(--color-text-muted)] mb-2"
-          />
-          <p className="text-5xl sm:text-6xl md:text-7xl font-black text-[var(--color-warm)]">
-            <AnimatedCounter target={signatureCount} suffix="명" />
-          </p>
-          <EditableText
-            contentKey="home.cta.countSuffix"
-            defaultValue="이 함께하고 있습니다"
-            as="p"
-            page="home"
-            section="cta"
-            className="text-lg text-[var(--color-text-muted)] mt-2"
-          />
+        <FadeIn className="mb-12 flex justify-center">
+          <div className="stamp-badge inline-block">
+            <div className="stamp-badge__inner">
+              <EditableText
+                contentKey="home.cta.countPrefix"
+                defaultValue="현재"
+                as="p"
+                page="home"
+                section="cta"
+                className="text-sm text-[var(--color-text-muted)]"
+              />
+              <p className="font-serif-display font-bold text-4xl sm:text-5xl text-[var(--color-warm)] my-1">
+                <AnimatedCounter target={signatureCount} suffix="명" />
+              </p>
+              <EditableText
+                contentKey="home.cta.countSuffix"
+                defaultValue="이 함께하고 있습니다"
+                as="p"
+                page="home"
+                section="cta"
+                className="text-sm text-[var(--color-text-muted)]"
+              />
+            </div>
+          </div>
         </FadeIn>
       )}
 
@@ -124,30 +130,29 @@ export default function HomeCtaSection({
                 const IconComp = icons[index] || icons[0];
                 return (
                   <FadeIn key={card.title} delay={index * 0.1}>
-                    <div className="hover-lift bg-white rounded-[var(--radius-card)] p-8 border border-[var(--color-border)] shadow-card text-center h-full flex flex-col">
-                      <IconComp className="w-10 h-10 text-[var(--color-warm)] mx-auto mb-5" />
-                      <h3 className="text-xl font-bold mb-3">{card.title}</h3>
-                      <p className="text-[var(--color-text-muted)] leading-relaxed mb-6 flex-1">
-                        {card.desc}
-                      </p>
-                      {card.href === "#share" ? (
-                        <button
-                          onClick={handleShare}
-                          className="inline-block min-h-[44px] px-6 py-3 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold transition-colors cursor-pointer"
-                        >
-                          {card.title}
-                        </button>
-                      ) : (
-                        <EditableLink
-                          contentKey={`home.cta.cardLink.${index}`}
-                          defaultHref={card.href}
-                          page="home"
-                          section="cta"
-                          className="inline-flex items-center justify-center min-h-[44px] px-6 py-3 rounded-full bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] text-white font-bold transition-colors"
-                        >
-                          {card.title}
-                        </EditableLink>
-                      )}
+                    <div className="hover-lift paper p-8 text-center h-full flex flex-col">
+                      <div className="relative z-[1] flex flex-col h-full">
+                        <IconComp className="w-10 h-10 text-[var(--color-warm)] mx-auto mb-5" />
+                        <h3 className="text-xl font-bold mb-3">{card.title}</h3>
+                        <p className="text-[var(--color-text-muted)] leading-relaxed mb-6 flex-1">
+                          {card.desc}
+                        </p>
+                        {card.href === "#share" ? (
+                          <button onClick={handleShare} className="letter-btn letter-btn--primary">
+                            {card.title}
+                          </button>
+                        ) : (
+                          <EditableLink
+                            contentKey={`home.cta.cardLink.${index}`}
+                            defaultHref={card.href}
+                            page="home"
+                            section="cta"
+                            className="letter-btn letter-btn--primary"
+                          >
+                            {card.title}
+                          </EditableLink>
+                        )}
+                      </div>
                     </div>
                   </FadeIn>
                 );
