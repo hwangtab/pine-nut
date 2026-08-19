@@ -85,7 +85,7 @@ export default async function NewsDetailPage({
           />
         </EditableLink>
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--color-text-muted)] font-medium mb-10">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-serif-display text-sm text-[var(--color-text-muted)] mb-10">
           <time dateTime={item.date}>{formattedDate}</time>
           {item.sourceName && (
             <>
@@ -152,41 +152,39 @@ export default async function NewsDetailPage({
 
         <nav className="grid grid-cols-1 sm:grid-cols-2 gap-4" aria-label="이전/다음 소식">
           {prevItem ? (
-            <Link
-              href={`/news/${prevItem.slug}`}
-              className="group flex flex-col p-5 rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card hover-lift"
-            >
-              <EditableText
-                contentKey="news.detail.prevLabel"
-                defaultValue="← 이전 소식"
-                as="span"
-                page="news"
-                section="detail"
-                className="text-xs text-[var(--color-text-muted)] mb-1"
-              />
-              <span className="text-sm font-semibold text-[var(--color-text)] group-hover:text-[var(--color-forest)] transition-colors line-clamp-2">
-                {prevItem.title}
-              </span>
+            <Link href={`/news/${prevItem.slug}`} className="group block paper hover-lift">
+              <div className="relative z-[1] flex flex-col p-5">
+                <EditableText
+                  contentKey="news.detail.prevLabel"
+                  defaultValue="← 이전 소식"
+                  as="span"
+                  page="news"
+                  section="detail"
+                  className="text-xs text-[var(--color-text-muted)] mb-1"
+                />
+                <span className="font-serif-display font-bold text-sm text-[var(--color-text)] group-hover:text-[var(--color-forest)] transition-colors line-clamp-2">
+                  {prevItem.title}
+                </span>
+              </div>
             </Link>
           ) : (
             <div />
           )}
           {nextItem ? (
-            <Link
-              href={`/news/${nextItem.slug}`}
-              className="group flex flex-col items-end text-right p-5 rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card hover-lift"
-            >
-              <EditableText
-                contentKey="news.detail.nextLabel"
-                defaultValue="다음 소식 →"
-                as="span"
-                page="news"
-                section="detail"
-                className="text-xs text-[var(--color-text-muted)] mb-1"
-              />
-              <span className="text-sm font-semibold text-[var(--color-text)] group-hover:text-[var(--color-forest)] transition-colors line-clamp-2">
-                {nextItem.title}
-              </span>
+            <Link href={`/news/${nextItem.slug}`} className="group block paper hover-lift">
+              <div className="relative z-[1] flex flex-col items-end text-right p-5">
+                <EditableText
+                  contentKey="news.detail.nextLabel"
+                  defaultValue="다음 소식 →"
+                  as="span"
+                  page="news"
+                  section="detail"
+                  className="text-xs text-[var(--color-text-muted)] mb-1"
+                />
+                <span className="font-serif-display font-bold text-sm text-[var(--color-text)] group-hover:text-[var(--color-forest)] transition-colors line-clamp-2">
+                  {nextItem.title}
+                </span>
+              </div>
             </Link>
           ) : (
             <div />

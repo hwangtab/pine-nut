@@ -24,7 +24,7 @@ const pressKitItems = [
     title: "팩트시트",
     description: "풍천리 투쟁 핵심 정리 (1페이지)",
     icon: FileText,
-    color: "text-[var(--color-warm)] bg-[var(--color-bg-warm)]",
+    color: "text-[var(--color-sky)] bg-[var(--color-bg-warm)]",
     href: "/press/factsheet",
   },
 ];
@@ -67,7 +67,7 @@ export default function PressPage() {
               as="h2"
               page="press"
               section="kit"
-              className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
+              className="font-serif-display text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {pressKitItems.map((item, index) => {
@@ -80,31 +80,33 @@ export default function PressPage() {
                     defaultHref={item.href}
                     page="press"
                     section="kit"
-                    className="group flex flex-col items-center text-center p-6 bg-white rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card hover-lift"
+                    className="group block paper hover-lift"
                   >
-                    <div className={`w-14 h-14 rounded-[var(--radius-card)] flex items-center justify-center mb-4 ${item.color}`}>
-                      <Icon className="w-6 h-6" />
+                    <div className="relative z-[1] flex flex-col items-center text-center p-6">
+                      <div className={`w-14 h-14 rounded-[var(--radius-card)] flex items-center justify-center mb-4 ${item.color}`}>
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <EditableText
+                        contentKey={`press.kit.item.${index}.title`}
+                        defaultValue={item.title}
+                        as="h3"
+                        page="press"
+                        section="kit"
+                        className="font-serif-display font-bold text-base text-[var(--color-text)] mb-1"
+                      />
+                      <EditableText
+                        contentKey={`press.kit.item.${index}.description`}
+                        defaultValue={item.description}
+                        as="p"
+                        page="press"
+                        section="kit"
+                        className="text-sm text-[var(--color-text-muted)] mb-4 leading-relaxed"
+                      />
+                      <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-forest)] group-hover:text-[var(--color-forest-light)] transition-colors">
+                        <EditableText contentKey="press.kit.open" defaultValue="열기" as="span" page="press" section="kit" />
+                        <ArrowRight className="w-4 h-4" />
+                      </span>
                     </div>
-                    <EditableText
-                      contentKey={`press.kit.item.${index}.title`}
-                      defaultValue={item.title}
-                      as="h3"
-                      page="press"
-                      section="kit"
-                      className="text-base font-bold text-[var(--color-text)] mb-1"
-                    />
-                    <EditableText
-                      contentKey={`press.kit.item.${index}.description`}
-                      defaultValue={item.description}
-                      as="p"
-                      page="press"
-                      section="kit"
-                      className="text-sm text-[var(--color-text-muted)] mb-4 leading-relaxed"
-                    />
-                    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-forest)] group-hover:text-[var(--color-forest-light)] transition-colors">
-                      <EditableText contentKey="press.kit.open" defaultValue="열기" as="span" page="press" section="kit" />
-                      <ArrowRight className="w-4 h-4" />
-                    </span>
                   </EditableLink>
                 );
               })}
@@ -124,7 +126,7 @@ export default function PressPage() {
               as="h2"
               page="press"
               section="facts"
-              className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
+              className="font-serif-display text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
             />
             <PressFactsSection />
         </ManagedSection>
@@ -142,44 +144,46 @@ export default function PressPage() {
               as="h2"
               page="press"
               section="contact"
-              className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
+              className="font-serif-display text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
             />
-            <div className="bg-white rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card p-6 md:p-8">
-              <EditableRichText
-                contentKey="press.contact.description"
-                defaultValue="취재 및 자료 요청은 빠띠 캠페인 페이지를 통해 문의해 주세요. 빠른 시일 내에 답변드리겠습니다."
-                page="press"
-                section="contact"
-                renderMode="paragraph"
-                className="text-[var(--color-text-muted)] mb-6 leading-relaxed"
-              />
-              <div className="grid grid-cols-1 gap-4">
-                <div className="flex items-start gap-3 p-4 bg-[var(--color-bg-warm)] rounded-[var(--radius-card)]">
-                  <ExternalLink className="w-5 h-5 text-[var(--color-forest)] mt-0.5 shrink-0" />
-                  <div>
-                    <EditableText
-                      contentKey="press.contact.campaignLabel"
-                      defaultValue="캠페인 페이지"
-                      as="p"
-                      page="press"
-                      section="contact"
-                      className="text-sm font-semibold text-[var(--color-text-muted)] mb-0.5"
-                    />
-                    <EditableLink
-                      contentKey="press.contact.campaignHref"
-                      defaultHref="https://campaigns.do/campaigns/1328"
-                      page="press"
-                      section="contact"
-                      className="text-base font-medium text-[var(--color-text)] hover:text-[var(--color-forest)] transition-colors"
-                    >
+            <div className="paper">
+              <div className="relative z-[1] p-6 md:p-8">
+                <EditableRichText
+                  contentKey="press.contact.description"
+                  defaultValue="취재 및 자료 요청은 빠띠 캠페인 페이지를 통해 문의해 주세요. 빠른 시일 내에 답변드리겠습니다."
+                  page="press"
+                  section="contact"
+                  renderMode="paragraph"
+                  className="text-[var(--color-text-muted)] mb-6 leading-relaxed"
+                />
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex items-start gap-3 p-4 bg-[var(--color-bg-warm)] rounded-[var(--radius-card)]">
+                    <ExternalLink className="w-5 h-5 text-[var(--color-forest)] mt-0.5 shrink-0" />
+                    <div>
                       <EditableText
-                        contentKey="press.contact.campaignLink"
-                        defaultValue="빠띠 캠페인 페이지에서 문의하기"
-                        as="span"
+                        contentKey="press.contact.campaignLabel"
+                        defaultValue="캠페인 페이지"
+                        as="p"
                         page="press"
                         section="contact"
+                        className="text-sm font-semibold text-[var(--color-text-muted)] mb-0.5"
                       />
-                    </EditableLink>
+                      <EditableLink
+                        contentKey="press.contact.campaignHref"
+                        defaultHref="https://campaigns.do/campaigns/1328"
+                        page="press"
+                        section="contact"
+                        className="text-base font-medium text-[var(--color-text)] hover:text-[var(--color-forest)] transition-colors"
+                      >
+                        <EditableText
+                          contentKey="press.contact.campaignLink"
+                          defaultValue="빠띠 캠페인 페이지에서 문의하기"
+                          as="span"
+                          page="press"
+                          section="contact"
+                        />
+                      </EditableLink>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -199,44 +203,46 @@ export default function PressPage() {
               as="h2"
               page="press"
               section="cite"
-              className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
+              className="font-serif-display text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
             />
-            <div className="bg-white rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card p-6 md:p-8">
-              <EditableRichText
-                contentKey="press.cite.description"
-                defaultValue="연구 및 보도 시 아래 형식으로 인용해 주시기 바랍니다."
-                page="press"
-                section="cite"
-                renderMode="paragraph"
-                className="text-[var(--color-text-muted)] mb-4 leading-relaxed"
-              />
-              <div className="bg-[var(--color-bg-warm)] rounded-[var(--radius-card)] p-5 border border-[var(--color-border)]">
+            <div className="paper">
+              <div className="relative z-[1] p-6 md:p-8">
                 <EditableRichText
-                  contentKey="press.cite.citation"
-                  defaultValue={`풍천리 주민회. (2026). 풍천리 양수발전소 반대 투쟁 기록.\n${SITE_URL}`}
-                  page="press"
-                  section="cite"
-                  renderMode="lines"
-                  className="text-sm text-[var(--color-text)] leading-relaxed font-mono"
-                />
-              </div>
-              <EditableText
-                contentKey="press.cite.apaLabel"
-                defaultValue="APA 형식 예시:"
-                as="p"
-                page="press"
-                section="cite"
-                className="text-sm text-[var(--color-text-muted)] mt-4 leading-relaxed"
-              />
-              <div className="bg-[var(--color-bg-warm)] rounded-[var(--radius-card)] p-5 border border-[var(--color-border)] mt-2">
-                <EditableRichText
-                  contentKey="press.cite.apaCitation"
-                  defaultValue={`풍천리 주민회 (2026). 풍천리를 지켜주세요: 양수발전소 건설 반대 투쟁 기록. ${SITE_URL}`}
+                  contentKey="press.cite.description"
+                  defaultValue="연구 및 보도 시 아래 형식으로 인용해 주시기 바랍니다."
                   page="press"
                   section="cite"
                   renderMode="paragraph"
-                  className="text-sm text-[var(--color-text)] leading-relaxed font-mono"
+                  className="text-[var(--color-text-muted)] mb-4 leading-relaxed"
                 />
+                <div className="bg-[var(--color-bg-warm)] rounded-[var(--radius-card)] p-5 border border-[var(--color-border)]">
+                  <EditableRichText
+                    contentKey="press.cite.citation"
+                    defaultValue={`풍천리 주민회. (2026). 풍천리 양수발전소 반대 투쟁 기록.\n${SITE_URL}`}
+                    page="press"
+                    section="cite"
+                    renderMode="lines"
+                    className="text-sm text-[var(--color-text)] leading-relaxed font-mono"
+                  />
+                </div>
+                <EditableText
+                  contentKey="press.cite.apaLabel"
+                  defaultValue="APA 형식 예시:"
+                  as="p"
+                  page="press"
+                  section="cite"
+                  className="text-sm text-[var(--color-text-muted)] mt-4 leading-relaxed"
+                />
+                <div className="bg-[var(--color-bg-warm)] rounded-[var(--radius-card)] p-5 border border-[var(--color-border)] mt-2">
+                  <EditableRichText
+                    contentKey="press.cite.apaCitation"
+                    defaultValue={`풍천리 주민회 (2026). 풍천리를 지켜주세요: 양수발전소 건설 반대 투쟁 기록. ${SITE_URL}`}
+                    page="press"
+                    section="cite"
+                    renderMode="paragraph"
+                    className="text-sm text-[var(--color-text)] leading-relaxed font-mono"
+                  />
+                </div>
               </div>
             </div>
         </ManagedSection>

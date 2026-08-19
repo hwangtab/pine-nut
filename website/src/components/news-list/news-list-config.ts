@@ -9,21 +9,12 @@ export interface NewsDisplayItem {
   thumbnailUrl?: string;
 }
 
-interface CategoryFilterStyle {
-  color: string;
-  activeColor: string;
-}
-
 export interface NewsListConfig {
   page: string;
   detailPathPrefix: string;
   allCategory: string;
   categories: readonly string[];
   dateLocale: string;
-  categoryFilterStyles: Record<string, CategoryFilterStyle>;
-  categoryTagColors: Record<string, string>;
-  fallbackFilterStyle: CategoryFilterStyle;
-  fallbackTagColor: string;
   hero: {
     imageUrl: string;
     imageContentKey: string;
@@ -45,50 +36,6 @@ export interface NewsListConfig {
   };
 }
 
-const koreanCategoryFilterStyles: NewsListConfig["categoryFilterStyles"] = {
-  공지: {
-    color: "bg-[var(--color-sky)]/10 text-[var(--color-sky)]",
-    activeColor: "bg-[var(--color-sky)] text-white",
-  },
-  집회: {
-    color: "bg-[var(--color-warm)]/10 text-[var(--color-warm)]",
-    activeColor: "bg-[var(--color-warm)] text-white",
-  },
-  언론보도: {
-    color: "bg-[var(--color-earth)]/10 text-[var(--color-earth)]",
-    activeColor: "bg-[var(--color-earth)] text-white",
-  },
-  연대: {
-    color: "bg-[var(--color-forest)]/10 text-[var(--color-forest)]",
-    activeColor: "bg-[var(--color-forest)] text-white",
-  },
-};
-
-const koreanCategoryTagColors: NewsListConfig["categoryTagColors"] = {
-  공지: "bg-[var(--color-sky)]/10 text-[var(--color-sky)]",
-  집회: "bg-[var(--color-warm)]/10 text-[var(--color-warm)]",
-  언론보도: "bg-[var(--color-earth)]/10 text-[var(--color-earth)]",
-  연대: "bg-[var(--color-forest)]/10 text-[var(--color-forest)]",
-};
-
-const englishCategoryFilterStyles: NewsListConfig["categoryFilterStyles"] = {
-  Notice: koreanCategoryFilterStyles.공지,
-  Protest: koreanCategoryFilterStyles.집회,
-  "Press Coverage": koreanCategoryFilterStyles.언론보도,
-  Solidarity: koreanCategoryFilterStyles.연대,
-};
-
-const englishCategoryTagColors: NewsListConfig["categoryTagColors"] = {
-  Notice: koreanCategoryTagColors.공지,
-  Protest: koreanCategoryTagColors.집회,
-  "Press Coverage": koreanCategoryTagColors.언론보도,
-  Solidarity: koreanCategoryTagColors.연대,
-};
-
-const fallbackFilterStyle = {
-  color: "bg-[var(--color-bg)] text-[var(--color-text-muted)]",
-  activeColor: "bg-[var(--color-text)] text-white",
-};
 const heroImageUrl =
   "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003499236_std.jpg";
 
@@ -98,10 +45,6 @@ export const koreanNewsListConfig: NewsListConfig = {
   allCategory: "전체",
   categories: ["공지", "집회", "언론보도", "연대"],
   dateLocale: "ko-KR",
-  categoryFilterStyles: koreanCategoryFilterStyles,
-  categoryTagColors: koreanCategoryTagColors,
-  fallbackFilterStyle,
-  fallbackTagColor: koreanCategoryTagColors.공지,
   hero: {
     imageUrl: heroImageUrl,
     imageContentKey: "news.hero.image",
@@ -129,10 +72,6 @@ export const englishNewsListConfig: NewsListConfig = {
   allCategory: "All",
   categories: ["Notice", "Protest", "Press Coverage", "Solidarity"],
   dateLocale: "en-US",
-  categoryFilterStyles: englishCategoryFilterStyles,
-  categoryTagColors: englishCategoryTagColors,
-  fallbackFilterStyle,
-  fallbackTagColor: englishCategoryTagColors.Notice,
   hero: {
     imageUrl: heroImageUrl,
     imageContentKey: "en.news.hero.image",
