@@ -6,14 +6,14 @@ import { FadeIn } from "@/components/home/HomeMotion";
 export default function HomeQuotesSection() {
   return (
     <div className="max-w-4xl mx-auto">
-      <FadeIn className="text-center mb-16">
+      <FadeIn className="mb-16">
         <EditableText
           contentKey="home.quotes.heading"
           defaultValue="주민들의 목소리"
           as="h2"
           page="home"
           section="quotes"
-          className="text-3xl sm:text-4xl md:text-5xl font-black mb-4"
+          className="font-serif-display font-bold text-3xl sm:text-4xl md:text-5xl mb-4 text-[var(--color-text)]"
         />
         <EditableText
           contentKey="home.quotes.subtitle"
@@ -21,7 +21,7 @@ export default function HomeQuotesSection() {
           as="p"
           page="home"
           section="quotes"
-          className="text-balance text-white/75 text-lg"
+          className="text-balance text-[var(--color-text-muted)] text-lg"
         />
       </FadeIn>
 
@@ -49,22 +49,21 @@ export default function HomeQuotesSection() {
         ]}
       >
         {(items) => (
-          <div className="space-y-12 md:space-y-16">
+          <div className="space-y-10 md:space-y-12">
             {items.map((item, i) => (
               <FadeIn key={item.name} delay={i * 0.15}>
-                <blockquote className="relative pl-8 md:pl-12">
-                  <span
-                    className="absolute top-0 left-0 text-6xl md:text-8xl font-serif-display leading-none text-white/20 select-none"
-                    aria-hidden="true"
-                  >
-                    {"\u201C"}
-                  </span>
-                  <p className="font-serif-display text-xl sm:text-2xl md:text-3xl leading-relaxed mb-4">
-                    {item.quote}
-                  </p>
-                  <footer className="text-white/70 text-base md:text-lg">
-                    — {item.name}
-                  </footer>
+                <blockquote className={`paper ${i % 2 === 0 ? "paper-tilt-l" : "paper-tilt-r"} p-8 md:p-10`}>
+                  <div className="relative z-[1]">
+                    <span className="font-serif-display text-6xl leading-none text-[var(--color-forest)]/25 select-none" aria-hidden="true">
+                      {"\u201C"}
+                    </span>
+                    <p className="font-serif-display text-xl sm:text-2xl md:text-[1.7rem] leading-relaxed text-[var(--color-text)] mt-2 mb-5">
+                      {item.quote}
+                    </p>
+                    <footer className="font-hand text-2xl text-[var(--color-text-muted)] text-right">
+                      — {item.name}
+                    </footer>
+                  </div>
                 </blockquote>
               </FadeIn>
             ))}
