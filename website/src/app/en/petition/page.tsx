@@ -16,6 +16,7 @@ import {
   englishPetitionSuccessCopy,
 } from "@/components/petition/petition-copy";
 import { usePetitionSignatureSummary } from "@/components/petition/usePetitionSignatureSummary";
+import { PostmarkStamp } from "@/components/visuals/ForestLetterMotifs";
 import { events } from "@/lib/analytics";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 
@@ -102,16 +103,18 @@ export default function EnglishPetitionPage() {
         eyebrow={<EditableText contentKey="en.petition.hero.eyebrow" defaultValue="Petition" as="span" page="en/petition" section="hero" />}
         variant="emphasis"
         metric={
-          <div className="flex flex-col items-center gap-1">
-            <PetitionAnimatedCounter target={signatureCount} locale="en-US" />
-            <EditableText
-              contentKey="en.petition.hero.metricLabel"
-              defaultValue="people have signed so far"
-              as="span"
-              page="en/petition"
-              section="hero"
-              className="text-white/80 text-lg mt-1"
-            />
+          <div className="stamp-badge inline-block">
+            <div className="stamp-badge__inner">
+              <PetitionAnimatedCounter target={signatureCount} locale="en-US" />
+              <EditableText
+                contentKey="en.petition.hero.metricLabel"
+                defaultValue="people have signed so far"
+                as="p"
+                page="en/petition"
+                section="hero"
+                className="text-sm text-[var(--color-text-muted)] mt-1"
+              />
+            </div>
           </div>
         }
       />
@@ -135,14 +138,17 @@ export default function EnglishPetitionPage() {
           shareDefaultHref="/en/share"
         />
 
-        <EditableText
-          contentKey="en.petition.emotional.prompt"
-          defaultValue="Add your name to more than 705 cries of resistance"
-          as="p"
-          page="en/petition"
-          section="emotional"
-          className="text-center text-xl font-serif-display text-[var(--color-text-muted)] mb-6"
-        />
+        <div className="relative">
+          <PostmarkStamp className="absolute -top-6 right-0 hidden w-16 h-16 text-[var(--color-forest)]/30 rotate-6 sm:block" />
+          <EditableText
+            contentKey="en.petition.emotional.prompt"
+            defaultValue="Add your name to more than 705 cries of resistance"
+            as="p"
+            page="en/petition"
+            section="emotional"
+            className="text-center text-xl font-serif-display text-[var(--color-text-muted)] mb-6"
+          />
+        </div>
 
         {!submitted ? (
           <section className="fade-in" id="signature-form" aria-label="Signature form">

@@ -12,7 +12,7 @@ export function EnglishStoryDemandsSection() {
           as="h2"
           page="en/story"
           section="demands"
-          className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
+          className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
         />
         <EditableList
           contentKey="en.storyPage.demands.items"
@@ -47,7 +47,7 @@ export function EnglishStoryDemandsSection() {
             as="p"
             page="en/story"
             section="demands"
-            className="text-xl md:text-2xl lg:text-3xl font-bold text-[var(--color-forest)] leading-snug"
+            className="font-serif-display text-xl md:text-2xl lg:text-3xl font-bold text-[var(--color-forest)] leading-snug"
           />
         </blockquote>
       </div>

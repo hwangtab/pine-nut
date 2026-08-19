@@ -113,7 +113,7 @@ export default function EnglishGalleryPage() {
               as="h2"
               page="en/gallery"
               section="cta"
-              className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3"
+              className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-3"
             />
             <EditableText
               contentKey="en.gallery.cta.description"
@@ -128,7 +128,7 @@ export default function EnglishGalleryPage() {
               defaultHref="https://campaigns.do/campaigns/1328"
               page="en/gallery"
               section="cta"
-              className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[var(--color-warm)] px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all duration-200 hover:bg-[var(--color-warm-light)] hover:shadow-xl"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[var(--color-forest)] px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all duration-200 hover:bg-[var(--color-forest-light)] hover:shadow-xl"
             >
               <EditableText
                 contentKey="en.gallery.cta.submit"

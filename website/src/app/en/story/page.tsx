@@ -42,7 +42,7 @@ export default function EnglishStoryPage() {
             as="h2"
             page="en/story"
             section="village"
-            className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
+            className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
           />
           <EditableRichText
             contentKey="en.storyPage.village.body"
@@ -67,7 +67,7 @@ The area is also habitat for endangered wildlife including the goral, black wood
             as="h2"
             page="en/story"
             section="plant"
-            className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
+            className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
           />
           <EditableRichText
             contentKey="en.storyPage.plant.body"
@@ -96,7 +96,7 @@ Hongcheon County applied to host the plant in 2019, after which KHNP selected Pu
             as="h2"
             page="en/story"
             section="video"
-            className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10 text-center"
+            className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
           />
           <EditableText
             contentKey="en.storyPage.video.description"
@@ -104,17 +104,19 @@ Hongcheon County applied to host the plant in 2019, after which KHNP selected Pu
             as="p"
             page="en/story"
             section="video"
-            className="text-center text-[var(--color-text-muted)] mb-8 text-base md:text-lg"
+            className="text-[var(--color-text-muted)] mb-8 text-base md:text-lg"
           />
-          <div className="aspect-video w-full rounded-[var(--radius-panel)] overflow-hidden shadow-card border-2 border-[var(--color-forest)]/15">
-            <iframe
-              src="https://www.youtube.com/embed/MtmOKKpkGMk"
-              title="Save Pungcheon-ri campaign video"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              className="w-full h-full border-0"
-              loading="lazy"
-            />
+          <div className="paper p-3 md:p-4">
+            <div className="relative z-[1] aspect-video w-full rounded-[10px] overflow-hidden">
+              <iframe
+                src="https://www.youtube.com/embed/MtmOKKpkGMk"
+                title="Save Pungcheon-ri campaign video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="w-full h-full border-0"
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -127,15 +129,17 @@ Hongcheon County applied to host the plant in 2019, after which KHNP selected Pu
             as="h2"
             page="en/story"
             section="location"
-            className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
+            className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
           />
-          <div className="rounded-[var(--radius-panel)] overflow-hidden border-2 border-[var(--color-forest)]/15 shadow-card">
-            <iframe
-              src="https://www.openstreetmap.org/export/embed.html?bbox=127.93,37.78,128.04,37.85&layer=mapnik&marker=37.8167,127.9833"
-              className="w-full h-[300px] md:h-[400px] lg:h-[450px] border-0"
-              loading="lazy"
-              title="Map of Pungcheon-ri"
-            />
+          <div className="paper p-3 md:p-4">
+            <div className="relative z-[1] rounded-[10px] overflow-hidden">
+              <iframe
+                src="https://www.openstreetmap.org/export/embed.html?bbox=127.93,37.78,128.04,37.85&layer=mapnik&marker=37.8167,127.9833"
+                className="w-full h-[300px] md:h-[400px] lg:h-[450px] border-0"
+                loading="lazy"
+                title="Map of Pungcheon-ri"
+              />
+            </div>
           </div>
           <EditableText
             contentKey="en.storyPage.location.description"
@@ -158,7 +162,7 @@ Hongcheon County applied to host the plant in 2019, after which KHNP selected Pu
             as="h2"
             page="en/story"
             section="cta"
-            className="text-3xl md:text-4xl font-black mb-6"
+            className="font-serif-display font-bold text-3xl md:text-4xl mb-6"
           />
           <EditableRichText
             contentKey="en.storyPage.cta.body"

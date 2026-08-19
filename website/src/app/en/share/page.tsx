@@ -33,7 +33,7 @@ export default function EnglishSharePage() {
         <CardNews locale="en" />
       </section>
 
-      <section className="py-12 md:py-16 px-4 sm:px-6 bg-[var(--color-bg-warm)]">
+      <section className="py-12 md:py-16 px-4 sm:px-6 bg-[var(--color-bg)]">
         <div className="max-w-xl mx-auto text-center">
           <EditableText
             contentKey="en.share.tip.text"

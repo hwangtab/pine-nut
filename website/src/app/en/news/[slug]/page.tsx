@@ -118,7 +118,7 @@ export default async function EnglishNewsDetailPage({
           </p>
         )}
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--color-text-muted)] font-medium mb-10">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-serif-display text-sm text-[var(--color-text-muted)] mb-10">
           <time dateTime={translatedItem.date}>{formattedDate}</time>
           {translatedItem.sourceName && (
             <>
@@ -186,41 +186,39 @@ export default async function EnglishNewsDetailPage({
 
         <nav className="grid grid-cols-1 sm:grid-cols-2 gap-4" aria-label="Previous and next news">
           {prevItem ? (
-            <Link
-              href={`/en/news/${prevItem.slug}`}
-              className="group flex flex-col p-5 rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card hover-lift"
-            >
-              <EditableText
-                contentKey="en.news.detail.prevLabel"
-                defaultValue="← Previous"
-                as="span"
-                page="en/news"
-                section="detail"
-                className="text-xs text-[var(--color-text-muted)] mb-1"
-              />
-              <span className="text-sm font-semibold text-[var(--color-text)] group-hover:text-[var(--color-forest)] transition-colors line-clamp-2">
-                {prevItem.title}
-              </span>
+            <Link href={`/en/news/${prevItem.slug}`} className="group block paper hover-lift">
+              <div className="relative z-[1] flex flex-col p-5">
+                <EditableText
+                  contentKey="en.news.detail.prevLabel"
+                  defaultValue="← Previous"
+                  as="span"
+                  page="en/news"
+                  section="detail"
+                  className="text-xs text-[var(--color-text-muted)] mb-1"
+                />
+                <span className="font-serif-display font-bold text-sm text-[var(--color-text)] group-hover:text-[var(--color-forest)] transition-colors line-clamp-2">
+                  {prevItem.title}
+                </span>
+              </div>
             </Link>
           ) : (
             <div />
           )}
           {nextItem ? (
-            <Link
-              href={`/en/news/${nextItem.slug}`}
-              className="group flex flex-col items-end text-right p-5 rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card hover-lift"
-            >
-              <EditableText
-                contentKey="en.news.detail.nextLabel"
-                defaultValue="Next →"
-                as="span"
-                page="en/news"
-                section="detail"
-                className="text-xs text-[var(--color-text-muted)] mb-1"
-              />
-              <span className="text-sm font-semibold text-[var(--color-text)] group-hover:text-[var(--color-forest)] transition-colors line-clamp-2">
-                {nextItem.title}
-              </span>
+            <Link href={`/en/news/${nextItem.slug}`} className="group block paper hover-lift">
+              <div className="relative z-[1] flex flex-col items-end text-right p-5">
+                <EditableText
+                  contentKey="en.news.detail.nextLabel"
+                  defaultValue="Next →"
+                  as="span"
+                  page="en/news"
+                  section="detail"
+                  className="text-xs text-[var(--color-text-muted)] mb-1"
+                />
+                <span className="font-serif-display font-bold text-sm text-[var(--color-text)] group-hover:text-[var(--color-forest)] transition-colors line-clamp-2">
+                  {nextItem.title}
+                </span>
+              </div>
             </Link>
           ) : (
             <div />

@@ -23,16 +23,15 @@ export function EnglishNumbersSection() {
       {(items) => (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {items.map((stat, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-[var(--radius-card)] p-4 md:p-6 lg:p-8 text-center shadow-card border border-[var(--color-border)]"
-            >
-              <p className="text-3xl md:text-4xl font-black text-[var(--color-forest)] mb-2">
-                {stat.number}
-              </p>
-              <p className="text-sm md:text-base text-[var(--color-text-muted)] font-medium">
-                {stat.label}
-              </p>
+            <div key={index} className="paper p-4 md:p-6 lg:p-8 text-center">
+              <div className="relative z-[1]">
+                <p className="font-serif-display text-3xl md:text-4xl font-bold text-[var(--color-forest)] mb-2">
+                  {stat.number}
+                </p>
+                <p className="text-sm md:text-base text-[var(--color-text-muted)] font-medium">
+                  {stat.label}
+                </p>
+              </div>
             </div>
           ))}
         </div>
@@ -92,33 +91,32 @@ export function EnglishStakeSection() {
             const icon = icons[index % icons.length];
 
             return (
-              <div
-                key={index}
-                className="bg-white rounded-[var(--radius-card)] p-5 md:p-8 border border-[var(--color-border)] shadow-card"
-              >
-                <div
-                  className={`w-12 h-12 rounded-xl ${icon.bgClass} flex items-center justify-center mb-5`}
-                >
-                  <svg
-                    className={`w-6 h-6 ${icon.colorClass}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
+              <div key={index} className="paper p-5 md:p-8">
+                <div className="relative z-[1]">
+                  <div
+                    className={`w-12 h-12 rounded-xl ${icon.bgClass} flex items-center justify-center mb-5`}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d={icon.path}
-                    />
-                  </svg>
+                    <svg
+                      className={`w-6 h-6 ${icon.colorClass}`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d={icon.path}
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="font-serif-display font-bold text-lg text-[var(--color-text)] mb-3">
+                    {card.title}
+                  </h3>
+                  <p className="text-[var(--color-text-muted)] leading-relaxed text-[15px]">
+                    {card.description}
+                  </p>
                 </div>
-                <h3 className="text-lg font-bold text-[var(--color-text)] mb-3">
-                  {card.title}
-                </h3>
-                <p className="text-[var(--color-text-muted)] leading-relaxed text-[15px]">
-                  {card.description}
-                </p>
               </div>
             );
           })}

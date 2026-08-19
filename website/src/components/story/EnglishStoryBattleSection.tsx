@@ -1,6 +1,7 @@
 "use client";
 
 import { EditableList, EditableText } from "@/components/editable";
+import { PineConeIcon } from "@/components/visuals/ForestLetterMotifs";
 
 export function EnglishStoryBattleSection() {
   return (
@@ -12,7 +13,7 @@ export function EnglishStoryBattleSection() {
           as="h2"
           page="en/story"
           section="battle"
-          className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
+          className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
         />
         <EditableList
           contentKey="en.storyPage.battle.timeline"
@@ -50,15 +51,16 @@ export function EnglishStoryBattleSection() {
           ]}
         >
           {(items) => (
-            <div className="space-y-8">
+            <div className="trail-line relative ml-2 space-y-12 pl-10">
               {items.map((item, index) => (
-                <div key={index} className="flex gap-5 md:gap-8">
-                  <div className="shrink-0 w-24 md:w-28">
-                    <span className="inline-block bg-[var(--color-forest)] text-white text-xs md:text-sm font-bold px-2.5 md:px-3 py-1.5 rounded-full whitespace-nowrap">
-                      {item.year}
-                    </span>
-                  </div>
-                  <p className="text-[var(--color-text)] leading-relaxed text-base md:text-lg pt-0.5">
+                <div key={index} className="relative">
+                  <PineConeIcon
+                    className="absolute -left-[52px] top-0 w-6 h-8 text-[var(--color-forest)]"
+                  />
+                  <h3 className="font-serif-display font-bold text-2xl mb-2 text-[var(--color-text)]">
+                    {item.year}
+                  </h3>
+                  <p className="max-w-xl leading-relaxed text-[var(--color-text-muted)] [overflow-wrap:anywhere]">
                     {item.text}
                   </p>
                 </div>

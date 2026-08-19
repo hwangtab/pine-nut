@@ -62,7 +62,7 @@ export default function EnglishPage() {
               as="h2"
               page="en"
               section="story"
-              className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
+              className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-10"
             />
             <EditableRichText
               contentKey="en.story.body"
@@ -96,7 +96,7 @@ The villagers voted unanimously to oppose the project. Since then, they have hel
               as="h2"
               page="en"
               section="numbers"
-              className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-12 text-center"
+              className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-12"
             />
             <EnglishNumbersSection />
           </div>
@@ -117,7 +117,7 @@ The villagers voted unanimously to oppose the project. Since then, they have hel
               as="h2"
               page="en"
               section="stake"
-              className="text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-12 text-center"
+              className="font-serif-display text-2xl md:text-3xl font-bold text-[var(--color-forest)] mb-12"
             />
             <EnglishStakeSection />
           </div>
@@ -138,7 +138,7 @@ The villagers voted unanimously to oppose the project. Since then, they have hel
               as="h2"
               page="en"
               section="help"
-              className="text-3xl md:text-4xl font-black mb-6"
+              className="font-serif-display font-bold text-3xl md:text-4xl mb-6"
             />
             <EditableText
               contentKey="en.help.subtitle"

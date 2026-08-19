@@ -33,8 +33,8 @@ export function EnglishPressFactsSection() {
       ]}
     >
       {(items) => (
-        <div className="bg-white rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card overflow-hidden">
-          <div className="divide-y divide-[var(--color-border)]">
+        <div className="paper overflow-hidden">
+          <div className="relative z-[1] divide-y divide-[var(--color-border)]">
             {items.map((fact) => (
               <div
                 key={fact.label}

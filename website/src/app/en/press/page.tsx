@@ -17,7 +17,7 @@ const pressKitItems = [
     title: "Fact Sheet",
     description: "One-page summary of the key facts and numbers",
     icon: FileText,
-    color: "text-[var(--color-warm)] bg-[var(--color-bg-warm)]",
+    color: "text-[var(--color-sky)] bg-[var(--color-bg-warm)]",
     href: "/en/press/factsheet",
   },
 ];
@@ -57,7 +57,7 @@ export default function EnglishPressPage() {
             as="h2"
             page="en/press"
             section="kit"
-            className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
+            className="font-serif-display text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {pressKitItems.map((item, index) => {
@@ -70,31 +70,33 @@ export default function EnglishPressPage() {
                   defaultHref={item.href}
                   page="en/press"
                   section="kit"
-                  className="group flex flex-col items-center text-center p-6 bg-white rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card hover-lift"
+                  className="group block paper hover-lift"
                 >
-                  <div className={`w-14 h-14 rounded-[var(--radius-card)] flex items-center justify-center mb-4 ${item.color}`}>
-                    <Icon className="w-6 h-6" />
+                  <div className="relative z-[1] flex flex-col items-center text-center p-6">
+                    <div className={`w-14 h-14 rounded-[var(--radius-card)] flex items-center justify-center mb-4 ${item.color}`}>
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <EditableText
+                      contentKey={`en.press.kit.item.${index}.title`}
+                      defaultValue={item.title}
+                      as="h3"
+                      page="en/press"
+                      section="kit"
+                      className="font-serif-display font-bold text-base text-[var(--color-text)] mb-1"
+                    />
+                    <EditableText
+                      contentKey={`en.press.kit.item.${index}.description`}
+                      defaultValue={item.description}
+                      as="p"
+                      page="en/press"
+                      section="kit"
+                      className="text-sm text-[var(--color-text-muted)] mb-4 leading-relaxed"
+                    />
+                    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-forest)] group-hover:text-[var(--color-forest-light)] transition-colors">
+                      <EditableText contentKey="en.press.kit.open" defaultValue="Open" as="span" page="en/press" section="kit" />
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
                   </div>
-                  <EditableText
-                    contentKey={`en.press.kit.item.${index}.title`}
-                    defaultValue={item.title}
-                    as="h3"
-                    page="en/press"
-                    section="kit"
-                    className="text-base font-bold text-[var(--color-text)] mb-1"
-                  />
-                  <EditableText
-                    contentKey={`en.press.kit.item.${index}.description`}
-                    defaultValue={item.description}
-                    as="p"
-                    page="en/press"
-                    section="kit"
-                    className="text-sm text-[var(--color-text-muted)] mb-4 leading-relaxed"
-                  />
-                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-forest)] group-hover:text-[var(--color-forest-light)] transition-colors">
-                    <EditableText contentKey="en.press.kit.open" defaultValue="Open" as="span" page="en/press" section="kit" />
-                    <ArrowRight className="w-4 h-4" />
-                  </span>
                 </EditableLink>
               );
             })}
@@ -108,7 +110,7 @@ export default function EnglishPressPage() {
             as="h2"
             page="en/press"
             section="facts"
-            className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
+            className="font-serif-display text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
           />
           <EnglishPressFactsSection />
         </section>
@@ -120,44 +122,46 @@ export default function EnglishPressPage() {
             as="h2"
             page="en/press"
             section="contact"
-            className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
+            className="font-serif-display text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
           />
-          <div className="bg-white rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card p-6 md:p-8">
-            <EditableRichText
-              contentKey="en.press.contact.description"
-              defaultValue="For reporting requests, interviews, and source materials, please contact the campaign through the official campaigns.do page."
-              page="en/press"
-              section="contact"
-              renderMode="paragraph"
-              className="text-[var(--color-text-muted)] mb-6 leading-relaxed"
-            />
-            <div className="grid grid-cols-1 gap-4">
-              <div className="flex items-start gap-3 p-4 bg-[var(--color-bg-warm)] rounded-[var(--radius-card)]">
-                <ExternalLink className="w-5 h-5 text-[var(--color-forest)] mt-0.5 shrink-0" />
-                <div>
-                  <EditableText
-                    contentKey="en.press.contact.campaignLabel"
-                    defaultValue="Campaign page"
-                    as="p"
-                    page="en/press"
-                    section="contact"
-                    className="text-sm font-semibold text-[var(--color-text-muted)] mb-0.5"
-                  />
-                  <EditableLink
-                    contentKey="en.press.contact.campaignHref"
-                    defaultHref="https://campaigns.do/campaigns/1328"
-                    page="en/press"
-                    section="contact"
-                    className="text-base font-medium text-[var(--color-text)] hover:text-[var(--color-forest)] transition-colors"
-                  >
+          <div className="paper">
+            <div className="relative z-[1] p-6 md:p-8">
+              <EditableRichText
+                contentKey="en.press.contact.description"
+                defaultValue="For reporting requests, interviews, and source materials, please contact the campaign through the official campaigns.do page."
+                page="en/press"
+                section="contact"
+                renderMode="paragraph"
+                className="text-[var(--color-text-muted)] mb-6 leading-relaxed"
+              />
+              <div className="grid grid-cols-1 gap-4">
+                <div className="flex items-start gap-3 p-4 bg-[var(--color-bg-warm)] rounded-[var(--radius-card)]">
+                  <ExternalLink className="w-5 h-5 text-[var(--color-forest)] mt-0.5 shrink-0" />
+                  <div>
                     <EditableText
-                      contentKey="en.press.contact.campaignLink"
-                      defaultValue="Open the official campaign page"
-                      as="span"
+                      contentKey="en.press.contact.campaignLabel"
+                      defaultValue="Campaign page"
+                      as="p"
                       page="en/press"
                       section="contact"
+                      className="text-sm font-semibold text-[var(--color-text-muted)] mb-0.5"
                     />
-                  </EditableLink>
+                    <EditableLink
+                      contentKey="en.press.contact.campaignHref"
+                      defaultHref="https://campaigns.do/campaigns/1328"
+                      page="en/press"
+                      section="contact"
+                      className="text-base font-medium text-[var(--color-text)] hover:text-[var(--color-forest)] transition-colors"
+                    >
+                      <EditableText
+                        contentKey="en.press.contact.campaignLink"
+                        defaultValue="Open the official campaign page"
+                        as="span"
+                        page="en/press"
+                        section="contact"
+                      />
+                    </EditableLink>
+                  </div>
                 </div>
               </div>
             </div>
@@ -171,26 +175,28 @@ export default function EnglishPressPage() {
             as="h2"
             page="en/press"
             section="cite"
-            className="text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
+            className="font-serif-display text-xl md:text-2xl font-bold text-[var(--color-text)] mb-6"
           />
-          <div className="bg-white rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card p-6 md:p-8">
-            <EditableRichText
-              contentKey="en.press.cite.description"
-              defaultValue="If you cite this campaign in reporting or research, you may use the following format."
-              page="en/press"
-              section="cite"
-              renderMode="paragraph"
-              className="text-[var(--color-text-muted)] mb-4 leading-relaxed"
-            />
-            <div className="bg-[var(--color-bg-warm)] rounded-[var(--radius-card)] p-5 border border-[var(--color-border)]">
+          <div className="paper">
+            <div className="relative z-[1] p-6 md:p-8">
               <EditableRichText
-                contentKey="en.press.cite.citation"
-                defaultValue={`Pungcheon-ri Residents' Committee. (2026). Save Pungcheon-ri campaign materials.\n${SITE_URL}/en`}
+                contentKey="en.press.cite.description"
+                defaultValue="If you cite this campaign in reporting or research, you may use the following format."
                 page="en/press"
                 section="cite"
-                renderMode="lines"
-                className="text-sm text-[var(--color-text)] leading-relaxed font-mono"
+                renderMode="paragraph"
+                className="text-[var(--color-text-muted)] mb-4 leading-relaxed"
               />
+              <div className="bg-[var(--color-bg-warm)] rounded-[var(--radius-card)] p-5 border border-[var(--color-border)]">
+                <EditableRichText
+                  contentKey="en.press.cite.citation"
+                  defaultValue={`Pungcheon-ri Residents' Committee. (2026). Save Pungcheon-ri campaign materials.\n${SITE_URL}/en`}
+                  page="en/press"
+                  section="cite"
+                  renderMode="lines"
+                  className="text-sm text-[var(--color-text)] leading-relaxed font-mono"
+                />
+              </div>
             </div>
           </div>
         </section>
