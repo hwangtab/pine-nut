@@ -12,6 +12,7 @@
 :root {
   --color-forest: #2D5016;
   --color-forest-light: #4A7A2E;
+  --color-forest-on-dark: #6CB83D;  /* 다크 밴드 텍스트/숫자 전용 — forest 계열 유지, --color-deep 위 4.5:1 확보 */
   --color-earth: #8B6914;
   --color-earth-light: #D4A843;
   --color-sky: #1B4965;
@@ -44,6 +45,7 @@
 @theme inline {
   --color-forest: var(--color-forest);
   --color-forest-light: var(--color-forest-light);
+  --color-forest-on-dark: var(--color-forest-on-dark);
   --color-earth: var(--color-earth);
   --color-earth-light: var(--color-earth-light);
   --color-sky: var(--color-sky);

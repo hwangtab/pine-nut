@@ -216,7 +216,7 @@ export default function ConcertPage() {
               <div key={s.label} className="text-center">
                 <dd
                   className={`font-serif-display text-4xl font-bold leading-none sm:text-5xl ${
-                    s.accent === "pink" ? "text-[var(--color-earth-light)]" : "text-[var(--color-forest-light)]"
+                    s.accent === "pink" ? "text-[var(--color-earth-light)]" : "text-[var(--color-forest-on-dark)]"
                   }`}
                 >
                   {s.value}
@@ -409,7 +409,7 @@ export default function ConcertPage() {
             href="https://www.saf2026.com/funding/pungcheonri"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-8 inline-block rounded-full bg-[var(--color-forest)] px-8 py-4 text-lg font-bold text-white transition hover:opacity-90"
+            className="mt-8 inline-block rounded-full bg-[var(--color-warm)] px-8 py-4 text-lg font-bold text-white transition-colors hover:bg-[var(--color-warm-light)]"
           >
             후원하러 가기 →
           </a>
