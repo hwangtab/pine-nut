@@ -30,8 +30,8 @@ export default function SharePage() {
         <CardNews />
       </section>
 
-      {/* Mobile tip */}
-      <section className="py-12 md:py-16 px-4 sm:px-6 bg-[var(--color-bg)]">
+      {/* Mobile tip — 하단 여백은 푸터 능선(마루 실측 md 60px, sm 42px)을 넘겨 잡는다 */}
+      <section className="pt-12 pb-16 md:pt-16 md:pb-24 px-4 sm:px-6 bg-[var(--color-bg)]">
         <div className="max-w-xl mx-auto text-center">
           <EditableText
             contentKey="share.tip.text"
