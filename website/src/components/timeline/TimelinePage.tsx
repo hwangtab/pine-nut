@@ -36,7 +36,7 @@ export function TimelinePage({
       : timelineEvents.filter((event) => event.year === selectedYear);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-[var(--color-bg-warm)]/60 via-[var(--color-bg)] to-stone-50">
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-[var(--color-bg-warm)]/60 via-[var(--color-bg)] to-[var(--color-bg)]">
       <SubHero
         imageUrl={timelineConfig.hero.imageUrl}
         imageContentKey={timelineConfig.hero.imageContentKey}
