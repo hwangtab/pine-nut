@@ -45,8 +45,8 @@ export default async function BoardPage({
   }
 
   return (
-    // 하단 여백은 푸터 능선(md 이상 80px)이 겹쳐 그려도 내용을 가리지 않을 만큼 확보한다
-    <div className="mx-auto max-w-3xl px-4 pt-10 pb-16 md:pb-32">
+    // 하단 여백은 푸터 능선(마루 실측 md 60px)을 살짝 넘기는 선까지만 — 더 키우면 빈 공백으로 보인다
+    <div className="mx-auto max-w-3xl px-4 pt-10 pb-12 md:pb-20">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-[var(--color-text)]">게시판</h1>
         {profile && (
@@ -103,7 +103,7 @@ export default async function BoardPage({
       </form>
 
       {items.length === 0 ? (
-        <p className="py-20 text-center text-[var(--color-text-muted)]">
+        <p className="pt-20 pb-4 text-center text-[var(--color-text-muted)]">
           {q ? "검색 결과가 없습니다." : "글이 없습니다."}
         </p>
       ) : (

@@ -160,7 +160,7 @@ export default function GalleryPage() {
       </div>
 
       {/* Copyright notice — 하단 여백은 푸터 능선(마루 실측 md 60px, sm 42px)이 겹쳐 그려도 가리지 않을 만큼 확보한다 */}
-      <div className="max-w-5xl mx-auto px-4 pb-10 sm:pb-16 md:pb-28 text-center">
+      <div className="max-w-5xl mx-auto px-4 pb-10 sm:pb-14 md:pb-20 text-center">
         <EditableText
           contentKey="gallery.copyright.text"
           defaultValue="사진 출처: 오마이뉴스, 프레시안, 뉴시스, 풍천리양수발전소반대대책위. 언론 보도 사진은 출처를 표기하여 사용합니다."
