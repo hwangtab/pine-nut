@@ -106,27 +106,26 @@ export default function ConcertPage() {
       <section className="px-6 py-16 sm:py-20">
         <div className="mx-auto grid max-w-4xl grid-cols-2 gap-4 md:grid-cols-4">
           {INFO_CARDS.map((card) => (
-            <div
-              key={card.label}
-              className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white px-4 py-6 text-center shadow-card"
-            >
-              <card.icon className="mx-auto h-7 w-7 text-[var(--color-forest)]" aria-hidden />
-              <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
-                {card.label}
-              </p>
-              {card.href ? (
-                <a
-                  href={card.href}
-                  className="mt-1 block break-keep text-lg font-black text-[var(--color-text)] hover:text-[var(--color-forest)]"
-                >
-                  {card.value}
-                </a>
-              ) : (
-                <p className="mt-1 break-keep text-lg font-black text-[var(--color-text)]">
-                  {card.value}
+            <div key={card.label} className="paper px-4 py-6 text-center">
+              <div className="relative z-[1]">
+                <card.icon className="mx-auto h-7 w-7 text-[var(--color-forest)]" aria-hidden />
+                <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+                  {card.label}
                 </p>
-              )}
-              <p className="mt-0.5 break-keep text-xs text-[var(--color-text-muted)]">{card.sub}</p>
+                {card.href ? (
+                  <a
+                    href={card.href}
+                    className="mt-1 block break-keep text-lg font-bold text-[var(--color-text)] hover:text-[var(--color-forest)]"
+                  >
+                    {card.value}
+                  </a>
+                ) : (
+                  <p className="mt-1 break-keep text-lg font-bold text-[var(--color-text)]">
+                    {card.value}
+                  </p>
+                )}
+                <p className="mt-0.5 break-keep text-xs text-[var(--color-text-muted)]">{card.sub}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -135,16 +134,16 @@ export default function ConcertPage() {
       {/* 왜 이 공연인가 */}
       <section className="px-6 pb-4 pt-4 sm:pb-8">
         <div className="mx-auto max-w-3xl">
-          <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
+          <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
             Why We Sing
           </p>
-          <h2 className="mt-3 text-balance break-keep text-center text-3xl font-bold leading-tight text-[var(--color-text)] sm:text-4xl">
+          <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold leading-tight text-[var(--color-text)] sm:text-4xl">
             숲이 베어지기 전에, 노래로 곁을 지킵니다
           </h2>
 
           {/* 첫 문단 + 숲 사진 */}
-          <div className="mt-10 overflow-hidden rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card">
-            <div className="relative aspect-[16/9] w-full">
+          <figure className="photo-frame mt-10">
+            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[2px]">
               <Image
                 src="/images/concert/real-canopy.jpg"
                 alt="풍천리 잣나무 숲을 아래에서 올려다본 실제 모습"
@@ -152,12 +151,11 @@ export default function ConcertPage() {
                 sizes="(max-width: 768px) 100vw, 768px"
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent" />
-              <p className="absolute bottom-4 left-5 right-5 text-sm font-medium text-white/90 drop-shadow">
-                산림청이 꼽은 ‘100대 명품숲’ · 국내 최대 잣나무 숲 (풍천리 현지 사진)
-              </p>
             </div>
-          </div>
+            <figcaption className="font-hand mt-2 px-1 text-lg text-[var(--color-text-muted)]">
+              산림청이 꼽은 ‘100대 명품숲’ · 국내 최대 잣나무 숲 (풍천리 현지 사진)
+            </figcaption>
+          </figure>
           <p className="mt-8 break-keep text-lg leading-loose text-[var(--color-text)] sm:text-xl">
             <b className="font-bold">백 년입니다.</b> 풍천리 잣나무가 지금 키에 이르기까지 걸린
             시간이. 강원도 홍천 가리산 자락에 1,800헥타르로 펼쳐진 이 숲을 산림청은 ‘100대
@@ -170,14 +168,14 @@ export default function ConcertPage() {
           {/* 둘째 문단 — 위기, 톱날 이미지 */}
           <div className="mt-12 grid gap-6 sm:grid-cols-[1fr_0.9fr] sm:items-center">
             <p className="order-2 break-keep text-base leading-loose text-[var(--color-text-muted)] sm:order-1 sm:text-lg">
-              그 백 년을 <b className="font-bold text-[var(--color-warm)]">84개월</b>이면 지울 수
+              그 백 년을 <b className="font-bold text-[var(--color-forest)]">84개월</b>이면 지울 수
               있다고 합니다. 양수발전소가 들어서면 잣나무 11만 그루가 잘려 나가고, 51가구가
               물에 잠기거나 정든 집을 떠나야 합니다. 앞으로의 이야기가 아닙니다. 2024년 10월,
               이설도로를 낸다며 벌써 2,256그루가 먼저 쓰러졌습니다. 톱날은 이미 숲의 가장자리를
               파고들고 있습니다.
             </p>
-            <div className="order-1 overflow-hidden rounded-[var(--radius-panel)] border border-[var(--color-border)] shadow-card sm:order-2">
-              <div className="relative aspect-[4/5] w-full">
+            <figure className="photo-frame paper-tilt-r order-1 sm:order-2">
+              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[2px]">
                 <Image
                   src="/images/concert/real-logs.jpg"
                   alt="풍천리에서 실제로 베어진 잣나무들이 쌓여 있는 모습"
@@ -186,39 +184,39 @@ export default function ConcertPage() {
                   className="object-cover"
                 />
               </div>
-            </div>
+            </figure>
           </div>
 
           {/* 셋째 문단 — 강조 인용 블록 */}
-          <div className="mt-12 rounded-[var(--radius-panel)] border-l-4 border-[var(--color-warm)] bg-[var(--color-bg-warm)] px-6 py-8 sm:px-10">
+          <div className="mt-12 rounded-[var(--radius-panel)] border-l-4 border-[var(--color-forest)] bg-[var(--color-bg-warm)] px-6 py-8 sm:px-10">
             <p className="break-keep text-lg leading-loose text-[var(--color-text)] sm:text-xl">
               주민들은 2019년부터 7년 동안 705번 넘게 거리에 섰습니다. 예순에서 여든의 손들이
               팻말을 들었고, 그 가운데 일곱 분은 지금 재판을 받고 있습니다. 이제 음악가 열네
               팀이 그 손을 마주 잡으러 청와대 앞에 섭니다. 숲이 사라지기 전에, 우리 노래가
               가닿아야 할 곳이 있습니다.
             </p>
-            <p className="mt-5 break-keep text-xl font-bold text-[var(--color-warm)] sm:text-2xl">
+            <p className="mt-5 break-keep text-xl font-bold text-[var(--color-forest)] sm:text-2xl">
               8월 1일, 당신이 앉을 자리 하나가 그 숲의 한 그루가 됩니다.
             </p>
           </div>
         </div>
       </section>
 
-      {/* 위기의 숫자 — 다크 네온 밴드(포스터 무드) */}
-      <section className="mt-12 bg-[var(--color-forest)] px-6 py-16 sm:py-20">
+      {/* 위기의 숫자 — 다크 밴드 */}
+      <section className="mt-12 bg-[var(--color-deep)] px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl">
-          <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[#3BEF7C]">
+          <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-earth-light)]">
             What&apos;s at Stake
           </p>
-          <h2 className="mt-3 text-balance break-keep text-center text-2xl font-bold text-white sm:text-3xl">
+          <h2 className="mt-3 text-balance break-keep font-serif-display text-2xl font-bold text-white sm:text-3xl">
             우리가 지키려는 것
           </h2>
           <dl className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4">
             {STATS.map((s) => (
               <div key={s.label} className="text-center">
                 <dd
-                  className={`text-4xl font-black leading-none sm:text-5xl ${
-                    s.accent === "pink" ? "text-[#FF8CA0]" : "text-[#3BEF7C]"
+                  className={`font-serif-display text-4xl font-bold leading-none sm:text-5xl ${
+                    s.accent === "pink" ? "text-[var(--color-earth-light)]" : "text-[var(--color-forest-light)]"
                   }`}
                 >
                   {s.value}
@@ -228,11 +226,8 @@ export default function ConcertPage() {
               </div>
             ))}
           </dl>
-          <div className="mt-12 text-center">
-            <Link
-              href="/story"
-              className="inline-flex min-h-[44px] items-center rounded-full border-2 border-white/50 px-6 py-3 text-base font-bold text-white transition-colors hover:bg-white/10"
-            >
+          <div className="mt-12">
+            <Link href="/story" className="letter-btn letter-btn--outline">
               풍천리 이야기 자세히 보기 →
             </Link>
           </div>
@@ -242,30 +237,29 @@ export default function ConcertPage() {
       {/* 타임테이블 */}
       <section className="px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-2xl">
-          <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
+          <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
             Time Table
           </p>
-          <h2 className="mt-3 text-balance break-keep text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
+          <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
             함께하는 음악가 14팀
           </h2>
-          <p className="mt-3 text-center text-sm text-[var(--color-text-muted)]">
+          <p className="mt-3 text-sm text-[var(--color-text-muted)]">
             팀당 30분 · 현장 상황에 따라 순서와 시간이 조정될 수 있습니다.
           </p>
           <ol className="mt-10 space-y-2">
             {CONCERT_TIMETABLE.map((slot, i) => (
-              <li
-                key={slot.name}
-                className="flex items-center gap-3 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white px-4 py-4 shadow-card transition-colors hover:border-[var(--color-warm)]/40 sm:gap-4 sm:px-5"
-              >
-                <span className="w-7 shrink-0 text-sm font-black text-[var(--color-warm)]">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="w-[7.5rem] shrink-0 text-sm font-bold tabular-nums text-[var(--color-text-muted)]">
-                  {slot.start} – {slot.end}
-                </span>
-                <span className="break-keep text-base font-bold leading-snug text-[var(--color-text)]">
-                  {slot.name}
-                </span>
+              <li key={slot.name} className="paper transition-colors hover:border-[var(--color-forest)]/40">
+                <div className="relative z-[1] flex items-center gap-3 px-4 py-4 sm:gap-4 sm:px-5">
+                  <span className="w-7 shrink-0 text-sm font-bold text-[var(--color-forest)]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="w-[7.5rem] shrink-0 text-sm font-bold tabular-nums text-[var(--color-text-muted)]">
+                    {slot.start} – {slot.end}
+                  </span>
+                  <span className="break-keep text-base font-bold leading-snug text-[var(--color-text)]">
+                    {slot.name}
+                  </span>
+                </div>
               </li>
             ))}
             <li className="flex items-center gap-3 rounded-[var(--radius-card)] border border-dashed border-[var(--color-border)] px-4 py-4 sm:gap-4 sm:px-5">
@@ -282,27 +276,26 @@ export default function ConcertPage() {
       </section>
 
       {/* 이렇게 함께해주세요 */}
-      <section className="bg-[var(--color-bg-warm)] px-6 py-16 sm:py-24">
+      <section className="bg-[var(--color-bg-moss)] px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-5xl">
-          <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
+          <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
             Join Us
           </p>
-          <h2 className="mt-3 text-balance break-keep text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
+          <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
             이렇게 함께해주세요
           </h2>
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             {PARTICIPATE.map((p) => (
-              <div
-                key={p.title}
-                className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-card"
-              >
-                <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-warm)]/10 text-[var(--color-warm)]">
-                  <p.icon className="h-6 w-6" aria-hidden />
-                </span>
-                <h3 className="mt-4 text-lg font-bold text-[var(--color-text)]">{p.title}</h3>
-                <p className="mt-2 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                  {p.body}
-                </p>
+              <div key={p.title} className="paper p-6">
+                <div className="relative z-[1]">
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-forest)]/10 text-[var(--color-forest)]">
+                    <p.icon className="h-6 w-6" aria-hidden />
+                  </span>
+                  <h3 className="mt-4 text-lg font-bold text-[var(--color-text)]">{p.title}</h3>
+                  <p className="mt-2 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+                    {p.body}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
@@ -312,28 +305,30 @@ export default function ConcertPage() {
       {/* 현장 부스 */}
       <section className="px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-3xl">
-          <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
+          <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
             On-site Booth
           </p>
-          <h2 className="mt-3 text-balance break-keep text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
+          <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
             현장 부스도 함께합니다
           </h2>
-          <div className="mt-8 flex flex-col items-start gap-5 rounded-[var(--radius-panel)] border border-[var(--color-border)] bg-[var(--color-bg-warm)] p-6 shadow-card sm:flex-row sm:p-8">
-            <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--color-forest)]/10 text-[var(--color-forest)]">
-              <Shirt className="h-6 w-6" aria-hidden />
-            </span>
-            <div>
-              <h3 className="text-lg font-bold text-[var(--color-text)]">
-                강원녹색당 — 실크스크린 · 풍천리 티셔츠 판매 부스
-              </h3>
-              <p className="mt-2 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                강원녹색당이 공연에 함께해 실크스크린 체험과 티셔츠 판매 부스를 운영합니다.
-                풍천리를 담아 새로 만든 티셔츠를 현장에서 바로 만나고 구매할 수 있습니다.
-                부스는 공연 시간 내내(13:00~20:00) 운영됩니다.
-              </p>
-              <p className="mt-3 break-keep rounded-xl bg-white/70 px-4 py-3 text-sm font-semibold text-[var(--color-forest)]">
-                💡 실크스크린 체험을 하고 싶다면, <b>하얀색 티셔츠</b>를 미리 챙겨오시면 좋아요.
-              </p>
+          <div className="paper mt-8 p-6 sm:p-8">
+            <div className="relative z-[1] flex flex-col items-start gap-5 sm:flex-row">
+              <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--color-forest)]/10 text-[var(--color-forest)]">
+                <Shirt className="h-6 w-6" aria-hidden />
+              </span>
+              <div>
+                <h3 className="text-lg font-bold text-[var(--color-text)]">
+                  강원녹색당 — 실크스크린 · 풍천리 티셔츠 판매 부스
+                </h3>
+                <p className="mt-2 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+                  강원녹색당이 공연에 함께해 실크스크린 체험과 티셔츠 판매 부스를 운영합니다.
+                  풍천리를 담아 새로 만든 티셔츠를 현장에서 바로 만나고 구매할 수 있습니다.
+                  부스는 공연 시간 내내(13:00~20:00) 운영됩니다.
+                </p>
+                <p className="mt-3 break-keep rounded-xl bg-[var(--color-bg)] px-4 py-3 text-sm font-semibold text-[var(--color-forest)]">
+                  💡 실크스크린 체험을 하고 싶다면, <b>하얀색 티셔츠</b>를 미리 챙겨오시면 좋아요.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -342,41 +337,45 @@ export default function ConcertPage() {
       {/* 오시는 길 */}
       <section className="px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-3xl">
-          <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
+          <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
             Location
           </p>
-          <h2 className="mt-3 text-balance break-keep text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
+          <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
             오시는 길
           </h2>
-          <p className="mt-4 text-balance break-keep text-center text-lg font-bold text-[var(--color-text)]">
+          <p className="mt-4 text-balance break-keep text-lg font-bold text-[var(--color-text)]">
             청와대 사랑채 앞 도로 · 서울 종로구 효자동
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-card">
-              <span className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-forest)]">
-                <Train className="h-5 w-5" aria-hidden />
-                지하철
-              </span>
-              <p className="mt-3 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                3호선 <b className="text-[var(--color-text)]">경복궁역 3번 출구</b>에서 약 900m
-                (도보 약 15분). <b className="text-[var(--color-text)]">청와대사랑채입구</b> 정류장이
-                바로 앞입니다.
-              </p>
+            <div className="paper p-6">
+              <div className="relative z-[1]">
+                <span className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-forest)]">
+                  <Train className="h-5 w-5" aria-hidden />
+                  지하철
+                </span>
+                <p className="mt-3 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+                  3호선 <b className="text-[var(--color-text)]">경복궁역 3번 출구</b>에서 약 900m
+                  (도보 약 15분). <b className="text-[var(--color-text)]">청와대사랑채입구</b> 정류장이
+                  바로 앞입니다.
+                </p>
+              </div>
             </div>
-            <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-card">
-              <span className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-forest)]">
-                <TreePine className="h-5 w-5" aria-hidden />
-                한여름 야외 공연
-              </span>
-              <p className="mt-3 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                물, 양산·모자, 돗자리를 챙겨오시면 오래 편하게 함께할 수 있어요. 주변에 대형
-                주차장이 없으니 대중교통을 권합니다.
-              </p>
+            <div className="paper p-6">
+              <div className="relative z-[1]">
+                <span className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-forest)]">
+                  <TreePine className="h-5 w-5" aria-hidden />
+                  한여름 야외 공연
+                </span>
+                <p className="mt-3 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+                  물, 양산·모자, 돗자리를 챙겨오시면 오래 편하게 함께할 수 있어요. 주변에 대형
+                  주차장이 없으니 대중교통을 권합니다.
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="mx-auto mt-6 flex w-full max-w-md flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row sm:items-center">
+          <div className="mt-6 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
             <a
               href="https://map.kakao.com/link/search/%EC%B2%AD%EC%99%80%EB%8C%80%20%EC%82%AC%EB%9E%91%EC%B1%84"
               target="_blank"
@@ -398,9 +397,9 @@ export default function ConcertPage() {
       </section>
 
       {/* 공연 개최 후원 */}
-      <section id="support" className="scroll-mt-20 bg-[var(--color-bg-warm)] px-6 py-16 sm:py-24">
+      <section id="support" className="scroll-mt-20 bg-[var(--color-bg-moss)] px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-serif text-3xl font-bold sm:text-4xl">공연 개최를 후원해주세요</h2>
+          <h2 className="font-serif-display text-3xl font-bold sm:text-4xl">공연 개최를 후원해주세요</h2>
           <p className="mt-4 text-lg leading-relaxed text-[var(--color-text)]">
             음악가 14팀은 개런티 없이 무대에 오릅니다. 악기 운반, 생수와 그늘막, 현수막 — 공연을
             여는 실비를 함께 만들어주세요. 2만원 이상 후원하시면 공연 포스터(A2)를 현장에서
@@ -418,25 +417,25 @@ export default function ConcertPage() {
       </section>
 
       {/* 포스터 */}
-      <section id="poster" className="scroll-mt-20 bg-[var(--color-bg-warm)] px-6 py-16 sm:py-24">
+      <section id="poster" className="scroll-mt-20 px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
+          <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
             Spread the Word
           </p>
-          <h2 className="mt-3 text-balance break-keep text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
+          <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
             포스터를 널리 알려주세요
           </h2>
           <p className="mt-3 break-keep text-base text-[var(--color-text-muted)]">
             내려받아 SNS·단체방·동네 게시판에 공유해주세요.
           </p>
-          <div className="mt-8 overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-card">
+          <div className="photo-frame mt-8">
             <Image
               src="/images/concert/poster.jpg"
               alt="베어지기 전에 풍천리 공연 포스터 — 2026년 8월 1일 토요일 오후 1시부터 8시, 청와대 앞. 출연: 강민정, 강상석, 경하와 세민과 멍구와 흑염소, 길가는밴드 장현호, 김민정(알마즈), 남수, 물장구클럽, 삼각전파사, 아나자오, 이서영, 자이, 종이코트, 치핵, 하늘소년"
               width={1200}
               height={1500}
               sizes="(max-width: 768px) 100vw, 672px"
-              className="h-auto w-full"
+              className="h-auto w-full rounded-[2px]"
             />
           </div>
           <div className="mt-6">
@@ -454,22 +453,21 @@ export default function ConcertPage() {
       {/* FAQ */}
       <section className="px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-3xl">
-          <p className="text-center text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-warm)]">
+          <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
             FAQ
           </p>
-          <h2 className="mt-3 text-balance break-keep text-center text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
+          <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
             자주 묻는 질문
           </h2>
           <dl className="mt-10 space-y-3">
             {FAQ.map((item) => (
-              <div
-                key={item.q}
-                className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-card"
-              >
-                <dt className="text-lg font-bold text-[var(--color-text)]">Q. {item.q}</dt>
-                <dd className="mt-2 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                  {item.a}
-                </dd>
+              <div key={item.q} className="paper p-6">
+                <div className="relative z-[1]">
+                  <dt className="text-lg font-bold text-[var(--color-text)]">Q. {item.q}</dt>
+                  <dd className="mt-2 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+                    {item.a}
+                  </dd>
+                </div>
               </div>
             ))}
           </dl>
@@ -487,32 +485,23 @@ export default function ConcertPage() {
       </section>
 
       {/* 마무리 CTA */}
-      <section className="relative overflow-hidden bg-[var(--color-forest)] px-6 py-20 text-center sm:py-24">
+      <section className="relative overflow-hidden bg-[var(--color-deep)] px-6 py-20 text-center sm:py-24">
         <div className="mx-auto max-w-3xl">
-          <Megaphone className="mx-auto h-10 w-10 text-[#3BEF7C]" aria-hidden />
-          <h2 className="mx-auto mt-5 max-w-[16ch] text-balance break-keep text-3xl font-bold leading-tight text-white sm:text-4xl">
+          <Megaphone className="mx-auto h-10 w-10 text-[var(--color-earth-light)]" aria-hidden />
+          <h2 className="mx-auto mt-5 max-w-[16ch] text-balance break-keep font-serif-display text-3xl font-bold leading-tight text-white sm:text-4xl">
             공연장에 오지 못해도 함께할 수 있어요
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-balance break-keep text-base text-white/80 sm:text-lg">
             서명 한 번, 응원 한 줄, 후원 한 걸음이 풍천리의 숲을 지키는 힘이 됩니다.
           </p>
           <div className="mx-auto mt-8 flex w-full max-w-md flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row sm:items-center sm:flex-wrap">
-            <Link
-              href="/petition"
-              className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[var(--color-warm)] px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-[var(--color-warm-light)]"
-            >
+            <Link href="/petition" className="letter-btn letter-btn--primary">
               서명하기
             </Link>
-            <Link
-              href="/board"
-              className="inline-flex min-h-[52px] items-center justify-center rounded-full border-2 border-white/70 px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-white/10"
-            >
+            <Link href="/board" className="letter-btn letter-btn--outline">
               게시판에 응원 남기기
             </Link>
-            <Link
-              href="/donate"
-              className="inline-flex min-h-[52px] items-center justify-center rounded-full border-2 border-white/70 px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-white/10"
-            >
+            <Link href="/donate" className="letter-btn letter-btn--outline">
               후원하기
             </Link>
           </div>
