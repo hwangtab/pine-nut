@@ -141,4 +141,99 @@ grep -rn '!"' src --include="*.tsx" | grep -E "letter-btn|paper|ink-chip"
   검증했다. 로직상 문제는 없으나 공연 시즌 중 실제 렌더링 스모크 테스트는 하지
   못했다.
 - 검증에 사용한 스크린샷은 `/Users/hwang-gyeongha/pine-nut/.css-layer-screenshots/`에
-  남아 있으며(git 미추적), 필요 없으면 삭제해도 된다.
+  임시로 저장했다가 검증 종료 후 삭제했다(git 미추적 디렉터리).
+
+---
+
+## 2차 리뷰 대응 (7번째 충돌 지점)
+
+1차 리뷰에서 지적된 대로, 최초 조사에서 열거한 "6곳"은 실제로는 바닥값이었지
+전체 목록이 아니었다. `SubHero.tsx`의 아이백로우 칩에서 7번째 충돌 지점이
+발견됐다. 아래는 그 대응 내용이다.
+
+### FIX 1 — `src/components/SubHero.tsx:102`: `.ink-chip` vs `tracking-[0.12em]`
+
+`.ink-chip`은 자체적으로 `letter-spacing: 0.02em`을 선언한다. 리디자인 전
+`.glass-dark` 칩은 letter-spacing을 아예 지정하지 않았고, `tracking-[0.12em]`
+유틸리티가 그대로 적용돼 0.12em으로 렌더링됐다. Task 12에서 `.glass-dark`가
+`.ink-chip`으로 교체되며 언레이어드 규칙이 유틸리티를 조용히 이겨 0.02em으로
+바뀌었고, 아무도 `!`를 붙이지 않은 채 방치돼 있었다(다른 6곳과 달리 `!`가
+없었던 이유가 바로 이것 — 무력화된 유틸리티라 애초에 아무도 문제로 인지하지
+못했다). 레이어링 이후에는 `tracking-[0.12em]`이 다시 이기므로, 이는 회귀가
+아니라 리디자인이 의도치 않게 죽였던 원래 트리트먼트(넓은 자간의 소형
+대문자 아이백로우)를 복원하는 것이다. 따라서 **`tracking-[0.12em]`을 삭제하지
+않고 그대로 이기게 두었다** — `SubHero.tsx`는 코드 변경 없음.
+
+**letter-spacing (계산값), before/after**
+
+| | before(리디자인 이후 ~ 레이어 이전) | after(레이어링 이후, 현재) |
+|---|---|---|
+| `.ink-chip`의 letter-spacing | `0.02em`(언레이어드 `.ink-chip`이 항상 이김 — 1차 패스에서 칩의 gap/font-weight로 이미 실증한 것과 동일한 캐스케이드 메커니즘) | `1.5px` = `0.12em`(폰트 크기 12.5px 기준; 라이브로 측정) |
+
+before 값은 별도로 옛 커밋을 체크아웃해 재측정하지 않고, 1차 패스에서 이미
+`.ink-chip`의 gap/font-weight로 실증한 것과 동일한 "언레이어드가 항상 이김"
+캐스케이드 규칙에서 도출했다 — 동일 메커니즘이므로 재검증이 불필요하다고
+판단했다. after 값은 아래 페이지들에서 실제 라이브 측정.
+
+**페이지별 truncation 측정 (desktop 1440×900, mobile 390×844)**
+
+`.ink-chip`은 `max-w-full overflow-hidden text-ellipsis whitespace-nowrap`이라
+`scrollWidth > clientWidth`이면 말줄임(ellipsis)이 발생한다. 아래 3곳 모두
+두 뷰포트에서 `scrollWidth === clientWidth`로 truncation 없음을 확인했다.
+
+| 페이지 | 텍스트 | desktop scrollWidth/clientWidth | mobile scrollWidth/clientWidth | truncated |
+|---|---|---|---|---|
+| `/timeline` | "투쟁 연대기" | 92 / 92 | 92 / 92 | 아니오 |
+| `/petition` | "참여하기" | 75 / 75 | 75 / 75 | 아니오 |
+| `/en/petition` | "Petition" | 94 / 94 | 94 / 94 | 아니오 |
+
+추가로 리스크가 가장 커 보였던 `/news/[slug]`(카테고리+날짜 조합이라 가장
+긴 아이백로우 후보)도 확인했는데, 이 페이지는 `SubHero`가 아니라
+`UtilityHeader`를 쓰고 `UtilityHeader`의 아이백로우는 `.ink-chip`이 아닌
+자체 `<p>` + `tracking-[0.22em]`이라 이번 레이어링과 무관함을 확인했다(칩
+자체가 없음 — `.ink-chip` 셀렉터로 찾아지지 않음).
+
+세 페이지 모두 truncation 신규 발생 없음. 코드 변경 없이 안전하게 확인됨.
+
+### FIX 2 — `src/components/builder/ManagedSection.tsx:10`: `THEME_CLASS_MAP.paper`
+
+컴파일된 CSS를 확인한 결과 `!bg-white`(v3 리딩-`!` 문법)는 실제로
+`.\!bg-white { background-color: var(--color-white) !important; }`로 컴파일돼
+동작하고 있었다 — Tailwind v4가 레거시 호환으로 리딩-`!`도 인식해 클래스명
+리터럴에 이스케이프된 `!`를 넣고 `!important`를 내보낸다. 즉 "적용되지 않던
+죽은 클래스"는 아니었다.
+
+다만 이 `!important`는 우리의 레이어 경계(`.paper` 등 재질 클래스)와는
+무관했다 — `ManagedSection`을 실제로 쓰는 곳(`gallery`, `press`, `en`,
+`story`, `HomeClient` 등)에서 `defaultClassName`이 이미 자체 `bg-[var(--color-*)]`
+유틸리티를 갖고 있어, THEME_CLASS_MAP의 배경색은 **같은 유틸리티 레이어 안에서
+서로 다른 Tailwind 유틸리티끼리** 경합하고 있었다. 이 경합은 className
+속성값의 문자열 순서가 아니라 Tailwind가 생성한 스타일시트 내 규칙 순서로
+결정되며(className 순서는 CSS 캐스케이드에 영향 없음), `!important` 없이도
+`bg-white`가 실제 사용되는 모든 `defaultClassName` 배경 조합
+(`bg-[var(--color-bg)]`, `bg-[var(--color-bg-warm)]`, `bg-[var(--color-forest)]`,
+`bg-[var(--color-bg-moss)]`, `bg-[var(--color-deep)]`)을 합성 엘리먼트로
+일일이 테스트해 전부 이긴다는 것을 확인했다(`bg-gradient-to-t` 변형은
+`background-image`라 애초에 충돌하지 않음).
+
+**판정: "작동하던 클래스였다"** — 삭제 후에도(`bg-white`, `!` 없이) 동일하게
+이기므로 `!`를 제거했다. 다만 이 승리는 Tailwind의 유틸리티 생성 순서라는
+구현 세부사항에 기대고 있어, 향후 `defaultClassName`에 새로운 종류의 배경
+유틸리티가 추가되면 이론적으로 순서가 달라질 수 있다는 점은 참고용 메모로
+남긴다(이번 변경으로 인한 결함은 아님).
+
+### 가드 스위트 재실행
+
+44개 스크립트 중 **42개 통과, 2개 실패**(`home-page:refactor:check`,
+`timeline-client:refactor:check` — 동일하게 사전 존재, main에서도 실패).
+`npm run lint`/`npm run build` 모두 재통과.
+
+### "6곳" 인벤토리에 대한 결론
+
+최초 스캔(원 디스패치 + 나의 1차 조사)이 찾아낸 6곳은 실제로는 **바닥값
+(floor)이었지 상한(ceiling)이 아니었다** — 재질 클래스와 유틸리티가 같은
+속성을 두고 겹치는 지점을 소스 전체에서 완전히 열거하는 정적 스캔은 어렵고,
+`.ink-chip`의 letter-spacing처럼 "죽은 유틸리티라 아무도 `!`를 붙이지 않아
+grep으로 찾을 수 없는" 사례가 최소 1곳 더 있었다. 향후 유사 리팩토링에서는
+"`!`가 붙은 곳"뿐 아니라 재질 클래스가 선언하는 모든 CSS 속성을 각 사용처의
+유틸리티 클래스와 대조하는 전수 조사가 필요하다.

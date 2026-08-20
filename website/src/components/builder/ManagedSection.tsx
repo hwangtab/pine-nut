@@ -7,7 +7,7 @@ import { parseExistingSectionStyles } from "@/lib/custom-sections";
 
 const THEME_CLASS_MAP = {
   default: "",
-  paper: "!bg-white",
+  paper: "bg-white",
   warm: "!bg-[var(--color-bg-warm)]",
   mist: "!bg-[var(--color-bg)]",
 } as const;
