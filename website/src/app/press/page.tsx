@@ -52,7 +52,7 @@ export default function PressPage() {
         eyebrow={<EditableText contentKey="press.hero.eyebrow" defaultValue="자료 아카이브" as="span" page="press" section="hero" />}
       />
 
-      <div className="max-w-4xl mx-auto px-4 pt-12 md:pt-16 pb-10 md:pb-12 space-y-16">
+      <div className="max-w-4xl mx-auto px-4 pt-12 md:pt-16 pb-20 space-y-16">
         <OrderedSectionGroup page="press" defaultOrder={[...PRESS_SECTION_ORDER]}>
         <ManagedSection
           page="press"

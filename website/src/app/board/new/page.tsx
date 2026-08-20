@@ -8,7 +8,7 @@ export default async function NewBoardPostPage() {
 
   if (!profile) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-10">
+      <div className="mx-auto max-w-3xl px-4 pt-10 pb-12 md:pb-20">
         <div className="paper p-10 text-center">
          <div className="relative z-[1]">
           <p className="mb-4 text-[var(--color-text)]">
@@ -28,7 +28,7 @@ export default async function NewBoardPostPage() {
 
   if (!profile.nickname) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-10">
+      <div className="mx-auto max-w-3xl px-4 pt-10 pb-12 md:pb-20">
         <div className="paper p-10 text-center">
          <div className="relative z-[1]">
           <p className="mb-4 text-[var(--color-text)]">
@@ -47,7 +47,7 @@ export default async function NewBoardPostPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
+    <div className="mx-auto max-w-3xl px-4 pt-10 pb-12 md:pb-20">
       <Link
         href="/board"
         className="text-base text-[var(--color-text-muted)] hover:text-[var(--color-text)]"

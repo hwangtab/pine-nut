@@ -30,7 +30,7 @@ export default async function EditBoardPostPage({
   const action = updateBoardPost.bind(null, id);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
+    <div className="mx-auto max-w-3xl px-4 pt-10 pb-12 md:pb-20">
       <Link
         href={`/board/${id}`}
         className="text-base text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
