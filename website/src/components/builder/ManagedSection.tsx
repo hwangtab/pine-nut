@@ -5,9 +5,11 @@ import { EditableSection } from "@/components/editable";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 import { parseExistingSectionStyles } from "@/lib/custom-sections";
 
+// paper/warm/mist는 각 섹션의 defaultClassName에 이미 있는 배경 유틸리티를
+// 반드시 이겨야 해서 ! 를 붙인다 — @layer components 경계와는 무관하다.
 const THEME_CLASS_MAP = {
   default: "",
-  paper: "bg-white",
+  paper: "!bg-white",
   warm: "!bg-[var(--color-bg-warm)]",
   mist: "!bg-[var(--color-bg)]",
 } as const;

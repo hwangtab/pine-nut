@@ -237,3 +237,76 @@ before 값은 별도로 옛 커밋을 체크아웃해 재측정하지 않고, 1�
 grep으로 찾을 수 없는" 사례가 최소 1곳 더 있었다. 향후 유사 리팩토링에서는
 "`!`가 붙은 곳"뿐 아니라 재질 클래스가 선언하는 모든 CSS 속성을 각 사용처의
 유틸리티 클래스와 대조하는 전수 조사가 필요하다.
+
+---
+
+## 3차 정정: FIX 2는 잘못된 전제였다 — `ManagedSection.tsx` 원복
+
+2차 대응에서 `THEME_CLASS_MAP.paper`의 `!bg-white`를 `bg-white`로 바꿨던 것은
+**잘못된 전제에서 나온 조치였고, 되돌렸다.**
+
+지시받은 전제는 "`@layer components` 경계가 생겨 일반 유틸리티가 이기게 됐으니
+이 `!`는 이제 불필요하다"였다. 하지만 2차 조사에서 직접 확인했듯, 이 `!`는
+애초에 우리가 레이어링한 재질 클래스(`.paper` 등)와 싸운 적이 없다 —
+`ManagedSection`이 실제로 쓰이는 곳마다 `defaultClassName`이 이미 자체
+`bg-[var(--color-*)]` 유틸리티를 갖고 있어서, `THEME_CLASS_MAP`의 배경색은
+**형제 Tailwind 유틸리티끼리** 경합하는 것이었다. 이는 이번 `@layer
+components` 리팩토링이 건드리는 범위 밖의, 전혀 다른 문제다. 즉 전제 자체가
+틀렸으므로 "이제 불필요하다"는 결론도 성립하지 않는다.
+
+원복 사유는 두 가지다.
+
+1. **일관성.** `paper`만 `bg-white`로 바뀌고 `warm`/`mist`는 여전히 `!` 를
+   유지하는 상태는, 같은 배열 안에서 한 항목만 다른 메커니즘으로 동작하는
+   함정이 되어 다음 편집자를 오도할 수 있다.
+2. **견고성.** `!` 없는 `bg-white`의 승리는 Tailwind가 유틸리티를 생성하는
+   내부 순서(구현 세부사항)에 의존한다. 2차 조사에서 현재 사용되는 5가지
+   `defaultClassName` 배경 조합 전부에서 이긴다는 것은 합성 테스트로 확인했지만,
+   "지금 생성 순서상 이긴다"는 "important로 표시돼 있어 이긴다"보다 약한
+   보장이다. 관리자가 섹션 테마를 고르는 admin 기능에서, Tailwind 빌드 출력
+   순서에 좌우되는 조용한 무동작(silent no-op)은 진단하기 어려운 함정이 될
+   수 있다.
+
+### 조치
+
+- `THEME_CLASS_MAP.paper`를 `"!bg-white"`로 정확히 원복했다.
+- `warm`/`mist`는 애초에 손대지 않았다.
+- `THEME_CLASS_MAP` 선언 바로 위에 한 줄 한글 주석을 추가했다: 이 `!`들은
+  각 섹션의 `defaultClassName`에 이미 있는 배경 유틸리티를 반드시 이겨야 해서
+  붙인 것이며, `@layer components` 경계와는 무관하다는 내용.
+
+```ts
+// paper/warm/mist는 각 섹션의 defaultClassName에 이미 있는 배경 유틸리티를
+// 반드시 이겨야 해서 ! 를 붙인다 — @layer components 경계와는 무관하다.
+const THEME_CLASS_MAP = {
+  default: "",
+  paper: "!bg-white",
+  warm: "!bg-[var(--color-bg-warm)]",
+  mist: "!bg-[var(--color-bg)]",
+} as const;
+```
+
+### 검증
+
+- 컴파일된 CSS에서 `.\!bg-white { background-color: var(--color-white)
+  !important; }`가 다시 생성됨을 확인했다.
+- admin 테마 피커를 실제로 조작하지는 않았고(관리자 로그인·site-builder UI를
+  거치는 시나리오라 이번 검증 범위에서는 접근하지 않음), 2차 조사와 동일한
+  방식의 합성(synthetic) 브라우저 테스트로 대체 검증했다: `/en` 페이지
+  컨텍스트에서 실제 `defaultClassName`에 쓰이는 5가지 배경 유틸리티
+  (`bg-[var(--color-bg)]`, `bg-[var(--color-bg-warm)]`,
+  `bg-[var(--color-forest)]`, `bg-[var(--color-bg-moss)]`,
+  `bg-[var(--color-deep)]`) 각각에 `!bg-white`를 결합한 엘리먼트를 주입해
+  `getComputedStyle(...).backgroundColor`가 전부 `rgb(255, 255, 255)`로
+  칠해짐을 확인했다 — 이번에는 `!important`가 보장하므로 Tailwind의 유틸리티
+  생성 순서와 무관하게 항상 이긴다.
+
+### 재실행 결과
+
+`npm run lint`, `npm run build` 모두 재통과. 가드 스위트 44개 중 **42개 통과,
+2개 실패**(`home-page:refactor:check`, `timeline-client:refactor:check` —
+동일하게 사전 존재, 이번 변경과 무관).
+
+이번 라운드에서 실제로 변경된 파일은 `ManagedSection.tsx` 1개뿐이며,
+`SubHero.tsx`의 아이백로우 판단(코드 무변경, `tracking-[0.12em]`이 이기도록
+둔 것)과 `@layer components` 이동, 6곳의 `!` 제거는 그대로 유지된다.
