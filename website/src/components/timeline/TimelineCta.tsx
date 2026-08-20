@@ -4,8 +4,9 @@ import type { TimelineConfig } from "./timeline-config";
 
 export function TimelineCta({ timelineConfig }: { timelineConfig: TimelineConfig }) {
   const { ref, inView } = useReveal<HTMLDivElement>();
+  // 하단 여백은 푸터 능선(md 이상 80px)이 겹쳐 그려도 CTA 버튼을 가리지 않을 만큼 확보한다
   return (
-    <section className="py-16 md:py-20 px-4 text-center bg-gradient-to-t from-[var(--color-bg-warm)] to-transparent">
+    <section className="pt-16 pb-20 md:pt-20 md:pb-36 px-4 text-center bg-gradient-to-t from-[var(--color-bg-warm)] to-transparent">
       <div ref={ref} className={`reveal ${inView ? "is-visible" : ""}`}>
         <EditableText
           contentKey={timelineConfig.cta.titleKey}

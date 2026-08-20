@@ -45,7 +45,8 @@ export default async function BoardPage({
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
+    // 하단 여백은 푸터 능선(md 이상 80px)이 겹쳐 그려도 내용을 가리지 않을 만큼 확보한다
+    <div className="mx-auto max-w-3xl px-4 pt-10 pb-16 md:pb-32">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-[var(--color-text)]">게시판</h1>
         {profile && (
