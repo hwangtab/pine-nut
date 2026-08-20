@@ -46,7 +46,7 @@ export function HomeInlineSignatureFields({
       <button
         type="submit"
         disabled={submitting}
-        className="letter-btn letter-btn--primary min-h-[48px]! whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed!"
+        className="letter-btn letter-btn--primary min-h-[48px] whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
       >
         <EditableText
           contentKey={submitting ? "home.cta.inlineSubmitting" : "home.cta.inlineSubmit"}

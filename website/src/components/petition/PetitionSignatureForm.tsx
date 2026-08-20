@@ -71,7 +71,7 @@ export default function PetitionSignatureForm({
           <button
             type="submit"
             disabled={form.submitting}
-            className="letter-btn letter-btn--primary w-full disabled:opacity-60 disabled:cursor-not-allowed!"
+            className="letter-btn letter-btn--primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {form.submitting ? (
               <>

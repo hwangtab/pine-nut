@@ -13,7 +13,7 @@ export function NewsCard({
   return (
     <Link
       href={`${newsListConfig.detailPathPrefix}/${item.slug}`}
-      className="group block min-h-[44px] paper hover-lift border-t-2! border-t-[var(--color-text)]! overflow-hidden"
+      className="group block min-h-[44px] paper hover-lift border-t-2 border-t-[var(--color-text)] overflow-hidden"
     >
       <div className="relative z-[1]">
         <div className="relative w-full h-48 bg-[var(--color-bg)]">

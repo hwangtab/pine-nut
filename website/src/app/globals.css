@@ -231,128 +231,142 @@ html {
 /* ────────────────────────────────────────────────────────────
    종이 재질 시스템 ("숲의 편지")
    컴포넌트는 아래 클래스 하나만 고른다. 값은 직접 만지지 않는다.
-   ──────────────────────────────────────────────────────────── */
 
-/* 종이 카드 — 본문·폼·증언 편지지의 기본 표면 */
-.paper {
-  position: relative;
-  background: #FFFDF7;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  box-shadow: 0 1px 2px rgb(34 48 31 / 0.05), 0 10px 28px rgb(34 48 31 / 0.08);
+   왜 @layer components인가: Tailwind v4에서는 레이어가 없는 CSS가
+   유틸리티 레이어보다 항상 이긴다(specificity·순서 무관). 이 파일의
+   클래스들이 그동안 레이어 밖에 있었던 탓에 리디자인 중 유틸리티가
+   조용히 6번 무력화됐고(버튼 크기, disabled 커서, 칩 padding·font-weight 등),
+   그때마다 Tailwind의 `!` 트레일링 수식자로 임시 봉합했다. 이 블록을
+   @layer components로 감싸면 유틸리티가 다시 정상적으로 이길 수 있게 되어
+   그 `!` 땜질을 구조적으로 걷어낼 수 있다.
+   ──────────────────────────────────────────────────────────── */
+@layer components {
+  /* 종이 카드 — 본문·폼·증언 편지지의 기본 표면 */
+  .paper {
+    position: relative;
+    background: #FFFDF7;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: 0 1px 2px rgb(34 48 31 / 0.05), 0 10px 28px rgb(34 48 31 / 0.08);
+  }
+  /* 옅은 섬유 질감 (SVG feTurbulence 노이즈) */
+  .paper::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  }
+  /* 앨범에 붙인 사진처럼 살짝 기울인 변형 */
+  .paper-tilt-l { transform: rotate(-1.1deg); }
+  .paper-tilt-r { transform: rotate(1.1deg); }
+
+  /* 종이 위 입력 필드 */
+  .paper-field {
+    font: inherit;
+    font-size: 15px;
+    color: var(--color-text);
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: #FFFFFF;
+    border: 1px solid var(--color-border);
+    box-shadow: inset 0 1px 2px rgb(34 48 31 / 0.04);
+    width: 100%;
+  }
+  .paper-field::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1;
+  }
+
+  /* 전체 화면 시트 (모바일 메뉴) — 불투명 한지 */
+  .paper-sheet {
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  /* 앨범 사진 프레임 — 흰 두꺼운 테두리 + 그림자 */
+  .photo-frame {
+    background: #FFFDF7;
+    padding: 10px;
+    padding-bottom: 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgb(34 48 31 / 0.08), 0 14px 32px rgb(34 48 31 / 0.1);
+  }
+  .photo-frame > img { border-radius: 2px; }
+
+  /* 사진 위 소형 칩 (구 다크 틴트 칩 대체) — 잉크 배경 */
+  .ink-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 13px;
+    border-radius: var(--radius-pill);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #FFFDF7;
+    background: rgb(30 51 23 / 0.82);
+  }
+
+  /* 편지 버튼 */
+  .letter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 12px 24px;
+    border-radius: var(--radius-pill);
+    border: 0;
+    font: inherit;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform var(--motion-press), box-shadow var(--motion-hover), background var(--motion-hover);
+  }
+  .letter-btn:active { transform: scale(0.97); }
+  .letter-btn--primary {
+    background: var(--color-warm);
+    color: #fff;
+    box-shadow: 0 8px 24px rgb(199 80 0 / 0.3);
+  }
+  .letter-btn--primary:hover { background: var(--color-warm-light); }
+  /* 사진 위·어두운 배경 위에서 쓰는 보조 버튼 */
+  .letter-btn--outline {
+    background: rgb(255 253 247 / 0.12);
+    border: 1.5px solid rgb(255 253 247 / 0.65);
+    color: #FFFDF7;
+  }
+  .letter-btn--outline:hover { background: rgb(255 253 247 / 0.22); }
+
+  /* 우표 뱃지 — 이중 점선 테두리로 천공 은유 */
+  .stamp-badge {
+    background: #FFFDF7;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 6px;
+    box-shadow: 0 2px 8px rgb(34 48 31 / 0.1);
+  }
+  .stamp-badge__inner {
+    border: 2px dashed rgb(92 102 83 / 0.45);
+    border-radius: 2px;
+    padding: 10px 14px;
+    text-align: center;
+  }
+
+  /* 오솔길 점선 (타임라인·발자취 연결선) */
+  .trail-line {
+    border-left: 3px dotted rgb(45 80 22 / 0.4);
+  }
 }
-/* 옅은 섬유 질감 (SVG feTurbulence 노이즈) */
-.paper::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
-}
-/* 앨범에 붙인 사진처럼 살짝 기울인 변형 */
-.paper-tilt-l { transform: rotate(-1.1deg); }
-.paper-tilt-r { transform: rotate(1.1deg); }
+
+/* .paper-tilt-l / .paper-tilt-r는 위 @layer components 안에 있지만,
+   이 감속 모션 예외는 레이어 밖에 남겨둔다 — 레이어 없는 규칙은 항상
+   레이어 규칙을 이기므로, prefers-reduced-motion에서는 그대로
+   레이어된 transform을 확실히 덮어쓴다(의도된 동작). */
 @media (prefers-reduced-motion: reduce) {
   .paper-tilt-l, .paper-tilt-r { transform: none; }
-}
-
-/* 종이 위 입력 필드 */
-.paper-field {
-  font: inherit;
-  font-size: 15px;
-  color: var(--color-text);
-  padding: 12px 16px;
-  border-radius: 10px;
-  background: #FFFFFF;
-  border: 1px solid var(--color-border);
-  box-shadow: inset 0 1px 2px rgb(34 48 31 / 0.04);
-  width: 100%;
-}
-.paper-field::placeholder {
-  color: var(--color-text-muted);
-  opacity: 1;
-}
-
-/* 전체 화면 시트 (모바일 메뉴) — 불투명 한지 */
-.paper-sheet {
-  background: var(--color-bg);
-  color: var(--color-text);
-}
-
-/* 앨범 사진 프레임 — 흰 두꺼운 테두리 + 그림자 */
-.photo-frame {
-  background: #FFFDF7;
-  padding: 10px;
-  padding-bottom: 14px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  box-shadow: 0 2px 6px rgb(34 48 31 / 0.08), 0 14px 32px rgb(34 48 31 / 0.1);
-}
-.photo-frame > img { border-radius: 2px; }
-
-/* 사진 위 소형 칩 (구 다크 틴트 칩 대체) — 잉크 배경 */
-.ink-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 13px;
-  border-radius: var(--radius-pill);
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: #FFFDF7;
-  background: rgb(30 51 23 / 0.82);
-}
-
-/* 편지 버튼 */
-.letter-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 12px 24px;
-  border-radius: var(--radius-pill);
-  border: 0;
-  font: inherit;
-  font-weight: 700;
-  font-size: 15px;
-  cursor: pointer;
-  transition: transform var(--motion-press), box-shadow var(--motion-hover), background var(--motion-hover);
-}
-.letter-btn:active { transform: scale(0.97); }
-.letter-btn--primary {
-  background: var(--color-warm);
-  color: #fff;
-  box-shadow: 0 8px 24px rgb(199 80 0 / 0.3);
-}
-.letter-btn--primary:hover { background: var(--color-warm-light); }
-/* 사진 위·어두운 배경 위에서 쓰는 보조 버튼 */
-.letter-btn--outline {
-  background: rgb(255 253 247 / 0.12);
-  border: 1.5px solid rgb(255 253 247 / 0.65);
-  color: #FFFDF7;
-}
-.letter-btn--outline:hover { background: rgb(255 253 247 / 0.22); }
-
-/* 우표 뱃지 — 이중 점선 테두리로 천공 은유 */
-.stamp-badge {
-  background: #FFFDF7;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  padding: 6px;
-  box-shadow: 0 2px 8px rgb(34 48 31 / 0.1);
-}
-.stamp-badge__inner {
-  border: 2px dashed rgb(92 102 83 / 0.45);
-  border-radius: 2px;
-  padding: 10px 14px;
-  text-align: center;
-}
-
-/* 오솔길 점선 (타임라인·발자취 연결선) */
-.trail-line {
-  border-left: 3px dotted rgb(45 80 22 / 0.4);
 }
