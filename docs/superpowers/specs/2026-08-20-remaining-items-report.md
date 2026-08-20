@@ -219,14 +219,76 @@ chrome-devtools로 `/donate` 네비게이션 후 콘솔 에러 없음. 두 페�
 `website/COMPREHENSIVE_CODE_REVIEW.md`는 이 세션이 만든 파일이 아니고(작업 시작 시점부터
 untracked 상태) 이번 작업 범위와 무관해 커밋에서 제외했다.
 
+## 추가 조치 — `gradients`/`svgIcons` 어서션도 조정자 소관으로 확인, 수정
+
+조정자가 확인해준 대로 `HomeImpactSection must include gradients.` 실패는 이번 리팩토링
+범위(내 소관)였다: 카드별 그라디언트 배경과 흰색 인라인 SVG 아이콘 배열은 "종이 카드 +
+번호 + 순텍스트" 디자인으로 교체하면서 브리프에 따라 의도적으로 통째로 삭제된 것이었고,
+가드만 그 사실을 못 따라간 상태였다. 두 항목과 정확히 같은 "코드가 맞고 가드가 낡음" 패턴.
+
+`website/scripts/check-home-page-refactor.mjs:67-71` 수정:
+
+```js
+// 카드별 그라디언트 배경("gradients")과 흰색 인라인 SVG 아이콘("svgIcons")은 종이 카드
+// 리디자인에서 의도적으로 삭제됐다(번호 + 순텍스트로 대체) — 되살리면 안 되는 죽은 배열이니
+// 이 문자열들을 다시 요구 목록에 넣지 말 것.
+const impactSource = read("src/components/home/HomeImpactSection.tsx");
+for (const expected of ["EditableList", "home.impact.cards"]) {
+  assert(impactSource.includes(expected), `HomeImpactSection must include ${expected}.`);
+}
+```
+
+`"gradients"`, `"svgIcons"`는 목록에서 제거. `"EditableList"`, `"home.impact.cards"`는 제거
+전에 `HomeImpactSection.tsx`를 직접 읽어 재확인 — `EditableList`가 `home.impact.cards`
+contentKey로 카드 4개(관리자 편집 가능)를 감싸는 구조가 그대로 살아 있어 여전히 유효한
+불변조건이다. 코드는 손대지 않았다(가드만 수정).
+
+### 파일 전체 재검토(fresh-eyes 패스)
+
+이 스크립트에서 이제까지 3개의 서로 다른 낡은 어서션(HomeClient 조준, gradients/svgIcons)을
+고쳤으므로, 지시대로 나머지 어서션도 처음부터 다시 하나씩 현재 코드와 대조했다:
+
+- 5개 홈 컴포넌트 `existsSync` 체크 — 전부 실존. 이상 없음.
+- `HomeClient.tsx` 컴포지션(5개 섹션 이름) — 이미 확인·수정 완료, 유효.
+- "removed responsibility" 9개 문자열(`EditableText`/`EditableImage`/`EditableList`/`FadeIn`/
+  `PineTreeIcon`/`home.impact.cards`/`home.hope.cards`/`home.quotes.items`/`home.stats.items`)
+  — `HomeClient.tsx`에 grep, 전부 부재 확인(실제 책임은 각 섹션 컴포넌트가 보유). 유효.
+- `HomeClient.tsx` 180줄 이하 — 125줄. 유효.
+- `HomeAboutSection.tsx` — `EditableImage`, `home.about.forestImage`, `PineTreeIcon` 전부
+  현재 파일에 실존(각각 import/사용, `EditableImage`의 contentKey, `PineTreeIcon` 컴포넌트
+  사용). 유효, 낡지 않음.
+- `HomeHopeSection.tsx` — `EditableList`, `home.hope.cards`, `home.hope.protestPhoto` 전부
+  실존(카드 리스트의 contentKey와 사진 `EditableImage`의 contentKey). 유효.
+- `HomeQuotesSection.tsx` — `EditableList`, `home.quotes.items`, `blockquote` 전부 실존
+  (인용문 리스트 contentKey, 실제 `<blockquote>` 태그 사용). 유효.
+- `HomeStatsSection.tsx` — `EditableList`, `home.stats.items`, `stat.number` 전부 실존
+  (통계 리스트 contentKey, `{stat.number}` 표현식). 유효.
+
+**결론: `gradients`/`svgIcons` 외에 추가로 낡은 어서션은 없었다.** 코드 쪽 실제 문제로
+의심되는 것도 발견하지 못했다 — 전부 리디자인 이후에도 여전히 참인 불변조건들이다.
+
+### 재검증
+
+```
+npm run lint   → 통과
+npm run build  → 성공(기존과 동일한 무관한 Supabase sitemap 경고만)
+```
+
+가드 스위트 재실행: **44 pass / 0 fail** (지시받은 기대치 달성).
+
+### 확정 커밋 (2차)
+
+`website/scripts/check-home-page-refactor.mjs` 1건 추가 수정을 앞선 커밋 위에 새 커밋으로
+쌓았다(같은 파일에 대한 3번째 낡은 어서션 수정이라 별도 커밋으로 구분).
+
 ## 확신이 서지 않는 부분 / 남은 이슈
 
-1. **`HomeImpactSection`의 `gradients` 어서션 실패(43/44)** — Item 2 지시 범위 밖이라 고치지
-   않았지만, 성격은 동일한 "코드가 맞고 가드가 낡음" 케이스로 보인다. 다음 라운드에서 함께
-   정리하는 걸 권장.
+1. ~~`HomeImpactSection`의 `gradients` 어서션 실패~~ — **해결됨.** 조정자가 이 부분도
+   자기 소관이라 확인해줘서 위 "추가 조치" 절대로 `gradients`/`svgIcons`를 요구 목록에서
+   제거하고 재검증까지 마쳤다(44/0). 더 이상 열린 이슈 아님.
 2. **`mypage/page.tsx`의 "홈으로" 버튼** — 새 변형과 시각적으로 유사하지만 형제 버튼들과의
-   패딩 체급(px-5 vs px-6) 때문에 전환하지 않았다. 이 판단에 동의하지 않는다면 별도로
-   그 버튼 행 전체(3개)를 함께 리디자인하는 게 안전할 것.
+   패딩 체급(px-5 vs px-6) 때문에 전환하지 않았다. 조정자 확인: 이 판단이 맞다(강제 통일하면
+   같은 행의 시각적 일관성이 깨져 실익 없이 손해). 추가 조치 불필요.
 3. **`error.tsx` 버튼의 hover 동작 변화** — 기존엔 `hover:bg-[var(--color-bg)]`가 페이지 배경과
    같은 색이라 사실상 무동작이었는데, 이번 전환으로 `--color-border`로 눈에 띄게 바뀐다.
-   의도적으로 유익한 부수효과라 판단해 반영했지만, 순수 리팩토링만 원했다면 되돌릴 수 있다.
+   조정자 확인: 이 변화는 진짜 개선이라 그대로 유지한다.

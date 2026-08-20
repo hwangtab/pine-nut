@@ -64,8 +64,11 @@ for (const expected of ["EditableImage", "home.about.forestImage", "PineTreeIcon
   assert(aboutSource.includes(expected), `HomeAboutSection must include ${expected}.`);
 }
 
+// 카드별 그라디언트 배경("gradients")과 흰색 인라인 SVG 아이콘("svgIcons")은 종이 카드
+// 리디자인에서 의도적으로 삭제됐다(번호 + 순텍스트로 대체) — 되살리면 안 되는 죽은 배열이니
+// 이 문자열들을 다시 요구 목록에 넣지 말 것.
 const impactSource = read("src/components/home/HomeImpactSection.tsx");
-for (const expected of ["EditableList", "home.impact.cards", "gradients", "svgIcons"]) {
+for (const expected of ["EditableList", "home.impact.cards"]) {
   assert(impactSource.includes(expected), `HomeImpactSection must include ${expected}.`);
 }
 
