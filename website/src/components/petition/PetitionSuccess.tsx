@@ -100,7 +100,7 @@ export default function PetitionSuccess({
             <button
               type="button"
               onClick={onCopyUrl}
-              className="min-h-[48px] px-6 py-3 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] font-semibold flex items-center justify-center gap-2 transition-colors hover:bg-[var(--color-border)]"
+              className="letter-btn letter-btn--outline-light min-h-[48px] font-semibold"
             >
               {urlCopied ? (
                 <>

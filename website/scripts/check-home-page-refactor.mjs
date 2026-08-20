@@ -24,7 +24,10 @@ for (const path of [
   assert(existsSync(join(root, path)), `${path} must exist.`);
 }
 
-const pagePath = "src/app/page.tsx";
+// src/app/page.tsx는 82d4c30에서 라우트 메타데이터 전용 서버 컴포넌트로 축소됐고,
+// 화면 조립(섹션 컴포지션)은 src/components/home/HomeClient.tsx로 옮겨졌다(이유는
+// page.tsx 상단 주석과 CLAUDE.md 참고). 그래서 조립 검증은 HomeClient.tsx를 봐야 한다.
+const pagePath = "src/components/home/HomeClient.tsx";
 const pageSource = read(pagePath);
 for (const componentName of [
   "HomeAboutSection",
@@ -33,7 +36,7 @@ for (const componentName of [
   "HomeQuotesSection",
   "HomeStatsSection",
 ]) {
-  assert(pageSource.includes(componentName), `Home page must compose ${componentName}.`);
+  assert(pageSource.includes(componentName), `HomeClient must compose ${componentName}.`);
 }
 
 for (const removedResponsibility of [
@@ -49,12 +52,12 @@ for (const removedResponsibility of [
 ]) {
   assert(
     !pageSource.includes(removedResponsibility),
-    `Home page should not own ${removedResponsibility}.`,
+    `HomeClient should not own ${removedResponsibility}.`,
   );
 }
 
 const pageLines = pageSource.trimEnd().split("\n").length;
-assert(pageLines <= 180, `Home page should stay orchestration-focused, got ${pageLines} lines.`);
+assert(pageLines <= 180, `HomeClient should stay orchestration-focused, got ${pageLines} lines.`);
 
 const aboutSource = read("src/components/home/HomeAboutSection.tsx");
 for (const expected of ["EditableImage", "home.about.forestImage", "PineTreeIcon"]) {

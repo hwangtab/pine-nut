@@ -77,8 +77,11 @@ for (const required of [
   assert(pageSource.includes(required), `TimelinePage.tsx must contain ${required}.`);
 }
 
+// framer-motion의 useInView는 자체 훅 useReveal(@/lib/use-reveal, {ref, inView} 반환)로
+// 교체됐다 — 스크롤 리빌 동작 자체는 그대로이고 구현 방식만 바뀌었으니, 검증도
+// useInView 문자열이 아니라 useReveal을 찾도록 맞춘다.
 const cardSource = read("src/components/timeline/TimelineCard.tsx");
-for (const required of ["useInView", "Image", "imageSourceLabel", "categoryStyles"]) {
+for (const required of ["useReveal", "Image", "imageSourceLabel", "categoryStyles"]) {
   assert(cardSource.includes(required), `TimelineCard.tsx must contain ${required}.`);
 }
 

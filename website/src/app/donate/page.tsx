@@ -1,5 +1,10 @@
 "use client";
 
+// 영문판(src/app/en/donate/page.tsx)은 이 페이지의 Donate*Section 컴포넌트들을
+// 공유하지 않고 UI를 따로 구현한다 — 그 컴포넌트들이 한국어 defaultValue와
+// donate.* contentKey 네임스페이스에 언어 종속돼 있어, 공유하려면 실사용 중인
+// 후원 페이지의 콘텐츠 플러밍을 통째로 재작업해야 하기 때문(트레이드오프 부적절
+// 판단, 의도적 분리). 이 페이지의 시각적 변경은 영문판에도 수동으로 반영해야 한다.
 import { useState } from "react";
 import DonateBankTransferSection, {
   DONATION_BANK_ACCOUNT,

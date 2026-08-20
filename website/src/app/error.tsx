@@ -49,13 +49,13 @@ export default function PublicError({
           </button>
           <Link
             href="/"
-            className="min-h-[48px] inline-flex items-center px-6 py-3 rounded-full border border-[var(--color-border)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-bg)] transition-colors"
+            className="letter-btn letter-btn--outline-light min-h-[48px] font-semibold"
           >
             홈으로
           </Link>
           <Link
             href="/petition"
-            className="min-h-[48px] inline-flex items-center px-6 py-3 rounded-full border border-[var(--color-border)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-bg)] transition-colors"
+            className="letter-btn letter-btn--outline-light min-h-[48px] font-semibold"
           >
             서명 참여
           </Link>

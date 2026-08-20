@@ -1,5 +1,10 @@
 "use client";
 
+// 한국어판(src/app/donate/page.tsx)이 쓰는 Donate*Section 컴포넌트들을 여기선
+// 쓰지 않고 UI를 따로 인라인 구현했다 — 그 컴포넌트들이 한국어 defaultValue와
+// donate.* contentKey 네임스페이스에 언어 종속돼 있어, 공유하려면 실사용 중인
+// 후원 페이지의 콘텐츠 플러밍을 통째로 재작업해야 하기 때문(트레이드오프 부적절
+// 판단, 의도적 분리). 이 페이지의 시각적 변경은 한국어판에도 수동으로 반영해야 한다.
 import { useState } from "react";
 import { Bus, Check, Copy, ExternalLink, Megaphone, Scale, Settings } from "lucide-react";
 import SubHero from "@/components/SubHero";
