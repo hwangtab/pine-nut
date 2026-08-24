@@ -73,25 +73,21 @@ export function needsNavTopPadding(pathname: string): boolean {
 // 그래서 원칙은 하나다: **자기 색을 칠하는 섹션은 자기 하단 여백을 직접 갖는다.**
 // 전역 여백은 페이지 배경으로 끝나는 라우트에만 준다.
 
-// 마지막 섹션이 푸터와 **같은** --color-deep 인 라우트.
-// 능선이 deep-on-deep 이라 보이지 않으므로 능선·여백 모두 생략한다.
-// 개별 공연 페이지(/concert/*)는 어두운 CTA로 끝난다. 반면 목록 페이지(/concert)는
-// 크림 배경으로 끝나므로 능선과 여백이 모두 필요하다 — 여기 넣으면 안 된다.
-const DEEP_TAIL_ROUTES = ["/", "/concert/before-cut"];
-
-// 마지막 섹션이 어둡지만 푸터와 **다른** 색(--color-forest)인 라우트.
-// 능선은 보여야 하므로 그리되, 여백은 그 섹션이 자기 py-20 md:py-28 로 이미
-// 확보한다(능선 마루 60px < 112px). 전역 여백을 얹으면 그 섹션 '바깥'에 붙어
-// 숲색과 크림색 사이에 가로 이음매가 생긴다.
-// → 이 패딩은 scripts/check-footer-clearance.mjs 가 지킨다.
-const FOREST_TAIL_ROUTES = ["/story", "/en"];
+// 어두운 색으로 끝나지만 푸터(--color-deep)와는 **다른** 색인 라우트.
+// 능선은 보여야 하므로 그리되, 전역 여백은 주지 않는다 — 그 섹션이 자기
+// 하단 패딩으로 능선 마루(md 60px)를 이미 비우기 때문이다.
+// 전역 여백을 얹으면 그 섹션 '바깥'에 붙어 어두운 색과 크림색 사이에
+// 가로 이음매가 생긴다.
+//
+//   /        home.stats  bg-deep-raised  py-16 md:py-20 (64/80px)
+//   /story   story.cta   bg-forest       py-20 md:py-28 (80/112px)
+//   /en      en.cta      bg-forest       py-20 md:py-28 (80/112px)
+//
+// → 이 패딩과 색은 scripts/check-footer-clearance.mjs 가 지킨다.
+//   특히 밴드 색이 --color-deep 으로 되돌아가면 푸터와 같아져 능선이 사라진다.
+const DARK_TAIL_ROUTES = ["/", "/story", "/en"];
 
 // 능선 아래 여백을 전역으로 줄 것인가.
 export function needsFooterRidgeGap(pathname: string): boolean {
-  return !DEEP_TAIL_ROUTES.includes(pathname) && !FOREST_TAIL_ROUTES.includes(pathname);
-}
-
-// 능선을 그릴 것인가.
-export function showsFooterRidge(pathname: string): boolean {
-  return !DEEP_TAIL_ROUTES.includes(pathname);
+  return !DARK_TAIL_ROUTES.includes(pathname);
 }

@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import CustomSectionsHost from "@/components/CustomSectionsHost";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 import { PATH_TO_BUILDER_PAGE, parseCustomSections } from "@/lib/custom-sections";
-import { needsFooterRidgeGap, needsNavTopPadding, showsFooterRidge } from "@/lib/nav-routes";
+import { needsFooterRidgeGap, needsNavTopPadding } from "@/lib/nav-routes";
 
 export default function PublicShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -35,7 +35,6 @@ export default function PublicShell({ children }: { children: React.ReactNode })
     : false;
   const ridgeGap = needsFooterRidgeGap(pathname) || hasCustomTail;
   // 능선은 푸터와 같은 색으로 끝나는 페이지에서만 생략한다(숲색 꼬리에서는 보인다).
-  const showRidge = showsFooterRidge(pathname);
 
   return (
     <>
@@ -44,7 +43,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
         {children}
         <CustomSectionsHost />
       </main>
-      <Footer showRidge={showRidge} />
+      <Footer />
     </>
   );
 }

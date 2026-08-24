@@ -32,16 +32,14 @@ assert(shell.includes("<CustomSectionsHost />"),
 
 // 2) 능선은 여백이 있는 페이지에서만 그려져야 한다.
 const footer = read("src/components/Footer.tsx");
-assert(/showRidge/.test(footer),
-  "Footer must accept showRidge — 어두운 꼬리 페이지에서 능선을 끄지 못하면 크림색 띠가 생긴다.");
-assert(shell.includes("showRidge={showRidge}"),
-  "PublicShell must pass showRidge to Footer.");
-assert(shell.includes("showsFooterRidge"),
-  "PublicShell must use showsFooterRidge — 능선 표시와 여백 확보는 판정 기준이 다르다.");
+assert(!/showRidge/.test(footer),
+  "Footer 의 능선 토글은 제거됐다 — 푸터와 같은 색으로 끝나는 페이지가 없으므로 능선은 전 라우트 공통이다.");
+assert(!shell.includes("showRidge"),
+  "능선 토글은 제거됐다 — 푸터와 같은 색으로 끝나는 페이지가 없으므로 능선은 전 라우트 공통이다.");
 
 // 3) 라우트 분류가 남아 있어야 한다.
 const nav = read("src/lib/nav-routes.ts");
-for (const sym of ["DEEP_TAIL_ROUTES", "FOREST_TAIL_ROUTES", "needsFooterRidgeGap", "showsFooterRidge"]) {
+for (const sym of ["DARK_TAIL_ROUTES", "needsFooterRidgeGap"]) {
   assert(nav.includes(sym), `nav-routes.ts must define ${sym}.`);
 }
 
@@ -84,21 +82,22 @@ for (const f of walk("src")) {
   }
 }
 
-if (fail.length) {
-  console.error("footer-clearance:check 실패\n" + fail.map((m) => "  - " + m).join("\n"));
-  process.exit(1);
-}
-
 // ── 색 이음매 재발 방지 ──────────────────────────────────────────────────────
-// 1) FOREST_TAIL 라우트는 전역 여백을 받지 않는다. 그 섹션이 자기 하단 패딩으로
-//    능선 마루(md 60px)를 비워야 한다. md:py-28(112px)이 그 근거다.
-for (const [file, line] of [
-  ["src/app/story/page.tsx", "story cta"],
-  ["src/app/en/page.tsx", "en cta"],
-]) {
+// 1) DARK_TAIL 라우트는 전역 여백을 받지 않는다. 그 밴드가 자기 하단 패딩으로
+//    능선 마루(md 60px)를 비워야 하고, 색은 푸터(--color-deep)와 달라야 한다.
+//    같은 색이면 경계가 사라져 능선이 보이지 않는다.
+const DARK_TAILS = [
+  ["src/components/home/HomeClient.tsx", "md:py-20", "--color-deep-raised", "home.stats"],
+  ["src/app/story/page.tsx", "md:py-28", "--color-forest", "story.cta"],
+  ["src/app/en/page.tsx", "md:py-28", "--color-forest", "en.cta"],
+];
+for (const [file, pad, color, label] of DARK_TAILS) {
   const src = read(file);
-  assert(/md:py-28[^"]*bg-\[var\(--color-forest\)\]/.test(src),
-    `${file}: 숲색 꼬리 섹션은 md:py-28 을 유지해야 한다 (${line}) — 능선이 콘텐츠를 덮는다.`);
+  const re = new RegExp(`${pad}[^"]*bg-\\[var\\(${color.replace(/[-]/g, "-")}\\)\\]`);
+  assert(re.test(src),
+    `${file}: ${label} 밴드는 ${pad} + bg-[var(${color})] 를 유지해야 한다 — 패딩이 줄면 능선이 콘텐츠를 덮고, 색이 --color-deep 이 되면 푸터와 같아져 능선이 사라진다.`);
+  assert(!new RegExp(`${pad}[^"]*bg-\\[var\\(--color-deep\\)\\]`).test(src),
+    `${file}: ${label} 밴드가 푸터와 같은 --color-deep 이다 — --color-deep-raised 를 써라.`);
 }
 
 // 2) 섹션 배경 그라디언트가 한쪽 끝에서 불투명하게 끝나면 그 경계에 가로 색선이
@@ -111,6 +110,11 @@ for (const file of [
   const src = read(file);
   assert(!/gradient-to-[tb] from-\[var\(--color-bg-warm\)\] to-transparent/.test(src),
     `${file}: 한쪽 끝이 불투명한 모래빛 그라디언트 — from-transparent via-... to-transparent 를 써라.`);
+}
+
+if (fail.length) {
+  console.error("footer-clearance:check 실패\n" + fail.map((m) => "  - " + m).join("\n"));
+  process.exit(1);
 }
 
 console.log("footer-clearance:check ok");

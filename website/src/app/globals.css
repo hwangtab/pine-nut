@@ -22,6 +22,9 @@
   --color-bg-warm: #F3EFE2;     /* 옅은 모래빛 — 한지와 이어지는 톤 */
   --color-bg-moss: #EFF2E4;     /* 옅은 이끼 세이지 — 보조 배경 */
   --color-deep: #1E3317;        /* 깊은 숲 그린 — 어두운 밴드 전용 */
+  --color-deep-raised: #28431E; /* 푸터 앞 어두운 밴드 — 푸터(deep)와 같은 색이면 경계가 사라져
+                                   능선이 보이지 않는다. 한 단 밝은 어둠으로 앞쪽 능선을 만든다.
+                                   deep 위 대비 1.24, 라벨 4.61:1 / 숫자 4.96:1 (AA 유지) */
   --color-text: #22301F;        /* 침엽수 차콜 (순검정 금지) */
   --color-text-muted: #5C6653;  /* 이끼 회녹 */
   --color-border: #E3DFD0;
@@ -55,6 +58,7 @@
   --color-bg-warm: var(--color-bg-warm);
   --color-bg-moss: var(--color-bg-moss);
   --color-deep: var(--color-deep);
+  --color-deep-raised: var(--color-deep-raised);
   --color-text: var(--color-text);
   --color-text-muted: var(--color-text-muted);
   --color-border: var(--color-border);
