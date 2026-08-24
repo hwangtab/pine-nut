@@ -125,7 +125,7 @@ export const FEAST_LINEUP: FeastArtist[] = [
     photo: "/images/concert/artists/kimdongsan.jpg",
     photoCredit: "강정피스앤뮤직캠프",
     blurb:
-      "수원의 포크·블루스 음악가 김동산과 밴드 블루이웃. 해고 노동자와 쫓겨나는 상인들의 이야기를 노래해 ‘한국의 우디 거스리’로 불립니다.",
+      "수원의 포크·블루스 음악가 김동산과 밴드 블루이웃. 해고 노동자와 쫓겨나는 상인들의 이야기를 노래해 ‘한국의 우디거스리’로 불립니다.",
     source: "https://peaceandmusic.net/album/musicians/3",
   },
   {
@@ -155,8 +155,8 @@ export const FEAST_LINEUP: FeastArtist[] = [
     photo: "/images/concert/artists/samgak.jpg",
     photoCredit: "강정피스앤뮤직캠프",
     blurb:
-      "2015년부터 활동해온 로파이 전자음악 밴드. 1980년대 민중음악을 신디사이저의 언어로 다시 씁니다. 첫 정규 「Dystopia 2025」.",
-    source: "https://bbs.ruliweb.com/news/read/209283",
+      "전자음악가이자 SF 작가 장호진의 솔로 프로젝트. 예측 불가능한 사운드와 비선형적 작곡으로 한국 사회의 구조적 모순을 담습니다. 2025년 정규 1집 「디스토피아 2025」.",
+    source: "https://peaceandmusic.net/camps/2026/musicians/34",
   },
   {
     name: "자이",
@@ -170,18 +170,16 @@ export const FEAST_LINEUP: FeastArtist[] = [
     name: "최양다음 NEXT",
     photo: "/images/concert/artists/next.jpg",
     photoCredit: "주최 측 제공",
-    blurb: "독학으로 음악을 익힌 싱어송라이터. 여러 나라 말로 노래합니다.",
+    blurb: "싱어송라이터. 이름을 여러 나라 말로 씁니다 — 다음, NEXT, 次, Nächste, 翌.",
     source: "https://www.instagram.com/nextisnexttoyou/",
   },
   {
     name: "ZSTHYGER",
-    // 강정캠프의 「Sight X Zsthyger」 합동 사진에서 기타를 든 오른쪽을 잘랐다.
-    // 왼쪽은 비트박서 Sight — 두 사람의 악기가 달라 구분이 가능했다.
     photo: "/images/concert/artists/zsthyger.jpg",
-    photoCredit: "강정피스앤뮤직캠프",
-    // 소개는 비워둔다. 종전 문구("2018년부터 홍대…컨트리 블루스…현대의 고딕")는
-    // 검색 결과 요약을 원문 확인 없이 옮긴 것이고, 사실이 아니라고 본인이 알려왔다.
-    // 확인된 자료를 받기 전까지 채우지 않는다.
+    photoCredit: "경기아트콜렉티브",
+    blurb:
+      "전자음악·메탈·클래식을 아우르는 연주자이자 프로듀서. 수원에서 ACME 스튜디오를 운영하며 ‘악기와 악사의 가치를 증명하는 방법은 연주뿐’이라는 태도로 작업합니다.",
+    source: "https://ggac.kr/artists/acmein",
   },
 ];
 
