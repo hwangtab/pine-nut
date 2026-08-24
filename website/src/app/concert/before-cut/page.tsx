@@ -19,6 +19,7 @@ import { SITE_URL } from "@/lib/site-config";
 import {
   CONCERT_DATE_LABEL,
   CONCERT_PHONE,
+  CONCERT_PHONE_NAME,
   CONCERT_PLACE,
   CONCERT_TIME_LABEL,
   CONCERT_TIMETABLE,
@@ -49,7 +50,7 @@ const INFO_CARDS = [
   { icon: CalendarDays, label: "일시", value: `${CONCERT_DATE_LABEL}`, sub: CONCERT_TIME_LABEL },
   { icon: MapPin, label: "장소", value: CONCERT_PLACE, sub: "사랑채 앞 도로" },
   { icon: Ticket, label: "관람", value: "무료", sub: "예매 없이 누구나" },
-  { icon: Phone, label: "문의", value: CONCERT_PHONE, sub: "대책위", href: `tel:${CONCERT_PHONE}` },
+  { icon: Phone, label: "문의", value: CONCERT_PHONE, sub: CONCERT_PHONE_NAME, href: `tel:${CONCERT_PHONE}` },
 ];
 
 // 위기의 숫자 — 출처: 대책위 자료(사이트 llms.txt / 이야기 페이지)
@@ -479,7 +480,7 @@ export default function ConcertPage() {
             >
               {CONCERT_PHONE}
             </a>{" "}
-            (대책위)로 문의해주세요.
+            ({CONCERT_PHONE_NAME})로 문의해주세요.
           </p>
         </div>
       </section>

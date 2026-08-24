@@ -5,6 +5,8 @@ export const CONCERT_DATE_LABEL = "2026년 8월 1일(토)";
 export const CONCERT_TIME_LABEL = "오후 1시 – 오후 8시";
 export const CONCERT_PLACE = "청와대 앞";
 export const CONCERT_PHONE = "010-8748-3044";
+/** 공연 문의를 받는 사람. 번호와 이름은 항상 같이 표기한다. */
+export const CONCERT_PHONE_NAME = "박성율 목사";
 
 export const CONCERT_START = new Date("2026-08-01T13:00:00+09:00");
 // 14팀(30분×14=7시간) + 마무리 10분 → 20:10 종료
@@ -86,8 +88,9 @@ export const FEAST_START = new Date("2026-09-05T13:00:00+09:00");
 
 /** 대책위 문의(이창후 총무) */
 export const FEAST_PHONE_COMMITTEE = "010-8918-8933";
-/** 공연 문의 */
-export const FEAST_PHONE_STAGE = "010-8748-3044";
+/** 공연 문의 — 「베어지기 전에 풍천리」와 같은 번호·같은 사람이다 */
+export const FEAST_PHONE_STAGE = CONCERT_PHONE;
+export const FEAST_PHONE_STAGE_NAME = CONCERT_PHONE_NAME;
 
 export interface FeastArtist {
   name: string;

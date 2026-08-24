@@ -21,6 +21,7 @@ import {
   FEAST_LINEUP,
   FEAST_PHONE_COMMITTEE,
   FEAST_PHONE_STAGE,
+  FEAST_PHONE_STAGE_NAME,
   FEAST_PLACE,
   FEAST_TIME_LABEL,
   FEAST_TITLE,
@@ -405,7 +406,8 @@ export default function VillageFeastPage() {
               className="font-bold text-[var(--color-forest)] hover:underline"
             >
               {FEAST_PHONE_STAGE}
-            </a>
+            </a>{" "}
+            ({FEAST_PHONE_STAGE_NAME})
           </p>
         </div>
       </section>
