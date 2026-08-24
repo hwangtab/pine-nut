@@ -99,7 +99,7 @@ export interface FeastArtist {
    * 정사각 프로필 사진(/images/concert/artists/*.jpg).
    * 본인이 맞다고 확인된 사진만 넣는다 — 합동 사진에서 누가 누구인지 추측하거나
    * 동명이인일 수 있는 사진을 넣으면 엉뚱한 사람의 얼굴을 걸게 된다.
-   * 없으면 목록에서 잣송이 자리표시가 대신 들어간다.
+   * 없으면 목록에서 잣송이 자리표시가 대신 들어간다(현재는 9팀 모두 있다).
    */
   photo?: string;
   /** 사진 출처. 게시 허락을 확인할 때 근거가 된다. */
@@ -135,11 +135,15 @@ export const FEAST_LINEUP: FeastArtist[] = [
   },
   {
     name: "마쓰모토 코타",
+    photo: "/images/concert/artists/matsumoto-kota.jpg",
+    photoCredit: "주최 측 제공",
     blurb:
       "일본과 베를린을 오가며 이주와 여행을 거듭해온 음악가. 거친 결의 목소리에 일본어 노랫말을 얹고 기타·피아노·아카펠라를 오갑니다. 2000년대 초 오사카 언더그라운드에서 출발해 일본 열도 100여 곳과 파리·탈린·코펜하겐·방콕·서울을 거쳤고, 2012년부터 베를린에 자리를 잡았습니다.",
   },
   {
     name: "박지휘",
+    photo: "/images/concert/artists/parkjihwi.jpg",
+    photoCredit: "주최 측 제공",
     blurb:
       "튠업 24기 프리포크 싱어송라이터. 일러스트레이터 2da(이다)의 그림에서 따온 ‘sickbaby’라는 이름으로도 불렀습니다. 로파이한 프리포크로 시작해, 근래에는 엘리엇 스미스의 새드코어에 기운 곡을 씁니다.",
   },
@@ -161,6 +165,8 @@ export const FEAST_LINEUP: FeastArtist[] = [
   },
   {
     name: "최양다음 NEXT",
+    photo: "/images/concert/artists/next.jpg",
+    photoCredit: "주최 측 제공",
     blurb: "독학으로 음악을 익힌 싱어송라이터. 여러 나라 말로 노래합니다.",
     source: "https://www.instagram.com/nextisnexttoyou/",
   },

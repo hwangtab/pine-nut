@@ -34,6 +34,7 @@ const LINEUP_NAMES = FEAST_LINEUP.map((artist) => artist.name).join("·");
 const PHOTO_CREDITS = [
   ...new Set(FEAST_LINEUP.map((artist) => artist.photoCredit).filter(Boolean)),
 ].join(" · ");
+const HAS_MISSING_PHOTO = FEAST_LINEUP.some((artist) => !artist.photo);
 
 export const metadata: Metadata = {
   alternates: localeAlternates("/concert/village-feast"),
@@ -240,8 +241,8 @@ export default function VillageFeastPage() {
           </ul>
 
           <p className="mt-6 break-keep text-xs leading-relaxed text-[var(--color-text-muted)]">
-            프로필 사진 출처: {PHOTO_CREDITS}. 사진이 확인되지 않은 팀은 잣송이 그림으로
-            대신했습니다.
+            프로필 사진 출처: {PHOTO_CREDITS}.
+            {HAS_MISSING_PHOTO ? " 사진이 확인되지 않은 팀은 잣송이 그림으로 대신했습니다." : ""}
           </p>
         </div>
       </section>
