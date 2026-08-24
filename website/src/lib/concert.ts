@@ -166,6 +166,10 @@ export const FEAST_LINEUP: FeastArtist[] = [
   },
   {
     name: "ZSTHYGER",
+    // 강정캠프의 「Sight X Zsthyger」 합동 사진에서 기타를 든 오른쪽을 잘랐다.
+    // 왼쪽은 비트박서 Sight — 두 사람의 악기가 달라 구분이 가능했다.
+    photo: "/images/concert/artists/zsthyger.jpg",
+    photoCredit: "강정피스앤뮤직캠프",
     blurb:
       "2018년부터 홍대에서 활동해온 컨트리 블루스 음악가 제트싸이져. 낮고 거친 목소리로 현대의 고딕을 노래합니다.",
     source: "https://peaceandmusic.net/camps/2026/musicians/27",
