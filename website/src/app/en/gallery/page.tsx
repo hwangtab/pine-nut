@@ -104,7 +104,7 @@ export default function EnglishGalleryPage() {
           />
         </div>
 
-        <section className="py-16 md:py-20 px-4 text-center bg-gradient-to-t from-[var(--color-bg-warm)] to-transparent">
+        <section className="py-16 md:py-20 px-4 text-center bg-gradient-to-b from-transparent via-[var(--color-bg-warm)] to-transparent">
           <div
             ref={ctaRef}
             className={`reveal ${ctaInView ? "is-visible" : ""} max-w-lg mx-auto`}

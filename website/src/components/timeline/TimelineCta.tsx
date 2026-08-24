@@ -5,7 +5,7 @@ import type { TimelineConfig } from "./timeline-config";
 export function TimelineCta({ timelineConfig }: { timelineConfig: TimelineConfig }) {
   const { ref, inView } = useReveal<HTMLDivElement>();
   return (
-    <section className="py-16 md:py-20 px-4 text-center bg-gradient-to-t from-[var(--color-bg-warm)] to-transparent">
+    <section className="py-16 md:py-20 px-4 text-center bg-gradient-to-b from-transparent via-[var(--color-bg-warm)] to-transparent">
       <div ref={ref} className={`reveal ${inView ? "is-visible" : ""}`}>
         <EditableText
           contentKey={timelineConfig.cta.titleKey}

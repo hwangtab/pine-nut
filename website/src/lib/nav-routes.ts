@@ -58,32 +58,37 @@ export function needsNavTopPadding(pathname: string): boolean {
 }
 
 // ── 푸터 능선(RidgeDivider)과 그 아래 여백 ─────────────────────────────────
-// 능선은 푸터 위로 겹쳐 그려지므로(마루: 모바일 30px / sm 42px / md 60px),
-// 그만큼 + 숨 쉴 틈만큼의 빈 공간이 마지막 콘텐츠 아래에 있어야 한다.
-// 그 여백은 PublicShell이 전역으로 한 번만 확보한다. 페이지가 각자
-// pb-* 를 잡는 방식은 이미 세 번 어긋났고, 관리자가 섹션을 추가하면
-// 손댈 개발자가 없어 구조적으로 재발한다.
+// 능선은 푸터 위로 겹쳐 그려지므로(마루: 모바일 30px / sm 42px / md 60px)
+// 그만큼 + 숨 쉴 틈이 마지막 콘텐츠 아래에 있어야 한다.
 //
-// 마지막 섹션이 어두운 라우트는 여백을 넣으면 크림색 띠가 생기므로 제외한다.
-// 단 "어둡다"와 "푸터와 같은 색"은 다르다 — 이 둘을 한 목록으로 묶으면
-// 숲색으로 끝나는 페이지에서 능선까지 사라져 직선 경계가 된다.
+// 그 여백은 별도 요소가 아니라 globals.css의 `.footer-ridge-gap > :last-child`
+// 패딩으로 준다. 여백을 별도 요소로 두면 그 요소의 배경이 페이지 배경과 달라
+// 반드시 가로 이음매가 생긴다 — 실제로 모래빛으로 끝나는 페이지에서 발생했다.
+// 마지막 블록 '안쪽' 패딩이면 그 블록의 배경이 그대로 늘어나 색이 어긋날 수 없다.
+//
+// 단, 그 규칙은 main의 '직계' 마지막 자식이 배경을 칠할 때만 성립한다.
+// 자기 색을 칠하는 섹션이 배경 없는 래퍼 안에 중첩돼 있으면 여백은 래퍼에
+// 붙어 크림색으로 칠해진다 — /story·/en 에서 실제로 그렇다.
+// 그래서 원칙은 하나다: **자기 색을 칠하는 섹션은 자기 하단 여백을 직접 갖는다.**
+// 전역 여백은 페이지 배경으로 끝나는 라우트에만 준다.
 
-// 마지막 섹션이 푸터와 **같은** --color-deep 인 라우트. 능선을 그려도
-// deep-on-deep 이라 보이지 않으므로 능선·여백 모두 생략한다.
+// 마지막 섹션이 푸터와 **같은** --color-deep 인 라우트.
+// 능선이 deep-on-deep 이라 보이지 않으므로 능선·여백 모두 생략한다.
 const DEEP_TAIL_ROUTES = ["/", "/concert"];
 
 // 마지막 섹션이 어둡지만 푸터와 **다른** 색(--color-forest)인 라우트.
-// 능선은 보이므로 그리되, 여백은 크림색 띠가 되므로 넣지 않는다.
+// 능선은 보여야 하므로 그리되, 여백은 그 섹션이 자기 py-20 md:py-28 로 이미
+// 확보한다(능선 마루 60px < 112px). 전역 여백을 얹으면 그 섹션 '바깥'에 붙어
+// 숲색과 크림색 사이에 가로 이음매가 생긴다.
+// → 이 패딩은 scripts/check-footer-clearance.mjs 가 지킨다.
 const FOREST_TAIL_ROUTES = ["/story", "/en"];
 
-// 능선 아래 빈 여백이 필요한가 — 마지막 섹션이 밝은 라우트만 해당.
+// 능선 아래 여백을 전역으로 줄 것인가.
 export function needsFooterRidgeGap(pathname: string): boolean {
-  return (
-    !DEEP_TAIL_ROUTES.includes(pathname) && !FOREST_TAIL_ROUTES.includes(pathname)
-  );
+  return !DEEP_TAIL_ROUTES.includes(pathname) && !FOREST_TAIL_ROUTES.includes(pathname);
 }
 
-// 능선을 그릴 것인가 — 푸터와 같은 색으로 끝나는 라우트에서만 생략.
+// 능선을 그릴 것인가.
 export function showsFooterRidge(pathname: string): boolean {
   return !DEEP_TAIL_ROUTES.includes(pathname);
 }

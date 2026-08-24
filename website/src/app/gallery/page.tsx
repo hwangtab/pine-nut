@@ -116,7 +116,7 @@ export default function GalleryPage() {
             sectionId="cta"
             visibilityContentKey="gallery.cta.visibility"
             section="cta"
-            defaultClassName="py-16 md:py-20 px-4 text-center bg-gradient-to-t from-[var(--color-bg-warm)] to-transparent"
+            defaultClassName="py-16 md:py-20 px-4 text-center bg-gradient-to-b from-transparent via-[var(--color-bg-warm)] to-transparent"
           >
             <div
               ref={ctaRef}

@@ -21,12 +21,14 @@ const read = (p) => readFileSync(join(root, p), "utf8");
 const shell = read("src/components/PublicShell.tsx");
 assert(shell.includes("needsFooterRidgeGap"),
   "PublicShell must import/use needsFooterRidgeGap — 전역 능선 여백 판정이 사라졌다.");
-assert(/aria-hidden="true"\s+className="h-16 sm:h-20 md:h-28"/.test(shell),
-  "PublicShell must render the global ridge spacer (h-16 sm:h-20 md:h-28).");
+assert(shell.includes("footer-ridge-gap"),
+  "PublicShell must put the footer-ridge-gap class on <main> — 여백은 마지막 블록 안쪽 패딩으로 준다.");
+const css = read("src/app/globals.css");
+assert(css.includes(".footer-ridge-gap > :last-child"),
+  "globals.css must define .footer-ridge-gap > :last-child — 별도 여백 요소는 배경 이음매를 만든다.");
 assert(shell.includes("<CustomSectionsHost />"),
   "PublicShell must render CustomSectionsHost before the spacer — 관리자 섹션도 여백을 받아야 한다.");
-assert(shell.indexOf("<CustomSectionsHost />") < shell.indexOf("md:h-28"),
-  "The ridge spacer must come AFTER CustomSectionsHost, or admin-added sections lose their clearance.");
+
 
 // 2) 능선은 여백이 있는 페이지에서만 그려져야 한다.
 const footer = read("src/components/Footer.tsx");
@@ -86,4 +88,29 @@ if (fail.length) {
   console.error("footer-clearance:check 실패\n" + fail.map((m) => "  - " + m).join("\n"));
   process.exit(1);
 }
+
+// ── 색 이음매 재발 방지 ──────────────────────────────────────────────────────
+// 1) FOREST_TAIL 라우트는 전역 여백을 받지 않는다. 그 섹션이 자기 하단 패딩으로
+//    능선 마루(md 60px)를 비워야 한다. md:py-28(112px)이 그 근거다.
+for (const [file, line] of [
+  ["src/app/story/page.tsx", "story cta"],
+  ["src/app/en/page.tsx", "en cta"],
+]) {
+  const src = read(file);
+  assert(/md:py-28[^"]*bg-\[var\(--color-forest\)\]/.test(src),
+    `${file}: 숲색 꼬리 섹션은 md:py-28 을 유지해야 한다 (${line}) — 능선이 콘텐츠를 덮는다.`);
+}
+
+// 2) 섹션 배경 그라디언트가 한쪽 끝에서 불투명하게 끝나면 그 경계에 가로 색선이
+//    생긴다. 모래빛 그라디언트는 양끝이 모두 투명해야 한다.
+for (const file of [
+  "src/components/timeline/TimelineCta.tsx",
+  "src/app/gallery/page.tsx",
+  "src/app/en/gallery/page.tsx",
+]) {
+  const src = read(file);
+  assert(!/gradient-to-[tb] from-\[var\(--color-bg-warm\)\] to-transparent/.test(src),
+    `${file}: 한쪽 끝이 불투명한 모래빛 그라디언트 — from-transparent via-... to-transparent 를 써라.`);
+}
+
 console.log("footer-clearance:check ok");

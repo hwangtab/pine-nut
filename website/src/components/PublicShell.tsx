@@ -23,7 +23,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
   // 푸터 능선이 겹쳐 그리는 만큼 + 숨 쉴 틈을 여기서 한 번만 확보한다.
   // 페이지가 각자 pb-* 를 잡지 않는다 — 그 방식은 반복해서 어긋났고,
   // 관리자가 추가한 섹션에는 손댈 개발자가 없어 구조적으로 재발한다.
-  // 높이 = 능선 마루(30/42/60px) + 여유(34/38/52px).
+  // 여백은 globals.css의 .footer-ridge-gap 규칙이 마지막 블록 안쪽에 준다.
   // 관리자가 추가한 섹션은 항상 main의 마지막 자식이 된다. 그 섹션은 밝은
   // 테마뿐이라, 어두운 꼬리로 분류된 라우트라도 섹션이 붙는 순간 꼬리가
   // 밝아진다 — 이때는 여백을 강제해야 능선에 잘리지 않는다.
@@ -40,10 +40,9 @@ export default function PublicShell({ children }: { children: React.ReactNode })
   return (
     <>
       <Navigation />
-      <main className={topPad}>
+      <main className={[topPad, ridgeGap ? "footer-ridge-gap" : ""].filter(Boolean).join(" ")}>
         {children}
         <CustomSectionsHost />
-        {ridgeGap && <div aria-hidden="true" className="h-16 sm:h-20 md:h-28" />}
       </main>
       <Footer showRidge={showRidge} />
     </>
