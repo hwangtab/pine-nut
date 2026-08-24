@@ -32,12 +32,14 @@ assert(shell.indexOf("<CustomSectionsHost />") < shell.indexOf("md:h-28"),
 const footer = read("src/components/Footer.tsx");
 assert(/showRidge/.test(footer),
   "Footer must accept showRidge — 어두운 꼬리 페이지에서 능선을 끄지 못하면 크림색 띠가 생긴다.");
-assert(shell.includes("showRidge={ridgeGap}"),
-  "PublicShell must pass showRidge to Footer so the spacer and the ridge stay in sync.");
+assert(shell.includes("showRidge={showRidge}"),
+  "PublicShell must pass showRidge to Footer.");
+assert(shell.includes("showsFooterRidge"),
+  "PublicShell must use showsFooterRidge — 능선 표시와 여백 확보는 판정 기준이 다르다.");
 
 // 3) 라우트 분류가 남아 있어야 한다.
 const nav = read("src/lib/nav-routes.ts");
-for (const sym of ["DARK_TAIL_ROUTES", "hasDarkTailSection", "needsFooterRidgeGap"]) {
+for (const sym of ["DEEP_TAIL_ROUTES", "FOREST_TAIL_ROUTES", "needsFooterRidgeGap", "showsFooterRidge"]) {
   assert(nav.includes(sym), `nav-routes.ts must define ${sym}.`);
 }
 

@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import CustomSectionsHost from "@/components/CustomSectionsHost";
-import { needsFooterRidgeGap, needsNavTopPadding } from "@/lib/nav-routes";
+import { needsFooterRidgeGap, needsNavTopPadding, showsFooterRidge } from "@/lib/nav-routes";
 
 export default function PublicShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -22,6 +22,8 @@ export default function PublicShell({ children }: { children: React.ReactNode })
   // 관리자가 추가한 섹션에는 손댈 개발자가 없어 구조적으로 재발한다.
   // 높이 = 능선 마루(30/42/60px) + 여유(34/38/52px).
   const ridgeGap = needsFooterRidgeGap(pathname);
+  // 능선은 푸터와 같은 색으로 끝나는 페이지에서만 생략한다(숲색 꼬리에서는 보인다).
+  const showRidge = showsFooterRidge(pathname);
 
   return (
     <>
@@ -31,7 +33,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
         <CustomSectionsHost />
         {ridgeGap && <div aria-hidden="true" className="h-16 sm:h-20 md:h-28" />}
       </main>
-      <Footer showRidge={ridgeGap} />
+      <Footer showRidge={showRidge} />
     </>
   );
 }
