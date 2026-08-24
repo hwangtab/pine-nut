@@ -27,6 +27,8 @@ export function hasPageHero(pathname: string): boolean {
 // padding 판정(hasPageHero, prefix)과 달리 exact 매칭이다:
 // 목록 페이지(/news)는 사진 SubHero지만, 하위 상세(/news/[slug])는 밝은
 // UtilityHeader를 쓰므로 투명 내비(흰 글씨)가 아니라 불투명 페이퍼 내비여야 읽힌다.
+// /concert/village-feast 는 빠져 있다 — 히어로가 포스터의 연둣빛(밝은 배경)이라
+// 흰 잉크 투명 내비가 읽히지 않는다. 불투명 페이퍼 내비여야 한다.
 const TRANSPARENT_NAV_ROUTES = [
   "/",
   "/story",
@@ -39,7 +41,6 @@ const TRANSPARENT_NAV_ROUTES = [
   "/donate",
   "/concert",
   "/concert/before-cut",
-  "/concert/village-feast",
   "/en",
 ];
 
