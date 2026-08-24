@@ -75,9 +75,8 @@ export function ddayLabel(start: Date, now: Date = new Date()): string {
 // '내려오는' 잔치다. 2025년 7월 같은 마을회관에서 열린 「잣나무골 여름잔치」의
 // 두 번째 자리이기도 하다.
 
-// 포스터에는 「풍천리 마을 잔치」로 찍혀 있다. 사이트에서는 지키려는 대상을
-// 이름에 넣어 「잣나무 마을 잔치」로 부른다 — 2025년 같은 마을회관에서 열린
-// 「잣나무골 여름잔치」의 계보이기도 하다.
+// 포스터 제목 그대로. 2025년 같은 마을회관에서 열린 「잣나무골 여름잔치」의
+// 계보를 잇는 이름이다.
 export const FEAST_TITLE = "풍천리 잣나무 마을 잔치";
 export const FEAST_DATE_LABEL = "2026년 9월 5일(토)";
 export const FEAST_TIME_LABEL = "오후 1시 시작";
@@ -98,7 +97,8 @@ export interface FeastArtist {
   source?: string;
 }
 
-// 포스터에 적힌 순서 그대로. 소개는 공개된 자료로 확인된 것만 적는다.
+// 포스터에 적힌 순서 그대로. 소개는 확인된 것만 적는다 — source 가 있으면 공개
+// 웹자료, 없으면(마쓰모토 코타·박지휘) 주최 측에서 받은 소개글을 다듬은 것이다.
 export const FEAST_LINEUP: FeastArtist[] = [
   {
     name: "경하와 세민",
@@ -118,8 +118,16 @@ export const FEAST_LINEUP: FeastArtist[] = [
       "싱어송라이터 장현호를 중심으로 2011년 결성된 거리 밴드. 세월호, 강정마을, KTX 해고 승무원 — 십수 년을 현장에서 불러왔습니다.",
     source: "https://peaceandmusic.net/camps/2026/musicians/15",
   },
-  { name: "마쓰모토 코타" },
-  { name: "박지휘" },
+  {
+    name: "마쓰모토 코타",
+    blurb:
+      "일본과 베를린을 오가며 이주와 여행을 거듭해온 음악가. 거친 결의 목소리에 일본어 노랫말을 얹고 기타·피아노·아카펠라를 오갑니다. 2000년대 초 오사카 언더그라운드에서 출발해 일본 열도 100여 곳과 파리·탈린·코펜하겐·방콕·서울을 거쳤고, 2012년부터 베를린에 자리를 잡았습니다.",
+  },
+  {
+    name: "박지휘",
+    blurb:
+      "튠업 24기 프리포크 싱어송라이터. 일러스트레이터 2da(이다)의 그림에서 따온 ‘sickbaby’라는 이름으로도 불렀습니다. 로파이한 프리포크로 시작해, 근래에는 엘리엇 스미스의 새드코어에 기운 곡을 씁니다.",
+  },
   {
     name: "삼각전파사",
     blurb:
@@ -178,7 +186,7 @@ export const CONCERTS: ConcertEntry[] = [
     timeLabel: FEAST_TIME_LABEL,
     place: FEAST_PLACE,
     posterImage: "/images/concert/village-feast-poster.jpg",
-    posterAlt: "풍천리 마을 잔치 포스터 — 2026년 9월 5일 토요일 오후 1시",
+    posterAlt: "풍천리 잣나무 마을 잔치 포스터 — 2026년 9월 5일 토요일 오후 1시",
     summary:
       "이번엔 음악가들이 마을로 내려옵니다. 7년을 싸워온 사람들이 하루쯤은 웃고 먹고 춤추는, 풍천리 마을회관 앞마당의 잔치입니다.",
     lineupCount: FEAST_LINEUP.length,
