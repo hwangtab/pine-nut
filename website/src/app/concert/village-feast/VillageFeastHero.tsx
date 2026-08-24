@@ -69,8 +69,7 @@ export default function VillageFeastHero() {
         </h1>
 
         <p className="rise-in rise-in-2 mx-auto mt-6 max-w-2xl text-balance break-keep text-base font-medium leading-relaxed sm:text-xl">
-          이번엔 음악가들이 마을로 내려옵니다. 7년을 싸워온 사람들이 하루쯤은 웃고, 먹고,
-          춤추는 날입니다.
+          양수발전소에 맞서 7년을 싸워온 마을, 풍천리에서 음악가 아홉 팀이 함께합니다.
         </p>
 
         <div

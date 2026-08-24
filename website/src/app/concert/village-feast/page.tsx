@@ -10,7 +10,6 @@ import {
   Music,
   Phone,
   Share2,
-  Ticket,
   Users,
 } from "lucide-react";
 import { localeAlternates } from "@/lib/seo-alternates";
@@ -58,7 +57,7 @@ export const metadata: Metadata = {
 const INFO_CARDS = [
   { icon: CalendarDays, label: "일시", value: FEAST_DATE_LABEL, sub: FEAST_TIME_LABEL },
   { icon: MapPin, label: "장소", value: FEAST_PLACE, sub: "강원 홍천 화촌면" },
-  { icon: Ticket, label: "관람", value: "무료", sub: "예매 없이 누구나" },
+  { icon: Users, label: "출연", value: `${FEAST_LINEUP.length}팀`, sub: "포스터 순서대로" },
   {
     icon: Phone,
     label: "문의",
@@ -77,7 +76,7 @@ const PARTICIPATE = [
   {
     icon: Users,
     title: "마을에서, 함께 놀아요",
-    body: "잔치는 구경하는 자리가 아니라 섞이는 자리입니다. 노래를 듣고, 밥을 나누고, 주민들과 이야기를 나눠주세요.",
+    body: "자리를 채우는 것 자체가 연대입니다. 노래를 듣고, 주민들과 인사를 나눠주세요.",
   },
   {
     icon: Heart,
@@ -86,24 +85,23 @@ const PARTICIPATE = [
   },
 ];
 
+// 포스터에 없는 것(관람료·종료 시각·진행 순서·준비물)은 아직 확인되지 않았다.
+// 아는 척 쓰면 그대로 사실이 되어 퍼진다 — 확정되면 채운다.
 const FAQ = [
   {
-    q: "관람료가 있나요?",
-    a: "무료입니다. 예매나 사전 신청 없이 누구나 오실 수 있어요.",
+    q: "몇 시에 끝나나요?",
+    a: "오후 1시에 시작합니다. 끝나는 시각과 진행 순서는 아직 정해지지 않았습니다. 확정되면 이 페이지에 올립니다.",
   },
   {
-    q: "몇 시에 끝나나요?",
-    a: "오후 1시에 시작합니다. 끝나는 시간과 공연 순서는 준비 상황에 따라 정해지며, 확정되면 이 페이지로 안내드립니다.",
+    q: "관람료나 사전 신청이 있나요?",
+    a: "안내를 준비하고 있습니다. 아래 문의처로 연락 주시면 확인해 드립니다.",
   },
   {
     q: "어떻게 가나요?",
-    a: "풍천리는 대중교통이 드문 산촌 마을입니다. 자가용을 권하고, 함께 오실 분들끼리 차를 나눠 타시면 좋습니다. 이동이 어려우시면 대책위로 미리 연락 주세요.",
-  },
-  {
-    q: "무엇을 준비하면 좋나요?",
-    a: "야외 자리가 많습니다. 앉을 자리(돗자리)와 모자, 초가을 저녁에 대비한 겉옷을 챙기시면 편합니다.",
+    a: "강원도 홍천군 화촌면 풍천리, 가리산 자락의 산촌 마을입니다. 아래 지도 링크를 참고하시고, 이동이 어려우시면 대책위로 미리 연락 주세요.",
   },
 ];
+
 
 export default function VillageFeastPage() {
   return (
@@ -145,43 +143,35 @@ export default function VillageFeastPage() {
       <section className="px-6 pb-4 pt-4 sm:pb-8">
         <div className="mx-auto max-w-3xl">
           <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
-            Why a Feast
+            Why Here
           </p>
           <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold leading-tight text-[var(--color-text)] sm:text-4xl">
-            싸우는 마을에도 잔칫날이 있어야 합니다
+            7년을 싸워온 마을에서 열립니다
           </h2>
 
           <p className="mt-8 break-keep text-lg leading-loose text-[var(--color-text)] sm:text-xl">
-            <b className="font-bold">7년입니다.</b> 풍천리 사람들이 양수발전소에 반대하며 거리에 선
-            시간이. 705번이 넘는 집회를 예순에서 여든의 손들이 지켜왔고, 그중 일곱 분은 지금
-            재판을 받고 있습니다. 싸움이 길어질수록 마을에서 사라지는 건 나무만이 아닙니다.
-            웃음이 먼저 사라집니다.
+            풍천리 사람들이 양수발전소에 반대하며 거리에 선 지 7년입니다. 705번이 넘는 집회를
+            예순에서 여든의 손들이 지켜왔고, 그중 일곱 분은 지금 재판을 받고 있습니다. 잣나무
+            11만 그루가 잘려 나가고 51가구가 물에 잠기거나 정든 집을 떠나야 하는 계획이
+            그대로 남아 있습니다.
           </p>
 
           <div className="mt-12 rounded-[var(--radius-panel)] border-l-4 border-[var(--color-forest)] bg-[var(--color-bg-warm)] px-6 py-8 sm:px-10">
             <p className="break-keep text-lg leading-loose text-[var(--color-text)] sm:text-xl">
-              지난해 여름에도 같은 마을회관에서 잔치가 열렸습니다. 음악가와 예술가 열다섯 팀이
-              모였고, 토종 씨앗을 나누고 건강 상담을 하고 다 같이 춤을 췄습니다. 그날 한 주민은
-              이렇게 말했습니다.
+              같은 마을회관에서 지난해 여름에도 자리가 있었습니다. 2025년 7월 12일
+              「잣나무골 여름잔치」에 음악가와 예술가 열다섯 팀이 모였고, 토종 씨앗을 나누고
+              건강 상담을 하고 다 같이 춤을 췄습니다. 그날 한 주민은 이렇게 말했습니다.
             </p>
             <p className="font-hand mt-6 break-keep text-2xl leading-relaxed text-[var(--color-forest)] sm:text-3xl">
               “사람답게 산 것 같다. 몇 년 만에 웃어봤는지 모르겠다.”
             </p>
             <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-              — 2025년 7월 「잣나무골 여름잔치」에서, 허순이 주민
+              — 2025년 7월 「잣나무골 여름잔치」에서, 허순이 주민 (한국농정신문·여성신문 보도)
             </p>
           </div>
 
           <p className="mt-12 break-keep text-lg leading-loose text-[var(--color-text)] sm:text-xl">
-            그래서 다시 모입니다. 음악가들이 풍천리 곁에 선 것은 처음이 아닙니다. 마을에서,
-            거리에서, 서울에서 여러 차례 이어져왔습니다. 8월 1일 청와대 앞 공연이 마을의
-            목소리를 서울로 올려보낸 자리였다면, 이번 <b className="font-bold">9월 5일</b>은
-            반대로 음악가들이 마을로 내려오는 자리입니다. 구호가 아니라 노래로, 집회가 아니라
-            잔치로 하루를 채웁니다.
-          </p>
-
-          <p className="mt-8 break-keep text-xl font-bold text-[var(--color-forest)] sm:text-2xl">
-            숲을 지키는 일에는 이런 하루도 필요합니다.
+            <b className="font-bold">9월 5일</b>, 그 마을회관에 아홉 팀이 다시 모입니다.
           </p>
         </div>
       </section>
@@ -307,11 +297,11 @@ export default function VillageFeastPage() {
               <div className="relative z-[1]">
                 <span className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-forest)]">
                   <Music className="h-5 w-5" aria-hidden />
-                  초가을 야외 잔치
+                  자세한 안내
                 </span>
                 <p className="mt-3 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                  돗자리와 모자, 해가 진 뒤를 위한 겉옷을 챙겨오시면 오래 편하게 함께할 수 있어요.
-                  이동이 어려우시면 대책위로 미리 연락 주세요.
+                  진행 순서와 준비물 안내는 확정되는 대로 이 페이지에 올립니다. 급한 문의는
+                  아래 연락처로 주세요.
                 </p>
               </div>
             </div>
