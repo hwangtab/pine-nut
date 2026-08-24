@@ -226,7 +226,7 @@ export default function StoryPage() {
         sectionId="cta"
         visibilityContentKey="story.cta.visibility"
         section="cta"
-        defaultClassName="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-forest)] text-white text-center"
+        defaultClassName="ridge-tail pt-20 md:pt-28 px-4 sm:px-6 bg-[var(--color-forest)] text-white text-center"
       >
           <div className="max-w-2xl mx-auto">
             <EditableText

@@ -87,21 +87,30 @@ for (const f of walk("src")) {
 //    능선 마루(md 60px)를 비워야 하고, 색은 푸터(--color-deep)와 달라야 한다.
 //    같은 색이면 경계가 사라져 능선이 보이지 않는다.
 const DARK_TAILS = [
-  ["src/components/home/HomeClient.tsx", "md:py-20", "--color-deep-raised", "home.stats"],
-  ["src/app/story/page.tsx", "md:py-28", "--color-forest", "story.cta"],
-  ["src/app/en/page.tsx", "md:py-28", "--color-forest", "en.cta"],
-  ["src/app/concert/before-cut/page.tsx", "sm:py-24", "--color-deep-raised", "before-cut 마무리 CTA"],
-  ["src/app/concert/village-feast/page.tsx", "sm:py-24", "--color-deep-raised", "village-feast 마무리 CTA"],
+  ["src/components/home/HomeClient.tsx", "--color-deep-raised", "home.stats"],
+  ["src/app/story/page.tsx", "--color-forest", "story.cta"],
+  ["src/app/en/page.tsx", "--color-forest", "en.cta"],
+  ["src/app/concert/before-cut/page.tsx", "--color-deep-raised", "before-cut 마무리 CTA"],
+  ["src/app/concert/village-feast/page.tsx", "--color-deep-raised", "village-feast 마무리 CTA"],
 ];
-for (const [file, pad, color, label] of DARK_TAILS) {
-  // 클래스 순서(bg 먼저냐 padding 먼저냐)는 파일마다 다르므로 '같은 줄에 둘 다'로 본다.
+for (const [file, color, label] of DARK_TAILS) {
   const lines = read(file).split("\n");
-  const bandLines = lines.filter((line) => line.includes(`bg-[var(${color})]`));
-  assert(bandLines.some((line) => line.includes(pad)),
-    `${file}: ${label} 밴드는 ${pad} + bg-[var(${color})] 를 같은 요소에 유지해야 한다 — 패딩이 줄면 능선이 콘텐츠를 덮는다.`);
-  assert(!lines.some((line) => line.includes("bg-[var(--color-deep)]") && line.includes(pad)),
+  const band = lines.filter((line) => line.includes(`bg-[var(${color})]`));
+  assert(band.some((line) => line.includes("ridge-tail")),
+    `${file}: ${label} 밴드에 .ridge-tail 이 있어야 한다 — 어두운 꼬리는 자기 색으로 능선 마루를 비운다.`);
+  // py-* 를 함께 쓰면 Tailwind 유틸리티가 .ridge-tail 의 padding-bottom 을 덮는다.
+  assert(!band.some((line) => /\bridge-tail\b/.test(line) && /\b(sm:|md:)?py-\d/.test(line)),
+    `${file}: ${label} 밴드가 .ridge-tail 과 py-* 를 함께 쓴다 — 위쪽은 pt-* 로만 줘라.`);
+  assert(!lines.some((line) => line.includes("bg-[var(--color-deep)]") && line.includes("ridge-tail")),
     `${file}: ${label} 밴드가 푸터와 같은 --color-deep 이다 — --color-deep-raised 를 써라.`);
 }
+
+// 여백 값은 능선 높이에서 유도한다. 손으로 고른 숫자로 되돌아가면 능선과 무관해져
+// 어떤 페이지는 잘리고 어떤 페이지는 허옇게 뜬다.
+assert(css.includes("--ridge-crest") && css.includes("--ridge-breathe"),
+  "globals.css must define --ridge-crest/--ridge-breathe — 여백 값은 능선 높이에서 유도한다.");
+assert(/\.footer-ridge-gap > :last-child,\s*\n\.ridge-tail \{\s*\n\s*padding-bottom: calc\(var\(--ridge-crest\) \+ var\(--ridge-breathe\)\)/.test(css),
+  "두 경로(.footer-ridge-gap / .ridge-tail)는 같은 계산식을 공유해야 한다 — 갈라지면 페이지마다 여백이 달라진다.");
 
 // 2) 섹션 배경 그라디언트가 한쪽 끝에서 불투명하게 끝나면 그 경계에 가로 색선이
 //    생긴다. 모래빛 그라디언트는 양끝이 모두 투명해야 한다.

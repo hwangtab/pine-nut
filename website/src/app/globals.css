@@ -385,19 +385,35 @@ html {
 }
 
 /* ── 푸터 능선 여백 ─────────────────────────────────────────────────────────
-   능선은 푸터 위로 겹쳐 그려지므로(마루: 30/42/60px) 그만큼 + 숨 쉴 틈이
-   마지막 콘텐츠 아래에 있어야 한다.
-   그 여백을 '별도 요소'로 넣으면 그 요소의 배경이 페이지 배경과 달라
-   반드시 가로 이음매가 생긴다(모래빛으로 끝나는 페이지에서 실제로 발생).
-   그래서 여백을 페이지의 마지막 블록 '안쪽' 패딩으로 준다 — 그 블록의
-   배경(단색이든 그라디언트든)이 그대로 늘어나므로 색이 어긋날 수 없다.
-   관리자가 추가한 섹션도 main의 마지막 자식이 되므로 자동으로 적용된다. */
-.footer-ridge-gap > :last-child {
-  padding-bottom: 4rem;
+   능선(RidgeDivider)은 푸터 위로 겹쳐 그려진다. 그래서 마지막 콘텐츠 아래에
+   '마루 높이 + 숨 쉴 틈'이 있어야 하고, 그 값은 능선 높이에서 유도해야 한다.
+   숫자를 손으로 고르면 능선과 무관해져서 어떤 페이지는 잘리고 어떤 페이지는
+   허옇게 뜬다 — 실제로 그렇게 세 번 어긋났다.
+
+   마루 높이: RidgeDivider 박스는 h-10 sm:h-14 md:h-20(40/56/80px)이고,
+   viewBox(96) 안에서 실제로 칠해지는 부분은 위 37.5%를 뺀 62.5% → 30/42/60px.
+
+   두 가지 경우가 있고 **값은 하나를 공유한다**:
+   1) 페이지 배경으로 끝나는 라우트 → main 에 .footer-ridge-gap.
+      여백을 마지막 블록 '안쪽' 패딩으로 준다. 별도 요소로 넣으면 그 요소의
+      배경이 달라 가로 이음매가 생긴다. 관리자가 추가한 섹션도 main 의
+      마지막 자식이라 자동 적용된다.
+   2) 자기 색을 칠하는 어두운 밴드로 끝나는 라우트 → 그 밴드에 .ridge-tail.
+      1)의 방식은 배경 없는 래퍼에 여백이 붙어 크림색 띠를 만든다.
+      밴드는 위쪽 패딩만 pt-* 로 주고 아래는 이 클래스에 맡긴다 —
+      py-* 를 함께 쓰면 Tailwind 유틸리티와 padding-bottom 을 두고 다툰다. */
+:root {
+  --ridge-crest: 30px;
+  --ridge-breathe: 2.5rem;
 }
 @media (min-width: 640px) {
-  .footer-ridge-gap > :last-child { padding-bottom: 5rem; }
+  :root { --ridge-crest: 42px; --ridge-breathe: 3rem; }
 }
 @media (min-width: 768px) {
-  .footer-ridge-gap > :last-child { padding-bottom: 7rem; }
+  :root { --ridge-crest: 60px; --ridge-breathe: 4rem; }
+}
+
+.footer-ridge-gap > :last-child,
+.ridge-tail {
+  padding-bottom: calc(var(--ridge-crest) + var(--ridge-breathe));
 }

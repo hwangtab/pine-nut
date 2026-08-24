@@ -107,7 +107,7 @@ export default function HomeClient() {
         sectionId="stats"
         visibilityContentKey="home.stats.visibility"
         section="stats"
-        defaultClassName="py-16 md:py-20 px-6 bg-[var(--color-deep-raised)] text-[#FFFDF7]"
+        defaultClassName="ridge-tail pt-16 md:pt-20 px-6 bg-[var(--color-deep-raised)] text-[#FFFDF7]"
       >
         <HomeStatsSection />
       </ManagedSection>
