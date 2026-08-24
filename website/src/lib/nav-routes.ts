@@ -38,6 +38,7 @@ const TRANSPARENT_NAV_ROUTES = [
   "/petition",
   "/donate",
   "/concert",
+  "/concert/before-cut",
   "/en",
 ];
 
@@ -74,7 +75,9 @@ export function needsNavTopPadding(pathname: string): boolean {
 
 // 마지막 섹션이 푸터와 **같은** --color-deep 인 라우트.
 // 능선이 deep-on-deep 이라 보이지 않으므로 능선·여백 모두 생략한다.
-const DEEP_TAIL_ROUTES = ["/", "/concert"];
+// 개별 공연 페이지(/concert/*)는 어두운 CTA로 끝난다. 반면 목록 페이지(/concert)는
+// 크림 배경으로 끝나므로 능선과 여백이 모두 필요하다 — 여기 넣으면 안 된다.
+const DEEP_TAIL_ROUTES = ["/", "/concert/before-cut"];
 
 // 마지막 섹션이 어둡지만 푸터와 **다른** 색(--color-forest)인 라우트.
 // 능선은 보여야 하므로 그리되, 여백은 그 섹션이 자기 py-20 md:py-28 로 이미

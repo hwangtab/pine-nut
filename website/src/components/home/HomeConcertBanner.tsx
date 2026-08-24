@@ -12,7 +12,7 @@ export default function HomeConcertBanner() {
 
   return (
     <Link
-      href="/concert"
+      href="/concert/before-cut"
       className="ink-chip mb-6 max-w-full flex-wrap justify-center transition-[filter] hover:brightness-125"
     >
       <span className="rounded-full bg-[var(--color-forest-light)] px-2.5 py-0.5 text-xs font-black sm:text-sm">

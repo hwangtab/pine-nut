@@ -70,3 +70,50 @@ export function concertDdayLabel(now: Date = new Date()): string {
   if (d === 0) return "D-DAY";
   return "공연 종료";
 }
+
+// ── 예술연대 아카이브 ──────────────────────────────────────────────────────
+// 공연은 정해진 주기 없이 열린다. 그래서 회차 번호를 쓰지 않고, 끝난 공연을
+// 아래 배열에 최신순으로 쌓기만 한다. 다음 공연 날짜가 잡히면 upcoming: true 로
+// 항목을 추가하면 /concert 목록 맨 위에 예정 공연으로 뜬다.
+export interface ConcertEntry {
+  /** /concert/{slug} */
+  slug: string;
+  title: string;
+  /** 내비 하위 메뉴에 쓰는 짧은 이름 */
+  navLabel: string;
+  dateLabel: string;
+  timeLabel: string;
+  place: string;
+  posterImage: string;
+  posterAlt: string;
+  summary: string;
+  lineupCount: number;
+  /** 아직 열리지 않은 공연 */
+  upcoming?: boolean;
+}
+
+export const CONCERTS: ConcertEntry[] = [
+  {
+    slug: "before-cut",
+    title: CONCERT_TITLE,
+    navLabel: "베어지기 전에, 풍천리",
+    dateLabel: CONCERT_DATE_LABEL,
+    timeLabel: CONCERT_TIME_LABEL,
+    place: CONCERT_PLACE,
+    posterImage: "/images/concert/poster.jpg",
+    posterAlt: "베어지기 전에 풍천리 공연 포스터",
+    summary:
+      "잣나무 11만 그루가 베어지기 전에, 풍천리를 지키려는 음악가들이 청와대 앞에 모였습니다. 일곱 시간 동안 이어진 첫 번째 예술연대입니다.",
+    lineupCount: CONCERT_LINEUP.length,
+  },
+];
+
+/** 아직 열리지 않은 공연(없으면 null) */
+export function upcomingConcert(): ConcertEntry | null {
+  return CONCERTS.find((concert) => concert.upcoming) ?? null;
+}
+
+/** 이미 열린 공연 — 목록에서 아카이브로 보여준다 */
+export function pastConcerts(): ConcertEntry[] {
+  return CONCERTS.filter((concert) => !concert.upcoming);
+}

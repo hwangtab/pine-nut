@@ -52,6 +52,7 @@ export default function MobileNavigationMenu({
       >
         {navLinks.map((link) => {
           const active = isActive(link.href);
+          const children = link.children ?? [];
 
           return (
             <span key={link.id}>
@@ -66,6 +67,31 @@ export default function MobileNavigationMenu({
                 onClick={onDismiss}
                 ariaCurrent={active ? "page" : undefined}
               />
+
+              {/* 하위 메뉴는 접지 않고 그대로 펼친다. 좁은 화면에서 탭 한 번을
+                  더 요구하는 아코디언보다, 세로로 이어지는 목록이 빠르다. */}
+              {children.length > 0 && (
+                <ul className="ml-4 border-l border-[var(--color-border)] pl-3">
+                  {children.map((child) => {
+                    const childActive = isActive(child.href);
+                    return (
+                      <li key={child.id}>
+                        <NavigationLink
+                          href={child.href}
+                          className={`px-4 py-2.5 rounded-xl text-base font-medium min-h-[44px] flex items-center transition-colors ${
+                            childActive
+                              ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
+                              : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]"
+                          }`}
+                          label={child.label}
+                          onClick={onDismiss}
+                          ariaCurrent={childActive ? "page" : undefined}
+                        />
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </span>
           );
         })}

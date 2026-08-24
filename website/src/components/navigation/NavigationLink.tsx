@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import {
   isExternalEditableHref,
@@ -12,6 +13,8 @@ interface NavigationLinkProps {
   label: string;
   onClick?: () => void;
   ariaCurrent?: "page";
+  /** 라벨 뒤에 붙는 장식(드롭다운 화살표 등) */
+  suffix?: ReactNode;
 }
 
 export default function NavigationLink({
@@ -20,6 +23,7 @@ export default function NavigationLink({
   label,
   onClick,
   ariaCurrent,
+  suffix,
 }: NavigationLinkProps) {
   if (isInternalEditableHref(href)) {
     return (
@@ -30,6 +34,7 @@ export default function NavigationLink({
         aria-current={ariaCurrent}
       >
         {label}
+        {suffix}
       </Link>
     );
   }
@@ -44,6 +49,7 @@ export default function NavigationLink({
       rel={isExternalEditableHref(href) ? "noopener noreferrer" : undefined}
     >
       {label}
+      {suffix}
     </a>
   );
 }

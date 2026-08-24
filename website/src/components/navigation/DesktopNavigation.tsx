@@ -1,6 +1,7 @@
 "use client";
 
 import { EditableLink, EditableText } from "@/components/editable";
+import NavigationDropdown from "@/components/navigation/NavigationDropdown";
 import NavigationLink from "@/components/navigation/NavigationLink";
 import type { BuilderLinkItem } from "@/lib/custom-sections";
 
@@ -18,6 +19,19 @@ export default function DesktopNavigation({
   return (
     <div className="hidden nav:flex items-center gap-0.5 min-w-0">
       {navLinks.map((link) => {
+        const children = link.children ?? [];
+        if (children.length > 0) {
+          return (
+            <NavigationDropdown
+              key={link.id}
+              link={link}
+              items={children}
+              isTransparent={isTransparent}
+              isActive={isActive}
+            />
+          );
+        }
+
         const active = isActive(link.href);
 
         return (
