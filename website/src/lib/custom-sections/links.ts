@@ -35,7 +35,7 @@ export function defaultNavLinks(): BuilderLinkItem[] {
       children: [
         {
           id: "nav-concert-village-feast",
-          label: "풍천리 좋은 마을 잔치",
+          label: "풍천리 잣나무 마을 잔치",
           href: "/concert/village-feast",
         },
         {

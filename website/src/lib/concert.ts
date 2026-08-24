@@ -70,12 +70,15 @@ export function ddayLabel(start: Date, now: Date = new Date()): string {
   return "공연 종료";
 }
 
-// ── 「풍천리 좋은 마을 잔치」(2026-09-05 풍천리 마을회관) ────────────────────
+// ── 「풍천리 잣나무 마을 잔치」(2026-09-05 풍천리 마을회관) ──────────────────
 // 첫 예술연대가 청와대 앞으로 '올라간' 공연이었다면, 이번은 음악가들이 마을로
 // '내려오는' 잔치다. 2025년 7월 같은 마을회관에서 열린 「잣나무골 여름잔치」의
 // 두 번째 자리이기도 하다.
 
-export const FEAST_TITLE = "풍천리 좋은 마을 잔치";
+// 포스터에는 「풍천리 마을 잔치」로 찍혀 있다. 사이트에서는 지키려는 대상을
+// 이름에 넣어 「잣나무 마을 잔치」로 부른다 — 2025년 같은 마을회관에서 열린
+// 「잣나무골 여름잔치」의 계보이기도 하다.
+export const FEAST_TITLE = "풍천리 잣나무 마을 잔치";
 export const FEAST_DATE_LABEL = "2026년 9월 5일(토)";
 export const FEAST_TIME_LABEL = "오후 1시 시작";
 export const FEAST_PLACE = "풍천리 마을회관";
@@ -175,7 +178,7 @@ export const CONCERTS: ConcertEntry[] = [
     timeLabel: FEAST_TIME_LABEL,
     place: FEAST_PLACE,
     posterImage: "/images/concert/village-feast-poster.jpg",
-    posterAlt: "풍천리 좋은 마을 잔치 포스터 — 2026년 9월 5일 토요일 오후 1시",
+    posterAlt: "풍천리 마을 잔치 포스터 — 2026년 9월 5일 토요일 오후 1시",
     summary:
       "이번엔 음악가들이 마을로 내려옵니다. 7년을 싸워온 사람들이 하루쯤은 웃고 먹고 춤추는, 풍천리 마을회관 앞마당의 잔치입니다.",
     lineupCount: FEAST_LINEUP.length,

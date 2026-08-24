@@ -50,7 +50,7 @@ export default function VillageFeastHero() {
           <span className="block" style={{ color: POSTER_LIME }}>
             풍천리
           </span>
-          <span className="mt-2 block text-white">좋은 마을 잔치</span>
+          <span className="mt-2 block text-white">잣나무 마을 잔치</span>
         </h1>
 
         <p className="rise-in rise-in-2 mx-auto mt-6 max-w-2xl text-balance break-keep text-base leading-relaxed text-white/85 sm:text-xl">

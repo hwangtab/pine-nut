@@ -31,10 +31,10 @@ const LINEUP_NAMES = FEAST_LINEUP.map((artist) => artist.name).join("·");
 
 export const metadata: Metadata = {
   alternates: localeAlternates("/concert/village-feast"),
-  title: `${FEAST_TITLE} — 9·5 풍천리 마을회관`,
+  title: `${FEAST_TITLE} — 9·5 홍천 마을회관`,
   description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 양수발전소에 맞서 7년을 싸워온 마을에서 여는 잔치입니다. ${LINEUP_NAMES} 등 ${FEAST_LINEUP.length}팀이 함께합니다.`,
   openGraph: {
-    title: `${FEAST_TITLE} — 9·5 풍천리 마을회관`,
+    title: `${FEAST_TITLE} — 9·5 홍천 마을회관`,
     description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 음악가 ${FEAST_LINEUP.length}팀이 마을로 내려옵니다.`,
     images: [
       {
@@ -328,7 +328,7 @@ export default function VillageFeastPage() {
           <div className="mt-6">
             <a
               href="/images/concert/village-feast-poster.jpg"
-              download="풍천리-좋은-마을-잔치-포스터.jpg"
+              download="풍천리-잣나무-마을-잔치-포스터.jpg"
               className="inline-flex min-h-[48px] items-center rounded-full bg-[var(--color-forest)] px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-[var(--color-forest-light)]"
             >
               포스터 저장하기
