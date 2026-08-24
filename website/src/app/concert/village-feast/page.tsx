@@ -25,9 +25,15 @@ import {
   FEAST_TIME_LABEL,
   FEAST_TITLE,
 } from "@/lib/concert";
+import { PineConeIcon } from "@/components/visuals/ForestLetterMotifs";
 import VillageFeastHero from "./VillageFeastHero";
 
 const LINEUP_NAMES = FEAST_LINEUP.map((artist) => artist.name).join("·");
+
+// 사진 출처는 페이지에 밝힌다 — 우리가 찍은 사진이 아니다.
+const PHOTO_CREDITS = [
+  ...new Set(FEAST_LINEUP.map((artist) => artist.photoCredit).filter(Boolean)),
+].join(" · ");
 
 export const metadata: Metadata = {
   alternates: localeAlternates("/concert/village-feast"),
@@ -193,10 +199,31 @@ export default function VillageFeastPage() {
           <ul className="mt-10 space-y-2">
             {FEAST_LINEUP.map((artist, i) => (
               <li key={artist.name} className="paper">
-                <div className="relative z-[1] flex gap-4 px-5 py-5">
-                  <span className="mt-0.5 w-7 shrink-0 text-sm font-bold text-[var(--color-forest)]">
+                <div className="relative z-[1] flex items-start gap-4 px-5 py-5">
+                  <span className="mt-1 w-7 shrink-0 text-sm font-bold text-[var(--color-forest)]">
                     {String(i + 1).padStart(2, "0")}
                   </span>
+
+                  {/* 사진이 없는 팀도 같은 자리를 차지해야 이름 줄이 어긋나지 않는다 */}
+                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full sm:h-20 sm:w-20">
+                    {artist.photo ? (
+                      <Image
+                        src={artist.photo}
+                        alt={`${artist.name} 프로필 사진`}
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <span
+                        className="flex h-full w-full items-center justify-center bg-[var(--color-bg-warm)] text-[var(--color-forest)]/45"
+                        aria-hidden
+                      >
+                        <PineConeIcon className="h-8 w-8" />
+                      </span>
+                    )}
+                  </div>
+
                   <div className="min-w-0">
                     <h3 className="break-keep text-lg font-bold leading-snug text-[var(--color-text)]">
                       {artist.name}
@@ -211,6 +238,11 @@ export default function VillageFeastPage() {
               </li>
             ))}
           </ul>
+
+          <p className="mt-6 break-keep text-xs leading-relaxed text-[var(--color-text-muted)]">
+            프로필 사진 출처: {PHOTO_CREDITS}. 사진이 확인되지 않은 팀은 잣송이 그림으로
+            대신했습니다.
+          </p>
         </div>
       </section>
 

@@ -95,6 +95,15 @@ export interface FeastArtist {
   blurb?: string;
   /** blurb 의 출처 URL */
   source?: string;
+  /**
+   * 정사각 프로필 사진(/images/concert/artists/*.jpg).
+   * 본인이 맞다고 확인된 사진만 넣는다 — 합동 사진에서 누가 누구인지 추측하거나
+   * 동명이인일 수 있는 사진을 넣으면 엉뚱한 사람의 얼굴을 걸게 된다.
+   * 없으면 목록에서 잣송이 자리표시가 대신 들어간다.
+   */
+  photo?: string;
+  /** 사진 출처. 게시 허락을 확인할 때 근거가 된다. */
+  photoCredit?: string;
 }
 
 // 포스터에 적힌 순서 그대로. 소개는 확인된 것만 적는다 — source 가 있으면 공개
@@ -102,18 +111,24 @@ export interface FeastArtist {
 export const FEAST_LINEUP: FeastArtist[] = [
   {
     name: "경하와 세민",
+    photo: "/images/concert/artists/kyungha-semin.jpg",
+    photoCredit: "벅스 아티스트 페이지",
     blurb:
       "재개발로 쫓겨나는 자리, 세상을 떠난 이를 기리는 자리에서 노래해온 듀오. 「그물에 걸리지 않는 바람」을 불렀습니다.",
     source: "https://music.bugs.co.kr/track/31264665",
   },
   {
     name: "김동산과 블루이웃",
+    photo: "/images/concert/artists/kimdongsan.jpg",
+    photoCredit: "강정피스앤뮤직캠프",
     blurb:
       "수원의 포크·블루스 음악가 김동산과 밴드 블루이웃. 해고 노동자와 쫓겨나는 상인들의 이야기를 노래해 ‘한국의 우디 거스리’로 불립니다.",
     source: "https://peaceandmusic.net/album/musicians/3",
   },
   {
     name: "길가는밴드 장현호",
+    photo: "/images/concert/artists/gilganun.jpg",
+    photoCredit: "강정피스앤뮤직캠프",
     blurb:
       "싱어송라이터 장현호를 중심으로 2011년 결성된 거리 밴드. 세월호, 강정마을, KTX 해고 승무원 — 십수 년을 현장에서 불러왔습니다.",
     source: "https://peaceandmusic.net/camps/2026/musicians/15",
@@ -130,12 +145,16 @@ export const FEAST_LINEUP: FeastArtist[] = [
   },
   {
     name: "삼각전파사",
+    photo: "/images/concert/artists/samgak.jpg",
+    photoCredit: "강정피스앤뮤직캠프",
     blurb:
       "2015년부터 활동해온 로파이 전자음악 밴드. 1980년대 민중음악을 신디사이저의 언어로 다시 씁니다. 첫 정규 「Dystopia 2025」.",
     source: "https://bbs.ruliweb.com/news/read/209283",
   },
   {
     name: "자이",
+    photo: "/images/concert/artists/jai.jpg",
+    photoCredit: "강정피스앤뮤직캠프",
     blurb:
       "인디 1세대 밴드 헤디마마의 보컬·베이스를 거쳐, 지금은 낮은 중저음과 정직한 선율의 네오소울 포크를 씁니다.",
     source: "https://peaceandmusic.net/camps/2026/musicians/11",
