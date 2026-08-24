@@ -41,7 +41,15 @@ export function defaultNavLinks(): BuilderLinkItem[] {
       ],
     },
     { id: "nav-gallery", label: "갤러리", href: "/gallery" },
-    { id: "nav-press", label: "자료실", href: "/press" },
+    {
+      id: "nav-press",
+      label: "자료실",
+      href: "/press",
+      children: [
+        { id: "nav-press-release", label: "보도자료", href: "/press/release" },
+        { id: "nav-press-factsheet", label: "팩트시트", href: "/press/factsheet" },
+      ],
+    },
     { id: "nav-share", label: "카드뉴스", href: "/share" },
     { id: "nav-board", label: "게시판", href: "/board" },
   ];
