@@ -98,9 +98,10 @@ for (const [file, color, label] of DARK_TAILS) {
   const band = lines.filter((line) => line.includes(`bg-[var(${color})]`));
   assert(band.some((line) => line.includes("ridge-tail")),
     `${file}: ${label} 밴드에 .ridge-tail 이 있어야 한다 — 어두운 꼬리는 자기 색으로 능선 마루를 비운다.`);
-  // py-* 를 함께 쓰면 Tailwind 유틸리티가 .ridge-tail 의 padding-bottom 을 덮는다.
-  assert(!band.some((line) => /\bridge-tail\b/.test(line) && /\b(sm:|md:)?py-\d/.test(line)),
-    `${file}: ${label} 밴드가 .ridge-tail 과 py-* 를 함께 쓴다 — 위쪽은 pt-* 로만 줘라.`);
+  // 세로 패딩은 .ridge-tail 이 전부 정한다. pt-*/py-* 를 함께 쓰면 Tailwind
+  // 유틸리티가 이겨서 위아래 대칭(아래 = 위 + 마루)이 깨진다.
+  assert(!band.some((line) => /\bridge-tail\b/.test(line) && /\b(sm:|md:)?p[ytb]-\d/.test(line)),
+    `${file}: ${label} 밴드가 .ridge-tail 과 pt-*/py-*/pb-* 를 함께 쓴다 — 세로 패딩은 .ridge-tail 에 맡겨라.`);
   assert(!lines.some((line) => line.includes("bg-[var(--color-deep)]") && line.includes("ridge-tail")),
     `${file}: ${label} 밴드가 푸터와 같은 --color-deep 이다 — --color-deep-raised 를 써라.`);
 }
@@ -109,8 +110,13 @@ for (const [file, color, label] of DARK_TAILS) {
 // 어떤 페이지는 잘리고 어떤 페이지는 허옇게 뜬다.
 assert(css.includes("--ridge-crest") && css.includes("--ridge-breathe"),
   "globals.css must define --ridge-crest/--ridge-breathe — 여백 값은 능선 높이에서 유도한다.");
-assert(/\.footer-ridge-gap > :last-child,\s*\n\.ridge-tail \{\s*\n\s*padding-bottom: calc\(var\(--ridge-crest\) \+ var\(--ridge-breathe\)\)/.test(css),
-  "두 경로(.footer-ridge-gap / .ridge-tail)는 같은 계산식을 공유해야 한다 — 갈라지면 페이지마다 여백이 달라진다.");
+assert(css.includes("--ridge-band-pad"),
+  "globals.css must define --ridge-band-pad — 어두운 밴드의 세로 패딩도 한 곳에서 온다.");
+// 밴드의 아래 여백은 '위 + 마루' 여야 눈에 보이는 여백이 위아래 같아진다.
+assert(/\.ridge-tail \{[^}]*padding-top: var\(--ridge-band-pad\);[^}]*padding-bottom: calc\(var\(--ridge-band-pad\) \+ var\(--ridge-crest\)\)/.test(css),
+  ".ridge-tail 의 아래 여백은 calc(--ridge-band-pad + --ridge-crest) 여야 한다 — 마루가 먹는 만큼을 더하지 않으면 아래가 좁아 보인다.");
+assert(/\.footer-ridge-gap > :last-child \{[^}]*calc\(var\(--ridge-crest\) \+ var\(--ridge-breathe\)\)/.test(css),
+  ".footer-ridge-gap 의 여백도 마루 높이에서 유도해야 한다.");
 
 // 2) 섹션 배경 그라디언트가 한쪽 끝에서 불투명하게 끝나면 그 경계에 가로 색선이
 //    생긴다. 모래빛 그라디언트는 양끝이 모두 투명해야 한다.

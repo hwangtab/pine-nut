@@ -411,7 +411,7 @@ export default function VillageFeastPage() {
       </section>
 
       {/* 마무리 CTA — 푸터와 같은 색이면 경계가 사라지므로 한 단 밝은 어둠을 쓴다 */}
-      <section className="ridge-tail relative overflow-hidden bg-[var(--color-deep-raised)] px-6 pt-20 text-center sm:pt-24">
+      <section className="ridge-tail relative overflow-hidden bg-[var(--color-deep-raised)] px-6 text-center">
         <div className="mx-auto max-w-3xl">
           <Megaphone className="mx-auto h-10 w-10 text-[var(--color-earth-light)]" aria-hidden />
           <h2 className="mx-auto mt-5 max-w-[16ch] text-balance break-keep font-serif-display text-3xl font-bold leading-tight text-white sm:text-4xl">

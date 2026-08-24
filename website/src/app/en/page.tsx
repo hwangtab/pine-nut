@@ -129,7 +129,7 @@ The villagers voted unanimously to oppose the project. Since then, they have hel
         htmlId="help"
         visibilityContentKey="en.help.visibility"
         section="help"
-        defaultClassName="scroll-mt-24 ridge-tail pt-20 md:pt-28 px-4 sm:px-6 bg-[var(--color-forest)] text-white"
+        defaultClassName="scroll-mt-24 ridge-tail px-4 sm:px-6 bg-[var(--color-forest)] text-white"
       >
           <div className="max-w-3xl mx-auto text-center">
             <EditableText
