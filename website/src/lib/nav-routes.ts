@@ -88,7 +88,14 @@ export function needsNavTopPadding(pathname: string): boolean {
 //
 // → 이 패딩과 색은 scripts/check-footer-clearance.mjs 가 지킨다.
 //   특히 밴드 색이 --color-deep 으로 되돌아가면 푸터와 같아져 능선이 사라진다.
-const DARK_TAIL_ROUTES = ["/", "/story", "/en", "/concert/before-cut", "/concert/village-feast"];
+const DARK_TAIL_ROUTES = [
+  "/",
+  "/story",
+  "/en",
+  "/en/story",
+  "/concert/before-cut",
+  "/concert/village-feast",
+];
 
 // 능선 아래 여백을 전역으로 줄 것인가.
 export function needsFooterRidgeGap(pathname: string): boolean {

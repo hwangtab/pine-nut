@@ -154,7 +154,7 @@ Hongcheon County applied to host the plant in 2019, after which KHNP selected Pu
         </div>
       </section>
 
-      <section className="py-20 md:py-28 px-4 sm:px-6 bg-[var(--color-forest)] text-white text-center">
+      <section className="ridge-tail px-4 sm:px-6 bg-[var(--color-forest)] text-white text-center">
         <div className="max-w-2xl mx-auto">
           <EditableText
             contentKey="en.storyPage.cta.heading"

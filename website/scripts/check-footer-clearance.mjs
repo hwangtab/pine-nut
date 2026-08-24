@@ -118,6 +118,46 @@ assert(/\.ridge-tail \{[^}]*padding-top: var\(--ridge-band-pad\);[^}]*padding-bo
 assert(/\.footer-ridge-gap > :last-child \{[^}]*calc\(var\(--ridge-crest\) \+ var\(--ridge-breathe\)\)/.test(css),
   ".footer-ridge-gap 의 여백도 마루 높이에서 유도해야 한다.");
 
+// ── 새로 만든 페이지도 잡는다 ────────────────────────────────────────────────
+// 위 DARK_TAILS 는 '아는 파일'만 본다. 정작 이 버그가 매번 들어온 경로는
+// '어두운 밴드로 끝나는 페이지를 새로 만들면서 등록을 잊는 것'이었다.
+// 그래서 목록이 아니라 소스에서 유도한다: 페이지 파일에서 배경색을 칠하는
+// 마지막 클래스가 어두운 색이면 그 줄에 .ridge-tail 이 있어야 한다.
+const DARK_BG = /bg-\[var\(--color-(deep|deep-raised|forest)\)\](?!\/)/;
+const ANY_BG = /bg-\[var\(--color-[a-z-]+\)\](?!\/)/;
+// 페이지의 마지막 섹션을 담는 파일들. 컴포넌트(Footer 등)는 페이지 꼬리가
+// 아니므로 제외한다.
+const PAGE_FILES = walk("src/app")
+  .filter((f) => f.endsWith("/page.tsx"))
+  .filter((f) => !f.startsWith("src/app/admin") && !f.startsWith("src/app/api"))
+  .concat(["src/components/home/HomeClient.tsx"]);
+
+// 버튼·칩도 배경색을 갖는다. 섹션급 배경만 본다 — 둥근 모서리나 inline-flex
+// 가 붙어 있으면 그건 페이지 꼬리가 아니라 그 안의 버튼이다.
+const NOT_A_SECTION = /rounded|inline-flex|<Link|<a\s|<button|letter-btn|min-h-\[44px\]/;
+
+for (const f of PAGE_FILES) {
+  const lines = read(f).split("\n");
+  let lastBgLine = null;
+  for (const [i, line] of lines.entries()) {
+    if (NOT_A_SECTION.test(line)) continue;
+    if (ANY_BG.test(line)) lastBgLine = { i, line };
+  }
+  if (!lastBgLine || !DARK_BG.test(lastBgLine.line)) continue;
+  assert(lastBgLine.line.includes("ridge-tail"),
+    `${f}:${lastBgLine.i + 1} — 어두운 밴드로 끝나는 페이지다. 그 밴드에 .ridge-tail 을 붙이고, 라우트를 nav-routes.ts 의 DARK_TAIL_ROUTES 에 등록해라. 안 하면 여백이 배경 없는 래퍼에 붙어 크림색 띠가 생긴다.`);
+
+  // 라우트도 등록돼 있어야 한다 — 등록을 잊으면 전역 여백이 걸려 이음매가 생긴다.
+  if (f.endsWith("/page.tsx") && f.startsWith("src/app/")) {
+    const route = "/" + f.slice("src/app/".length, -"/page.tsx".length);
+    const normalized = route === "/" ? "/" : route.replace(/\/$/, "");
+    if (!normalized.includes("[")) {
+      assert(nav.includes(`"${normalized}"`),
+        `${f} — 어두운 밴드로 끝나는데 nav-routes.ts 의 DARK_TAIL_ROUTES 에 "${normalized}" 가 없다.`);
+    }
+  }
+}
+
 // 2) 섹션 배경 그라디언트가 한쪽 끝에서 불투명하게 끝나면 그 경계에 가로 색선이
 //    생긴다. 모래빛 그라디언트는 양끝이 모두 투명해야 한다.
 for (const file of [
