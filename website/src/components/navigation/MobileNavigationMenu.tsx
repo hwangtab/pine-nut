@@ -52,21 +52,15 @@ export default function MobileNavigationMenu({
       >
         {navLinks.map((link) => {
           const active = isActive(link.href);
-          // 기간 한정 이벤트(공연) 링크는 forest 색으로 강조 — warm은 "함께하기" CTA 전용
-          const isEvent = link.href === "/concert";
 
           return (
             <span key={link.id}>
               <NavigationLink
                 href={link.href}
-                className={`px-4 py-3 rounded-xl text-lg min-h-[48px] flex items-center transition-colors ${
-                  isEvent ? "font-bold" : "font-medium"
-                } ${
+                className={`px-4 py-3 rounded-xl text-lg font-medium min-h-[48px] flex items-center transition-colors ${
                   active
                     ? "text-[var(--color-forest)] bg-[var(--color-forest)]/10"
-                    : isEvent
-                      ? "text-[var(--color-forest)] hover:bg-[var(--color-forest)]/10"
-                      : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]"
+                    : "text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]"
                 }`}
                 label={link.label}
                 onClick={onDismiss}
