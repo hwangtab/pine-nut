@@ -105,6 +105,35 @@ p {
   text-wrap: pretty;
 }
 
+/* 가운데 정렬 문단은 한 단계 더 — 줄 길이를 고르게 나눈다.
+   pretty 로도 마지막 줄에 한 단어만 남는 경우가 있는데, 가운데 정렬에서는
+   좌우 여백이 함께 벌어져 문단이 뾰족해 보인다.
+   가운데 정렬은 대개 부모 섹션에 걸리고 문단이 상속받으므로, 요소에 직접
+   붙은 경우와 물려받은 경우를 모두 잡는다.
+   레이어 밖에 두는 이유: 바로 위 `p { text-wrap: pretty }` 가 레이어 밖이라
+   @layer 안에 두면 그 규칙에 진다(Tailwind v4에서는 레이어 없는 CSS가 이긴다).
+   브라우저가 줄 수가 적을 때만 balance 를 적용하므로 긴 본문에는 영향이 없다. */
+p.text-center,
+dd.text-center,
+li.text-center,
+figcaption.text-center,
+.text-center p,
+.text-center dd,
+.text-center li,
+.text-center figcaption {
+  text-wrap: balance;
+}
+
+/* 카드(.paper) 안의 설명 문단도 마찬가지다. 카드는 폭이 좁아 두세 줄로 끊기는데
+   마지막 줄에 한 단어만 남으면 카드가 반쯤 빈 것처럼 보인다.
+   카드마다 손으로 붙이면 새 카드에서 또 빠지므로 규칙으로 둔다.
+   줄이 많은 긴 글에는 브라우저가 balance 를 적용하지 않으므로 안전하다. */
+.paper p,
+.paper dd,
+.paper li {
+  text-wrap: balance;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
