@@ -8,7 +8,8 @@ import {
   FEAST_TIME_LABEL,
 } from "@/lib/concert";
 import { useDday } from "@/lib/use-concert-status";
-import { ContourBackground, RidgeDivider } from "@/components/visuals/ForestLetterMotifs";
+import { RidgeDivider } from "@/components/visuals/ForestLetterMotifs";
+import { PosterFlower, PosterGrain, TornStrip } from "./VillageFeastMotifs";
 
 /* 포스터의 연둣빛과 먹색. 이 히어로에서만 쓰는 값이라 전역 팔레트에 올리지 않는다.
    앞선 「베어지기 전에 풍천리」 히어로가 어두운 잣나무 숲 사진이라, 같은 결의 숲
@@ -26,17 +27,41 @@ export default function VillageFeastHero() {
       className="relative flex min-h-[88svh] flex-col items-center justify-center overflow-hidden px-4 pt-32 pb-24 text-center sm:px-6"
       style={{ backgroundColor: POSTER_LIME, color: POSTER_INK }}
     >
-      <ContourBackground className="opacity-70" />
+      {/* 포스터의 꽃 — 연한 잎 위에 먹색 꽃이 겹친 2겹 구조를 그대로 옮겼다.
+          좁은 폭에서는 제목이 화면을 꽉 채우므로 꽃을 글자 밖(위·아래 모서리)으로 뺀다.
+          가운데에 두면 「잣나무」를 덮는다. */}
+      <PosterFlower
+        className="pointer-events-none absolute -left-28 -top-16 h-72 w-72 text-[#8FD94A] opacity-90 sm:-left-16 sm:top-[14%] sm:h-[34rem] sm:w-[34rem]"
+        petals={7}
+        rotate={-8}
+      />
+      <PosterFlower
+        className="pointer-events-none absolute -left-6 bottom-6 h-32 w-32 text-[#12200C] opacity-90 sm:bottom-auto sm:left-24 sm:top-[30%] sm:h-56 sm:w-56"
+        petals={9}
+        rotate={14}
+      />
+      <PosterFlower
+        className="pointer-events-none absolute -right-28 bottom-[18%] hidden h-[22rem] w-[22rem] text-[#A8E85C] opacity-80 lg:block"
+        petals={8}
+        rotate={22}
+      />
+
+      <PosterGrain className="z-[1] opacity-[0.38]" />
       <RidgeDivider className="absolute bottom-0 left-0 z-[2] text-[var(--color-bg)]" />
 
       <div className="relative z-[3] mx-auto w-full max-w-4xl">
-        <p className="rise-in mb-6 inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm font-bold sm:text-base">
-          <span>{FEAST_DATE_LABEL}</span>
-          <span aria-hidden>·</span>
-          <span>{FEAST_PLACE}</span>
-          <span aria-hidden>·</span>
-          <span>{FEAST_TIME_LABEL}</span>
-        </p>
+        <div className="rise-in mb-8 flex justify-center">
+          <span className="relative inline-block px-8 py-3">
+            <TornStrip className="absolute inset-0 h-full w-full text-[#F3EEDF]" />
+            <span className="relative inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm font-bold sm:text-base">
+              <span>{FEAST_DATE_LABEL}</span>
+              <span aria-hidden>·</span>
+              <span>{FEAST_PLACE}</span>
+              <span aria-hidden>·</span>
+              <span>{FEAST_TIME_LABEL}</span>
+            </span>
+          </span>
+        </div>
 
         <h1 className="rise-in rise-in-1 font-sans text-5xl font-black leading-[1.05] tracking-tight sm:text-7xl md:text-8xl">
           <span className="block">풍천리</span>
