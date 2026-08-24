@@ -5,27 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 import {
-  type BuilderPageId,
+  PATH_TO_BUILDER_PAGE,
   parseCustomSections,
 } from "@/lib/custom-sections";
 import {
   isExternalEditableHref,
   isInternalEditableHref,
 } from "@/lib/validation/editable-link";
-
-const PATH_TO_PAGE: Record<string, BuilderPageId> = {
-  "/": "home",
-  "/story": "story",
-  "/timeline": "timeline",
-  "/news": "news",
-  "/press": "press",
-  "/petition": "petition",
-  "/donate": "donate",
-  "/share": "share",
-  "/gallery": "gallery",
-  "/privacy": "privacy",
-  "/en": "en",
-};
 
 function renderSectionLink(
   href: string,
@@ -55,7 +41,7 @@ function renderSectionLink(
 export default function CustomSectionsHost() {
   const pathname = usePathname();
   const { getContent } = useAdminEdit();
-  const page = PATH_TO_PAGE[pathname];
+  const page = PATH_TO_BUILDER_PAGE[pathname];
 
   if (!page) return null;
 

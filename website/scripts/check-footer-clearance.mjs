@@ -43,6 +43,15 @@ for (const sym of ["DEEP_TAIL_ROUTES", "FOREST_TAIL_ROUTES", "needsFooterRidgeGa
   assert(nav.includes(sym), `nav-routes.ts must define ${sym}.`);
 }
 
+// 5) 관리자 섹션이 붙으면 어두운 꼬리 라우트라도 여백을 강제해야 한다.
+assert(shell.includes("hasCustomTail"),
+  "PublicShell must force the spacer when admin custom sections exist — 어두운 꼬리 라우트에 섹션이 붙으면 꼬리가 밝아진다.");
+assert(shell.includes("PATH_TO_BUILDER_PAGE"),
+  "PublicShell must use the shared PATH_TO_BUILDER_PAGE so its judgement matches CustomSectionsHost.");
+const host = read("src/components/CustomSectionsHost.tsx");
+assert(host.includes("PATH_TO_BUILDER_PAGE"),
+  "CustomSectionsHost must use the shared PATH_TO_BUILDER_PAGE — 두 곳이 다른 맵을 보면 판정이 어긋난다.");
+
 // 4) 페이지가 다시 각자 푸터 여백을 잡지 않아야 한다.
 //    (md: 로 커지는 큰 하단 패딩은 이 구조에서 전역 여백과 겹쳐 과다 공백이 된다)
 const OFFENDER = /\bmd:pb-(2[0-9]|3[0-9]|4[0-9])\b/;

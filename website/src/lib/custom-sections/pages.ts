@@ -56,3 +56,19 @@ export const EXISTING_PAGE_SECTIONS: Partial<
     { id: "help", label: "How You Can Help" },
   ],
 };
+
+// 라우트 → 빌더 페이지 id. CustomSectionsHost와 PublicShell이 같은 출처를 봐야
+// "관리자 섹션이 있으면 푸터 여백을 강제한다"는 판정이 어긋나지 않는다.
+export const PATH_TO_BUILDER_PAGE: Record<string, BuilderPageId> = {
+  "/": "home",
+  "/story": "story",
+  "/timeline": "timeline",
+  "/news": "news",
+  "/press": "press",
+  "/petition": "petition",
+  "/donate": "donate",
+  "/share": "share",
+  "/gallery": "gallery",
+  "/privacy": "privacy",
+  "/en": "en",
+};
