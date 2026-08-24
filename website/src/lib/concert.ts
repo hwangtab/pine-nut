@@ -178,7 +178,7 @@ export const FEAST_LINEUP: FeastArtist[] = [
     photo: "/images/concert/artists/zsthyger.jpg",
     photoCredit: "경기아트콜렉티브",
     blurb:
-      "전자음악·메탈·클래식을 아우르는 연주자이자 프로듀서. 수원에서 ACME 스튜디오를 운영하며 ‘악기와 악사의 가치를 증명하는 방법은 연주뿐’이라는 태도로 작업합니다.",
+      "전자음악·메탈·클래식을 아우르는 연주자이자 프로듀서. ‘악기와 악사의 가치를 증명하는 방법은 연주뿐’이라는 태도로 작업합니다.",
     source: "https://ggac.kr/artists/acmein",
   },
 ];
