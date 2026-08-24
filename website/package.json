@@ -50,7 +50,8 @@
     "site-builder-state:refactor:check": "node scripts/check-site-builder-state-refactor.mjs",
     "story:refactor:check": "node scripts/check-story-refactor.mjs",
     "timeline-client:refactor:check": "node scripts/check-timeline-client-refactor.mjs",
-    "version-history:refactor:check": "node scripts/check-version-history-refactor.mjs"
+    "version-history:refactor:check": "node scripts/check-version-history-refactor.mjs",
+    "footer-clearance:check": "node scripts/check-footer-clearance.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",

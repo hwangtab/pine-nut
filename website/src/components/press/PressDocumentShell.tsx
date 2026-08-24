@@ -86,8 +86,7 @@ export default function PressDocumentShell({
         />
       </div>
 
-      {/* 하단 여백은 푸터 능선이 겹쳐 그려도 문서 말미를 가리지 않을 만큼 확보한다(md 이상 마루 60px) */}
-      <div className="print-page max-w-3xl mx-auto px-6 pt-12 pb-16 sm:pb-20 md:pb-24">
+      <div className="print-page max-w-3xl mx-auto px-6 py-12">
         <div className="no-print mb-8 flex flex-wrap items-center gap-3">
           <button
             type="button"

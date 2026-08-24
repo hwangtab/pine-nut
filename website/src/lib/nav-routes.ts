@@ -56,3 +56,23 @@ export function isFullscreenRoute(pathname: string): boolean {
 export function needsNavTopPadding(pathname: string): boolean {
   return !hasPageHero(pathname) && !isFullscreenRoute(pathname);
 }
+
+// ── 푸터 능선(RidgeDivider) 여백 ────────────────────────────────────────────
+// 능선은 푸터 위로 겹쳐 그려지므로(마루: 모바일 30px / sm 42px / md 60px),
+// 그만큼 + 숨 쉴 틈만큼의 빈 공간이 마지막 콘텐츠 아래에 있어야 한다.
+// 그 여백은 PublicShell이 전역으로 한 번만 확보한다. 페이지가 각자
+// pb-* 를 잡는 방식은 이미 세 번 어긋났고, 관리자가 섹션을 추가하면
+// 손댈 개발자가 없어 구조적으로 재발한다.
+//
+// 예외: 마지막 섹션이 푸터와 같은 어두운 색인 라우트. 여기서는 능선이
+// deep-on-deep 이라 보이지 않고, 빈 공간을 넣으면 오히려 크림색 띠가 생긴다.
+const DARK_TAIL_ROUTES = ["/", "/story", "/concert", "/en"];
+
+export function hasDarkTailSection(pathname: string): boolean {
+  return DARK_TAIL_ROUTES.includes(pathname);
+}
+
+// 푸터 능선과 그 아래 여백을 렌더할지. 어두운 꼬리 페이지에서는 둘 다 생략한다.
+export function needsFooterRidgeGap(pathname: string): boolean {
+  return !hasDarkTailSection(pathname);
+}

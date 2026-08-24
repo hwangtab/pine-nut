@@ -1,0 +1,78 @@
+// 푸터 능선(RidgeDivider) 아래 여백 구조 가드.
+//
+// 능선은 푸터 위로 겹쳐 그려지므로(마루: 모바일 30px / sm 42px / md 60px),
+// 마지막 콘텐츠 아래에 그만큼 + 숨 쉴 틈이 필요하다. 이 여백을 페이지가
+// 각자 pb-* 로 잡던 방식은 세 번 어긋났고(가림 → 과다 공백 → 다시 가림),
+// 관리자가 추가한 섹션에는 손댈 개발자가 없어 구조적으로 재발한다.
+//
+// 그래서 여백은 PublicShell이 전역으로 한 번만 확보한다. 이 스크립트는
+// 그 구조가 유지되는지, 그리고 페이지들이 다시 각자 여백을 잡기 시작하지
+// 않는지 검사한다.
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+
+const root = fileURLToPath(new URL("..", import.meta.url));
+const fail = [];
+function assert(cond, msg) { if (!cond) fail.push(msg); }
+const read = (p) => readFileSync(join(root, p), "utf8");
+
+// 1) 전역 여백이 PublicShell에 살아 있어야 한다.
+const shell = read("src/components/PublicShell.tsx");
+assert(shell.includes("needsFooterRidgeGap"),
+  "PublicShell must import/use needsFooterRidgeGap — 전역 능선 여백 판정이 사라졌다.");
+assert(/aria-hidden="true"\s+className="h-16 sm:h-20 md:h-28"/.test(shell),
+  "PublicShell must render the global ridge spacer (h-16 sm:h-20 md:h-28).");
+assert(shell.includes("<CustomSectionsHost />"),
+  "PublicShell must render CustomSectionsHost before the spacer — 관리자 섹션도 여백을 받아야 한다.");
+assert(shell.indexOf("<CustomSectionsHost />") < shell.indexOf("md:h-28"),
+  "The ridge spacer must come AFTER CustomSectionsHost, or admin-added sections lose their clearance.");
+
+// 2) 능선은 여백이 있는 페이지에서만 그려져야 한다.
+const footer = read("src/components/Footer.tsx");
+assert(/showRidge/.test(footer),
+  "Footer must accept showRidge — 어두운 꼬리 페이지에서 능선을 끄지 못하면 크림색 띠가 생긴다.");
+assert(shell.includes("showRidge={ridgeGap}"),
+  "PublicShell must pass showRidge to Footer so the spacer and the ridge stay in sync.");
+
+// 3) 라우트 분류가 남아 있어야 한다.
+const nav = read("src/lib/nav-routes.ts");
+for (const sym of ["DARK_TAIL_ROUTES", "hasDarkTailSection", "needsFooterRidgeGap"]) {
+  assert(nav.includes(sym), `nav-routes.ts must define ${sym}.`);
+}
+
+// 4) 페이지가 다시 각자 푸터 여백을 잡지 않아야 한다.
+//    (md: 로 커지는 큰 하단 패딩은 이 구조에서 전역 여백과 겹쳐 과다 공백이 된다)
+const OFFENDER = /\bmd:pb-(2[0-9]|3[0-9]|4[0-9])\b/;
+const SKIP = ["src/app/admin", "src/components/admin"];
+function walk(dir, out = []) {
+  for (const e of readdirSync(join(root, dir))) {
+    const rel = `${dir}/${e}`;
+    if (SKIP.some((s) => rel.startsWith(s))) continue;
+    if (statSync(join(root, rel)).isDirectory()) walk(rel, out);
+    else if (rel.endsWith(".tsx")) out.push(rel);
+  }
+  return out;
+}
+// 히어로(화면 상단 풀블리드 블록)의 하단 패딩은 푸터와 무관하므로 제외한다.
+const HERO_EXEMPT = [
+  "src/components/SubHero.tsx",
+  "src/components/UtilityHeader.tsx",
+  "src/components/home/HomeClient.tsx",
+  "src/components/PublicShell.tsx",
+];
+for (const f of walk("src")) {
+  if (HERO_EXEMPT.includes(f)) continue;
+  const src = read(f);
+  for (const [i, line] of src.split("\n").entries()) {
+    if (OFFENDER.test(line)) {
+      fail.push(`${f}:${i + 1} — 페이지가 자체 하단 여백(md:pb-*)을 잡고 있다. 푸터 여백은 PublicShell이 전역으로 확보한다.`);
+    }
+  }
+}
+
+if (fail.length) {
+  console.error("footer-clearance:check 실패\n" + fail.map((m) => "  - " + m).join("\n"));
+  process.exit(1);
+}
+console.log("footer-clearance:check ok");

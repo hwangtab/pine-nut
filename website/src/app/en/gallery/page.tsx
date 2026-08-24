@@ -145,8 +145,7 @@ export default function EnglishGalleryPage() {
         </section>
       </div>
 
-      {/* 하단 여백은 푸터 능선(마루 실측 md 60px, sm 42px)이 겹쳐 그려도 가리지 않을 만큼 확보한다 */}
-      <div className="max-w-5xl mx-auto px-4 pb-10 sm:pb-14 md:pb-20 text-center">
+      <div className="max-w-5xl mx-auto px-4 pb-8 text-center">
         <EditableText
           contentKey="en.gallery.copyright.text"
           defaultValue="Photo credits: OhmyNews, Pressian, Newsis, and the Pungcheon-ri opposition committee. Press photographs are used with source attribution."
