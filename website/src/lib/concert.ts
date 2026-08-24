@@ -117,8 +117,8 @@ export const FEAST_LINEUP: FeastArtist[] = [
     photo: "/images/concert/artists/kyungha-semin.jpg",
     photoCredit: "벅스 아티스트 페이지",
     blurb:
-      "재개발로 쫓겨나는 자리, 세상을 떠난 이를 기리는 자리에서 노래해온 듀오. 「그물에 걸리지 않는 바람」을 불렀습니다.",
-    source: "https://music.bugs.co.kr/track/31264665",
+      "재개발로 쫓겨나는 자리, 세상에게 죽임당한 이를 기리는 자리에서 노래해온 듀오.",
+    source: "https://music.bugs.co.kr/artist/20067057",
   },
   {
     name: "김동산과 블루이웃",

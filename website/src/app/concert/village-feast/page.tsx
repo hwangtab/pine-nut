@@ -168,7 +168,7 @@ export default function VillageFeastPage() {
               “사람답게 산 것 같다. 몇 년 만에 웃어봤는지 모르겠다.”
             </p>
             <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-              — 2025년 7월 「잣나무골 여름잔치」에서, 주민 허순 님
+              — 2025년 7월 「잣나무골 여름잔치」에서, 허순이 주민
             </p>
           </div>
 
