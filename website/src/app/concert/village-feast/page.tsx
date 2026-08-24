@@ -173,10 +173,11 @@ export default function VillageFeastPage() {
           </div>
 
           <p className="mt-12 break-keep text-lg leading-loose text-[var(--color-text)] sm:text-xl">
-            그래서 다시 모입니다. 8월 1일 청와대 앞에서 열린 첫 예술연대가 마을의 목소리를 서울로
-            올려보낸 자리였다면, 이번 <b className="font-bold">9월 5일</b>은 반대로 음악가들이
-            마을로 내려오는 자리입니다. 구호가 아니라 노래로, 집회가 아니라 잔치로 하루를
-            채웁니다.
+            그래서 다시 모입니다. 음악가들이 풍천리 곁에 선 것은 처음이 아닙니다. 마을에서,
+            거리에서, 서울에서 여러 차례 이어져왔습니다. 8월 1일 청와대 앞 공연이 마을의
+            목소리를 서울로 올려보낸 자리였다면, 이번 <b className="font-bold">9월 5일</b>은
+            반대로 음악가들이 마을로 내려오는 자리입니다. 구호가 아니라 노래로, 집회가 아니라
+            잔치로 하루를 채웁니다.
           </p>
 
           <p className="mt-8 break-keep text-xl font-bold text-[var(--color-forest)] sm:text-2xl">

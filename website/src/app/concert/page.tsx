@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: localeAlternates("/concert"),
   title: "예술연대 — 풍천리를 지키는 공연들",
   description:
-    "숲이 베어지기 전에, 음악가와 예술가들이 풍천리 곁에 섭니다. 청와대 앞 「베어지기 전에 풍천리」를 시작으로 이어지는 예술연대의 기록입니다.",
+    "숲이 베어지기 전에, 음악가와 예술가들이 풍천리 곁에 섭니다. 마을에서, 거리에서, 청와대 앞에서 이어져온 예술연대를 이 페이지에 기록합니다.",
   openGraph: {
     title: "예술연대 — 풍천리를 지키는 공연들",
     description: "숲이 베어지기 전에, 음악가와 예술가들이 풍천리 곁에 섭니다.",
@@ -146,6 +146,12 @@ export default function ArtSolidarityPage() {
               <h2 className="mt-16 font-serif-display text-2xl font-bold text-[var(--color-text)] sm:text-3xl">
                 지난 공연
               </h2>
+              {/* 이 목록이 곧 연대의 시작은 아니다. 기록을 남기기 시작한 시점이 여기일 뿐,
+                  그 전에도 마을과 거리에서 여러 차례 있었다. */}
+              <p className="mt-3 break-keep text-sm leading-relaxed text-[var(--color-text-muted)]">
+                이 목록은 사이트에 기록을 남기기 시작한 이후의 공연입니다. 그 전에도 마을과
+                거리에서 여러 차례 연대의 자리가 있었습니다.
+              </p>
               <div className="mt-6 space-y-8">
                 {past.map((concert) => (
                   <ConcertCard key={concert.slug} concert={concert} />
