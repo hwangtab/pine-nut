@@ -1,25 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { useConcertStatus } from "@/lib/use-concert-status";
+import { upcomingConcert } from "@/lib/concert";
+import { useDday } from "@/lib/use-concert-status";
 
-// 홈 히어로의 공연 안내 필: 공연 종료 후 자동 숨김
+// 홈 히어로의 공연 안내 필.
+// 어느 공연을 가리킬지는 예술연대 레지스트리(CONCERTS)가 정한다 — 배너가 특정
+// 공연을 하드코딩하면 다음 공연이 열려도 지난 공연을 계속 가리킨다.
 export default function HomeConcertBanner() {
-  const status = useConcertStatus();
+  const concert = upcomingConcert();
+  const status = useDday(concert?.startAt ?? new Date());
 
-  if (!status || status.over) return null;
-  const dday = status.label;
+  if (!concert || !status || status.over) return null;
 
   return (
     <Link
-      href="/concert/before-cut"
+      href={`/concert/${concert.slug}`}
       className="ink-chip mb-6 max-w-full flex-wrap justify-center transition-[filter] hover:brightness-125"
     >
       <span className="rounded-full bg-[var(--color-forest-light)] px-2.5 py-0.5 text-xs font-black sm:text-sm">
-        {dday}
+        {status.label}
       </span>
       <span className="break-keep">
-        8월 1일(토) 청와대 앞 「베어지기 전에 풍천리」 공연 →
+        {concert.dateLabel} {concert.place} 「{concert.title}」 →
       </span>
     </Link>
   );

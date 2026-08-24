@@ -90,13 +90,16 @@ const DARK_TAILS = [
   ["src/components/home/HomeClient.tsx", "md:py-20", "--color-deep-raised", "home.stats"],
   ["src/app/story/page.tsx", "md:py-28", "--color-forest", "story.cta"],
   ["src/app/en/page.tsx", "md:py-28", "--color-forest", "en.cta"],
+  ["src/app/concert/before-cut/page.tsx", "sm:py-24", "--color-deep-raised", "before-cut 마무리 CTA"],
+  ["src/app/concert/village-feast/page.tsx", "sm:py-24", "--color-deep-raised", "village-feast 마무리 CTA"],
 ];
 for (const [file, pad, color, label] of DARK_TAILS) {
-  const src = read(file);
-  const re = new RegExp(`${pad}[^"]*bg-\\[var\\(${color.replace(/[-]/g, "-")}\\)\\]`);
-  assert(re.test(src),
-    `${file}: ${label} 밴드는 ${pad} + bg-[var(${color})] 를 유지해야 한다 — 패딩이 줄면 능선이 콘텐츠를 덮고, 색이 --color-deep 이 되면 푸터와 같아져 능선이 사라진다.`);
-  assert(!new RegExp(`${pad}[^"]*bg-\\[var\\(--color-deep\\)\\]`).test(src),
+  // 클래스 순서(bg 먼저냐 padding 먼저냐)는 파일마다 다르므로 '같은 줄에 둘 다'로 본다.
+  const lines = read(file).split("\n");
+  const bandLines = lines.filter((line) => line.includes(`bg-[var(${color})]`));
+  assert(bandLines.some((line) => line.includes(pad)),
+    `${file}: ${label} 밴드는 ${pad} + bg-[var(${color})] 를 같은 요소에 유지해야 한다 — 패딩이 줄면 능선이 콘텐츠를 덮는다.`);
+  assert(!lines.some((line) => line.includes("bg-[var(--color-deep)]") && line.includes(pad)),
     `${file}: ${label} 밴드가 푸터와 같은 --color-deep 이다 — --color-deep-raised 를 써라.`);
 }
 

@@ -8,6 +8,7 @@ const STATIC_PAGES = [
   { url: "/story", priority: 0.9 },
   { url: "/timeline", priority: 0.8 },
   { url: "/concert", priority: 0.8 },
+  { url: "/concert/village-feast", priority: 0.8 },
   { url: "/concert/before-cut", priority: 0.7 },
   { url: "/petition", priority: 0.9 },
   { url: "/donate", priority: 0.8 },

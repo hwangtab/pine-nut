@@ -5,13 +5,14 @@ import Link from "next/link";
 import {
   CONCERT_DATE_LABEL,
   CONCERT_PLACE,
+  CONCERT_START,
   CONCERT_TIME_LABEL,
 } from "@/lib/concert";
-import { useConcertStatus } from "@/lib/use-concert-status";
+import { useDday } from "@/lib/use-concert-status";
 import { RidgeDivider } from "@/components/visuals/ForestLetterMotifs";
 
 export default function ConcertHero() {
-  const dday = useConcertStatus()?.label ?? null;
+  const dday = useDday(CONCERT_START)?.label ?? null;
 
   return (
     <section className="relative flex min-h-[88svh] flex-col items-center justify-center overflow-hidden px-4 pt-28 pb-20 text-center text-white sm:px-6">

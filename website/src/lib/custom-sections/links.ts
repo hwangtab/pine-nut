@@ -34,6 +34,11 @@ export function defaultNavLinks(): BuilderLinkItem[] {
       href: "/concert",
       children: [
         {
+          id: "nav-concert-village-feast",
+          label: "풍천리 좋은 마을 잔치",
+          href: "/concert/village-feast",
+        },
+        {
           id: "nav-concert-before-cut",
           label: "베어지기 전에, 풍천리",
           href: "/concert/before-cut",

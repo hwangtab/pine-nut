@@ -39,6 +39,7 @@ const TRANSPARENT_NAV_ROUTES = [
   "/donate",
   "/concert",
   "/concert/before-cut",
+  "/concert/village-feast",
   "/en",
 ];
 
@@ -79,13 +80,15 @@ export function needsNavTopPadding(pathname: string): boolean {
 // 전역 여백을 얹으면 그 섹션 '바깥'에 붙어 어두운 색과 크림색 사이에
 // 가로 이음매가 생긴다.
 //
-//   /        home.stats  bg-deep-raised  py-16 md:py-20 (64/80px)
-//   /story   story.cta   bg-forest       py-20 md:py-28 (80/112px)
-//   /en      en.cta      bg-forest       py-20 md:py-28 (80/112px)
+//   /                        home.stats  bg-deep-raised  py-16 md:py-20 (64/80px)
+//   /concert/before-cut      마무리 CTA   bg-deep-raised  py-20 sm:py-24 (80/96px)
+//   /concert/village-feast   마무리 CTA   bg-deep-raised  py-20 sm:py-24 (80/96px)
+//   /story                   story.cta   bg-forest       py-20 md:py-28 (80/112px)
+//   /en                      en.cta      bg-forest       py-20 md:py-28 (80/112px)
 //
 // → 이 패딩과 색은 scripts/check-footer-clearance.mjs 가 지킨다.
 //   특히 밴드 색이 --color-deep 으로 되돌아가면 푸터와 같아져 능선이 사라진다.
-const DARK_TAIL_ROUTES = ["/", "/story", "/en"];
+const DARK_TAIL_ROUTES = ["/", "/story", "/en", "/concert/before-cut", "/concert/village-feast"];
 
 // 능선 아래 여백을 전역으로 줄 것인가.
 export function needsFooterRidgeGap(pathname: string): boolean {
