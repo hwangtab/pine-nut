@@ -148,7 +148,7 @@ export const FEAST_LINEUP: FeastArtist[] = [
     photo: "/images/concert/artists/parkjihwi.jpg",
     photoCredit: "주최 측 제공",
     blurb:
-      "튠업 24기 프리포크 싱어송라이터. 일러스트레이터 2da(이다)의 그림에서 따온 ‘sickbaby’라는 이름으로도 불렀습니다. 로파이한 프리포크로 시작해, 근래에는 엘리엇 스미스의 새드코어에 기운 곡을 씁니다.",
+      "프리포크 싱어송라이터. 일러스트레이터 2da(이다)의 그림에서 따온 ‘sickbaby’라는 이름으로도 불렀습니다. 로파이한 프리포크로 시작해, 근래에는 엘리엇 스미스의 새드코어에 기운 곡을 씁니다.",
   },
   {
     name: "삼각전파사",
@@ -179,9 +179,9 @@ export const FEAST_LINEUP: FeastArtist[] = [
     // 왼쪽은 비트박서 Sight — 두 사람의 악기가 달라 구분이 가능했다.
     photo: "/images/concert/artists/zsthyger.jpg",
     photoCredit: "강정피스앤뮤직캠프",
-    blurb:
-      "2018년부터 홍대에서 활동해온 컨트리 블루스 음악가 제트싸이져. 낮고 거친 목소리로 현대의 고딕을 노래합니다.",
-    source: "https://peaceandmusic.net/camps/2026/musicians/27",
+    // 소개는 비워둔다. 종전 문구("2018년부터 홍대…컨트리 블루스…현대의 고딕")는
+    // 검색 결과 요약을 원문 확인 없이 옮긴 것이고, 사실이 아니라고 본인이 알려왔다.
+    // 확인된 자료를 받기 전까지 채우지 않는다.
   },
 ];
 
