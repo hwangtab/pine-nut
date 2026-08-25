@@ -23,11 +23,61 @@ import {
   FEAST_PHONE_STAGE,
   FEAST_PHONE_STAGE_NAME,
   FEAST_PLACE,
+  FEAST_START,
   FEAST_TIME_LABEL,
   FEAST_TITLE,
 } from "@/lib/concert";
 import { PineConeIcon } from "@/components/visuals/ForestLetterMotifs";
+import ShareButtons from "@/components/ShareButtons";
 import VillageFeastHero from "./VillageFeastHero";
+
+const FEAST_URL = `${SITE_URL}/concert/village-feast`;
+
+// 검색엔진·AI 검색이 이 페이지를 "9월 5일 홍천에서 열리는 무료 공연"으로
+// 읽게 하는 구조화 데이터. 포스터를 놓친 사람이 검색으로 찾아오는 경로다.
+// 종료 시각은 아직 정해지지 않았으므로 endDate 를 넣지 않는다 — 모르는 값을
+// 지어내면 리치결과에 틀린 시간이 박힌다.
+const eventJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "MusicEvent",
+  name: FEAST_TITLE,
+  startDate: FEAST_START.toISOString(),
+  eventStatus: "https://schema.org/EventScheduled",
+  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  url: FEAST_URL,
+  image: [`${SITE_URL}/images/concert/village-feast-poster.jpg`],
+  description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}에서 열리는 마을 잔치. 홍천 양수발전소 건설에 7년째 반대해온 풍천리에서 음악가 ${FEAST_LINEUP.length}팀이 함께합니다. 관람료는 없습니다.`,
+  isAccessibleForFree: true,
+  inLanguage: "ko",
+  location: {
+    "@type": "Place",
+    name: FEAST_PLACE,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "화촌면 풍천리",
+      addressLocality: "홍천군",
+      addressRegion: "강원특별자치도",
+      addressCountry: "KR",
+    },
+  },
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "KRW",
+    availability: "https://schema.org/InStock",
+    url: FEAST_URL,
+    validFrom: new Date("2026-08-25T00:00:00+09:00").toISOString(),
+  },
+  performer: FEAST_LINEUP.map((artist) => ({
+    "@type": "MusicGroup",
+    name: artist.name,
+  })),
+  organizer: {
+    "@type": "Organization",
+    name: "홍천양수발전소 반대대책위원회",
+    url: SITE_URL,
+  },
+};
 
 const LINEUP_NAMES = FEAST_LINEUP.map((artist) => artist.name).join("·");
 
@@ -105,9 +155,30 @@ const FAQ = [
   },
 ];
 
+// 페이지의 FAQ 를 그대로 구조화한다 — "관람료 있나요" 같은 질문에 검색·AI
+// 답변이 직접 답하게 하려면 화면 문구와 같은 내용이어야 한다.
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+
 export default function VillageFeastPage() {
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+
       <VillageFeastHero />
 
       {/* 잔치 안내 */}
@@ -367,6 +438,17 @@ export default function VillageFeastPage() {
             >
               포스터 저장하기
             </a>
+          </div>
+
+          {/* 공유해달라고 부탁만 하고 정작 공유할 수단이 없었다 */}
+          <div className="mt-10 flex justify-center">
+            <ShareButtons
+              title={`${FEAST_TITLE} — ${FEAST_DATE_LABEL} ${FEAST_PLACE}`}
+              url={FEAST_URL}
+              page="concert-village-feast"
+              section="poster"
+              contentPrefix="concert.villageFeast.share"
+            />
           </div>
         </div>
       </section>
