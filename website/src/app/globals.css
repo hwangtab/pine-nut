@@ -100,38 +100,51 @@ h4 {
   text-wrap: balance;
 }
 
-/* 본문 단락은 마지막 줄에 단어 하나만 남는 '고아' 줄바꿈을 방지 */
-p {
-  text-wrap: pretty;
+/* 본문 단락은 마지막 줄에 단어 하나만 남는 '고아' 줄바꿈을 방지.
+   pretty 는 줄 수와 무관하게 동작하므로 긴 본문의 기본값으로 둔다.
+   @layer base 에 두는 이유: 레이어 밖에 있으면 Tailwind 유틸리티(text-nowrap,
+   text-balance 등)가 이 규칙을 못 이긴다. base < components < utilities 순서라
+   아래 balance 규칙과 유틸리티가 차례로 이길 수 있다. */
+@layer base {
+  p {
+    text-wrap: pretty;
+  }
 }
 
-/* 가운데 정렬 문단은 한 단계 더 — 줄 길이를 고르게 나눈다.
-   pretty 로도 마지막 줄에 한 단어만 남는 경우가 있는데, 가운데 정렬에서는
-   좌우 여백이 함께 벌어져 문단이 뾰족해 보인다.
-   가운데 정렬은 대개 부모 섹션에 걸리고 문단이 상속받으므로, 요소에 직접
-   붙은 경우와 물려받은 경우를 모두 잡는다.
-   레이어 밖에 두는 이유: 바로 위 `p { text-wrap: pretty }` 가 레이어 밖이라
-   @layer 안에 두면 그 규칙에 진다(Tailwind v4에서는 레이어 없는 CSS가 이긴다).
-   브라우저가 줄 수가 적을 때만 balance 를 적용하므로 긴 본문에는 영향이 없다. */
-p.text-center,
-dd.text-center,
-li.text-center,
-figcaption.text-center,
-.text-center p,
-.text-center dd,
-.text-center li,
-.text-center figcaption {
-  text-wrap: balance;
-}
+@layer components {
+  /* 가운데 정렬 문단은 한 단계 더 — 줄 길이를 고르게 나눈다.
+     pretty 로도 마지막 줄에 한 단어만 남는 경우가 있는데, 가운데 정렬에서는
+     좌우 여백이 함께 벌어져 문단이 뾰족해 보인다.
+     가운데 정렬은 대개 부모 섹션에 걸리고 문단이 상속받으므로 직계 자식까지 잡는다.
+     자손 전체(`.text-center p`)로 넓히지 않는 이유: 선택자는 '실제 정렬'이 아니라
+     클래스 이름에 걸리므로, 안쪽에서 text-left 로 되돌린 블록까지 balance 가 먹는다
+     (예: en 페이지의 가운데 정렬 섹션 안에 있는 text-left 카드 그리드).
+     주의: 훗날 `text-center sm:text-left` 같은 반응형 정렬을 쓰면 자기 자신을
+     겨냥한 아래 선택자가 모든 브레이크포인트에서 걸린다. 현재 코드베이스에는 없다. */
+  p.text-center,
+  dd.text-center,
+  li.text-center,
+  figcaption.text-center,
+  .text-center > p,
+  .text-center > dd,
+  .text-center > li,
+  .text-center > figcaption {
+    text-wrap: balance;
+  }
 
-/* 카드(.paper) 안의 설명 문단도 마찬가지다. 카드는 폭이 좁아 두세 줄로 끊기는데
-   마지막 줄에 한 단어만 남으면 카드가 반쯤 빈 것처럼 보인다.
-   카드마다 손으로 붙이면 새 카드에서 또 빠지므로 규칙으로 둔다.
-   줄이 많은 긴 글에는 브라우저가 balance 를 적용하지 않으므로 안전하다. */
-.paper p,
-.paper dd,
-.paper li {
-  text-wrap: balance;
+  /* 카드(.paper) 안의 짧은 항목 — 정의 목록·리스트·캡션은 한두 줄로 끝나므로
+     줄 길이를 고르게 나누는 편이 낫다.
+     `.paper p` 는 일부러 뺐다: 카드 본문 문단은 모바일에서 예닐곱 줄을 넘기는데,
+     브라우저는 줄 수가 한계를 넘으면 balance 를 포기하고 기본(normal) 줄바꿈으로
+     되돌아간다. 상속받던 pretty 로 돌아가는 게 아니라서, 긴 문단에 balance 를
+     걸면 오히려 고아 줄 보호가 사라진다.
+     짧은 카드 문단에 굳이 balance 를 주고 싶으면 `text-balance` 유틸리티를
+     그 요소에 붙인다 — 위 레이어 순서 덕분에 이제 유틸리티가 이긴다. */
+  .paper dd,
+  .paper li,
+  .paper figcaption {
+    text-wrap: balance;
+  }
 }
 
 /* Smooth scrolling */
