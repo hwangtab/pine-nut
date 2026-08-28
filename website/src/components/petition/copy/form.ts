@@ -5,7 +5,13 @@ export const koreanPetitionFormCopy: PetitionSignatureFormCopy = {
   fieldIdPrefix: "sig",
   labels: {
     name: { contentKey: "petition.form.nameLabel", defaultValue: "이름 또는 닉네임" },
-    email: { contentKey: "petition.form.emailLabel", defaultValue: "이메일 (선택)" },
+    email: { contentKey: "petition.form.emailLabel", defaultValue: "이메일" },
+    emailOptional: { contentKey: "petition.form.emailOptional", defaultValue: "(선택)" },
+    emailNote: {
+      contentKey: "petition.form.emailNote",
+      defaultValue:
+        "이후 풍천리 숲 보전 활동의 진행 상황과 결과를 받아보기를 원하시는 경우 입력해 주세요. 이메일은 활동 진행 상황 안내 목적으로만 사용합니다.",
+    },
     message: { contentKey: "petition.form.messageLabel", defaultValue: "제안 한마디" },
     messageOptional: { contentKey: "petition.form.messageOptional", defaultValue: "(선택)" },
     regionLabel: { contentKey: "petition.form.regionLabel", defaultValue: "거주 지역" },
@@ -56,8 +62,7 @@ export const koreanPetitionFormCopy: PetitionSignatureFormCopy = {
     },
     email: {
       contentKey: "petition.form.emailPlaceholder",
-      defaultValue:
-        "이후 풍천리 숲 보전 활동의 진행 상황과 결과를 받아보기를 원하시는 경우 입력해 주세요. 이메일은 활동 진행 상황 안내 목적으로만 사용합니다.",
+      defaultValue: "example@email.com",
       buttonLabel: "이메일 힌트",
     },
     message: {

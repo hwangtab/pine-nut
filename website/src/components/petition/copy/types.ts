@@ -14,6 +14,8 @@ export interface PetitionSignatureFormCopy {
   labels: {
     name: PetitionEditableTextCopy;
     email: PetitionEditableTextCopy;
+    emailOptional: PetitionEditableTextCopy;
+    emailNote: PetitionEditableTextCopy;
     message: PetitionEditableTextCopy;
     messageOptional: PetitionEditableTextCopy;
     regionLabel: PetitionEditableTextCopy;
