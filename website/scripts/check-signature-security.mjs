@@ -120,7 +120,7 @@ assert(
 );
 
 const solidarityMigrationPath =
-  "supabase/migrations/20260828_solidarity_signatures.sql";
+  "supabase/migrations/20260828000000_solidarity_signatures.sql";
 assert(
   existsSync(join(root, solidarityMigrationPath)),
   `${solidarityMigrationPath} must exist.`,
@@ -152,26 +152,56 @@ assert(
   "solidarity migration must truncate existing signature data after backup.",
 );
 assert(
-  /add constraint signatures_region_top_check check \(region_top in \(/.test(
-    normalizedSolidaritySql,
-  ),
+  normalizedSolidaritySql.includes("add constraint signatures_region_top_check"),
   "solidarity migration must constrain region_top to the known province list.",
 );
-assert(
-  normalizedSolidaritySql.includes("'해외'"),
-  "solidarity migration's region_top CHECK must include '해외'.",
+
+const regionsTs = readProjectFile("src/lib/regions.ts");
+const regionTops = [...regionsTs.matchAll(/top:\s*"([^"]+)"/g)].map(
+  (match) => match[1],
 );
+assert(
+  regionTops.length > 0,
+  "could not extract region top values from src/lib/regions.ts.",
+);
+
+const regionCheckMatch = normalizedSolidaritySql.match(
+  /region_top in \((.*?)\)\)/,
+);
+assert(
+  regionCheckMatch,
+  "solidarity migration must define a region_top IN (...) CHECK list.",
+);
+const regionCheckLiterals = [
+  ...regionCheckMatch[1].matchAll(/'([^']+)'/g),
+].map((match) => match[1]);
+
+assert(
+  regionCheckLiterals.length === regionTops.length,
+  `solidarity migration's region_top CHECK must list exactly the ${regionTops.length} values from src/lib/regions.ts (found ${regionCheckLiterals.length}).`,
+);
+for (const top of regionTops) {
+  assert(
+    regionCheckLiterals.includes(top),
+    `solidarity migration's region_top CHECK must include '${top}' from src/lib/regions.ts, character-for-character.`,
+  );
+}
+
 assert(
   normalizedSolidaritySql.includes("add constraint signatures_affiliation_len"),
   "solidarity migration must cap affiliation length.",
 );
 assert(
-  normalizedSolidaritySql.includes("create unique index idx_signatures_unique_email"),
-  "solidarity migration must keep a partial unique index on email.",
+  normalizedSolidaritySql.includes(
+    "create unique index idx_signatures_unique_email on signatures (lower(btrim(email))) where email is not null and btrim(email) <> ''",
+  ),
+  "solidarity migration must keep a partial unique index on email, scoped to non-blank trimmed emails.",
 );
 assert(
-  normalizedSolidaritySql.includes("create index idx_signatures_wall"),
-  "solidarity migration must index the public signature wall query.",
+  normalizedSolidaritySql.includes(
+    "create index idx_signatures_wall on signatures (created_at desc) where name_public is true",
+  ),
+  "solidarity migration must index the public signature wall query by created_at desc, scoped to name_public.",
 );
 assert(
   normalizedSolidaritySql.includes("create index idx_signatures_region"),

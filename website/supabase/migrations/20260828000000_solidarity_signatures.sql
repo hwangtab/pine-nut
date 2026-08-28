@@ -9,6 +9,7 @@ ALTER TABLE signatures
 
 ALTER TABLE signatures ALTER COLUMN email DROP NOT NULL;
 
+-- ⚠️ 되돌릴 수 없음: 이 시점 이후 기존 서명 전량 소실. 백업 확인 필수.
 TRUNCATE signatures RESTART IDENTITY;
 
 ALTER TABLE signatures
@@ -25,7 +26,7 @@ ALTER TABLE signatures
 DROP INDEX IF EXISTS idx_signatures_unique_normalized_email;
 CREATE UNIQUE INDEX idx_signatures_unique_email
   ON signatures (lower(btrim(email)))
-  WHERE email IS NOT NULL AND email <> '';
+  WHERE email IS NOT NULL AND btrim(email) <> '';
 
 CREATE INDEX idx_signatures_wall
   ON signatures (created_at DESC) WHERE name_public IS TRUE;
