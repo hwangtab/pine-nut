@@ -29,17 +29,27 @@ const copySource = [
 ].join("\n");
 for (const exportName of [
   "koreanPetitionFormCopy",
-  "englishPetitionFormCopy",
   "koreanPetitionSuccessCopy",
-  "englishPetitionSuccessCopy",
   "koreanPetitionShareEditFields",
-  "englishPetitionShareEditFields",
 ]) {
-  // 이 export들은 죽은 채로 남아 있다 — check-petition-copy-refactor.mjs가 여전히
-  // 요구하고, 그 가드의 재작성은 Task 6 소관이라 여기서는 존재만 확인한다.
   assert(
     copySource.includes(exportName),
     `petition-copy.ts must export ${exportName}.`,
+  );
+}
+
+// /en/petition no longer renders a signature form (it's a static English
+// summary page — see the banned-reference check below), so the English form
+// copy is dead. Task 6 removed it; this guard now asserts it stays removed
+// rather than requiring it to exist.
+for (const removedExportName of [
+  "englishPetitionFormCopy",
+  "englishPetitionSuccessCopy",
+  "englishPetitionShareEditFields",
+]) {
+  assert(
+    !copySource.includes(removedExportName),
+    `petition-copy.ts must not export ${removedExportName} (English form copy was removed).`,
   );
 }
 

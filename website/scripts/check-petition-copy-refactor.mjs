@@ -63,35 +63,65 @@ for (const exportName of [
 ]) {
   assert(typeSource.includes(`export interface ${exportName}`), `copy/types.ts must export ${exportName}.`);
 }
+for (const newField of [
+  "regionLabel",
+  "regionTopPlaceholder",
+  "regionSubPlaceholder",
+  "overseasSubPlaceholder",
+  "affiliationLabel",
+  "affiliationPlaceholder",
+  "namePublicLabel",
+  "namePublicYes",
+  "namePublicNo",
+  "namePublicNote",
+]) {
+  assert(
+    typeSource.includes(newField),
+    `copy/types.ts must declare ${newField} on PetitionSignatureFormCopy.`,
+  );
+}
 
 const formSource = read("src/components/petition/copy/form.ts");
 for (const required of [
   "koreanPetitionFormCopy",
-  "englishPetitionFormCopy",
   'fieldIdPrefix: "sig"',
-  'fieldIdPrefix: "en-sig"',
   "privacyLines",
+  "regionLabel",
+  "regionTopPlaceholder",
+  "regionSubPlaceholder",
+  "overseasSubPlaceholder",
+  "affiliationLabel",
+  "affiliationPlaceholder",
+  "namePublicLabel",
+  "namePublicYes",
+  "namePublicNo",
+  "namePublicNote",
 ]) {
   assert(formSource.includes(required), `copy/form.ts must contain ${required}.`);
 }
+for (const removed of ["englishPetitionFormCopy", 'fieldIdPrefix: "en-sig"']) {
+  assert(
+    !formSource.includes(removed),
+    `copy/form.ts must not contain ${removed} (English form copy removed).`,
+  );
+}
 
 const successSource = read("src/components/petition/copy/success.ts");
-for (const required of [
-  "koreanPetitionSuccessCopy",
-  "englishPetitionSuccessCopy",
-  "countLocale",
-  "primaryShareClassName",
-]) {
+for (const required of ["koreanPetitionSuccessCopy", "countLocale", "primaryShareClassName"]) {
   assert(successSource.includes(required), `copy/success.ts must contain ${required}.`);
 }
+assert(
+  !successSource.includes("englishPetitionSuccessCopy"),
+  "copy/success.ts must not contain englishPetitionSuccessCopy (English form removed).",
+);
 
 const shareSource = read("src/components/petition/copy/share.ts");
-for (const required of [
-  "koreanPetitionShareEditFields",
-  "englishPetitionShareEditFields",
-  'section: "share"',
-]) {
+for (const required of ["koreanPetitionShareEditFields", 'section: "share"']) {
   assert(shareSource.includes(required), `copy/share.ts must contain ${required}.`);
 }
+assert(
+  !shareSource.includes("englishPetitionShareEditFields"),
+  "copy/share.ts must not contain englishPetitionShareEditFields (English form removed).",
+);
 
 console.log("Petition copy refactor checks passed.");

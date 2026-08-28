@@ -16,6 +16,12 @@ export interface PetitionSignatureFormCopy {
     email: PetitionEditableTextCopy;
     message: PetitionEditableTextCopy;
     messageOptional: PetitionEditableTextCopy;
+    regionLabel: PetitionEditableTextCopy;
+    affiliationLabel: PetitionEditableTextCopy;
+    namePublicLabel: PetitionEditableTextCopy;
+    namePublicYes: PetitionEditableTextCopy;
+    namePublicNo: PetitionEditableTextCopy;
+    namePublicNote: PetitionEditableTextCopy;
     privacyPrefix?: PetitionEditableTextCopy;
     privacyToggle: PetitionEditableTextCopy;
     privacySuffix: PetitionEditableTextCopy;
@@ -27,6 +33,10 @@ export interface PetitionSignatureFormCopy {
     name: PetitionEditableValueCopy;
     email: PetitionEditableValueCopy;
     message: PetitionEditableValueCopy;
+    affiliationPlaceholder: PetitionEditableValueCopy;
+    regionTopPlaceholder: PetitionEditableValueCopy;
+    regionSubPlaceholder: PetitionEditableValueCopy;
+    overseasSubPlaceholder: PetitionEditableValueCopy;
   };
   errors: {
     name: PetitionEditableValueCopy;
