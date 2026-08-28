@@ -42,6 +42,7 @@ for (const required of [
   "submitDemoSignature",
   "fetchSignatureSummary",
   "submitSignatureToStore",
+  "hashIp",
 ]) {
   assert(routeSource.includes(required), `signature route must use ${required}.`);
 }
@@ -67,9 +68,20 @@ for (const required of [
   "IS_PRODUCTION",
   "SERVICE_UNAVAILABLE_MESSAGE",
   "DUPLICATE_SIGNATURE_MESSAGE",
+  "NAME_MAX_LENGTH",
+  "AFFILIATION_MAX_LENGTH",
+  "REGION_SUB_MAX_LENGTH",
+  "SIGNATURE_GOAL",
+  "WALL_PAGE_SIZE",
+  "INVALID_REGION_MESSAGE",
+  "INVALID_NAME_PUBLIC_MESSAGE",
 ]) {
   assert(configSource.includes(required), `signatures api config must contain ${required}.`);
 }
+assert(
+  configSource.includes("MESSAGE_MAX_LENGTH = 500"),
+  "signatures api config must raise MESSAGE_MAX_LENGTH to 500.",
+);
 
 const validationSource = read("src/lib/signatures/api/validation.ts");
 for (const required of [
@@ -79,13 +91,17 @@ for (const required of [
   "MESSAGE_MAX_LENGTH",
   "agreePrivacy",
   "agreeAge",
+  "regionTop",
+  "regionSub",
+  "namePublic",
+  "affiliation",
+  "isValidRegionPair",
 ]) {
   assert(validationSource.includes(required), `signatures api validation must contain ${required}.`);
 }
 
 const demoSource = read("src/lib/signatures/api/demo.ts");
 for (const required of [
-  "DEMO_SIGNATURES",
   "devRateLimitMap",
   "getDemoSignatureSummary",
   "submitDemoSignature",
@@ -98,13 +114,17 @@ const storeSource = read("src/lib/signatures/api/store.ts");
 for (const required of [
   "fetchSignatureSummary",
   "submitSignatureToStore",
-  "maskName",
-  "hashIp",
   "ip_hash",
   "DUPLICATE_SIGNATURE_MESSAGE",
+  "regionCount",
+  "recent24h",
 ]) {
   assert(storeSource.includes(required), `signatures api store module must contain ${required}.`);
 }
+assert(
+  !storeSource.includes("maskName"),
+  "signatures api store module must not mask names — the wall only shows opt-in real names.",
+);
 
 const responseSource = read("src/lib/signatures/api/responses.ts");
 for (const required of [

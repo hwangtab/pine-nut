@@ -1,4 +1,11 @@
-import { MESSAGE_MAX_LENGTH } from "./config";
+import { isValidRegionPair } from "@/lib/regions";
+import {
+  AFFILIATION_MAX_LENGTH,
+  INVALID_NAME_PUBLIC_MESSAGE,
+  INVALID_REGION_MESSAGE,
+  MESSAGE_MAX_LENGTH,
+  NAME_MAX_LENGTH,
+} from "./config";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -6,15 +13,23 @@ export interface SignatureSubmissionBody {
   name?: unknown;
   email?: unknown;
   message?: unknown;
+  regionTop?: unknown;
+  regionSub?: unknown;
+  affiliation?: unknown;
+  namePublic?: unknown;
   agreePrivacy?: unknown;
   agreeAge?: unknown;
 }
 
 export interface ValidSignatureSubmission {
   name: string;
-  email: string;
-  normalizedEmail: string;
+  email: string | null;
+  normalizedEmail: string | null;
   messageText: string;
+  regionTop: string;
+  regionSub: string;
+  affiliation: string | null;
+  namePublic: boolean;
   agreePrivacy: true;
   agreeAge: true;
 }
@@ -51,19 +66,33 @@ export function validateSignatureSubmission(
   if (!name?.trim()) {
     return validationError("이름을 입력해주세요.");
   }
-  if (name.trim().length > 50) {
+  if (name.trim().length > NAME_MAX_LENGTH) {
     return validationError("이름이 너무 깁니다.");
   }
 
-  const email = asOptionalString(body.email);
-  const emailText = email?.trim() ?? "";
-  if (!emailText || !EMAIL_PATTERN.test(emailText)) {
+  const regionTop = asOptionalString(body.regionTop)?.trim() ?? "";
+  const regionSub = asOptionalString(body.regionSub)?.trim() ?? "";
+  if (!regionTop || !isValidRegionPair(regionTop, regionSub)) {
+    return validationError(INVALID_REGION_MESSAGE);
+  }
+
+  const affiliationText = asOptionalString(body.affiliation)?.trim() ?? "";
+  if (affiliationText.length > AFFILIATION_MAX_LENGTH) {
+    return validationError(`소속은 ${AFFILIATION_MAX_LENGTH}자 이내로 입력해주세요.`);
+  }
+
+  const emailText = asOptionalString(body.email)?.trim() ?? "";
+  if (emailText && !EMAIL_PATTERN.test(emailText)) {
     return validationError("올바른 이메일을 입력해주세요.");
   }
 
   const message = asOptionalString(body.message);
   if (message === undefined || message.length > MESSAGE_MAX_LENGTH) {
     return validationError(`메시지는 ${MESSAGE_MAX_LENGTH}자 이내로 입력해주세요.`);
+  }
+
+  if (typeof body.namePublic !== "boolean") {
+    return validationError(INVALID_NAME_PUBLIC_MESSAGE);
   }
 
   if (body.agreePrivacy !== true) {
@@ -77,9 +106,13 @@ export function validateSignatureSubmission(
     ok: true,
     value: {
       name: name.trim(),
-      email: emailText,
-      normalizedEmail: emailText.toLowerCase(),
+      email: emailText ? emailText : null,
+      normalizedEmail: emailText ? emailText.toLowerCase() : null,
       messageText: message.trim(),
+      regionTop,
+      regionSub,
+      affiliation: affiliationText ? affiliationText : null,
+      namePublic: body.namePublic,
       agreePrivacy: true,
       agreeAge: true,
     },
