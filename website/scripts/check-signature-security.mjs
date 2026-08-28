@@ -208,4 +208,28 @@ assert(
   "solidarity migration must index region_top for aggregate queries.",
 );
 
+assert(
+  normalizedSolidaritySql.includes(
+    "create or replace function signature_region_count()",
+  ),
+  "solidarity migration must define signature_region_count() so regionCount is aggregated in the DB, not by pulling every row past Supabase's max_rows cap.",
+);
+assert(
+  normalizedSolidaritySql.includes("security definer") &&
+    normalizedSolidaritySql.includes("set search_path = public"),
+  "signature_region_count() must be SECURITY DEFINER with search_path locked to public (search_path hijacking defense).",
+);
+assert(
+  normalizedSolidaritySql.includes(
+    "revoke all on function signature_region_count() from public, anon, authenticated",
+  ),
+  "signature_region_count() must revoke EXECUTE from public/anon/authenticated — a SECURITY DEFINER function left callable by anon is a privilege-escalation hole.",
+);
+assert(
+  normalizedSolidaritySql.includes(
+    "grant execute on function signature_region_count() to service_role",
+  ),
+  "signature_region_count() must be granted to service_role only — that's the only caller (the server-side signatures API).",
+);
+
 console.log("Signature security checks passed.");

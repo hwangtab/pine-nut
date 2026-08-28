@@ -35,6 +35,7 @@ export function getDemoSignatureSummary(): SignatureSummary {
     regionCount: 17,
     recent24h: 42,
     goal: SIGNATURE_GOAL,
+    demo: true,
   };
 }
 

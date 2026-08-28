@@ -99,6 +99,14 @@ for (const required of [
 ]) {
   assert(validationSource.includes(required), `signatures api validation must contain ${required}.`);
 }
+assert(
+  validationSource.includes("isValidRegionPair(regionTop, regionSub)"),
+  "signatures api validation must actually call isValidRegionPair(regionTop, regionSub), not just import it.",
+);
+assert(
+  validationSource.includes('typeof body.namePublic !== "boolean"'),
+  "signatures api validation must reject a missing/non-boolean namePublic (required choice, no default).",
+);
 
 const demoSource = read("src/lib/signatures/api/demo.ts");
 for (const required of [
@@ -109,6 +117,10 @@ for (const required of [
 ]) {
   assert(demoSource.includes(required), `signatures api demo module must contain ${required}.`);
 }
+assert(
+  demoSource.includes("demo: true"),
+  "signatures api demo summary must set demo: true so client.ts shows the dev demo badge.",
+);
 
 const storeSource = read("src/lib/signatures/api/store.ts");
 for (const required of [
@@ -124,6 +136,25 @@ for (const required of [
 assert(
   !storeSource.includes("maskName"),
   "signatures api store module must not mask names — the wall only shows opt-in real names.",
+);
+for (const requiredInsertField of [
+  "region_top: value.regionTop",
+  "region_sub: value.regionSub",
+  "affiliation: value.affiliation",
+  "name_public: value.namePublic",
+]) {
+  assert(
+    storeSource.includes(requiredInsertField),
+    `signatures api store module's insert payload must include ${requiredInsertField} — a dropped field passes app validation but fails a DB NOT NULL/CHECK constraint as an unmapped 500.`,
+  );
+}
+assert(
+  storeSource.includes('rpc("signature_region_count")'),
+  "signatures api store module must aggregate regionCount via the signature_region_count() DB function, not by pulling all rows client-side.",
+);
+assert(
+  !storeSource.includes('.select("region_top")'),
+  "signatures api store module must not select all region_top rows client-side — Supabase's default max_rows (1000) silently truncates the aggregate once signatures exceed 1000.",
 );
 
 const responseSource = read("src/lib/signatures/api/responses.ts");

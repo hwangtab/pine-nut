@@ -14,6 +14,7 @@ export interface SignatureSummary {
   regionCount: number;
   recent24h: number;
   goal: number;
+  demo?: boolean;
 }
 
 export async function fetchSignatureSummary(
@@ -25,17 +26,16 @@ export async function fetchSignatureSummary(
 
   if (countError) throw countError;
 
-  const { data: regionRows, error: regionError } = await supabase
-    .from("signatures")
-    .select("region_top");
+  // region_top의 distinct count는 DB에서 집계한다 — select("region_top")로 전체
+  // 테이블을 끌어오면 max_rows(1000, supabase/config.toml)에 걸려 서명이 1000건을
+  // 넘는 순간 앞쪽 1000행만 조용히 반환되고 그 뒤로는 regionCount가 절대 늘지 않는다.
+  const { data: regionCountResult, error: regionError } =
+    await supabase.rpc("signature_region_count");
 
   if (regionError) throw regionError;
 
-  const regionCount = new Set(
-    (regionRows || [])
-      .map((row: { region_top: string | null }) => row.region_top)
-      .filter((value: string | null): value is string => Boolean(value)),
-  ).size;
+  const regionCount =
+    typeof regionCountResult === "number" ? regionCountResult : 0;
 
   const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const { count: recent24h, error: recentError } = await supabase

@@ -31,3 +31,14 @@ CREATE UNIQUE INDEX idx_signatures_unique_email
 CREATE INDEX idx_signatures_wall
   ON signatures (created_at DESC) WHERE name_public IS TRUE;
 CREATE INDEX idx_signatures_region ON signatures (region_top);
+
+-- 참여 지역 수 집계를 DB로 내린다. supabase/config.toml의 max_rows(1000)에 걸려
+-- 서명이 1000건을 넘으면 select("region_top") 전체 스캔이 조용히 앞쪽 1000행만
+-- 반환하고, 그 뒤로는 regionCount가 절대 늘지 않는 문제를 막기 위함.
+-- idx_signatures_region이 있어 count(distinct region_top) 비용은 낮다.
+CREATE OR REPLACE FUNCTION signature_region_count()
+RETURNS integer LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT count(DISTINCT region_top)::int FROM signatures
+$$;
+REVOKE ALL ON FUNCTION signature_region_count() FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION signature_region_count() TO service_role;
