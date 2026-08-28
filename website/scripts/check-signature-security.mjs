@@ -232,4 +232,38 @@ assert(
   "signature_region_count() must be granted to service_role only — that's the only caller (the server-side signatures API).",
 );
 
+const wallModulePath = "src/lib/signatures/api/wall.ts";
+assert(existsSync(join(root, wallModulePath)), `${wallModulePath} must exist.`);
+
+const wallModule = readProjectFile(wallModulePath);
+for (const forbiddenField of ["email", "message", "affiliation", "ip_hash"]) {
+  assert(
+    !wallModule.includes(forbiddenField),
+    `signature wall module must not select ${forbiddenField}.`,
+  );
+}
+assert(
+  wallModule.includes('.eq("name_public", true)'),
+  "signature wall module must filter to name_public rows only.",
+);
+
+const wallRoutePath = "src/app/api/signatures/wall/route.ts";
+assert(existsSync(join(root, wallRoutePath)), `${wallRoutePath} must exist.`);
+
+const wallRoute = readProjectFile(wallRoutePath);
+for (const forbiddenField of ["email", "message", "affiliation", "ip_hash"]) {
+  assert(
+    !wallRoute.includes(forbiddenField),
+    `signature wall route must not expose ${forbiddenField}.`,
+  );
+}
+assert(
+  !/from\s+["']@\/lib\/supabase["']/.test(wallRoute),
+  "signature wall route must not use the public anon Supabase client.",
+);
+assert(
+  wallRoute.includes("createSupabaseServiceClient"),
+  "signature wall route must use the server-only service-role client.",
+);
+
 console.log("Signature security checks passed.");
