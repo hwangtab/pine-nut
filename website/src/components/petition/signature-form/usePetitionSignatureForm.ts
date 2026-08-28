@@ -17,10 +17,17 @@ import type {
 
 // Error keys `PetitionFormFields`/`PetitionConsentFields` actually render
 // today. Kept as a named set (not inferred) so a future field-level UI
-// addition in Task 8 is a one-line change here, not a silent behavior shift.
+// change is a one-line change here, not a silent behavior shift.
+// check-petition-signature-form-hook-refactor.mjs asserts this set matches
+// SignatureFormErrors exactly, so a newly added error key fails the guard
+// until its message has somewhere on screen to appear.
 const RENDERED_ERROR_KEYS = new Set<keyof SignatureFormErrors>([
   "name",
   "email",
+  "message",
+  "region",
+  "affiliation",
+  "namePublic",
   "agreePrivacy",
   "agreeAge",
 ]);
@@ -36,19 +43,36 @@ export function usePetitionSignatureForm({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [regionTop, setRegionTop] = useState("");
+  const [regionSub, setRegionSub] = useState("");
+  const [affiliation, setAffiliation] = useState("");
+  const [namePublic, setNamePublic] = useState<boolean | null>(null);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [agreeAge, setAgreeAge] = useState(false);
   const [errors, setErrors] = useState<SignatureFormErrors>({});
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [signatureStartedTracked, setSignatureStartedTracked] = useState(false);
 
+  // 동의 체크박스는 화면에 1개다. 문구가 성명서 취지 공감 + 개인정보 수집·이용 +
+  // 만 14세 이상 확인을 한 문장으로 담고 있으므로, 한 번의 체크가 DB의 두 컬럼
+  // (consent_privacy·consent_age)을 모두 채운다.
+  const setAgreeConsent = useCallback((checked: boolean) => {
+    setAgreePrivacy(checked);
+    setAgreeAge(checked);
+  }, []);
+
   const ids = {
     nameId: `${copy.fieldIdPrefix}-name`,
     emailId: `${copy.fieldIdPrefix}-email`,
+    emailNoteId: `${copy.fieldIdPrefix}-email-note`,
     messageId: `${copy.fieldIdPrefix}-message`,
     messageCountId: `${copy.fieldIdPrefix}-message-count`,
-    privacyErrorId: `${copy.fieldIdPrefix}-privacy-error`,
-    ageErrorId: `${copy.fieldIdPrefix}-age-error`,
+    affiliationId: `${copy.fieldIdPrefix}-affiliation`,
+    namePublicYesId: `${copy.fieldIdPrefix}-name-public-yes`,
+    namePublicNoId: `${copy.fieldIdPrefix}-name-public-no`,
+    namePublicNoteId: `${copy.fieldIdPrefix}-name-public-note`,
+    namePublicErrorId: `${copy.fieldIdPrefix}-name-public-error`,
+    consentErrorId: `${copy.fieldIdPrefix}-consent-error`,
   };
 
   const placeholders = {
@@ -59,43 +83,56 @@ export function usePetitionSignatureForm({
     formMessagePlaceholder:
       getContent(copy.placeholders.message.contentKey) ??
       copy.placeholders.message.defaultValue,
+    formAffiliationPlaceholder:
+      getContent(copy.placeholders.affiliationPlaceholder.contentKey) ??
+      copy.placeholders.affiliationPlaceholder.defaultValue,
+    regionTopPlaceholder:
+      getContent(copy.placeholders.regionTopPlaceholder.contentKey) ??
+      copy.placeholders.regionTopPlaceholder.defaultValue,
+    regionSubPlaceholder:
+      getContent(copy.placeholders.regionSubPlaceholder.contentKey) ??
+      copy.placeholders.regionSubPlaceholder.defaultValue,
+    overseasSubPlaceholder:
+      getContent(copy.placeholders.overseasSubPlaceholder.contentKey) ??
+      copy.placeholders.overseasSubPlaceholder.defaultValue,
   };
 
   const formSubmitFallbackError =
     getContent(copy.errors.submit.contentKey) ?? copy.errors.submit.defaultValue;
 
-  // NOTE(Task 5 compile-keeping shim): regionTop/regionSub/affiliation/namePublic
-  // have no input UI yet (that's Task 8's job) — until then they're fixed at
-  // values that `validateSignatureForm` always rejects (empty region, null
-  // namePublic), so the form cannot actually succeed. This keeps the 7-field
-  // contract compiling without guessing at Task 8's field wiring.
   const buildValues = useCallback(
     (): SignatureFormValues => ({
       name,
       email,
       message,
-      regionTop: "",
-      regionSub: "",
-      affiliation: "",
-      namePublic: null,
+      regionTop,
+      regionSub,
+      affiliation,
+      namePublic,
       agreePrivacy,
       agreeAge,
     }),
-    [agreeAge, agreePrivacy, email, message, name],
+    [
+      affiliation,
+      agreeAge,
+      agreePrivacy,
+      email,
+      message,
+      name,
+      namePublic,
+      regionSub,
+      regionTop,
+    ],
   );
 
   const validate = useCallback((): boolean => {
     const result = validateSignatureForm(buildValues());
     setErrors(result);
 
-    // `PetitionFormFields`/`PetitionConsentFields` only render errors.name,
-    // errors.email, errors.agreePrivacy, errors.agreeAge — the region/
-    // namePublic/message/affiliation keys have no field-level UI yet (Task 8
-    // wires that up). Until then, a rejection on one of those keys would
-    // otherwise fail completely silently: the submit button would just stop
-    // doing anything with no visible error. Surface those specific messages
-    // through the shared submitError banner instead, so a validation failure
-    // is never silent even before Task 8 lands.
+    // 모든 오류 키는 지금 각 필드 옆에 렌더된다(RENDERED_ERROR_KEYS 참고).
+    // 그래도 이 폴백은 남긴다 — 나중에 어떤 필드의 오류 렌더가 사라지면 그
+    // 거부가 조용히 아무 반응 없는 제출 버튼으로 나타나기 때문이다. 그때는
+    // 최소한 폼 상단 배너로 이유가 보인다.
     const unrenderedKeys = (Object.keys(result) as (keyof SignatureFormErrors)[]).filter(
       (key) => !RENDERED_ERROR_KEYS.has(key),
     );
@@ -138,8 +175,9 @@ export function usePetitionSignatureForm({
         // carries a fresh count (contract shrank to `{ok:true}`). `count: 0`
         // is a placeholder — `onRefreshSignatures()` below re-fetches the
         // real summary immediately after, so any UI reading this value sees
-        // it overwritten within one round trip. Task 8/12 owns wiring this
-        // properly (e.g. dropping `count` from the callback entirely).
+        // it overwritten within one round trip. Task 11/12 owns wiring this
+        // properly (e.g. dropping `count` from the callback entirely), since
+        // the fix has to land in /petition/page.tsx's handler at the same time.
         onSubmitted({ name, count: 0 });
         events.signatureComplete();
         onRefreshSignatures();
@@ -163,11 +201,16 @@ export function usePetitionSignatureForm({
   // from copy at validation time. It no longer does — form.ts now owns fixed
   // Korean copy for those errors — so editing them here would have zero
   // effect. Only copy.errors.submit remains meaningful (still read above as
-  // formSubmitFallbackError).
+  // formSubmitFallbackError). Labels and notes stay inline-editable through
+  // PetitionFormText, so only the value-type copy needs a chip here.
   const editFields = [
     copy.placeholders.name,
     copy.placeholders.email,
     copy.placeholders.message,
+    copy.placeholders.affiliationPlaceholder,
+    copy.placeholders.regionTopPlaceholder,
+    copy.placeholders.regionSubPlaceholder,
+    copy.placeholders.overseasSubPlaceholder,
     copy.errors.submit,
   ];
 
@@ -178,6 +221,10 @@ export function usePetitionSignatureForm({
     name,
     email,
     message,
+    regionTop,
+    regionSub,
+    affiliation,
+    namePublic,
     agreePrivacy,
     agreeAge,
     errors,
@@ -190,8 +237,11 @@ export function usePetitionSignatureForm({
     setName,
     setEmail,
     setMessage,
-    setAgreePrivacy,
-    setAgreeAge,
+    setRegionTop,
+    setRegionSub,
+    setAffiliation,
+    setNamePublic,
+    setAgreeConsent,
     togglePrivacy: () => setShowPrivacy((current) => !current),
     clearError,
   };

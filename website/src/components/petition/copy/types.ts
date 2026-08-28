@@ -19,6 +19,8 @@ export interface PetitionSignatureFormCopy {
     message: PetitionEditableTextCopy;
     messageOptional: PetitionEditableTextCopy;
     regionLabel: PetitionEditableTextCopy;
+    /** 세종처럼 시·군·구가 없는 시·도를 골랐을 때 띄우는 안내. */
+    regionNoSubNote: PetitionEditableTextCopy;
     affiliationLabel: PetitionEditableTextCopy;
     namePublicLabel: PetitionEditableTextCopy;
     namePublicYes: PetitionEditableTextCopy;

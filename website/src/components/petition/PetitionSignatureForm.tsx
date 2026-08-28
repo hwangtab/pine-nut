@@ -34,17 +34,20 @@ export default function PetitionSignatureForm({
             name={form.name}
             email={form.email}
             message={form.message}
+            regionTop={form.regionTop}
+            regionSub={form.regionSub}
+            affiliation={form.affiliation}
+            namePublic={form.namePublic}
             errors={form.errors}
-            nameId={form.ids.nameId}
-            emailId={form.ids.emailId}
-            messageId={form.ids.messageId}
-            messageCountId={form.ids.messageCountId}
-            formNamePlaceholder={form.placeholders.formNamePlaceholder}
-            formEmailPlaceholder={form.placeholders.formEmailPlaceholder}
-            formMessagePlaceholder={form.placeholders.formMessagePlaceholder}
+            ids={form.ids}
+            placeholders={form.placeholders}
             onNameChange={form.setName}
             onEmailChange={form.setEmail}
             onMessageChange={form.setMessage}
+            onRegionTopChange={form.setRegionTop}
+            onRegionSubChange={form.setRegionSub}
+            onAffiliationChange={form.setAffiliation}
+            onNamePublicChange={form.setNamePublic}
             clearError={form.clearError}
           />
 
@@ -53,11 +56,9 @@ export default function PetitionSignatureForm({
             agreePrivacy={form.agreePrivacy}
             agreeAge={form.agreeAge}
             errors={form.errors}
-            privacyErrorId={form.ids.privacyErrorId}
-            ageErrorId={form.ids.ageErrorId}
+            consentErrorId={form.ids.consentErrorId}
             showPrivacy={form.showPrivacy}
-            onPrivacyChange={form.setAgreePrivacy}
-            onAgeChange={form.setAgreeAge}
+            onConsentChange={form.setAgreeConsent}
             onTogglePrivacy={form.togglePrivacy}
             clearError={form.clearError}
           />

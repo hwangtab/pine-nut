@@ -15,6 +15,11 @@ export const koreanPetitionFormCopy: PetitionSignatureFormCopy = {
     message: { contentKey: "petition.form.messageLabel", defaultValue: "제안 한마디" },
     messageOptional: { contentKey: "petition.form.messageOptional", defaultValue: "(선택)" },
     regionLabel: { contentKey: "petition.form.regionLabel", defaultValue: "거주 지역" },
+    regionNoSubNote: {
+      contentKey: "petition.form.regionNoSubNote",
+      defaultValue:
+        "세종특별자치시처럼 시·군·구가 없는 지역은 시·군·구를 고르지 않아도 됩니다. 그대로 진행해 주세요.",
+    },
     affiliationLabel: {
       contentKey: "petition.form.affiliationLabel",
       defaultValue: "소속 단체 또는 모임",
