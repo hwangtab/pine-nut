@@ -271,3 +271,43 @@ CSV 3종 분리는 하지 않는다. 전체 1종이면 운영자가 스프레드
    "해외" 지역 자유입력 / 비공개 선택 시 명단 벽 미노출 / 명단 벽 "더 보기" 페이지네이션
 4. 명단 벽 API 응답에 `email`·`message`·`affiliation`·`ip_hash`가 없음을 직접 확인
 5. chrome-devtools Lighthouse — 모바일 성능·접근성 회귀 없음
+
+## 13. 계획 수립 중 발견 — 홈 인라인 서명 폼과 가드 스크립트
+
+### 13.1 홈 CTA 인라인 서명 폼 제거
+
+`src/components/home/HomeCtaSection.tsx:96`이 `HomeInlineSignatureForm`(이름+이메일 2필드)을
+렌더하고 같은 `POST /api/signatures`로 제출한다. `region_top`/`region_sub`를 NOT NULL로
+만들면 이 폼이 즉시 깨진다.
+
+**결정: 홈 인라인 폼을 제거하고 `/petition`으로 보내는 CTA 버튼으로 교체한다.**
+서명 창구를 하나로 단일화한다는 전면 교체 결정과 일치하며, 이름+이메일만 받는 폼으로는
+연대서명의 요건(지역·이름 공개 동의)을 채울 수 없다.
+
+삭제: `src/components/home/HomeInlineSignatureForm.tsx`,
+`src/components/home/inline-signature/` 전체
+수정: `src/components/home/HomeCtaSection.tsx`
+
+### 13.2 가드 스크립트
+
+이 저장소에는 테스트 프레임워크가 없다. 대신 `website/scripts/check-*.mjs` 45개가
+아키텍처 계약을 강제하며 npm 스크립트로 실행된다(CI 없음, 수동 실행). 이 프로젝트의
+TDD는 "가드를 먼저 고쳐 실패시키고 → 구현해 통과시킨다"이다.
+
+이번 변경이 무효화하는 가드와 처리:
+
+| 가드 | 현재 계약 | 처리 |
+|---|---|---|
+| `check-home-inline-signature-form-refactor.mjs` | 인라인 폼 모듈 분해 구조 | **삭제** (대상 소멸). npm 스크립트도 제거 |
+| `check-home-cta-refactor.mjs` | HomeCtaSection이 인라인 폼을 렌더 | **재작성** — `/petition` 링크만 두고 폼 내부 상태가 없음을 단언 |
+| `check-petition-refactor.mjs` | `/en/petition`이 `PetitionSignatureForm`·`english*Copy`를 사용 | **재작성** — 영문 페이지는 요약형, 폼 미사용, `/petition` 링크 보유를 단언 |
+| `check-petition-copy-refactor.mjs` | `english*Copy` 3종 export 필수 | **재작성** — 영문 폼 카피 요구 제거, 신규 필드 카피 키 요구 추가 |
+| `check-petition-form-ui-refactor.mjs` | name/email/message 필드만 | **확장** — region·affiliation·namePublic 단언 추가 |
+| `check-petition-signature-form-hook-refactor.mjs` | `PetitionSignatureForm.tsx` ≤120줄 | **확장** — 필드 증가분을 반영해 상한 조정, 신규 상태 키 단언 |
+| `check-signature-form-refactor.mjs` | `HomeInlineSignatureForm` 번들 검사 | **재작성** — 홈 번들 제거, petition 번들만 검사 |
+| `check-signatures-api-refactor.mjs` | store에 `maskName` 필수 | **확장** — `maskName` 요구 제거(명단 벽은 공개 동의자만 실명 노출), `wall.ts` 모듈·`regionCount`·`recent24h` 단언 추가 |
+| `check-signature-security.mjs` | 마이그레이션 RLS·서비스 클라이언트 | **확장** — 명단 벽 라우트가 `email`·`message`·`affiliation`·`ip_hash`를 선택하지 않음을 단언 |
+
+`check-signature-security.mjs`의 기존 단언(anon 정책 회수, `signatures_admin_read`가
+`is_active_admin()` 사용, service_role GRANT)은 그대로 통과해야 한다. 새 마이그레이션은
+이 정책들을 건드리지 않는다.
