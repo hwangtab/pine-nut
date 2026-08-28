@@ -27,16 +27,21 @@ export default function PetitionProgress({
               / {goal.toLocaleString("ko-KR")}명
             </span>
           </p>
-          <p className="text-lg font-bold text-[var(--color-forest)]">{pct}%</p>
+          <p className="text-lg font-bold text-[var(--color-forest)]">{loading ? "…" : `${pct}%`}</p>
         </div>
 
         <div
           className="h-3 w-full rounded-full bg-[var(--color-bg-warm)] overflow-hidden"
           role="progressbar"
-          aria-valuenow={pct}
+          aria-busy={loading}
+          aria-valuenow={loading ? undefined : pct}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`서명 ${count.toLocaleString("ko-KR")}명, 목표 ${goal.toLocaleString("ko-KR")}명 대비 ${pct}%`}
+          aria-label={
+            loading
+              ? "서명 현황을 불러오는 중입니다."
+              : `서명 ${count.toLocaleString("ko-KR")}명, 목표 ${goal.toLocaleString("ko-KR")}명 대비 ${pct}%`
+          }
         >
           <div
             className="h-full rounded-full bg-[var(--color-forest)] transition-[width] duration-700 ease-out"

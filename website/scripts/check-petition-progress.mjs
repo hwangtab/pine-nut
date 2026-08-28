@@ -115,12 +115,39 @@ assert(
   'PetitionProgress.tsx must render an element with role="progressbar".',
 );
 assert(
-  /aria-valuenow=\{pct\}/.test(source),
-  "aria-valuenow must be wired to the computed `pct` value, not a literal.",
-);
-assert(
   /aria-valuemin=\{0\}/.test(source) && /aria-valuemax=\{100\}/.test(source),
   "progressbar must declare aria-valuemin={0} and aria-valuemax={100}.",
+);
+
+// Isolate the progressbar element's own opening tag so the loading-state
+// checks below can't accidentally match `loading` mentions that belong to
+// some other element in the file.
+const barTagMatch = source.match(/<div\b[\s\S]*?role=["']progressbar["'][\s\S]*?>/);
+assert(barTagMatch, "Could not isolate the progressbar element's opening tag for inspection.");
+const barTag = barTagMatch[0];
+
+// ── Loading-state ARIA contract (review fix, Task 9 round 2): while data is
+// still loading, the visible metrics show "…" but a screen reader must not
+// be told "0명, 0%" — that reads as a false fact ("zero people signed"), not
+// as "still loading". role="progressbar" treats a missing aria-valuenow as
+// the documented "indeterminate" state, so it must be omitted (not 0) while
+// loading, aria-busy must announce the loading state, and aria-label must
+// switch to a loading sentence instead of interpolating a stale/zero pct.
+assert(
+  /aria-busy=\{loading\}/.test(barTag),
+  'progressbar must declare aria-busy={loading} so assistive tech knows the value is not settled yet.',
+);
+assert(
+  /aria-valuenow=\{[^}]*loading[\s\S]*?\?[\s\S]*?undefined[\s\S]*?:[\s\S]*?pct[^}]*\}/.test(barTag),
+  "aria-valuenow must be `undefined` while loading (an indeterminate progressbar has no aria-valuenow) and the real `pct` once loaded — a hardcoded {pct} would report 0% as a real value during loading.",
+);
+assert(
+  /aria-label=\{[\s\S]*?loading[\s\S]*?\?/.test(barTag),
+  "aria-label must branch on `loading` — the populated-state sentence (interpolating count/goal/pct) must not be read while those numbers are still placeholders.",
+);
+assert(
+  /aria-label=\{[\s\S]*?:[\s\S]*?\$\{pct\}/.test(barTag),
+  "aria-label's loaded-state branch must still interpolate the real `pct` (regression check — don't lose the populated-state message while adding the loading branch).",
 );
 
 // ── Color-role discipline: --color-warm is the CTA/signature-button color
@@ -144,13 +171,22 @@ for (const expr of [
   );
 }
 
-// ── Loading state: every displayed metric must branch on `loading`, not
-// just the top-line count — a page skeleton that flashes real component
-// counts while regions/recent24h are still 0 would look broken.
-const loadingBranches = (source.match(/loading\s*\?/g) ?? []).length;
-assert(
-  loadingBranches >= 3,
-  `PetitionProgress.tsx must branch on \`loading\` for all three displayed metrics (count, regionCount, recent24h) — found ${loadingBranches} \`loading ?\` branches, need >= 3.`,
-);
+// ── Loading state: every displayed metric — including the pct% readout next
+// to the bar, added in review round 2 — must branch on `loading`, not just
+// the top-line count. A page skeleton that flashes real component counts
+// (or a stale/zero pct) while other metrics are still "…" would look broken
+// and, worse, briefly show "0%" as if it were a real reading.
+const perMetricLoadingChecks = [
+  [/\{loading \? "…" : count\.toLocaleString\("ko-KR"\)\}/, "count"],
+  [/\{loading \? "…" : `\$\{regionCount\.toLocaleString\("ko-KR"\)\}곳`\}/, "regionCount"],
+  [/\{loading \? "…" : `\$\{recent24h\.toLocaleString\("ko-KR"\)\}명`\}/, "recent24h"],
+  [/\{loading \? "…" : `\$\{pct\}%`\}/, "pct (the %, next to the bar)"],
+];
+for (const [pattern, label] of perMetricLoadingChecks) {
+  assert(
+    pattern.test(source),
+    `PetitionProgress.tsx must gate the ${label} display on \`loading\` (pattern: ${pattern}).`,
+  );
+}
 
 console.log("PetitionProgress checks passed.");
