@@ -199,9 +199,9 @@ assert(
 );
 assert(
   normalizedSolidaritySql.includes(
-    "create index idx_signatures_wall on signatures (created_at desc) where name_public is true",
+    "create index idx_signatures_wall on signatures (created_at desc, id desc) where name_public is true",
   ),
-  "solidarity migration must index the public signature wall query by created_at desc, scoped to name_public.",
+  "solidarity migration must index the public signature wall query by (created_at desc, id desc), scoped to name_public — the id tiebreaker matters because created_at is DEFAULT NOW() and a single-transaction batch insert (e.g. bulk paper-signature entry) gives every row in that batch the identical created_at.",
 );
 assert(
   normalizedSolidaritySql.includes("create index idx_signatures_region"),
@@ -236,12 +236,38 @@ const wallModulePath = "src/lib/signatures/api/wall.ts";
 assert(existsSync(join(root, wallModulePath)), `${wallModulePath} must exist.`);
 
 const wallModule = readProjectFile(wallModulePath);
-for (const forbiddenField of ["email", "message", "affiliation", "ip_hash"]) {
+for (const forbiddenField of [
+  "email",
+  "message",
+  "affiliation",
+  "ip_hash",
+  "consent_",
+]) {
   assert(
     !wallModule.includes(forbiddenField),
     `signature wall module must not select ${forbiddenField}.`,
   );
 }
+// 위 반리스트 검사는 select()가 그 리터럴을 문자 그대로 담고 있을 때만 유효하다.
+// select("*") — 또는 select() 인자를 아예 비워도 PostgREST 기본값은 * 다 — 는
+// 금지어를 하나도 포함하지 않으면서 email·message·affiliation·ip_hash·consent_*를
+// 전부 서버 프로세스로 끌어온다. 그래서 (a) 정확한 컬럼 목록을 명시적으로
+// select하는지 양성 단언하고, (b) 와일드카드 select와 (c) 행 전체를 스프레드하는
+// 매핑을 별도로 금지한다.
+assert(
+  wallModule.includes(
+    '.select("id, name, region_top, region_sub, created_at")',
+  ),
+  "signature wall module must select an explicit, exact column list — not a wildcard.",
+);
+assert(
+  !/\.select\([^)]*\*/.test(wallModule),
+  "signature wall module must not select * — that pulls email/message/ip_hash/consent_* into the process even if the response mapping later narrows it.",
+);
+assert(
+  !/\.\.\.row/.test(wallModule),
+  "signature wall module must map response fields explicitly, never spread the DB row — a spread silently re-exposes any column added to the select later.",
+);
 assert(
   wallModule.includes('.eq("name_public", true)'),
   "signature wall module must filter to name_public rows only.",
@@ -251,15 +277,27 @@ const wallRoutePath = "src/app/api/signatures/wall/route.ts";
 assert(existsSync(join(root, wallRoutePath)), `${wallRoutePath} must exist.`);
 
 const wallRoute = readProjectFile(wallRoutePath);
-for (const forbiddenField of ["email", "message", "affiliation", "ip_hash"]) {
+for (const forbiddenField of [
+  "email",
+  "message",
+  "affiliation",
+  "ip_hash",
+  "consent_",
+]) {
   assert(
     !wallRoute.includes(forbiddenField),
     `signature wall route must not expose ${forbiddenField}.`,
   );
 }
 assert(
-  !/from\s+["']@\/lib\/supabase["']/.test(wallRoute),
-  "signature wall route must not use the public anon Supabase client.",
+  !/["']@\/lib\/supabase["']/.test(wallRoute),
+  "signature wall route must not use the public anon Supabase client — this also catches dynamic import(\"@/lib/supabase\"), not just static `from` imports.",
+);
+assert(
+  /if\s*\(\s*IS_PRODUCTION\s*\)\s*return\s+missingSignatureServiceResponse\(\)/.test(
+    wallRoute,
+  ),
+  "signature wall route must fail closed in production when Supabase is unconfigured, not silently serve demo data — checking that both identifiers merely appear in the file (e.g. as unused imports) is not enough, the call must actually be gated by IS_PRODUCTION.",
 );
 assert(
   wallRoute.includes("createSupabaseServiceClient"),

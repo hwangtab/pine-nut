@@ -167,4 +167,40 @@ for (const required of [
   assert(responseSource.includes(required), `signatures api responses module must contain ${required}.`);
 }
 
+const wallModulePath = "src/lib/signatures/api/wall.ts";
+assert(existsSync(join(root, wallModulePath)), `${wallModulePath} must exist.`);
+
+const wallSource = read(wallModulePath);
+for (const required of [
+  "export interface WallEntry",
+  "export interface WallPage",
+  "export async function fetchSignatureWall",
+  "WALL_PAGE_SIZE",
+]) {
+  assert(wallSource.includes(required), `signatures api wall module must contain ${required}.`);
+}
+assert(
+  /name:\s*string;[\s\S]*regionTop:\s*string;[\s\S]*regionSub:\s*string;[\s\S]*createdAt:\s*string;/.test(
+    wallSource,
+  ),
+  "WallEntry must expose exactly name/regionTop/regionSub/createdAt — Task 11's SignatureWall consumes this shape verbatim.",
+);
+assert(
+  wallSource.includes("entries: WallEntry[]") && wallSource.includes("nextCursor: string | null"),
+  "WallPage must expose { entries: WallEntry[]; nextCursor: string | null }.",
+);
+
+const wallRoutePath = "src/app/api/signatures/wall/route.ts";
+assert(existsSync(join(root, wallRoutePath)), `${wallRoutePath} must exist.`);
+
+const wallRouteSource = read(wallRoutePath);
+assert(
+  wallRouteSource.includes("fetchSignatureWall"),
+  "signature wall route must delegate query logic to fetchSignatureWall — the route stays a thin orchestrator.",
+);
+assert(
+  !/\.from\(\s*["']signatures["']\s*\)/.test(wallRouteSource),
+  "signature wall route must not query the signatures table directly — that query logic belongs in wall.ts.",
+);
+
 console.log("Signatures API refactor checks passed.");

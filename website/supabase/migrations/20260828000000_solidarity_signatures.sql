@@ -28,8 +28,12 @@ CREATE UNIQUE INDEX idx_signatures_unique_email
   ON signatures (lower(btrim(email)))
   WHERE email IS NOT NULL AND btrim(email) <> '';
 
+-- (created_at DESC, id DESC): 명단 벽 커서 페이지네이션이 튜플 비교
+-- (created_at < C) OR (created_at = C AND id < I)로 동률을 깬다. id를 함께
+-- 인덱싱해야 동일 트랜잭션에서 일괄 INSERT된 행들(종이 서명 일괄 등록 등, 같은
+-- created_at을 갖는 행 다수)도 인덱스 스캔만으로 정렬·페이지 경계가 안정적이다.
 CREATE INDEX idx_signatures_wall
-  ON signatures (created_at DESC) WHERE name_public IS TRUE;
+  ON signatures (created_at DESC, id DESC) WHERE name_public IS TRUE;
 CREATE INDEX idx_signatures_region ON signatures (region_top);
 
 -- 참여 지역 수 집계를 DB로 내린다. supabase/config.toml의 max_rows(1000)에 걸려
