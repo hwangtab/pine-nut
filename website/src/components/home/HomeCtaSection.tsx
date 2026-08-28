@@ -3,20 +3,15 @@
 import { useCallback } from "react";
 import { Heart, PenLine, Share2 } from "lucide-react";
 import { EditableLink, EditableList, EditableText } from "@/components/editable";
-import HomeInlineSignatureForm from "@/components/home/HomeInlineSignatureForm";
 import { AnimatedCounter, FadeIn } from "@/components/home/HomeMotion";
 import { PostmarkStamp } from "@/components/visuals/ForestLetterMotifs";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 
 interface HomeCtaSectionProps {
   signatureCount: number | null;
-  onSignatureCountChange: (count: number) => void;
 }
 
-export default function HomeCtaSection({
-  signatureCount,
-  onSignatureCountChange,
-}: HomeCtaSectionProps) {
+export default function HomeCtaSection({ signatureCount }: HomeCtaSectionProps) {
   const { getContent } = useAdminEdit();
   const homeShareTitle = getContent("home.share.title") ?? "풍천리를 지켜주세요";
   const homeShareText =
@@ -25,12 +20,7 @@ export default function HomeCtaSection({
     getContent("home.share.copyAlert") ?? "링크가 복사되었습니다.";
 
   const handleShare = useCallback(async () => {
-    const shareData = {
-      title: homeShareTitle,
-      text: homeShareText,
-      url: window.location.href,
-    };
-
+    const shareData = { title: homeShareTitle, text: homeShareText, url: window.location.href };
     try {
       if (navigator.share) {
         await navigator.share(shareData);
@@ -57,7 +47,7 @@ export default function HomeCtaSection({
         />
         <EditableText
           contentKey="home.cta.subtitle"
-          defaultValue="당신의 작은 마음 하나가, 숲을 지키는 큰 힘이 됩니다"
+          defaultValue="당신의 이름 하나가 숲을 지키는 국민 연대서명에 힘을 더합니다"
           as="p"
           page="home"
           section="cta"
@@ -66,7 +56,7 @@ export default function HomeCtaSection({
       </FadeIn>
 
       {signatureCount !== null && (
-        <FadeIn className="mb-12 flex justify-center">
+        <FadeIn className="mb-8 flex justify-center">
           <div className="stamp-badge inline-block">
             <div className="stamp-badge__inner">
               <EditableText
@@ -93,26 +83,30 @@ export default function HomeCtaSection({
         </FadeIn>
       )}
 
-      <HomeInlineSignatureForm onSignatureCountChange={onSignatureCountChange} />
+      <FadeIn className="mb-12 flex justify-center">
+        <EditableLink
+          contentKey="home.cta.signatureLinkHref"
+          defaultHref="/petition"
+          page="home"
+          section="cta"
+          className="letter-btn letter-btn--primary min-h-[48px] px-8"
+        >
+          <EditableText
+            contentKey="home.cta.signatureLinkLabel"
+            defaultValue="국민 연대서명 하러 가기"
+            as="span"
+            page="home"
+            section="cta"
+          />
+        </EditableLink>
+      </FadeIn>
 
       <EditableList
         contentKey="home.cta.cards"
         defaultItems={[
-          {
-            title: "서명하기",
-            desc: "양수발전소 건설 반대 서명에 참여해주세요",
-            href: "/petition",
-          },
-          {
-            title: "후원하기",
-            desc: "주민들의 법률 비용과 활동을 후원해주세요",
-            href: "/donate",
-          },
-          {
-            title: "공유하기",
-            desc: "더 많은 사람들에게 풍천리의 이야기를 알려주세요",
-            href: "#share",
-          },
+          { title: "서명하기", desc: "양수발전소 건설 반대 서명에 참여해주세요", href: "/petition" },
+          { title: "후원하기", desc: "주민들의 법률 비용과 활동을 후원해주세요", href: "/donate" },
+          { title: "공유하기", desc: "더 많은 사람들에게 풍천리의 이야기를 알려주세요", href: "#share" },
         ]}
         page="home"
         section="cta"

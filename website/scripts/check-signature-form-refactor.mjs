@@ -34,13 +34,6 @@ const componentBundles = [
       read("src/components/petition/signature-form/usePetitionSignatureForm.ts"),
     ].join("\n"),
   },
-  {
-    label: "src/components/home/HomeInlineSignatureForm.tsx",
-    source: [
-      read("src/components/home/HomeInlineSignatureForm.tsx"),
-      read("src/components/home/inline-signature/useHomeInlineSignatureForm.ts"),
-    ].join("\n"),
-  },
 ];
 
 for (const { label, source } of componentBundles) {

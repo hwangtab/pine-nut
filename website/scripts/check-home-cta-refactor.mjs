@@ -15,42 +15,38 @@ function read(path) {
 }
 
 const inlineFormPath = "src/components/home/HomeInlineSignatureForm.tsx";
-assert(existsSync(join(root, inlineFormPath)), "Home inline signature form must be extracted.");
+assert(
+  !existsSync(join(root, inlineFormPath)),
+  "Home inline signature form must be removed — the petition flow now lives only at /petition.",
+);
+assert(
+  !existsSync(join(root, "src/components/home/inline-signature")),
+  "src/components/home/inline-signature must be removed along with the inline form.",
+);
 
 const sectionSource = read("src/components/home/HomeCtaSection.tsx");
-assert(
-  sectionSource.includes("HomeInlineSignatureForm"),
-  "HomeCtaSection must render the extracted HomeInlineSignatureForm.",
-);
 for (const banned of [
-  "inlineName",
-  "inlineEmail",
-  "inlineSubmitting",
-  "inlineSuccess",
-  "inlineError",
+  "HomeInlineSignatureForm",
+  "onSignatureCountChange",
+  "inline-signature",
   "validateSignatureForm",
   "submitSignatureForm",
-  "EditableValue",
-  "type FormEvent",
 ]) {
   assert(
     !sectionSource.includes(banned),
-    `HomeCtaSection must not keep inline signature form internals: found ${banned}.`,
+    `HomeCtaSection must not reference the removed inline form: found ${banned}.`,
   );
 }
 
-const formSource = [
-  read(inlineFormPath),
-  read("src/components/home/inline-signature/useHomeInlineSignatureForm.ts"),
-  read("src/components/home/inline-signature/HomeInlineSignatureEditControls.tsx"),
-].join("\n");
-for (const expected of [
-  "validateSignatureForm",
-  "submitSignatureForm",
-  "onSignatureCountChange",
-  "EditableValue",
-]) {
-  assert(formSource.includes(expected), `HomeInlineSignatureForm must include ${expected}.`);
-}
+assert(
+  /href=["']\/petition["']/.test(sectionSource) || sectionSource.includes('defaultHref="/petition"'),
+  "HomeCtaSection must link to /petition instead of embedding a signature form.",
+);
+
+const clientSource = read("src/components/home/HomeClient.tsx");
+assert(
+  !clientSource.includes("onSignatureCountChange"),
+  "HomeClient must not wire onSignatureCountChange into HomeCtaSection anymore.",
+);
 
 console.log("Home CTA refactor checks passed.");

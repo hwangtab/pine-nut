@@ -28,8 +28,7 @@ const HOME_SECTION_ORDER = [
 export default function HomeClient() {
   const { getContent, isEditMode } = useAdminEdit();
   const storyRef = useRef<HTMLDivElement>(null);
-  const { signatureCount, setSignatureCount, toastName, toastVisible } =
-    useHomeSignatureActivity();
+  const { signatureCount, toastName, toastVisible } = useHomeSignatureActivity();
   const toastPrefix = getContent("home.toast.prefix") ?? "방금";
   const toastSuffix = getContent("home.toast.suffix") ?? "님이 서명했습니다";
 
@@ -96,10 +95,7 @@ export default function HomeClient() {
         section="cta"
         defaultClassName="py-24 md:py-36 px-6 bg-[var(--color-bg-moss)]"
       >
-        <HomeCtaSection
-          signatureCount={signatureCount}
-          onSignatureCountChange={setSignatureCount}
-        />
+        <HomeCtaSection signatureCount={signatureCount} />
       </ManagedSection>
 
       <ManagedSection

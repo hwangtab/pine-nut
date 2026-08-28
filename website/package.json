@@ -27,7 +27,6 @@
     "footer:refactor:check": "node scripts/check-footer-refactor.mjs",
     "gallery:refactor:check": "node scripts/check-gallery-refactor.mjs",
     "home-cta:refactor:check": "node scripts/check-home-cta-refactor.mjs",
-    "home-inline-signature:refactor:check": "node scripts/check-home-inline-signature-form-refactor.mjs",
     "home-page:refactor:check": "node scripts/check-home-page-refactor.mjs",
     "imagehosts:check": "node scripts/check-image-host-config.mjs",
     "media-library:refactor:check": "node scripts/check-media-library-refactor.mjs",
