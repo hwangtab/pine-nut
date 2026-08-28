@@ -38,9 +38,20 @@ for (const banned of [
   );
 }
 
+// 부분문자열 검사만으로는 주석·죽은 변수에 "/petition" 텍스트만 남아도 통과한다.
+// 실제 <a>/<EditableLink> 태그 블록 안에서 href를 찾아야 한다 — 주석은 먼저 제거한다.
+const sourceWithoutComments = sectionSource
+  .replace(/\/\*[\s\S]*?\*\//g, "")
+  .replace(/\/\/.*$/gm, "");
+const linkTags = sourceWithoutComments.match(/<(?:a|EditableLink)\b[^>]*>/g) ?? [];
+const hasWorkingPetitionLink = linkTags.some(
+  (tag) =>
+    /(?:^|\s)href=["']\/petition["']/.test(tag) ||
+    /(?:^|\s)defaultHref=["']\/petition["']/.test(tag),
+);
 assert(
-  /href=["']\/petition["']/.test(sectionSource) || sectionSource.includes('defaultHref="/petition"'),
-  "HomeCtaSection must link to /petition instead of embedding a signature form.",
+  hasWorkingPetitionLink,
+  "HomeCtaSection must render a working <a>/<EditableLink> tag whose href/defaultHref is literally \"/petition\" — a comment or dead reference does not count.",
 );
 
 const clientSource = read("src/components/home/HomeClient.tsx");
