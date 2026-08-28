@@ -41,6 +41,7 @@
     "petition-signature-form:refactor:check": "node scripts/check-petition-signature-form-hook-refactor.mjs",
     "press-doc:refactor:check": "node scripts/check-press-doc-refactor.mjs",
     "regions:check": "node scripts/check-regions.mjs",
+    "region-select:check": "node scripts/check-region-select.mjs",
     "security:check": "node scripts/check-signature-security.mjs",
     "signature-form:refactor:check": "node scripts/check-signature-form-refactor.mjs",
     "share-buttons:refactor:check": "node scripts/check-share-buttons-refactor.mjs",
