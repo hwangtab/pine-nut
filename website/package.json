@@ -36,6 +36,7 @@
     "notfound:check": "node scripts/check-notfound-semantics.mjs",
     "page-content-actions:refactor:check": "node scripts/check-page-content-actions-refactor.mjs",
     "petition:refactor:check": "node scripts/check-petition-refactor.mjs",
+    "petition-progress:check": "node scripts/check-petition-progress.mjs",
     "petition-copy:refactor:check": "node scripts/check-petition-copy-refactor.mjs",
     "petition-form-ui:refactor:check": "node scripts/check-petition-form-ui-refactor.mjs",
     "petition-signature-form:refactor:check": "node scripts/check-petition-signature-form-hook-refactor.mjs",
