@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -117,6 +117,65 @@ const envExample = readProjectFile(".env.example");
 assert(
   envExample.includes("SUPABASE_SERVICE_ROLE_KEY="),
   ".env.example must document SUPABASE_SERVICE_ROLE_KEY.",
+);
+
+const solidarityMigrationPath =
+  "supabase/migrations/20260828_solidarity_signatures.sql";
+assert(
+  existsSync(join(root, solidarityMigrationPath)),
+  `${solidarityMigrationPath} must exist.`,
+);
+
+const solidarityMigration = readProjectFile(solidarityMigrationPath);
+const normalizedSolidaritySql = solidarityMigration
+  .toLowerCase()
+  .replace(/\s+/g, " ");
+
+for (const requiredColumn of [
+  "add column region_top",
+  "add column region_sub",
+  "add column affiliation",
+  "add column name_public",
+]) {
+  assert(
+    normalizedSolidaritySql.includes(requiredColumn),
+    `solidarity migration must ${requiredColumn}.`,
+  );
+}
+
+assert(
+  normalizedSolidaritySql.includes("alter column email drop not null"),
+  "solidarity migration must make email optional.",
+);
+assert(
+  normalizedSolidaritySql.includes("truncate signatures restart identity"),
+  "solidarity migration must truncate existing signature data after backup.",
+);
+assert(
+  /add constraint signatures_region_top_check check \(region_top in \(/.test(
+    normalizedSolidaritySql,
+  ),
+  "solidarity migration must constrain region_top to the known province list.",
+);
+assert(
+  normalizedSolidaritySql.includes("'해외'"),
+  "solidarity migration's region_top CHECK must include '해외'.",
+);
+assert(
+  normalizedSolidaritySql.includes("add constraint signatures_affiliation_len"),
+  "solidarity migration must cap affiliation length.",
+);
+assert(
+  normalizedSolidaritySql.includes("create unique index idx_signatures_unique_email"),
+  "solidarity migration must keep a partial unique index on email.",
+);
+assert(
+  normalizedSolidaritySql.includes("create index idx_signatures_wall"),
+  "solidarity migration must index the public signature wall query.",
+);
+assert(
+  normalizedSolidaritySql.includes("create index idx_signatures_region"),
+  "solidarity migration must index region_top for aggregate queries.",
 );
 
 console.log("Signature security checks passed.");
