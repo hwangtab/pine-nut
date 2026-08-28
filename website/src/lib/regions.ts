@@ -1,5 +1,8 @@
 export const OVERSEAS_REGION = "해외";
 
+/** '해외' 선택 시 자유 입력 sub의 최대 길이. */
+export const REGION_SUB_MAX_LENGTH = 40;
+
 export interface RegionOption {
   top: string;
   subs: string[];
@@ -142,7 +145,7 @@ export function isValidRegionPair(top: string, sub: string): boolean {
   const trimmedSub = sub.trim();
 
   if (top === OVERSEAS_REGION) {
-    return trimmedSub.length >= 1 && trimmedSub.length <= 40;
+    return trimmedSub.length >= 1 && trimmedSub.length <= REGION_SUB_MAX_LENGTH;
   }
 
   if (region.subs.length === 0) {

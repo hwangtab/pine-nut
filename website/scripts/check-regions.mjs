@@ -21,6 +21,7 @@ const source = read(regionsPath);
 
 for (const required of [
   'export const OVERSEAS_REGION = "해외"',
+  "export const REGION_SUB_MAX_LENGTH = 40",
   "export interface RegionOption",
   "export const REGIONS: RegionOption[]",
   "export const REGION_TOPS: string[]",
@@ -56,6 +57,11 @@ assert(
 assert(
   /top:\s*"세종특별자치시"[\s\S]{0,60}subs:\s*\[\s*\]/.test(source),
   '"세종특별자치시" entry must have an empty subs array (시·군·구 없음).',
+);
+
+assert(
+  !/trimmedSub\.length\s*<=\s*40/.test(source),
+  "isValidRegionPair must use REGION_SUB_MAX_LENGTH instead of a hardcoded 40.",
 );
 
 const packageJson = read("package.json");
