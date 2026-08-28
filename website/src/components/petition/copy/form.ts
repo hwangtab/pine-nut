@@ -24,6 +24,10 @@ export const koreanPetitionFormCopy: PetitionSignatureFormCopy = {
       contentKey: "petition.form.affiliationLabel",
       defaultValue: "소속 단체 또는 모임",
     },
+    affiliationOptional: {
+      contentKey: "petition.form.affiliationOptional",
+      defaultValue: "(선택)",
+    },
     namePublicLabel: {
       contentKey: "petition.form.namePublicLabel",
       defaultValue:

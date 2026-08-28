@@ -74,6 +74,12 @@ export default function PetitionFormFields({
   const emailDescribedBy = [ids.emailNoteId, errors.email ? `${ids.emailId}-error` : ""]
     .filter(Boolean)
     .join(" ");
+  const messageDescribedBy = [
+    ids.messageCountId,
+    errors.message ? `${ids.messageId}-error` : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
   const namePublicDescribedBy = [
     ids.namePublicNoteId,
     errors.namePublic ? ids.namePublicErrorId : "",
@@ -150,7 +156,12 @@ export default function PetitionFormFields({
 
       <div>
         <label htmlFor={ids.affiliationId} className={LABEL_CLASS}>
-          <PetitionFormText copy={copy} text={copy.labels.affiliationLabel} />
+          <PetitionFormText copy={copy} text={copy.labels.affiliationLabel} />{" "}
+          <PetitionFormText
+            copy={copy}
+            text={copy.labels.affiliationOptional}
+            className="font-normal text-[var(--color-text-muted)]"
+          />
         </label>
         <input
           id={ids.affiliationId}
@@ -227,7 +238,7 @@ export default function PetitionFormFields({
           rows={4}
           placeholder={placeholders.formMessagePlaceholder}
           aria-invalid={!!errors.message}
-          aria-describedby={ids.messageCountId}
+          aria-describedby={messageDescribedBy}
           className="paper-field focus:outline-none focus:ring-2 focus:ring-[var(--color-warm)]/30 resize-none transition"
         />
         <p id={ids.messageCountId} className="mt-1 text-right text-sm text-[var(--color-text-muted)]">

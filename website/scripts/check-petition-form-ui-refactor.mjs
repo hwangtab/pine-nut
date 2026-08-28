@@ -163,8 +163,38 @@ function renderAnchor(key) {
   return { anchor, index };
 }
 
+// 파일 상단의 `const X = "…";` 클래스 상수를 값으로 해석해둔다. className이
+// 상수 참조({NOTE_CLASS})면 정규식이 실제 클래스 문자열을 못 보기 때문에,
+// 상수 하나만 "sr-only"로 바꿔도 법적 고지 두 개가 동시에 화면에서 사라지면서
+// 가드는 통과해버린다. 그 우회를 막으려면 값을 따라가야 한다.
+const classConstants = new Map(
+  [...fieldsSource.matchAll(/^const (\w+) =\s*(?:\r?\n\s*)?"([^"]*)";/gm)].map((match) => [
+    match[1],
+    match[2],
+  ]),
+);
+
+const INVISIBLE_CLASS = /\bsr-only\b|\bhidden\b|\binvisible\b|\bopacity-0\b|\bw-0\b|\bh-0\b/;
+
+function resolveClassName(tag, what) {
+  const literal = tag.match(/className="([^"]*)"/);
+  if (literal) return literal[1];
+
+  const reference = tag.match(/className=\{(\w+)\}/);
+  assert(
+    reference !== null,
+    `${what}'s className must be a string literal or a single top-level class constant so this guard can read its real value. Found: ${tag}`,
+  );
+  const resolved = classConstants.get(reference[1]);
+  assert(
+    resolved !== undefined,
+    `${what} uses className={${reference[1]}} but no top-level \`const ${reference[1]} = "…";\` exists in PetitionFormFields.tsx — this guard must be able to resolve it to a real class string.`,
+  );
+  return resolved;
+}
+
 // (4a) 고지 2종은 "상시 노출되는 문단"이어야 한다 — 사라지는 placeholder도,
-// 조건부도, sr-only도 고지가 아니다.
+// 조건부(&&·삼항)도, sr-only도 고지가 아니다.
 for (const [label, key] of [
   ["the public-list-wall disclosure", "namePublicNote"],
   ["the email purpose notice", "emailNote"],
@@ -188,14 +218,27 @@ for (const [label, key] of [
     fieldsSource.indexOf(">", paragraphStart) + 1,
   );
   assert(
-    !/sr-only|\bhidden\b|aria-hidden/.test(paragraphTag),
+    !/aria-hidden|(?:^|\s)hidden(?:\s|=|>)/.test(paragraphTag),
     `${label} must be visible on screen — a hidden notice is not a notice. Found: ${paragraphTag}`,
   );
 
-  const preceding = fieldsSource.slice(Math.max(0, paragraphStart - 200), paragraphStart);
+  const paragraphClass = resolveClassName(paragraphTag, label);
   assert(
-    !/&&\s*\(?\s*$/.test(preceding),
-    `${label} must be rendered unconditionally, not behind a && guard.`,
+    !INVISIBLE_CLASS.test(paragraphClass),
+    `${label} must be visible on screen — a hidden notice is not a notice. Its <p> resolves to className "${paragraphClass}".`,
+  );
+
+  // 조건부 렌더 차단. `{cond && (<p …`뿐 아니라 `{cond ? (<p …`,
+  // `{cond ? null : (<p …` 같은 삼항도 거부한다 — 어느 쪽이든 고지가 어떤
+  // 상태에서는 화면에 없다는 뜻이다.
+  const preceding = fieldsSource
+    .slice(Math.max(0, paragraphStart - 300), paragraphStart)
+    .replace(/\s+$/, "")
+    .replace(/\($/, "")
+    .replace(/\s+$/, "");
+  assert(
+    !/(?:&&|\|\||\?|:)$/.test(preceding),
+    `${label} must be rendered unconditionally — found a conditional (&&, ||, or a ternary) immediately before it.`,
   );
 }
 
@@ -203,6 +246,7 @@ for (const [label, key] of [
 for (const [label, key] of [
   ["the name-disclosure question", "namePublicLabel"],
   ["the email optional marker", "emailOptional"],
+  ["the affiliation optional marker", "affiliationOptional"],
   ["the message optional marker", "messageOptional"],
 ]) {
   const { index } = renderAnchor(key);
@@ -247,6 +291,52 @@ assert(
     fieldsSource.includes("checked={namePublic === false}"),
   "the radios must reflect namePublic's tri-state (null = not answered yet), not coerce it.",
 );
+
+// (5b) 오류 문단의 id는 반드시 어떤 입력의 aria-describedby가 실제로 가리켜야
+// 한다. 그러지 않으면 화면에는 빨간 글씨가 뜨지만 스크린리더 사용자에게는 그
+// 필드와 오류가 연결되지 않는 dangling id가 된다. 파일 어딘가에 그 id 문자열이
+// 있는지만 보면 안 된다 — 쓰이지 않는 헬퍼 변수 안에 남아 있어도 통과해버리므로,
+// aria-describedby가 참조하는 식(識)만 모아 그 안에서 찾는다.
+function braceExpressionAt(source, openIndex) {
+  let depth = 0;
+  for (let cursor = openIndex; cursor < source.length; cursor += 1) {
+    if (source[cursor] === "{") depth += 1;
+    if (source[cursor] === "}") {
+      depth -= 1;
+      if (depth === 0) return source.slice(openIndex + 1, cursor);
+    }
+  }
+  return null;
+}
+
+let describedByPool = "";
+for (const match of fieldsSource.matchAll(/aria-describedby=\{/g)) {
+  const expression = braceExpressionAt(fieldsSource, match.index + match[0].length - 1);
+  assert(expression !== null, "could not parse an aria-describedby expression.");
+  describedByPool += `\n${expression}`;
+
+  // 단순 식별자면 그 변수의 선언부까지 따라가 펼친다.
+  const identifier = expression.trim();
+  if (/^\w+$/.test(identifier)) {
+    const declaration = fieldsSource.match(
+      new RegExp(`const ${identifier} =[\\s\\S]*?;\\n`),
+    );
+    if (declaration) describedByPool += `\n${declaration[0]}`;
+  }
+}
+
+for (const match of fieldsSource.matchAll(/<p id=\{/g)) {
+  const openIndex = match.index + match[0].length - 1;
+  const tag = fieldsSource.slice(match.index, fieldsSource.indexOf(">", openIndex) + 1);
+  if (!tag.includes('role="alert"')) continue;
+
+  const idExpression = braceExpressionAt(fieldsSource, openIndex);
+  assert(idExpression !== null, `could not parse the id expression of ${tag}.`);
+  assert(
+    describedByPool.includes(idExpression),
+    `the error message id ${idExpression} is never referenced by a live aria-describedby — the field and its error would not be linked for screen reader users.`,
+  );
+}
 
 // (6) 모든 검증 오류 키가 화면 어딘가에 렌더돼야 한다. 키 목록은 form.ts에서
 // 직접 뽑는다 — 나중에 새 오류 키가 추가되면 여기가 먼저 실패한다.
