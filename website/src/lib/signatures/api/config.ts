@@ -2,6 +2,11 @@ import { REGION_SUB_MAX_LENGTH } from "@/lib/regions";
 
 export { REGION_SUB_MAX_LENGTH };
 
+// 서명 이메일(선택 필드) 형식 검사. 서버 검증(api/validation.ts)과 클라이언트
+// 검증(lib/signatures/form.ts)이 각자 로컬 정규식을 복제해두면 한쪽만 고쳐질 때
+// 조용히 어긋난다 — 이 상수 하나로 단일화한다.
+export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 export const RATE_LIMIT_MAX = 5;
 export const MESSAGE_MAX_LENGTH = 500;

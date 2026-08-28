@@ -1,6 +1,7 @@
 import { isValidRegionPair } from "@/lib/regions";
 import {
   AFFILIATION_MAX_LENGTH,
+  EMAIL_PATTERN,
   MESSAGE_MAX_LENGTH,
   NAME_MAX_LENGTH,
 } from "@/lib/signatures/api/config";
@@ -31,8 +32,6 @@ export interface SignatureFormErrors {
   agreePrivacy?: string;
   agreeAge?: string;
 }
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function validateSignatureForm(values: SignatureFormValues): SignatureFormErrors {
   const errors: SignatureFormErrors = {};

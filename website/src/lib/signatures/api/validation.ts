@@ -1,13 +1,12 @@
 import { isValidRegionPair } from "@/lib/regions";
 import {
   AFFILIATION_MAX_LENGTH,
+  EMAIL_PATTERN,
   INVALID_NAME_PUBLIC_MESSAGE,
   INVALID_REGION_MESSAGE,
   MESSAGE_MAX_LENGTH,
   NAME_MAX_LENGTH,
 } from "./config";
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export interface SignatureSubmissionBody {
   name?: unknown;

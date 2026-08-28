@@ -15,6 +15,16 @@ import type {
   SignatureFormErrorKey,
 } from "./types";
 
+// Error keys `PetitionFormFields`/`PetitionConsentFields` actually render
+// today. Kept as a named set (not inferred) so a future field-level UI
+// addition in Task 8 is a one-line change here, not a silent behavior shift.
+const RENDERED_ERROR_KEYS = new Set<keyof SignatureFormErrors>([
+  "name",
+  "email",
+  "agreePrivacy",
+  "agreeAge",
+]);
+
 export function usePetitionSignatureForm({
   copy,
   onSubmitted,
@@ -77,6 +87,24 @@ export function usePetitionSignatureForm({
   const validate = useCallback((): boolean => {
     const result = validateSignatureForm(buildValues());
     setErrors(result);
+
+    // `PetitionFormFields`/`PetitionConsentFields` only render errors.name,
+    // errors.email, errors.agreePrivacy, errors.agreeAge — the region/
+    // namePublic/message/affiliation keys have no field-level UI yet (Task 8
+    // wires that up). Until then, a rejection on one of those keys would
+    // otherwise fail completely silently: the submit button would just stop
+    // doing anything with no visible error. Surface those specific messages
+    // through the shared submitError banner instead, so a validation failure
+    // is never silent even before Task 8 lands.
+    const unrenderedKeys = (Object.keys(result) as (keyof SignatureFormErrors)[]).filter(
+      (key) => !RENDERED_ERROR_KEYS.has(key),
+    );
+    setSubmitError(
+      unrenderedKeys.length > 0
+        ? unrenderedKeys.map((key) => result[key]).join(" ")
+        : "",
+    );
+
     return Object.keys(result).length === 0;
   }, [buildValues]);
 
@@ -130,15 +158,16 @@ export function usePetitionSignatureForm({
     setSignatureStartedTracked(true);
   }, [signatureStartedTracked]);
 
+  // copy.errors.name/emailRequired/emailInvalid/privacy/age used to be
+  // editable here because the old validateSignatureForm read those messages
+  // from copy at validation time. It no longer does — form.ts now owns fixed
+  // Korean copy for those errors — so editing them here would have zero
+  // effect. Only copy.errors.submit remains meaningful (still read above as
+  // formSubmitFallbackError).
   const editFields = [
     copy.placeholders.name,
     copy.placeholders.email,
     copy.placeholders.message,
-    copy.errors.name,
-    copy.errors.emailRequired,
-    copy.errors.emailInvalid,
-    copy.errors.privacy,
-    copy.errors.age,
     copy.errors.submit,
   ];
 
