@@ -22,39 +22,41 @@ for (const exportName of [
   "validateSignatureForm",
   "submitSignatureForm",
   "SignatureFormErrors",
+  "SignatureFormValues",
 ]) {
   assert(sharedSource.includes(exportName), `signature form helpers must export ${exportName}.`);
 }
+assert(
+  sharedSource.includes("regionTop"),
+  "signature form helpers must validate regionTop for the solidarity petition.",
+);
+assert(
+  sharedSource.includes("namePublic"),
+  "signature form helpers must validate namePublic for the solidarity petition.",
+);
 
-const componentBundles = [
-  {
-    label: "src/components/petition/PetitionSignatureForm.tsx",
-    source: [
-      read("src/components/petition/PetitionSignatureForm.tsx"),
-      read("src/components/petition/signature-form/usePetitionSignatureForm.ts"),
-    ].join("\n"),
-  },
-];
+const petitionSource = [
+  read("src/components/petition/PetitionSignatureForm.tsx"),
+  read("src/components/petition/signature-form/usePetitionSignatureForm.ts"),
+].join("\n");
 
-for (const { label, source } of componentBundles) {
-  assert(
-    source.includes("@/lib/signatures/form"),
-    `${label} must use shared signature form helpers.`,
-  );
-  assert(
-    source.includes("validateSignatureForm"),
-    `${label} must validate through shared signature form helpers.`,
-  );
-  assert(
-    source.includes("submitSignatureForm"),
-    `${label} must submit through shared signature form helpers.`,
-  );
-  assert(
-    !source.includes("@/lib/signatures/client"),
-    `${label} must not import signature client primitives directly.`,
-  );
-  assert(!source.includes("isValidEmail"), `${label} must not duplicate email validation.`);
-  assert(!source.includes("submitSignature("), `${label} must not call submitSignature directly.`);
-}
+assert(
+  petitionSource.includes("@/lib/signatures/form"),
+  "PetitionSignatureForm must use shared signature form helpers.",
+);
+assert(
+  petitionSource.includes("validateSignatureForm"),
+  "PetitionSignatureForm must validate through shared signature form helpers.",
+);
+assert(
+  petitionSource.includes("submitSignatureForm"),
+  "PetitionSignatureForm must submit through shared signature form helpers.",
+);
+assert(
+  !petitionSource.includes("@/lib/signatures/client"),
+  "PetitionSignatureForm must not import signature client primitives directly.",
+);
+assert(!petitionSource.includes("isValidEmail"), "PetitionSignatureForm must not duplicate email validation.");
+assert(!petitionSource.includes("submitSignature("), "PetitionSignatureForm must not call submitSignature directly.");
 
 console.log("Signature form refactor checks passed.");

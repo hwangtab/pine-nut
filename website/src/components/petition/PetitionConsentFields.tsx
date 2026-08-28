@@ -2,10 +2,7 @@
 
 import PetitionFormText from "@/components/petition/PetitionFormText";
 import type { PetitionSignatureFormCopy } from "@/components/petition/petition-copy";
-import type {
-  SignatureFormErrorKey,
-  SignatureFormErrors,
-} from "@/lib/signatures/form";
+import type { SignatureFormErrors } from "@/lib/signatures/form";
 
 interface PetitionConsentFieldsProps {
   copy: PetitionSignatureFormCopy;
@@ -18,7 +15,7 @@ interface PetitionConsentFieldsProps {
   onPrivacyChange: (checked: boolean) => void;
   onAgeChange: (checked: boolean) => void;
   onTogglePrivacy: () => void;
-  clearError: (key: SignatureFormErrorKey) => void;
+  clearError: (key: keyof SignatureFormErrors) => void;
 }
 
 export default function PetitionConsentFields({

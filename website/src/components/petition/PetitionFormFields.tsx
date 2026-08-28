@@ -2,10 +2,7 @@
 
 import PetitionFormText from "@/components/petition/PetitionFormText";
 import type { PetitionSignatureFormCopy } from "@/components/petition/petition-copy";
-import type {
-  SignatureFormErrorKey,
-  SignatureFormErrors,
-} from "@/lib/signatures/form";
+import type { SignatureFormErrors } from "@/lib/signatures/form";
 
 interface PetitionFormFieldsProps {
   copy: PetitionSignatureFormCopy;
@@ -23,7 +20,7 @@ interface PetitionFormFieldsProps {
   onNameChange: (value: string) => void;
   onEmailChange: (value: string) => void;
   onMessageChange: (value: string) => void;
-  clearError: (key: SignatureFormErrorKey) => void;
+  clearError: (key: keyof SignatureFormErrors) => void;
 }
 
 export default function PetitionFormFields({

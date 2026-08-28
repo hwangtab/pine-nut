@@ -6,12 +6,13 @@ import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 import {
   submitSignatureForm,
   validateSignatureForm,
-  type SignatureFormErrorKey,
   type SignatureFormErrors,
+  type SignatureFormValues,
 } from "@/lib/signatures/form";
 import type {
   PetitionSignatureFormProps,
   PetitionSignatureFormState,
+  SignatureFormErrorKey,
 } from "./types";
 
 export function usePetitionSignatureForm({
@@ -50,45 +51,34 @@ export function usePetitionSignatureForm({
       copy.placeholders.message.defaultValue,
   };
 
-  const formNameError =
-    getContent(copy.errors.name.contentKey) ?? copy.errors.name.defaultValue;
-  const formEmailRequiredError =
-    getContent(copy.errors.emailRequired.contentKey) ??
-    copy.errors.emailRequired.defaultValue;
-  const formEmailInvalidError =
-    getContent(copy.errors.emailInvalid.contentKey) ?? copy.errors.emailInvalid.defaultValue;
-  const formPrivacyError =
-    getContent(copy.errors.privacy.contentKey) ?? copy.errors.privacy.defaultValue;
-  const formAgeError =
-    getContent(copy.errors.age.contentKey) ?? copy.errors.age.defaultValue;
   const formSubmitFallbackError =
     getContent(copy.errors.submit.contentKey) ?? copy.errors.submit.defaultValue;
 
-  const validate = useCallback((): boolean => {
-    const result = validateSignatureForm(
-      { name, email, agreePrivacy, agreeAge },
-      {
-        name: formNameError,
-        emailRequired: formEmailRequiredError,
-        emailInvalid: formEmailInvalidError,
-        privacy: formPrivacyError,
-        age: formAgeError,
-      },
-    );
+  // NOTE(Task 5 compile-keeping shim): regionTop/regionSub/affiliation/namePublic
+  // have no input UI yet (that's Task 8's job) — until then they're fixed at
+  // values that `validateSignatureForm` always rejects (empty region, null
+  // namePublic), so the form cannot actually succeed. This keeps the 7-field
+  // contract compiling without guessing at Task 8's field wiring.
+  const buildValues = useCallback(
+    (): SignatureFormValues => ({
+      name,
+      email,
+      message,
+      regionTop: "",
+      regionSub: "",
+      affiliation: "",
+      namePublic: null,
+      agreePrivacy,
+      agreeAge,
+    }),
+    [agreeAge, agreePrivacy, email, message, name],
+  );
 
-    setErrors(result.errors);
-    return result.valid;
-  }, [
-    agreeAge,
-    agreePrivacy,
-    email,
-    formAgeError,
-    formEmailInvalidError,
-    formEmailRequiredError,
-    formNameError,
-    formPrivacyError,
-    name,
-  ]);
+  const validate = useCallback((): boolean => {
+    const result = validateSignatureForm(buildValues());
+    setErrors(result);
+    return Object.keys(result).length === 0;
+  }, [buildValues]);
 
   const clearError = useCallback((key: SignatureFormErrorKey) => {
     setErrors((current) => {
@@ -109,15 +99,20 @@ export function usePetitionSignatureForm({
       setSubmitError("");
 
       try {
-        const result = await submitSignatureForm({
-          name,
-          email,
-          message,
-          agreePrivacy,
-          agreeAge,
-        });
+        const result = await submitSignatureForm(buildValues());
 
-        onSubmitted({ name: result.name, count: result.count });
+        if (!result.ok) {
+          setSubmitError(result.error || formSubmitFallbackError);
+          return;
+        }
+
+        // NOTE(Task 5 compile-keeping shim): the POST response no longer
+        // carries a fresh count (contract shrank to `{ok:true}`). `count: 0`
+        // is a placeholder — `onRefreshSignatures()` below re-fetches the
+        // real summary immediately after, so any UI reading this value sees
+        // it overwritten within one round trip. Task 8/12 owns wiring this
+        // properly (e.g. dropping `count` from the callback entirely).
+        onSubmitted({ name, count: 0 });
         events.signatureComplete();
         onRefreshSignatures();
       } catch (err) {
@@ -126,17 +121,7 @@ export function usePetitionSignatureForm({
         setSubmitting(false);
       }
     },
-    [
-      agreeAge,
-      agreePrivacy,
-      email,
-      formSubmitFallbackError,
-      message,
-      name,
-      onRefreshSignatures,
-      onSubmitted,
-      validate,
-    ],
+    [buildValues, formSubmitFallbackError, name, onRefreshSignatures, onSubmitted, validate],
   );
 
   const handleFocusCapture = useCallback(() => {

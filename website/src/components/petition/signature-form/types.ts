@@ -3,10 +3,9 @@ import type {
   PetitionEditableValueCopy,
   PetitionSignatureFormCopy,
 } from "@/components/petition/petition-copy";
-import type {
-  SignatureFormErrorKey,
-  SignatureFormErrors,
-} from "@/lib/signatures/form";
+import type { SignatureFormErrors } from "@/lib/signatures/form";
+
+export type SignatureFormErrorKey = keyof SignatureFormErrors;
 
 export interface PetitionSignatureFormProps {
   formRef: RefObject<HTMLFormElement | null>;

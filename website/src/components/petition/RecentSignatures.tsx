@@ -3,7 +3,17 @@
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { EditableText } from "@/components/editable";
-import type { PublicSignature } from "@/lib/signatures/client";
+
+// NOTE(Task 5 compile-keeping shim): mirrors the `PublicSignature` shape that
+// used to live in `@/lib/signatures/client` before Task 3/4 moved recent-
+// signature listing to `/api/signatures/wall`. Kept local so this component
+// still compiles; replacing it with the wall API's `WallEntry` is Task 12's
+// job.
+interface RecentSignatureEntry {
+  name: string;
+  message?: string;
+  created_at: string;
+}
 
 function formatSignatureDate(dateStr: string, locale: string) {
   try {
@@ -18,7 +28,7 @@ function formatSignatureDate(dateStr: string, locale: string) {
 }
 
 interface RecentSignaturesProps {
-  signatures: PublicSignature[];
+  signatures: RecentSignatureEntry[];
   loading: boolean;
   ariaLabel?: string;
   page?: string;

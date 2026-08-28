@@ -1,19 +1,26 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  fetchSignatureSummary,
-  type PublicSignature,
-} from "@/lib/signatures/client";
+import { fetchSignatureSummary } from "@/lib/signatures/client";
 
 const MAX_TOASTS = 5;
 const INITIAL_DELAY_MS = 5000;
 const TOAST_INTERVAL_MS = 8000;
 const TOAST_DISPLAY_MS = 4000;
 
+// NOTE(Task 5 compile-keeping shim): mirrors the `PublicSignature` shape that
+// used to live in `@/lib/signatures/client` before Task 3/4 moved recent-
+// signature listing to `/api/signatures/wall`. `GET /api/signatures` no
+// longer returns a `signatures[]` list, so `recentSignatures` below is never
+// populated and the social-proof toast is silently inert until a later task
+// wires this hook onto `fetchSignatureWall`.
+interface LegacyRecentSignature {
+  name: string;
+}
+
 export function useHomeSignatureActivity() {
   const [signatureCount, setSignatureCount] = useState<number | null>(null);
-  const [recentSignatures, setRecentSignatures] = useState<PublicSignature[]>([]);
+  const [recentSignatures] = useState<LegacyRecentSignature[]>([]);
   const [toastName, setToastName] = useState<string | null>(null);
   const [toastVisible, setToastVisible] = useState(false);
   const toastCountRef = useRef(0);
@@ -22,7 +29,6 @@ export function useHomeSignatureActivity() {
     fetchSignatureSummary()
       .then((data) => {
         setSignatureCount(data.count);
-        if (data.signatures.length > 0) setRecentSignatures(data.signatures);
       })
       .catch(() => {
         /* graceful degradation: hide signature count and social proof */
