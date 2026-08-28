@@ -18,19 +18,15 @@ export interface SignaturePayload {
 
 const NETWORK_ERROR_MESSAGE = "네트워크 연결을 확인해주세요.";
 
-// 서버가 4xx/5xx에 실어 보내는 `error` 문구 중, 시민에게 그대로 보여줘도 되는
-// 상태 코드만 화이트리스트로 신뢰한다(409 중복 서명, 429 요청 과다, 503 서비스
-// 점검 — 전부 api/responses.ts·api/store.ts가 한국어로 작성해둔 문구다).
-// 그 외(400 JSON 파싱 실패, 500 등)는 "Failed to submit signature" 같은 서버
-// 로그·개발자용 영어 문구가 그대로 노출될 수 있어 한국어 폴백을 쓴다. 서버 쪽
-// 상수 자체는 로그·다른 가드가 이름을 참조하므로 여기서 건드리지 않는다.
-const TRUSTED_ERROR_STATUS = new Set([409, 429, 503]);
-
+// 서버 응답 바디의 `error` 필드는 항상 신뢰한다 — api/config.ts의 사용자
+// 노출 상수는 전부 한국어다(가드 signature-form:refactor:check가 단언한다).
+// 바디가 없거나 파싱 실패·`error` 필드 부재일 때만 아래 fallback을 쓴다.
+// (이전 리비전에서 상태 코드 화이트리스트로 400/500을 걸러 폴백만 쓰게
+// 했었는데, 그러면 서버가 이미 한국어로 만들어둔 구체적 문구
+// — "이름을 입력해주세요.", "거주 지역을 선택해주세요." 등 — 까지 전부
+// 일반 폴백 문구에 덮여 사라졌다. 진짜 문제는 상태 코드가 아니라 상수 값이
+// 영어였다는 것이었고, 그건 api/config.ts에서 고쳤다.)
 async function readApiErrorMessage(response: Response, fallback: string): Promise<string> {
-  if (!TRUSTED_ERROR_STATUS.has(response.status)) {
-    return fallback;
-  }
-
   const data = await response.json().catch(() => null);
   return data && typeof data === "object" && "error" in data && typeof data.error === "string"
     ? data.error
@@ -56,7 +52,8 @@ export async function submitSignature(
     }
 
     return { ok: true };
-  } catch {
+  } catch (err) {
+    console.error("submitSignature: network request failed", err);
     return { ok: false, error: NETWORK_ERROR_MESSAGE };
   }
 }

@@ -70,6 +70,32 @@ assert(
   "signature form helpers must only validate email format when a value is present — email is optional and must not be required.",
 );
 
+// (4) client.ts's readApiErrorMessage() trusts the server's `error` body
+// field unconditionally (see client.ts for why: filtering by status code
+// briefly replaced this and silently swallowed real Korean validation
+// messages like "이름을 입력해주세요."). That only stays safe as long as
+// every *_MESSAGE constant api/config.ts hands to a response body is
+// actually Korean — an English fallback (as INVALID_JSON_MESSAGE/
+// FETCH_SIGNATURES_ERROR_MESSAGE/SUBMIT_SIGNATURE_ERROR_MESSAGE briefly
+// were) would flow straight through to the signature form's error banner.
+// Assert every `*_MESSAGE` constant's literal value contains Hangul, so a
+// future addition that regresses to English fails loudly here instead of
+// silently in production.
+const configPath = "src/lib/signatures/api/config.ts";
+const configSource = read(configPath);
+const messageConstantPattern = /export const (\w*_MESSAGE)\s*=\s*"([^"]*)"/g;
+const messageConstants = [...configSource.matchAll(messageConstantPattern)];
+assert(
+  messageConstants.length > 0,
+  "api/config.ts must define at least one *_MESSAGE constant for this check to be meaningful.",
+);
+for (const [, name, value] of messageConstants) {
+  assert(
+    /[가-힣]/.test(value),
+    `${name} in api/config.ts must be a Korean user-facing message (found: "${value}") — client.ts trusts these values verbatim in the signature form's error banner.`,
+  );
+}
+
 const petitionSource = [
   read("src/components/petition/PetitionSignatureForm.tsx"),
   read("src/components/petition/signature-form/usePetitionSignatureForm.ts"),

@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { IS_PRODUCTION } from "@/lib/signatures/api/config";
+import {
+  FETCH_SIGNATURE_WALL_ERROR_MESSAGE,
+  IS_PRODUCTION,
+} from "@/lib/signatures/api/config";
 import {
   missingSignatureServiceResponse,
   signatureApiErrorResponse,
@@ -31,7 +34,7 @@ export async function GET(request: NextRequest) {
     return signatureApiErrorResponse(
       "Failed to fetch signature wall:",
       error,
-      "Failed to fetch signature wall",
+      FETCH_SIGNATURE_WALL_ERROR_MESSAGE,
     );
   }
 }
