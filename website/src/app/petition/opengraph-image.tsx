@@ -1,8 +1,8 @@
 import { ImageResponse } from "next/og";
-import { SITE_HOST, SITE_URL } from "@/lib/site-config";
+import { SITE_HOST } from "@/lib/site-config";
 
 export const runtime = "edge";
-export const alt = "우리가 나무다 — 풍천리 국민 연대서명";
+export const alt = "비 내리는 풍천리 잣나무 숲 — 우리가 나무다";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -55,8 +55,43 @@ async function loadKoreanFont(weight: 400 | 700): Promise<ArrayBuffer | null> {
   }
 }
 
+const PUNGCHEONRI_FOREST_PHOTO =
+  "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003499236_std.jpg";
+
+/**
+ * 배경 사진도 폰트와 같은 위험을 안는다 — 원격 fetch다. next/og의 <img src="https://...">
+ * 는 렌더링 중 satori가 자체적으로 그 URL을 가져오는데, 실패 시 동작이 보장되지 않는다
+ * (루트 카드는 이 위험을 감수하고 그냥 <img src>를 쓴다). 여기서는 loadKoreanFont와 같은
+ * 방식으로 직접 fetch해 data: URI로 미리 바꿔둔다 — 실패하면 null을 반환해 <img> 자체를
+ * 아예 렌더하지 않고, 컨테이너의 backgroundColor(#111111)만 보이는 빈 카드로 대체한다.
+ * 텍스트(제목·수치 등)는 사진 유무와 무관하게 항상 그려지므로, 사진이 빠져도 카드가
+ * 완전히 깨지지는 않는다.
+ */
+async function loadBackgroundImage(): Promise<string | null> {
+  try {
+    const res = await fetch(PUNGCHEONRI_FOREST_PHOTO);
+    if (!res.ok) return null;
+    const buf = await res.arrayBuffer();
+    const bytes = new Uint8Array(buf);
+    // edge 런타임에는 Node의 Buffer가 없다 — Web 표준 btoa로 직접 base64를 만든다.
+    // 한 번에 문자열로 펴면 큰 이미지에서 콜스택을 넘길 수 있어 청크 단위로 나눈다.
+    let binary = "";
+    const chunkSize = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+    }
+    return `data:image/jpeg;base64,${btoa(binary)}`;
+  } catch {
+    return null;
+  }
+}
+
 export default async function Image() {
-  const [bold, regular] = await Promise.all([loadKoreanFont(700), loadKoreanFont(400)]);
+  const [bold, regular, backgroundImage] = await Promise.all([
+    loadKoreanFont(700),
+    loadKoreanFont(400),
+    loadBackgroundImage(),
+  ]);
   const fonts = [
     bold ? { name: "NotoSansKR", data: bold, weight: 700 as const, style: "normal" as const } : null,
     regular ? { name: "NotoSansKR", data: regular, weight: 400 as const, style: "normal" as const } : null,
@@ -76,38 +111,52 @@ export default async function Image() {
           fontFamily: "NotoSansKR",
         }}
       >
-        {/* 처음에는 /petition 히어로 사진(연대 집회 사진)을 그대로 썼는데, 인물·
-            현수막의 흰 글씨가 화면 전체에 흩어져 있어 어디에 텍스트를 얹어도 그
-            지점의 국소 대비가 튀었다(리뷰에서 실측 확인 — 특히 부제·하단 문구가
-            현수막 위에서 거의 안 읽혔다). 루트 카드가 잘 읽히는 이유는 배경이
-            "질감은 있되 균질한" 항공 사진이기 때문이다. 그래서 근경 잣나무숲
-            사진으로 바꿨다 — "우리가 나무다"라는 이 캠페인의 은유와도 더 맞고,
-            안개 낀 능선 전체가 캔버스 하단 2/3(실제 텍스트가 놓이는 영역)를
-            고르게 채워 어느 지점에 글자를 얹어도 국소 대비가 비슷하다.
-            public/images의 다른 숲 사진 후보들도 열어봤지만(forest-landscape는
-            하단에 밝은 바위, mountain-forest·forest-aerial은 우측에 강한 역광/
-            수면 반사) 이 사진만 좌측·하단이 실제로 균질했다. */}
-        <img
-          src={`${SITE_URL}/images/pine-forest-1.jpg`}
-          alt=""
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-        />
+        {/* 처음엔 /petition 히어로 사진(연대 집회 사진)을, 그다음엔 스톡 숲 사진
+            (public/images/pine-forest-1.jpg)을 썼다. 둘 다 리뷰에서 문제가
+            잡혔다 — 집회 사진은 인물·현수막 글씨가 화면 전체에서 국소 대비를
+            튀게 했고, 스톡 사진은 "이 캠페인이 지키려는 특정한 숲"이 아니라
+            일반 침엽수림이라 og:image:alt("풍천리 잣나무 숲")와 실제로 어긋났다.
+            루트 카드가 이미 쓰는 방식 그대로 — Supabase의 실제 풍천리 사진으로
+            바꿨다. 이 사진(ie003499236)은 홈 "마을 소개" 섹션이 alt="풍천리
+            잣나무 숲 실제 풍경"으로 쓰는 바로 그 사진이고(HomeAboutSection.tsx),
+            루트 카드의 드론 항공샷(ie003535387)과는 다른 사진이라 형제이되
+            겹치지 않는다. 비 내리는 날 근경으로 찍혀 있다. */}
+        {backgroundImage && (
+          <img
+            src={backgroundImage}
+            alt=""
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+        )}
 
-        {/* 사진을 바꿨어도 스크림은 여전히 필요하다 — 안개 낀 상단은 밝고, 텍스트가
-            실제로 앉는 하단 2/3는 초기값(0.32~0.88)보다 더 일찍, 더 짙게 어둡혀야
-            흰 글씨가 어떤 배경에서도 안정적으로 읽힌다. */}
+        {/* 이 사진은 명암 분포가 이전 사진들과 다르다 — 좌상단이 밝은 흰 하늘이고
+            우하단으로 갈수록 어두운 숲이다(실제로 받아서 확인). 제목·부제가 있는
+            좌측 상단~중단이 하필 가장 밝은 구간과 겹친다. 그래서 스크림을 두
+            겹으로 쌓는다: (1) 좌상단에서 시작해 우하단으로 빠지는 대각선
+            스크림으로 하늘을 직접 눌러 죽이고, (2) 기존의 상→하 스크림으로
+            수치 배지·맺음 문구가 있는 하단을 마저 어둡힌다. 시작 불투명도도
+            이전(0.18)보다 훨씬 높였다 — 이전 사진의 안개보다 이 사진의 흰
+            하늘이 훨씬 밝기 때문이다. */}
         <div
           style={{
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(180deg, rgba(8, 14, 6, 0.18) 0%, rgba(8, 14, 6, 0.58) 28%, rgba(8, 14, 6, 0.90) 58%, rgba(8, 14, 6, 0.95) 100%)",
+              "linear-gradient(135deg, rgba(6, 10, 4, 0.92) 0%, rgba(6, 10, 4, 0.62) 32%, rgba(6, 10, 4, 0.22) 56%, rgba(6, 10, 4, 0) 74%)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "linear-gradient(180deg, rgba(6, 10, 4, 0.30) 0%, rgba(6, 10, 4, 0.60) 30%, rgba(6, 10, 4, 0.90) 60%, rgba(6, 10, 4, 0.95) 100%)",
           }}
         />
 
