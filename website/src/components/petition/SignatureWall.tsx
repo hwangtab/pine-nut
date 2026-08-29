@@ -160,8 +160,13 @@ export default function SignatureWall({ heading, emptyText, moreText, refreshTok
                 className={`paper px-5 py-4 ${index % 2 === 0 ? "paper-tilt-l" : "paper-tilt-r"}`}
               >
                 <div className="relative z-[1] flex items-center justify-between gap-3">
-                  <span className="font-semibold text-[var(--color-text)]">{entry.name}</span>
-                  <span className="text-sm text-[var(--color-text-muted)] text-right">
+                  {/* flex 자식의 기본 min-width는 auto라 내용 폭 아래로 줄지 않는다.
+                      이름/닉네임은 최대 50자, 해외 지역은 자유입력 40자까지 들어오는데
+                      공백 없는 문자열이면 항목이 뷰포트를 밀어내 가로 스크롤이 생긴다.
+                      min-w-0로 축소를 허용하고 anywhere로 줄바꿈 기회를 만든다
+                      (전역 word-break: keep-all이 공백 없는 한글을 안 끊는다). */}
+                  <span className="font-semibold text-[var(--color-text)] min-w-0 [overflow-wrap:anywhere]">{entry.name}</span>
+                  <span className="text-sm text-[var(--color-text-muted)] text-right min-w-0 [overflow-wrap:anywhere]">
                     {entry.regionTop} {entry.regionSub}
                     <br />
                     <time dateTime={entry.createdAt}>{formatWallDate(entry.createdAt)}</time>
