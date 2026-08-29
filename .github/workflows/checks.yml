@@ -28,3 +28,5 @@ jobs:
         working-directory: website
       - run: npx tsc --noEmit
         working-directory: website
+      - run: npm run lint
+        working-directory: website
