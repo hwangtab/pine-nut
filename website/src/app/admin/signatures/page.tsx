@@ -3,10 +3,24 @@ import { getSignatureStats } from "@/lib/data/signatures";
 export default async function AdminSignaturesPage() {
   const stats = await getSignatureStats(14);
   const maxDaily = Math.max(...stats.dailyCounts.map((d) => d.count), 1);
+  const maxRegion = Math.max(...stats.regionCounts.map((r) => r.count), 1);
+  const activeRegions = stats.regionCounts
+    .filter((r) => r.count > 0)
+    .sort((a, b) => b.count - a.count);
 
   return (
     <div className="p-6 md:p-10 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold text-[var(--color-admin-text)] mb-8">서명 현황</h1>
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <h1 className="text-2xl font-bold text-[var(--color-admin-text)]">서명 현황</h1>
+        {/* /api/admin/signatures/export는 src/proxy.ts 미들웨어 밖이라 라우트 자체가
+            requireActiveAdmin()으로 권한을 확인한다 — 관리자가 아니면 403. */}
+        <a
+          href="/api/admin/signatures/export"
+          className="rounded-full bg-[var(--color-warm)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+        >
+          CSV 내보내기
+        </a>
+      </div>
 
       {stats.warning && (
         <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-relaxed text-amber-800">
@@ -15,13 +29,22 @@ export default async function AdminSignaturesPage() {
         </div>
       )}
 
-      {/* Total count */}
-      <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-5 sm:p-8 mb-8 text-center">
-        <p className="text-[var(--color-admin-muted)] mb-2 text-lg">총 서명 수</p>
-        <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-warm)]">
-          {stats.totalCount.toLocaleString("ko-KR")}
-          <span className="text-lg sm:text-xl md:text-2xl font-normal text-[var(--color-admin-muted)]/70 ml-2">명</span>
-        </p>
+      {/* Total count + public consent rate */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+        <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-5 sm:p-8 text-center">
+          <p className="text-[var(--color-admin-muted)] mb-2 text-lg">총 서명 수</p>
+          <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-warm)]">
+            {stats.totalCount.toLocaleString("ko-KR")}
+            <span className="text-lg sm:text-xl md:text-2xl font-normal text-[var(--color-admin-muted)]/70 ml-2">명</span>
+          </p>
+        </div>
+        <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-5 sm:p-8 text-center">
+          <p className="text-[var(--color-admin-muted)] mb-2 text-lg">이름 공개 동의율</p>
+          <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-forest)]">
+            {Math.round(stats.namePublicRate * 100)}
+            <span className="text-lg sm:text-xl md:text-2xl font-normal text-[var(--color-admin-muted)]/70 ml-2">%</span>
+          </p>
+        </div>
       </div>
 
       {/* Daily chart */}
@@ -48,6 +71,54 @@ export default async function AdminSignaturesPage() {
           })}
         </div>
       </div>
+
+      {/* Region distribution */}
+      <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-6 mb-8">
+        <h2 className="text-lg font-bold text-[var(--color-admin-text)] mb-4">지역 분포 (시·도)</h2>
+        {activeRegions.length === 0 ? (
+          <p className="text-[var(--color-admin-muted)] text-center py-4">서명 데이터가 없습니다.</p>
+        ) : (
+          <div className="space-y-2">
+            {activeRegions.map((region) => (
+              <div key={region.regionTop} className="flex items-center gap-3">
+                <span className="w-24 shrink-0 text-sm text-[var(--color-admin-text)]">{region.regionTop}</span>
+                <div className="flex-1 h-3 rounded-full bg-[var(--color-admin-border)] overflow-hidden">
+                  <div
+                    className="h-full bg-[var(--color-sky)]"
+                    style={{ width: `${(region.count / maxRegion) * 100}%` }}
+                  />
+                </div>
+                <span className="w-10 shrink-0 text-right text-sm text-[var(--color-admin-muted)]">
+                  {region.count}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Duplicate candidates */}
+      {stats.duplicateCandidates.length > 0 && (
+        <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-amber-200 p-6 mb-8">
+          <h2 className="text-lg font-bold text-[var(--color-admin-text)] mb-1">중복 서명 후보</h2>
+          <p className="text-sm text-[var(--color-admin-muted)] mb-4">
+            동일한 이름·지역 조합이 여러 번 등록됐습니다. 실제 중복인지는 운영진이 판단해주세요.
+          </p>
+          <div className="space-y-2">
+            {stats.duplicateCandidates.map((c) => (
+              <div
+                key={`${c.name}-${c.regionTop}-${c.regionSub}`}
+                className="flex items-center justify-between text-sm"
+              >
+                <span className="text-[var(--color-admin-text)]">
+                  {c.name} · {c.regionTop} {c.regionSub}
+                </span>
+                <span className="text-[var(--color-admin-muted)]">{c.count}건</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Recent signatures */}
       <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-6">
