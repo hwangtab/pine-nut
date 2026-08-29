@@ -19,8 +19,10 @@ function kstDayStart(base: Date, daysAgo = 0): Date {
   return new Date(midnightKst - KST_OFFSET_MS);
 }
 
-/** UTC 시각을 KST 기준 YYYY-MM-DD로 바꾼다. */
-function kstDateKey(iso: string): string {
+/** UTC 시각을 KST 기준 YYYY-MM-DD로 바꾼다. 이 파일 밖(CSV 내보내기 파일명 등)에서도
+ * "이 프로젝트는 KST 기준"이라는 규칙을 그대로 따르도록 export한다 — 별도로
+ * `new Date().toISOString()`을 쓰면 KST 00:00~09:00 사이에 하루 어긋난 날짜가 찍힌다. */
+export function kstDateKey(iso: string): string {
   return new Date(new Date(iso).getTime() + KST_OFFSET_MS)
     .toISOString()
     .split("T")[0];
@@ -31,16 +33,19 @@ function kstDateKey(iso: string): string {
 // RPC 없이 select("region_top")로 전체를 끌어오려다 정확히 이 함정에 걸려 regionCount가
 // 1000건을 넘는 순간부터 영구히 틀린 값이 됐던 사례가 있다(supabase/migrations/
 // 20260828000000_solidarity_signatures.sql 참고). 지역 분포·공개 동의율·중복 후보·
-// CSV 내보내기는 목표 서명 수(10,000명)를 감안해 range()로 페이지를 나눠 전량을
-// 끌어와야 한다.
+// 최근 N일 추이·CSV 내보내기는 목표 서명 수(10,000명)를 감안해 range()로 페이지를
+// 나눠 전량을 끌어와야 한다.
 const SUPABASE_PAGE_SIZE = 1000;
-// 안전판: 어떤 이유로든 루프가 끝나지 않는 상황(무한 루프)을 막는다.
-// 목표 10,000명의 몇 배를 넉넉히 잡는다.
+// 안전판: 목표 10,000명의 10배를 넉넉히 잡는다. 이 상한에 실제로 닿으면 "일부만
+// 가져온 결과를 전체인 척" 보고하지 않고 truncated:true로 알린다(아래 fetchAllRows).
 const MAX_PAGINATED_ROWS = 100_000;
 
 interface PageResult<T> {
   data: T[] | null;
   error: PostgrestError | null;
+  /** true면 안전판(MAX_PAGINATED_ROWS)에 걸려 루프를 중단했다는 뜻 — data가 전체가
+   * 아닐 수 있다. 호출부는 이 경우를 error와 똑같이(또는 더 엄격하게) 다뤄야 한다. */
+  truncated: boolean;
 }
 
 /**
@@ -48,19 +53,28 @@ interface PageResult<T> {
  * 마지막 페이지가 페이지 크기보다 작게 오면(또는 비면) 종료한다.
  */
 async function fetchAllRows<T>(
-  fetchPage: (from: number, to: number) => PromiseLike<PageResult<T>>,
+  fetchPage: (
+    from: number,
+    to: number,
+  ) => PromiseLike<{ data: T[] | null; error: PostgrestError | null }>,
 ): Promise<PageResult<T>> {
   const rows: T[] = [];
   let from = 0;
   while (from < MAX_PAGINATED_ROWS) {
     const { data, error } = await fetchPage(from, from + SUPABASE_PAGE_SIZE - 1);
-    if (error) return { data: rows, error };
-    if (!data || data.length === 0) break;
+    if (error) return { data: rows, error, truncated: false };
+    if (!data || data.length === 0) return { data: rows, error: null, truncated: false };
     rows.push(...data);
-    if (data.length < SUPABASE_PAGE_SIZE) break;
+    if (data.length < SUPABASE_PAGE_SIZE) return { data: rows, error: null, truncated: false };
     from += SUPABASE_PAGE_SIZE;
   }
-  return { data: rows, error: null };
+  // 루프가 안전판에 걸려 끝났다 — 마지막으로 읽은 페이지까지 계속 꽉 차 있었으므로
+  // 그 뒤에 더 남아있을 가능성이 있다. 일부만 모아놓고 "전체"라고 반환하면 CSV
+  // 내보내기가 명부 일부를 완전한 명부인 척 내보내게 된다.
+  console.error(
+    `fetchAllRows: pagination safety cap reached (${MAX_PAGINATED_ROWS} rows) — refusing to report a partial result as complete.`,
+  );
+  return { data: rows, error: null, truncated: true };
 }
 
 interface SignatureRegionRow {
@@ -85,6 +99,30 @@ function fetchAllSignatureRegionRows(
   );
 }
 
+interface SignatureDailyRow {
+  created_at: string;
+}
+
+/** 최근 N일 서명 추이 원본 조회. 같은 max_rows 함정을 피하려고 fetchAllRows로
+ * 페이지네이션한다 — 목표 서명 수(10,000명) 캠페인에서 14일 창에 1,000건은
+ * 정상적으로 일어날 수 있는 수치라, 페이지네이션 없이는 그 뒤로 차트가 에러
+ * 없이 추세를 축소 보고하게 된다. */
+function fetchAllSignatureDailyRows(
+  supabase: SupabaseClient,
+  since: Date,
+): Promise<PageResult<SignatureDailyRow>> {
+  return fetchAllRows<SignatureDailyRow>((from, to) =>
+    supabase
+      .from("signatures")
+      .select("created_at")
+      // 구간 시작을 KST 자정으로 내림한다. 그러지 않으면 가장 왼쪽 날짜가
+      // '하루치'가 아니라 '조회 시각 이후분'만 집계되어 항상 작게 나온다.
+      .gte("created_at", since.toISOString())
+      .order("id", { ascending: true })
+      .range(from, to),
+  );
+}
+
 export interface SignatureExportRow {
   id: number;
   name: string;
@@ -94,7 +132,7 @@ export interface SignatureExportRow {
   affiliation: string | null;
   email: string | null;
   message: string | null;
-  createdAt: string;
+  createdAt: string | null;
 }
 
 interface SignatureExportDbRow {
@@ -106,14 +144,18 @@ interface SignatureExportDbRow {
   affiliation: string | null;
   email: string | null;
   message: string | null;
-  created_at: string;
+  // DB 컬럼은 DEFAULT NOW()일 뿐 NOT NULL이 아니다(supabase/migrations/
+  // 20260310_create_signatures.sql) — TS 타입도 그 사실을 정직하게 반영한다.
+  created_at: string | null;
 }
 
-/** CSV 내보내기용 전량 조회. 같은 max_rows 함정을 피하려고 fetchAllRows로 페이지네이션한다. */
+/** CSV 내보내기용 전량 조회. 같은 max_rows 함정을 피하려고 fetchAllRows로 페이지네이션한다.
+ * truncated:true면 안전판에 걸려 일부만 모은 것 — 호출부(CSV 라우트)는 이를 반드시
+ * 에러로 취급해 "부분 명부"를 "전체 명부"인 척 내보내지 않아야 한다. */
 export async function getAllSignaturesForExport(
   supabase: SupabaseClient,
-): Promise<{ rows: SignatureExportRow[]; error: PostgrestError | null }> {
-  const { data, error } = await fetchAllRows<SignatureExportDbRow>((from, to) =>
+): Promise<{ rows: SignatureExportRow[]; error: PostgrestError | null; truncated: boolean }> {
+  const { data, error, truncated } = await fetchAllRows<SignatureExportDbRow>((from, to) =>
     supabase
       .from("signatures")
       .select(
@@ -136,6 +178,7 @@ export async function getAllSignaturesForExport(
       createdAt: r.created_at,
     })),
     error,
+    truncated,
   };
 }
 
@@ -161,6 +204,9 @@ export interface SignatureStats {
   usingFallback: boolean;
   warning: string | null;
 }
+
+const PAGINATION_TRUNCATED_WARNING =
+  "서명 수가 안전 상한을 넘어 일부 통계가 잘렸을 수 있습니다. 개발자에게 문의하세요.";
 
 export async function getSignatureStats(days = 14): Promise<SignatureStats> {
   const supabase = await createSupabaseServerClient();
@@ -190,13 +236,7 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
       .select("name, email, message, created_at")
       .order("created_at", { ascending: false })
       .limit(20),
-    supabase
-      .from("signatures")
-      .select("created_at")
-      // 구간 시작을 KST 자정으로 내림한다. 그러지 않으면 가장 왼쪽 날짜가
-      // '하루치'가 아니라 '조회 시각 이후분'만 집계되어 항상 작게 나온다.
-      .gte("created_at", since.toISOString())
-      .order("created_at", { ascending: true }),
+    fetchAllSignatureDailyRows(supabase, since),
     fetchAllSignatureRegionRows(supabase),
   ]);
 
@@ -211,6 +251,16 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
         ? formatSupabaseRelationWarning("signatures", "서명")
         : "서명 데이터를 불러오지 못했습니다. Supabase 연결 상태를 확인하세요.",
     };
+  }
+
+  // 안전판(100,000행)에 걸린 경우: 위 error 체크와 달리 totalCount·recentSignatures는
+  // 여전히 신뢰할 수 있으므로(페이지네이션과 무관한 별도 조회) 전체를 fallback으로
+  // 갈아엎지 않는다 — 대신 경고만 얹어 화면이 이 사실을 알 수 있게 한다.
+  const paginationTruncated = dailyResult.truncated || regionResult.truncated;
+  if (paginationTruncated) {
+    console.error(
+      "getSignatureStats: pagination safety cap reached — daily/region/duplicate statistics below may be incomplete.",
+    );
   }
 
   const count = countResult.count;
@@ -280,6 +330,6 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
       .filter((candidate) => candidate.count > 1)
       .sort((a, b) => b.count - a.count),
     usingFallback: false,
-    warning: null,
+    warning: paginationTruncated ? PAGINATION_TRUNCATED_WARNING : null,
   };
 }

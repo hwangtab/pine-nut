@@ -25,11 +25,11 @@ assert(existsSync(join(root, csvPath)), `${csvPath} must exist.`);
 const csvModule = await import(join(root, csvPath));
 assert(
   typeof csvModule.csvSafeCell === "function",
-  "src/lib/csv.ts must export csvSafeCell(value: string): string.",
+  "src/lib/csv.ts must export csvSafeCell(value: string | null | undefined): string.",
 );
 assert(
   typeof csvModule.toCsvRow === "function",
-  "src/lib/csv.ts must export toCsvRow(cells: string[]): string.",
+  "src/lib/csv.ts must export toCsvRow(cells: (string | null | undefined)[]): string.",
 );
 
 const { csvSafeCell, toCsvRow } = csvModule;
@@ -149,16 +149,24 @@ assert(
   "export route must not create its own Supabase client — it must use the client returned by requireActiveAdmin() so RLS applies with the caller's session, not an unauthenticated client.",
 );
 
-const ctxCheckIndex = exportRouteSource.indexOf('"error" in ctx');
-const status403Index = exportRouteSource.indexOf("{ status: 403 }");
-const dataQueryIndex = exportRouteSource.indexOf("getAllSignaturesForExport(");
+// indexOf 위치 비교만으로는 `return`이 통째로 빠진 변형("error" in ctx일 때
+// NextResponse.json(...)만 만들고 반환하지 않는 코드)을 못 잡는다 — 세 토큰의
+// 순서 자체는 그대로라 가드가 GREEN인 채로 모든 비관리자가 전체 CSV를 받게 된다.
+// 그래서 `return`이 같은 문장 안에 있음을 정규식으로 강제한다.
+const guardBlockRegex =
+  /if\s*\(\s*"error" in ctx\s*\)\s*\{\s*return NextResponse\.json\(\s*\{\s*error:\s*ctx\.error\s*\},\s*\{\s*status:\s*403\s*\}\s*\);?\s*\}/;
+const guardBlockMatch = exportRouteSource.match(guardBlockRegex);
 assert(
-  ctxCheckIndex !== -1 && status403Index !== -1 && dataQueryIndex !== -1,
-  "export route must check `\"error\" in ctx`, return a 403, and call getAllSignaturesForExport — one of these is missing.",
+  guardBlockMatch,
+  'export route must have `if ("error" in ctx) { return NextResponse.json({ error: ctx.error }, { status: 403 }); }` as ONE statement — a missing `return` would let non-admin requests fall through to the data query even though the auth-check/403-response/query still appear in the "correct" order.',
 );
+
+const dataQueryIndex = exportRouteSource.indexOf("getAllSignaturesForExport(");
+assert(dataQueryIndex !== -1, "export route must call getAllSignaturesForExport(...).");
+const guardBlockEndIndex = guardBlockMatch.index + guardBlockMatch[0].length;
 assert(
-  ctxCheckIndex < status403Index && status403Index < dataQueryIndex,
-  "export route must check admin auth and return 403 BEFORE querying signatures — found the query running before (or without) the 403 guard, which would leak data to non-admins.",
+  guardBlockEndIndex <= dataQueryIndex,
+  "export route must call getAllSignaturesForExport(...) only after the complete 403 guard block (including its return).",
 );
 
 // ────────────────────────────────────────────────────────────────────────
@@ -226,6 +234,155 @@ assert(
     adminPageSource.includes("stats.namePublicRate") &&
     adminPageSource.includes("stats.duplicateCandidates"),
   "/admin/signatures page must render regionCounts, namePublicRate, and duplicateCandidates.",
+);
+
+// ────────────────────────────────────────────────────────────────────────
+// 6) 감사 기록 fail-closed — logAudit()은 대부분의 호출부에서 실패를 조용히
+//    삼키지만(콘텐츠 저장 작업까지 감사 로그 하나로 막을 필요는 없다는 판단),
+//    PII 대량 내보내기는 기록 자체가 목적이다. logAudit이 성공 여부를 반환하고
+//    라우트가 그 값을 실제로 확인해서 실패 시 CSV를 내보내지 않는지 검사한다.
+// ────────────────────────────────────────────────────────────────────────
+
+const auditSource = read("src/lib/actions/audit.ts");
+assert(
+  auditSource.includes("): Promise<boolean> {"),
+  "logAudit must return Promise<boolean> so callers that care (like PII export) can fail-closed on a logging failure.",
+);
+assert(
+  !/\breturn;/.test(auditSource),
+  "logAudit must not have a bare `return;` (returns undefined, i.e. an implicit failure signal by accident rather than a deliberate `return false;`) — every early exit must explicitly return true or false.",
+);
+
+const auditedCallIndex = exportRouteSource.indexOf("const audited = await logAudit(");
+assert(
+  auditedCallIndex !== -1,
+  "export route must capture logAudit's return value (`const audited = await logAudit(...)`).",
+);
+const auditedGuardMatch = exportRouteSource.match(
+  /if\s*\(\s*!audited\s*\)\s*\{\s*return NextResponse\.json\(\s*\{\s*error:\s*"[^"]+"\s*\},\s*\{\s*status:\s*500\s*\},?\s*\);?\s*\}/,
+);
+assert(
+  auditedGuardMatch,
+  'export route must have `if (!audited) { return NextResponse.json({ error: "..." }, { status: 500 }); }` as ONE statement — a missing `return` here would let the CSV ship even when the audit record failed to write, defeating the whole point of a PII-export audit trail.',
+);
+const auditedGuardIndex = exportRouteSource.indexOf(auditedGuardMatch[0]);
+const finalCsvResponseIndex = exportRouteSource.indexOf("return new NextResponse(csv");
+assert(
+  auditedCallIndex < auditedGuardIndex && auditedGuardIndex < finalCsvResponseIndex,
+  "export route must check the audit result and fail-closed BEFORE returning the CSV response.",
+);
+
+// ────────────────────────────────────────────────────────────────────────
+// 7) 페이지네이션 안전판(MAX_PAGINATED_ROWS) 상한 — 지금 고치는 max_rows(1000)
+//    문제와 정확히 같은 실패 부류가 10배 높은 문턱(100,000)에서 재현될 수 있다.
+//    fetchAllRows가 안전판에 걸리면 truncated:true를 반환하고, CSV 내보내기는
+//    이를 반드시 500으로 막아야 한다(부분 명부를 전체인 척 내보내면 안 된다).
+// ────────────────────────────────────────────────────────────────────────
+
+assert(
+  /truncated: boolean;/.test(signaturesDataSource),
+  "PageResult<T> must carry a `truncated: boolean` field so callers can distinguish a full result from one that hit the pagination safety cap.",
+);
+const whileLoopIndex = signaturesDataSource.indexOf("while (from < MAX_PAGINATED_ROWS)");
+const incrementIndex = signaturesDataSource.indexOf("from += SUPABASE_PAGE_SIZE;");
+const truncatedTrueIndex = signaturesDataSource.indexOf("truncated: true");
+assert(
+  whileLoopIndex !== -1 && incrementIndex !== -1 && truncatedTrueIndex !== -1,
+  "fetchAllRows must have a MAX_PAGINATED_ROWS-guarded loop that increments `from` and, when the cap is hit, returns truncated: true.",
+);
+assert(
+  whileLoopIndex < incrementIndex && incrementIndex < truncatedTrueIndex,
+  "fetchAllRows must set truncated: true AFTER the pagination loop (i.e. only when the safety cap was reached), not inside a normal per-page branch.",
+);
+assert(
+  signaturesDataSource.includes("truncated,") &&
+    /getAllSignaturesForExport[\s\S]*?truncated: boolean\s*\}>/.test(signaturesDataSource),
+  "getAllSignaturesForExport must propagate the truncated flag in its return type and value.",
+);
+
+const truncatedCheckIndex = exportRouteSource.indexOf("if (truncated)");
+assert(
+  truncatedCheckIndex !== -1,
+  "export route must check the `truncated` flag returned by getAllSignaturesForExport.",
+);
+const truncatedGuardMatch = exportRouteSource.match(
+  /if\s*\(\s*truncated\s*\)\s*\{[\s\S]*?return NextResponse\.json\(\s*\{\s*error:\s*"[^"]+"\s*\},\s*\{\s*status:\s*500\s*\},?\s*\);\s*\}/,
+);
+assert(
+  truncatedGuardMatch,
+  "export route must return a 500 when truncated is true — exporting a partial list as if it were the complete signature roster is worse than failing loudly.",
+);
+assert(
+  truncatedCheckIndex < auditedCallIndex,
+  "export route must check truncated BEFORE writing the audit log entry — no point auditing an export that's about to be rejected as incomplete.",
+);
+
+// ────────────────────────────────────────────────────────────────────────
+// 8) dailyCounts도 같은 max_rows 함정에 노출돼 있었다 — 목표 10,000명 캠페인에서
+//    14일 창에 1,000건은 잘 되는 주의 정상치다. fetchAllRows로 페이지네이션됐는지
+//    확인한다.
+// ────────────────────────────────────────────────────────────────────────
+
+assert(
+  /function fetchAllSignatureDailyRows/.test(signaturesDataSource),
+  "signatures.ts must define fetchAllSignatureDailyRows using paginated fetchAllRows, not a bare unpaginated select for the daily-trend chart.",
+);
+assert(
+  signaturesDataSource.includes("fetchAllSignatureDailyRows(supabase, since)"),
+  "getSignatureStats must fetch the daily-trend rows through fetchAllSignatureDailyRows (paginated).",
+);
+assert(
+  signaturesDataSource.includes("dailyResult.truncated || regionResult.truncated"),
+  "getSignatureStats must treat a truncated daily-rows fetch as seriously as a truncated region-rows fetch (both feed into the same paginationTruncated warning).",
+);
+
+// ────────────────────────────────────────────────────────────────────────
+// 9) csvSafeCell의 null/undefined 안전성 — created_at은 DB 스키마상 nullable
+//    (DEFAULT NOW()일 뿐 NOT NULL이 아님, supabase/migrations/20260310_create_signatures.sql)
+//    인데 TS 타입은 string이라 선언돼 있었다. 어떤 호출부가 `?? ""`를 빠뜨려도
+//    함수 자신이 던지지 않아야 한다 — 실행 기반으로 실제 검증한다.
+// ────────────────────────────────────────────────────────────────────────
+
+assert(
+  csvSafeCell(null) === '""',
+  `csvSafeCell(null) must return an empty quoted cell, not throw — got ${JSON.stringify(csvSafeCell(null))}.`,
+);
+assert(
+  csvSafeCell(undefined) === '""',
+  `csvSafeCell(undefined) must return an empty quoted cell, not throw — got ${JSON.stringify(csvSafeCell(undefined))}.`,
+);
+assert(
+  toCsvRow(["김민준", null, undefined]) === `"김민준","",""`,
+  "toCsvRow must tolerate null/undefined cells (e.g. a nullable created_at) without throwing mid-export.",
+);
+
+// ────────────────────────────────────────────────────────────────────────
+// 10) CSV 파일명 날짜는 KST — 이 프로젝트 전역 규칙(signatures.ts의 kstDateKey)을
+//     따른다. new Date().toISOString()은 UTC라 KST 00:00~09:00 사이엔 어제
+//     날짜가 찍힌다.
+// ────────────────────────────────────────────────────────────────────────
+
+assert(
+  exportRouteSource.includes("kstDateKey(new Date().toISOString())"),
+  "export route's CSV filename must use kstDateKey(...) from @/lib/data/signatures, not a raw UTC date.",
+);
+assert(
+  !/toISOString\(\)\.slice\(0,\s*10\)/.test(exportRouteSource),
+  "export route must not derive the filename date via new Date().toISOString().slice(0, 10) — that's UTC, and this project's date conventions are KST throughout.",
+);
+assert(
+  /import\s*\{[^}]*kstDateKey[^}]*\}\s*from\s*"@\/lib\/data\/signatures"/.test(exportRouteSource),
+  "export route must import kstDateKey from @/lib/data/signatures.",
+);
+
+// ────────────────────────────────────────────────────────────────────────
+// 11) Cache-Control — 전체 서명자 명부가 담긴 응답이다. force-dynamic은 Next.js
+//     라우트 캐시만 막을 뿐 응답 자체의 캐시 가능 여부는 별개이므로 명시적으로 막는다.
+// ────────────────────────────────────────────────────────────────────────
+
+assert(
+  exportRouteSource.includes('"Cache-Control": "no-store, private"'),
+  "export route must set Cache-Control: no-store, private — this response carries every signer's PII and must not be cached by any browser/proxy/CDN.",
 );
 
 console.log("Admin signatures export checks passed.");
