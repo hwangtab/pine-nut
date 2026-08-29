@@ -201,12 +201,21 @@ export interface SignatureDuplicateCandidate {
 
 export interface SignatureStats {
   totalCount: number;
-  recentSignatures: { name: string; email: string; message: string | null; createdAt: string }[];
+  /** email은 이 브랜치에서 nullable이 됐고(연대서명 전환: 이메일 선택 필드),
+   *  created_at도 스키마상 NOT NULL이 아니다. SignatureExportRow는 이미 둘 다
+   *  `| null`로 정직하게 선언돼 있다 — 여기만 거짓말을 하면 화면이 null을
+   *  new Date()에 넣어 "1970. 1. 1."을 띄운다. */
+  recentSignatures: {
+    name: string;
+    email: string | null;
+    message: string | null;
+    createdAt: string | null;
+  }[];
   dailyCounts: { date: string; count: number }[];
   regionCounts: SignatureRegionCount[];
   /** '미상'(supabase/migrations/20260828000000_solidarity_signatures.sql) 서명 건수 —
    * 2026-08-28 이전 65건은 지역을 수집하지 않아 이 센티넬로 백필됐다. regionCounts는
-   * REGION_TOPS(18개 시·도 + 해외)로만 시드·구성되므로(admin-signatures-export 가드가
+   * REGION_TOPS(17개 시·도 + 해외)로만 시드·구성되므로(admin-signatures-export 가드가
    * 이 형태를 고정한다) 그 배열엔 '미상'이 낄 자리가 없다 — 별도 필드로 빼지 않으면
    * 이 65건이 지역 분포 화면에서 조용히 사라진다. */
   unknownRegionCount: number;
@@ -341,7 +350,12 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
   return {
     totalCount: count ?? 0,
     recentSignatures: (recent ?? []).map(
-      (r: { name: string; email: string; message: string | null; created_at: string }) => ({
+      (r: {
+        name: string;
+        email: string | null;
+        message: string | null;
+        created_at: string | null;
+      }) => ({
         name: r.name,
         email: r.email,
         message: r.message,

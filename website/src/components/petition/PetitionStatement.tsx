@@ -69,7 +69,7 @@ function StatCard({ stat }: { stat: StatementStatCopy }) {
           as="p"
           page={PAGE}
           section={SECTION}
-          className="mt-1 text-xs sm:text-sm text-[var(--color-text-muted)]"
+          className="mt-1 text-sm text-[var(--color-text-muted)]"
         />
       </div>
     </div>

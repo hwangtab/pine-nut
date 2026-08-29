@@ -56,6 +56,16 @@ export async function GET() {
   // 호출부에서 실패를 조용히 삼키지만(콘텐츠 저장 작업까지 감사 로그 하나로 막을
   // 필요는 없다는 판단), 여기서는 그 판단이 다르다. 기록에 실패했는데 그대로
   // 내보내면 1만 명분 이메일이 흔적 없이 나간다 — fail-closed로 막는다.
+  //
+  // 다만 이 보장의 범위를 정확히 읽을 것: "감사 기록 없이는 PII가 나가지
+  // 않는다"가 아니라 **"이 라우트로는 나가지 않는다"** 이다. 20260622055905_
+  // lock_down_signature_data_api.sql:13이 authenticated 역할에 GRANT SELECT를
+  // 줬고, 20260701000001_admin_role_security_hardening.sql의
+  // signatures_admin_read 정책이 그 SELECT를 활성 관리자(is_active_admin())로
+  // 좁혔다. 즉 로그인한 활성 관리자는 PostgREST로 signatures 테이블을 직접
+  // 읽을 수 있고, 그 경로에는 감사 기록이 없다. RLS가 이미 그 수준을 허용하는
+  // 이상 이 라우트만 더 조여도 실질적인 차이가 없다 — 감사 로그는 "관리자
+  // 화면을 통한 대량 반출"의 기록이지, PII 유출 경로 전체의 봉인이 아니다.
   const audited = await logAudit(supabase, "signatures", 0, "bulk_update", {
     entityKey: "csv_export",
     payload: { exportedCount: rows.length, exportedBy: user.email },

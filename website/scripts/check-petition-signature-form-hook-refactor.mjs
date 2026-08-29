@@ -188,4 +188,16 @@ for (const required of [
   assert(typesSource.includes(required), `signature-form/types.ts must contain ${required}.`);
 }
 
+// ── 성공 화면·명단 벽에 뜨는 이름과 DB에 저장되는 이름은 같아야 한다.
+// 서버(api/validation.ts)는 name.trim()을 저장하는데, onSubmitted가 trim 전
+// 값을 넘기면 앞뒤 공백을 넣은 사람이 성공 화면에서 다른 이름을 본다.
+assert(
+  /onSubmitted\(\{ name: name\.trim\(\) \}\)/.test(hookSource),
+  "usePetitionSignatureForm must pass the trimmed name to onSubmitted — the server stores name.trim() (src/lib/signatures/api/validation.ts), so an untrimmed name shows the signer a different name on the success screen than the one that lands in the DB and on the wall.",
+);
+assert(
+  /name:\s*name\.trim\(\)/.test(read("src/lib/signatures/api/validation.ts")),
+  "src/lib/signatures/api/validation.ts must still store name.trim() — the assertion above depends on it.",
+);
+
 console.log("Petition signature form hook refactor checks passed.");

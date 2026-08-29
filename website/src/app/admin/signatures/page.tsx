@@ -167,14 +167,28 @@ export default async function AdminSignaturesPage() {
               <div key={i} className="flex items-start justify-between gap-4 py-3 border-b border-[var(--color-admin-border)] last:border-0">
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-[var(--color-admin-text)]">{sig.name}</p>
-                  <p className="text-sm text-[var(--color-admin-muted)]/70">{sig.email}</p>
+                  <p className="text-sm text-[var(--color-admin-muted)]/70">
+                    {sig.email ?? "이메일 미입력"}
+                  </p>
                   {sig.message && (
                     <p className="text-sm text-[var(--color-admin-muted)] mt-1 line-clamp-2">{sig.message}</p>
                   )}
                 </div>
-                <time dateTime={sig.createdAt} className="text-xs text-[var(--color-admin-muted)]/70 shrink-0">
-                  {new Date(sig.createdAt).toLocaleDateString("ko-KR")}
-                </time>
+                {/* created_at은 스키마상 NOT NULL이 아니다 — null을 그대로
+                    new Date()에 넣으면 "1970. 1. 1."이 진짜 서명일인 것처럼
+                    뜬다. 모르는 건 모른다고 표시한다. */}
+                {sig.createdAt ? (
+                  <time
+                    dateTime={sig.createdAt}
+                    className="text-xs text-[var(--color-admin-muted)]/70 shrink-0"
+                  >
+                    {new Date(sig.createdAt).toLocaleDateString("ko-KR")}
+                  </time>
+                ) : (
+                  <span className="text-xs text-[var(--color-admin-muted)]/70 shrink-0">
+                    날짜 미상
+                  </span>
+                )}
               </div>
             ))}
           </div>

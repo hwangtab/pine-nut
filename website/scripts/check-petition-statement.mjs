@@ -144,4 +144,13 @@ assert(
   "copy/statement.ts must not name 산업통상자원부 (the 2025-notice ministry) — the current ministry is 기후에너지환경부, per project convention.",
 );
 
+// ── 가독성: 이 사이트의 주 사용자는 노년층이고, 서명 폼은 min-h-[48px]·
+// text-[15px]로 그 기준을 맞춰 잡혀 있다. 성명서 숫자 카드의 라벨만 모바일에서
+// text-xs(12px)로 떨어지면 그 카드만 유독 읽기 어렵다. 최소 text-sm으로 고정한다.
+const componentSourceForType = read("src/components/petition/PetitionStatement.tsx");
+assert(
+  !/\btext-xs\b/.test(componentSourceForType),
+  "PetitionStatement.tsx must not use text-xs (12px) — the primary audience is older readers, and the signature form next to it is set at 15px/48px touch targets. Use text-sm or larger.",
+);
+
 console.log("PetitionStatement checks passed.");

@@ -175,7 +175,10 @@ export function usePetitionSignatureForm({
         // 줄었다). 그래서 이 콜백은 이름만 넘기고, 성공 화면이 보여줄 실제
         // 서명 수는 바로 아래 onRefreshSignatures()가 다시 불러온 요약
         // (usePetitionSignatureSummary의 summary.count)에서 나온다.
-        onSubmitted({ name });
+        // 서버는 name.trim()을 저장한다(api/validation.ts). 여기서 trim 전
+        // 값을 넘기면 앞뒤 공백을 넣은 사람이 성공 화면과 명단 벽에서 서로
+        // 다른 이름을 보게 된다.
+        onSubmitted({ name: name.trim() });
         events.signatureComplete();
         onRefreshSignatures();
       } catch (err) {

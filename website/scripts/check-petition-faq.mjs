@@ -313,8 +313,8 @@ assert(
   `onSubmitted must not carry a \`count\` any more — the POST response no longer returns one, so it was always the placeholder 0. Found: ${onSubmittedDecl[0]}`,
 );
 assert(
-  /onSubmitted\(\{\s*name\s*\}\)/.test(formHookSource),
-  "usePetitionSignatureForm must call onSubmitted({ name }) — no count placeholder.",
+  /onSubmitted\(\{\s*name:\s*name\.trim\(\)\s*\}\)/.test(formHookSource),
+  "usePetitionSignatureForm must call onSubmitted({ name: name.trim() }) — the name only (no count placeholder), and trimmed so the success screen shows the same name the server stores.",
 );
 assert(
   !/count:\s*0/.test(formHookSource),
@@ -512,5 +512,22 @@ for (const inner of ["<PetitionSignatureForm", "<PetitionSuccess"]) {
     `${inner} must sit inside the signatureSectionRef wrapper — if the scroll anchor only covers one branch, the hero CTA breaks in the other state.`,
   );
 }
+
+// ── FAQ가 가리키는 연락처는 실제로 존재하는 곳이어야 한다. "페이지 아래
+// 연락처"라고 썼지만 /petition에는 연락처 블록이 없다 — 전화번호는 푸터
+// (FooterContact)와 /privacy에 있다. 중복 서명을 정정하려는 사람이 존재하지
+// 않는 곳을 찾다 포기하게 두면 안 된다.
+assert(
+  !/페이지 아래 연락처/.test(faqSource),
+  "petition-faq.ts must not point at a \"페이지 아래 연락처\" — /petition renders no contact block (see the page composition checked above).",
+);
+assert(
+  /푸터|개인정보처리방침/.test(faqSource),
+  "petition-faq.ts's duplicate-signature answer must point at a contact channel that actually exists — the site footer or the privacy policy.",
+);
+assert(
+  /defaultValue="010-/.test(read("src/components/footer/FooterContact.tsx")),
+  "src/components/footer/FooterContact.tsx must still render a phone contact — the FAQ answer's pointer to the footer depends on it.",
+);
 
 console.log("PetitionFAQ checks passed.");

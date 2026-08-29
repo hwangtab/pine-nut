@@ -189,4 +189,29 @@ for (const [pattern, label] of perMetricLoadingChecks) {
   );
 }
 
+// ── 로딩 중에는 막대도 숫자와 같은 말을 해야 한다. 숫자·퍼센트는 "…"인데
+// 채움 막대만 count=0 기준 0% 너비로 렌더되면, 화면이 "아직 모름"과 "0명"을
+// 동시에 말한다 — 시각적으로는 후자가 이긴다. 그래서 로딩 중에는 채움 막대를
+// 아예 렌더하지 않고(0% 너비도 "0%"라고 말하는 것과 같다), 트랙에 불확정
+// 스타일을 준다. aria 쪽(aria-busy / aria-valuenow undefined)은 위에서 이미
+// 고정했으니, 여기서 고정하는 것은 눈에 보이는 쪽이다.
+const fillMatch = source.match(/style=\{\{ width: `\$\{pct\}%` \}\}/);
+assert(
+  fillMatch,
+  "PetitionProgress.tsx must render the fill bar with style={{ width: `${pct}%` }}.",
+);
+const beforeFill = source.slice(0, fillMatch.index);
+assert(
+  /\{!loading &&[\s\S]{0,400}$/.test(beforeFill),
+  "the fill bar must be gated on {!loading && ...} — a 0%-width bar rendered during loading tells the viewer \"0 signatures\" while the numbers next to it say \"…\".",
+);
+assert(
+  /animate-pulse/.test(barTag),
+  "the progressbar track must carry an indeterminate style (animate-pulse) while loading, so an empty track reads as \"loading\" rather than as a real 0%.",
+);
+assert(
+  /loading \?[^}]*animate-pulse/.test(barTag),
+  "the track's indeterminate style must be conditional on `loading` — a permanently pulsing bar would be wrong once the real value is in.",
+);
+
 console.log("PetitionProgress checks passed.");
