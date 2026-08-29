@@ -1,16 +1,18 @@
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 import { REGION_TOPS } from "@/lib/regions";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { createSupabaseServiceClient } from "@/lib/supabase-service";
 import {
   formatSupabaseRelationWarning,
   isMissingSupabaseRelationError,
 } from "@/lib/supabase-errors";
 
-// supabase/migrations/20260828000000_solidarity_signatures.sql가 정의한 레거시
-// 백필 센티넬. 폼(src/lib/regions.ts의 isValidRegionPair)은 이 값을 절대 만들지
-// 못한다 — 2026-08-28 이전 서명 65건에만 DB 마이그레이션이 직접 채워 넣은 값이다.
-const REGION_UNKNOWN_LEGACY = "미상";
-
+// '미상'은 supabase/migrations/20260828000000_solidarity_signatures.sql가 정의한
+// 레거시 백필 센티넬이다. 폼(src/lib/regions.ts의 isValidRegionPair)은 이 값을
+// 절대 만들지 못한다 — 2026-08-28 이전 서명 65건에만 DB 마이그레이션이 직접
+// 채워 넣은 값이다. 이 파일에서는 더 이상 이 값을 직접 다루지 않는다 —
+// 지역·중복·공개동의율 집계는 signature_admin_stats() RPC(20260829000000
+// 마이그레이션)로 넘어갔고, 그 SQL이 '미상' 필터링을 담당한다.
 const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
 
 /** 기준 시각에서 daysAgo일 전의 "KST 자정"에 해당하는 UTC 시각. */
@@ -38,8 +40,10 @@ export function kstDateKey(iso: string): string {
 // RPC 없이 select("region_top")로 전체를 끌어오려다 정확히 이 함정에 걸려 regionCount가
 // 1000건을 넘는 순간부터 영구히 틀린 값이 됐던 사례가 있다(supabase/migrations/
 // 20260828000000_solidarity_signatures.sql 참고). 지역 분포·공개 동의율·중복 후보·
-// 최근 N일 추이·CSV 내보내기는 목표 서명 수(10,000명)를 감안해 range()로 페이지를
-// 나눠 전량을 끌어와야 한다.
+// 최근 N일 추이는 signature_admin_stats() RPC(20260829000000 마이그레이션)가 SQL
+// 집계로 계산하므로 이 함정에서 벗어났다 — 아래 fetchAllRows는 이제 CSV 내보내기
+// (전체 명부가 진짜 목적인 유일한 경로)에만 남아 있다. 목표 서명 수(10,000명)를
+// 감안해 range()로 페이지를 나눠 전량을 끌어온다.
 const SUPABASE_PAGE_SIZE = 1000;
 // 안전판: 목표 10,000명의 10배를 넉넉히 잡는다. 이 상한에 실제로 닿으면 "일부만
 // 가져온 결과를 전체인 척" 보고하지 않고 truncated:true로 알린다(아래 fetchAllRows).
@@ -80,52 +84,6 @@ async function fetchAllRows<T>(
     `fetchAllRows: pagination safety cap reached (${MAX_PAGINATED_ROWS} rows) — refusing to report a partial result as complete.`,
   );
   return { data: rows, error: null, truncated: true };
-}
-
-interface SignatureRegionRow {
-  name: string;
-  region_top: string;
-  region_sub: string;
-  name_public: boolean;
-}
-
-/** 지역 분포·공개 동의율·중복 후보 계산에 쓰는 전량 조회. id 기준 오름차순으로
- * range() 페이지네이션해 max_rows 상한을 우회한다(정렬 기준이 유일 PK라 페이지
- * 경계에서 행이 누락되거나 중복되지 않는다). */
-function fetchAllSignatureRegionRows(
-  supabase: SupabaseClient,
-): Promise<PageResult<SignatureRegionRow>> {
-  return fetchAllRows<SignatureRegionRow>((from, to) =>
-    supabase
-      .from("signatures")
-      .select("name, region_top, region_sub, name_public")
-      .order("id", { ascending: true })
-      .range(from, to),
-  );
-}
-
-interface SignatureDailyRow {
-  created_at: string;
-}
-
-/** 최근 N일 서명 추이 원본 조회. 같은 max_rows 함정을 피하려고 fetchAllRows로
- * 페이지네이션한다 — 목표 서명 수(10,000명) 캠페인에서 14일 창에 1,000건은
- * 정상적으로 일어날 수 있는 수치라, 페이지네이션 없이는 그 뒤로 차트가 에러
- * 없이 추세를 축소 보고하게 된다. */
-function fetchAllSignatureDailyRows(
-  supabase: SupabaseClient,
-  since: Date,
-): Promise<PageResult<SignatureDailyRow>> {
-  return fetchAllRows<SignatureDailyRow>((from, to) =>
-    supabase
-      .from("signatures")
-      .select("created_at")
-      // 구간 시작을 KST 자정으로 내림한다. 그러지 않으면 가장 왼쪽 날짜가
-      // '하루치'가 아니라 '조회 시각 이후분'만 집계되어 항상 작게 나온다.
-      .gte("created_at", since.toISOString())
-      .order("id", { ascending: true })
-      .range(from, to),
-  );
 }
 
 export interface SignatureExportRow {
@@ -230,8 +188,96 @@ export interface SignatureStats {
   warning: string | null;
 }
 
-const PAGINATION_TRUNCATED_WARNING =
-  "서명 수가 안전 상한을 넘어 일부 통계가 잘렸을 수 있습니다. 개발자에게 문의하세요.";
+/** supabase/migrations/20260829000000_signature_admin_stats.sql이 정의한
+ * signature_admin_stats() RPC의 반환 형태. 지역 분포·공개 동의율·중복 후보·
+ * 일별 버킷을 전부 SQL 집계로 계산해 한 번의 호출로 돌려받는다 — 예전에는 이
+ * 원본 행을 전부 range() 페이지네이션해 Node로 끌어온 뒤 이 파일에서 계산했다
+ * (10,000건이면 페이지 로드 한 번에 11~15회 왕복). */
+interface SignatureAdminStatsRpcResult {
+  regionCounts: { regionTop: string; count: number }[];
+  unknownRegionCount: number;
+  namePublicRateBase: number;
+  namePublicTrueCount: number;
+  duplicateCandidates: SignatureDuplicateCandidate[];
+  dailyCounts: { date: string; count: number }[];
+}
+
+function isRegionCountEntry(value: unknown): value is { regionTop: string; count: number } {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  return typeof v.regionTop === "string" && typeof v.count === "number";
+}
+
+function isDuplicateCandidateEntry(value: unknown): value is SignatureDuplicateCandidate {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  return (
+    typeof v.name === "string" &&
+    typeof v.regionTop === "string" &&
+    typeof v.regionSub === "string" &&
+    typeof v.count === "number"
+  );
+}
+
+function isDailyCountEntry(value: unknown): value is { date: string; count: number } {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  return typeof v.date === "string" && typeof v.count === "number";
+}
+
+/** RPC 응답은 PostgREST를 거친 unknown JSON이라 TS 타입이 실제 모양을 보장하지
+ * 않는다 — 함수 시그니처가 바뀌었는데 이 파일을 안 고치면 필드 하나가 조용히
+ * undefined가 되어 화면 렌더링 중간에서 죽는다. 배열 원소 형태까지 검사한다 —
+ * `Array.isArray`만 확인하면 SQL 쪽 키 오타(예: regionTop → regiontop)가
+ * 조용히 "전 지역 0건"으로 렌더링될 뿐 아무 에러도 안 낸다. (SQL 가드의
+ * $$ ... $$ 본문 일치 검사는 비교 전에 전체를 소문자화해서 이런 대소문자
+ * 오타를 못 잡는다 — 여기가 그 구멍을 막는 두 번째 방어선이다.) 형태가
+ * 어긋나면 error 경로로 합류시켜 fail-closed시킨다. */
+function isSignatureAdminStatsRpcResult(
+  value: unknown,
+): value is SignatureAdminStatsRpcResult {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  return (
+    Array.isArray(v.regionCounts) &&
+    v.regionCounts.every(isRegionCountEntry) &&
+    typeof v.unknownRegionCount === "number" &&
+    typeof v.namePublicRateBase === "number" &&
+    typeof v.namePublicTrueCount === "number" &&
+    Array.isArray(v.duplicateCandidates) &&
+    v.duplicateCandidates.every(isDuplicateCandidateEntry) &&
+    Array.isArray(v.dailyCounts) &&
+    v.dailyCounts.every(isDailyCountEntry)
+  );
+}
+
+/** signature_admin_stats() 호출. signature_region_count()와 같은 신뢰 경계 —
+ * EXECUTE는 service_role에만 부여돼 있으므로(20260829000000 마이그레이션) 반드시
+ * 서비스 롤 클라이언트로 불러야 한다. 호출부(/admin/signatures 페이지)는
+ * src/proxy.ts matcher(/admin/:path*)로 이미 활성 관리자만 도달한다 — CSV
+ * 내보내기 라우트가 requireActiveAdmin() 뒤에서 서비스 클라이언트를 쓰는 것과
+ * 같은 경계다. */
+async function fetchSignatureAdminStats(
+  serviceClient: SupabaseClient,
+  since: Date,
+): Promise<{
+  data: SignatureAdminStatsRpcResult | null;
+  error: PostgrestError | Error | null;
+}> {
+  const { data, error } = await serviceClient.rpc("signature_admin_stats", {
+    p_since: since.toISOString(),
+  });
+  if (error) return { data: null, error };
+  if (!isSignatureAdminStatsRpcResult(data)) {
+    return {
+      data: null,
+      error: new Error(
+        `signature_admin_stats() returned an unexpected shape: ${JSON.stringify(data)}`,
+      ),
+    };
+  }
+  return { data, error: null };
+}
 
 export async function getSignatureStats(days = 14): Promise<SignatureStats> {
   const supabase = await createSupabaseServerClient();
@@ -252,116 +298,127 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
 
   if (!supabase) return fallback;
 
-  // Daily counts for chart
+  // signature_admin_stats()는 service_role 전용 RPC다(20260829000000
+  // 마이그레이션) — SUPABASE_SERVICE_ROLE_KEY가 없는 환경(키 회전 창, 설정
+  // 실수 등)에서는 createSupabaseServiceClient()가 null을 돌려준다. 이 경우
+  // RPC 호출 자체를 건너뛰고, 아래에서 그 사실을 "RPC 유래 통계만 부분
+  // fallback" 경로로 자연스럽게 합류시킨다 — 총 서명 수·최근 서명 목록까지
+  // 갈아엎지 않는다(바로 아래 countRecentError 처리 참고).
+  const serviceClient = createSupabaseServiceClient();
+
   // 서명자도 운영진도 한국에 있다. UTC 기준으로 날짜를 자르면 KST 00:00~09:00의
   // 서명이 전날 막대에 들어가고, 오전에는 '오늘' 막대가 통째로 비어 보인다.
   const since = kstDayStart(new Date(), periodDays - 1);
-  const [countResult, recentResult, dailyResult, regionResult] = await Promise.all([
+  const [countResult, recentResult, statsResult] = await Promise.all([
     supabase.from("signatures").select("*", { count: "exact", head: true }),
     supabase
       .from("signatures")
       .select("name, email, message, created_at")
       .order("created_at", { ascending: false })
       .limit(20),
-    fetchAllSignatureDailyRows(supabase, since),
-    fetchAllSignatureRegionRows(supabase),
+    serviceClient
+      ? fetchSignatureAdminStats(serviceClient, since)
+      : Promise.resolve<{
+          data: SignatureAdminStatsRpcResult | null;
+          error: PostgrestError | Error | null;
+        }>({
+          data: null,
+          error: new Error(
+            "SUPABASE_SERVICE_ROLE_KEY missing — cannot call signature_admin_stats().",
+          ),
+        }),
   ]);
 
-  const signatureError =
-    countResult.error ?? recentResult.error ?? dailyResult.error ?? regionResult.error;
-
-  if (signatureError) {
-    console.error("Failed to fetch signature stats:", signatureError);
+  // count·recentSignatures는 쿠키 세션 클라이언트(RLS 정책 signatures_admin_read)로
+  // 얻는 값이라 serviceClient 상태와 무관하게 신뢰할 수 있다 — 이 둘이
+  // 실패했을 때만 전체를 fallback으로 갈아엎는다. RPC 도입 전 코드가 지키던
+  // 원칙("totalCount·recentSignatures는 여전히 신뢰할 수 있으므로 전체를
+  // fallback으로 갈아엎지 않는다")을 그대로 되살린 것 — RPC를 끼워 넣으며
+  // 한 번 이 원칙을 깼던 걸 되돌린다.
+  const countRecentError = countResult.error ?? recentResult.error;
+  if (countRecentError) {
+    console.error("Failed to fetch signature stats (count/recent):", countRecentError);
     return {
       ...fallback,
-      warning: isMissingSupabaseRelationError(signatureError)
+      warning: isMissingSupabaseRelationError(countRecentError)
         ? formatSupabaseRelationWarning("signatures", "서명")
         : "서명 데이터를 불러오지 못했습니다. Supabase 연결 상태를 확인하세요.",
     };
   }
 
-  // 안전판(100,000행)에 걸린 경우: 위 error 체크와 달리 totalCount·recentSignatures는
-  // 여전히 신뢰할 수 있으므로(페이지네이션과 무관한 별도 조회) 전체를 fallback으로
-  // 갈아엎지 않는다 — 대신 경고만 얹어 화면이 이 사실을 알 수 있게 한다.
-  const paginationTruncated = dailyResult.truncated || regionResult.truncated;
-  if (paginationTruncated) {
-    console.error(
-      "getSignatureStats: pagination safety cap reached — daily/region/duplicate statistics below may be incomplete.",
-    );
-  }
-
   const count = countResult.count;
   const recent = recentResult.data;
-  const dailyRaw = dailyResult.data;
-  const regionRaw = regionResult.data ?? [];
+  const recentSignatures = (recent ?? []).map(
+    (r: {
+      name: string;
+      email: string | null;
+      message: string | null;
+      created_at: string | null;
+    }) => ({
+      name: r.name,
+      email: r.email,
+      message: r.message,
+      createdAt: r.created_at,
+    }),
+  );
 
+  // RPC 유래 통계(지역 분포·공개 동의율·중복 후보·일별 추이)만 부분
+  // fallback한다 — serviceClient가 없거나 RPC가 실패·형태 불일치여도 위에서
+  // 이미 확보한 count·recentSignatures는 그대로 살려서 반환한다. count·
+  // recentSignatures까지 0/빈 배열로 갈아엎으면(예전 실수) 서비스 키가
+  // 회전 중일 뿐인데 화면이 "총 0건"을 보여주게 된다.
+  if (!serviceClient || statsResult.error || !statsResult.data) {
+    if (statsResult.error) {
+      console.error("signature_admin_stats() 호출 실패:", statsResult.error);
+    }
+    return {
+      ...fallback,
+      totalCount: count ?? 0,
+      recentSignatures,
+      // usingFallback은 이 파일 밖에서 오직 admin/signatures/page.tsx 한 곳만
+      // 소비한다 — stats.warning이 이미 참일 때, "현재 수치는 fallback 상태
+      // 기준이며 실제 운영 데이터가 아닐 수 있습니다."라는 문장을 추가로
+      // 붙일지 말지를 이 값으로 결정한다. 여기서 ...fallback을 스프레드하면
+      // usingFallback: true가 그대로 따라와, 방금 채운 실측 totalCount·
+      // recentSignatures까지 "믿지 말라"는 문장과 정면으로 모순되는 배너가
+      // 뜬다(예: "총 서명 수는 정상이며 ..." 바로 뒤에 "실제 운영 데이터가
+      // 아닐 수 있습니다"). totalCount·recentSignatures는 이 분기에서 실측값
+      // 그대로이므로 false로 명시해 그 모순을 없앤다 — 무엇이 얼마나
+      // 못 미더운지는 이미 위 warning 문장이 정확히 설명한다.
+      usingFallback: false,
+      warning: !serviceClient
+        ? "서명 통계 집계에 필요한 서비스 키(SUPABASE_SERVICE_ROLE_KEY)가 설정되지 않았습니다. 총 서명 수·최근 서명 목록은 정상이며, 지역·동의율·중복 후보·일별 추이만 집계되지 않았습니다."
+        : "지역·동의율·중복 후보·일별 추이 통계를 불러오지 못했습니다. 총 서명 수·최근 서명 목록은 정상입니다.",
+    };
+  }
+
+  const stats = statsResult.data;
+
+  // 일별 버킷: RPC가 KST 기준으로 이미 (date, count)로 집계해 돌려준다(같은
+  // kstDateKey 규칙, supabase/migrations/20260829000000). 여기서는 서명이 없는
+  // 날짜도 축에서 사라지지 않도록 0으로 먼저 채운 뒤 RPC 결과를 덮어쓴다.
   const dailyMap = new Map<string, number>();
   const now = new Date();
   for (let i = periodDays - 1; i >= 0; i--) {
     dailyMap.set(kstDateKey(kstDayStart(now, i).toISOString()), 0);
   }
-  dailyRaw?.forEach((row: { created_at: string }) => {
-    const day = kstDateKey(row.created_at);
+  for (const { date, count: dayCount } of stats.dailyCounts) {
     // 버킷에 없는 날짜(경계 밖)는 무시한다. 새 키를 추가하면 차트 축이 어긋난다.
-    if (dailyMap.has(day)) dailyMap.set(day, (dailyMap.get(day) ?? 0) + 1);
-  });
+    if (dailyMap.has(date)) dailyMap.set(date, dayCount);
+  }
 
   // 지역 분포: REGION_TOPS(17개 시·도 + 해외)를 0으로 먼저 채워, 서명이 없는
   // 지역도 목록에서 사라지지 않게 한다. 하드코딩된 별도 목록을 두지 않고
-  // src/lib/regions.ts를 유일한 출처로 삼는다.
+  // src/lib/regions.ts를 유일한 출처로 삼는다. RPC가 이미 '미상'을 제외하고
+  // 돌려주므로 여기서 다시 걸러낼 필요는 없다.
   const regionMap = new Map<string, number>(REGION_TOPS.map((regionTop) => [regionTop, 0]));
-  let publicCount = 0;
-  // '미상' 행을 제외한, 실제로 공개 동의를 물어본 서명 수. namePublicRate의
-  // 분모로 쓴다 — regionRaw.length를 그대로 쓰면 레거시 65건(동의를 물은 적
-  // 없이 DEFAULT false로 백필된 행)이 분모에 섞여 동의율이 항상 낮게 보인다.
-  let askedCount = 0;
-  const duplicateMap = new Map<string, SignatureDuplicateCandidate>();
-
-  for (const row of regionRaw) {
-    regionMap.set(row.region_top, (regionMap.get(row.region_top) ?? 0) + 1);
-    if (row.name_public) publicCount += 1;
-
-    const isLegacyUnknownRegion = row.region_top === REGION_UNKNOWN_LEGACY;
-    if (!isLegacyUnknownRegion) askedCount += 1;
-
-    // 중복 후보: 이름+지역(시·도+시·군·구) 조합이 판별자다. '미상' 행은 지역이
-    // 전부 '미상'|''로 뭉개져 판별자 구실을 못 한다 — 그대로 두면 이름만 같은
-    // 서로 무관한 레거시 서명자 두 명이 "중복 서명 후보"에 올라, 운영자가
-    // 정당한 서명을 지울 위험이 생긴다. 지역 판별자가 있는 행만 후보로 삼는다.
-    if (isLegacyUnknownRegion) continue;
-
-    // 이름+지역 유니크 제약을 걸지 않은 대신(동명이인 차단·명단 벽 통한 참여 여부
-    // 노출 방지), 운영자가 훑어서 거를 수 있게 동일 이름+지역(시·도+시·군·구)
-    // 조합만 후보로 모은다. 실제 중복 여부 판단은 운영진 몫이다.
-    const key = `${row.name}|${row.region_top}|${row.region_sub}`;
-    const existing = duplicateMap.get(key);
-    if (existing) {
-      existing.count += 1;
-    } else {
-      duplicateMap.set(key, {
-        name: row.name,
-        regionTop: row.region_top,
-        regionSub: row.region_sub,
-        count: 1,
-      });
-    }
+  for (const { regionTop, count: regionCount } of stats.regionCounts) {
+    regionMap.set(regionTop, regionCount);
   }
 
   return {
     totalCount: count ?? 0,
-    recentSignatures: (recent ?? []).map(
-      (r: {
-        name: string;
-        email: string | null;
-        message: string | null;
-        created_at: string | null;
-      }) => ({
-        name: r.name,
-        email: r.email,
-        message: r.message,
-        createdAt: r.created_at,
-      }),
-    ),
+    recentSignatures,
     dailyCounts: Array.from(dailyMap.entries()).map(([date, cnt]) => ({
       date,
       count: cnt,
@@ -370,15 +427,14 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
       regionTop,
       count: regionMap.get(regionTop) ?? 0,
     })),
-    // regionMap은 REGION_TOPS로 시드됐지만 Map.set은 없는 키도 그냥 추가한다 —
-    // 행의 region_top이 '미상'이면 루프가 이 값을 자연스럽게 채워둔다.
-    unknownRegionCount: regionMap.get(REGION_UNKNOWN_LEGACY) ?? 0,
-    namePublicRateBase: askedCount,
-    namePublicRate: askedCount > 0 ? publicCount / askedCount : 0,
-    duplicateCandidates: [...duplicateMap.values()]
-      .filter((candidate) => candidate.count > 1)
-      .sort((a, b) => b.count - a.count),
+    unknownRegionCount: stats.unknownRegionCount,
+    namePublicRateBase: stats.namePublicRateBase,
+    namePublicRate:
+      stats.namePublicRateBase > 0 ? stats.namePublicTrueCount / stats.namePublicRateBase : 0,
+    // RPC가 이미 count DESC로 정렬해 돌려주지만, JSON 왕복을 거친 값의 정렬
+    // 순서에 기대지 않고 화면이 요구하는 정렬(count 내림차순)을 여기서도 보장한다.
+    duplicateCandidates: [...stats.duplicateCandidates].sort((a, b) => b.count - a.count),
     usingFallback: false,
-    warning: paginationTruncated ? PAGINATION_TRUNCATED_WARNING : null,
+    warning: null,
   };
 }

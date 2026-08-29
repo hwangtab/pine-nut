@@ -201,15 +201,48 @@ const solidaritySqlWithoutComments = solidarityMigration
   .toLowerCase()
   .replace(/\s+/g, " ");
 
+// SET DEFAULT는 테이블 범위로 검사한다 — 리뷰에서 지적된 구멍: 이전 버전은
+// "alter column region_top set default '미상'" 문자열이 파일 어딘가에만 있으면
+// 통과했다. 그 문자열이 다른 테이블을 대상으로 한 ALTER TABLE 문 안에 있어도
+// (디코이) 통과해, signatures 테이블 자체의 DEFAULT가 실제로는 빠진 걸 놓칠 수
+// 있다. `ALTER TABLE (public.)?signatures ...;` 문장 몸통 안에서만 찾는다.
+const alterSignaturesStatements = [
+  ...solidaritySqlWithoutComments.matchAll(
+    /alter table (?:public\.)?signatures\s+([^;]*);/g,
+  ),
+].map((match) => match[1]);
+
 for (const [column, defaultLiteral] of [
   ["region_top", "'미상'"],
   ["region_sub", "''"],
 ]) {
+  const hasTableScopedDefault = alterSignaturesStatements.some((body) =>
+    body.includes(`alter column ${column} set default ${defaultLiteral}`),
+  );
   assert(
-    solidaritySqlWithoutComments.includes(
-      `alter column ${column} set default ${defaultLiteral}`,
-    ),
-    `solidarity migration must give ${column} a DEFAULT (${defaultLiteral}) — the schema lands before the new code deploys, and the still-live old code INSERTs without ${column}. Without the DEFAULT every signature submitted during that window (and after any rollback to the previous deploy) fails with 23502 not_null_violation.`,
+    hasTableScopedDefault,
+    `solidarity migration must give signatures.${column} a DEFAULT (${defaultLiteral}) INSIDE an "ALTER TABLE signatures" statement specifically — the schema lands before the new code deploys, and the still-live old code INSERTs without ${column}. Without the DEFAULT every signature submitted during that window (and after any rollback to the previous deploy) fails with 23502 not_null_violation. A SET DEFAULT clause written under a different table name would satisfy a plain substring search while leaving signatures.${column} without its rollback-window DEFAULT.`,
+  );
+}
+
+// DROP DEFAULT는 이 파일 안에 있으면 안 된다. 이 파일 자신의 주석(바로 위)이
+// "신규 코드 배포 확인 후 별도 마이그레이션으로 DROP DEFAULT 한다"고 명시한다 —
+// 그 롤백 창 안전망을 언제 걷어낼지는 컨트롤러가 나중에 별도 마이그레이션에서
+// 판단할 몫이지, 이미 프로덕션에 적용된 이 파일이 조용히 되돌릴 자리가 아니다.
+// 이 금지는 이 파일 하나로 범위를 좁힌다 — 나중에 롤백 창이 닫힌 뒤 컨트롤러가
+// 승인한 새 마이그레이션 파일(예: 20260829000000_signature_admin_stats.sql)이
+// DROP DEFAULT를 쓰는 건 이 가드가 막지 않는다. 테이블명은 특정하지 않고
+// region_top/region_sub 컬럼의 DROP DEFAULT를 통째로 금지한다 — 이 파일에는 그
+// 두 컬럼의 DEFAULT를 없앨 이유가 애초에 없다(어느 테이블이든).
+for (const column of ["region_top", "region_sub"]) {
+  // COLUMN 키워드는 Postgres에서 선택이다 — "ALTER TABLE signatures ALTER
+  // region_top DROP DEFAULT;"가 유효한 SQL이라 COLUMN을 고정 리터럴로 요구하면
+  // 이 변형이 새어나간다. 인용 식별자("region_top")도 마찬가지로 통과해야
+  // 한다. 둘 다 선택 요소로 두는 정규식으로 막는다.
+  const dropDefaultPattern = new RegExp(`alter (?:column )?"?${column}"? drop default`);
+  assert(
+    !dropDefaultPattern.test(solidaritySqlWithoutComments),
+    `${solidarityMigrationPath} must NOT DROP DEFAULT on ${column} (with or without the optional COLUMN keyword, quoted or unquoted) — this migration already shipped to production. Dropping the DEFAULT here would silently remove the rollback-window safety net that this same file's own comment says is deferred to a separate, later migration once the deploy is confirmed safe.`,
   );
 }
 
@@ -340,12 +373,129 @@ assert(
   ),
   "signature_region_count() must revoke EXECUTE from public/anon/authenticated — a SECURITY DEFINER function left callable by anon is a privilege-escalation hole.",
 );
+// 순수 .includes()는 GRANT를 느슨하게 만드는 공격(예: service_role 뒤에
+// ", authenticated"를 덧붙임)을 놓친다 — "...to service_role"이 "...to
+// service_role, authenticated"의 부분 문자열이라 그대로 통과해버린다. 아래
+// signature_admin_stats() GRANT 검사를 만들다가 이 결함을 실제로 재현해
+// 발견했다 — 같은 반경의 기존 함수를 뚫린 채 두지 않도록 여기도 문장이
+// 정확히 "to service_role;"로 끝나는지 정규식으로 못박는다.
 assert(
-  normalizedSolidaritySql.includes(
-    "grant execute on function signature_region_count() to service_role",
+  /grant execute on function signature_region_count\(\) to service_role;/.test(
+    normalizedSolidaritySql,
   ),
-  "signature_region_count() must be granted to service_role only — that's the only caller (the server-side signatures API).",
+  "signature_region_count() must be granted to service_role ONLY (the GRANT statement must end right after service_role, not widen to `, authenticated` or any other role) — that's the only caller (the server-side signatures API).",
 );
+
+// ---------------------------------------------------------------------------
+// signature_admin_stats() — 관리자 통계 집계 RPC(2026-08-29 팔로업,
+// supabase/migrations/20260829000000_signature_admin_stats.sql). 지역 분포·공개
+// 동의율·중복 후보·일별 추이 전체를 이 함수 하나가 계산하므로, 여기서 권한이
+// 느슨해지면 signatures 테이블 전체를 우회 조회하는 것과 같은 반경의 구멍이
+// 생긴다. signature_region_count()와 정확히 같은 패턴을 요구한다: SECURITY
+// DEFINER, search_path 고정, service_role에만 EXECUTE.
+// ---------------------------------------------------------------------------
+
+const adminStatsMigrationPath =
+  "supabase/migrations/20260829000000_signature_admin_stats.sql";
+assert(
+  existsSync(join(root, adminStatsMigrationPath)),
+  `${adminStatsMigrationPath} must exist.`,
+);
+const adminStatsMigration = readProjectFile(adminStatsMigrationPath);
+const adminStatsSqlNoComments = adminStatsMigration
+  .split("\n")
+  .map((line) => line.replace(/--.*$/, ""))
+  .join("\n")
+  .toLowerCase()
+  .replace(/\s+/g, " ");
+
+assert(
+  adminStatsSqlNoComments.includes(
+    "create or replace function signature_admin_stats(p_since timestamptz)",
+  ),
+  "signature_admin_stats() must be defined with a single p_since timestamptz parameter.",
+);
+assert(
+  adminStatsSqlNoComments.includes("security definer") &&
+    adminStatsSqlNoComments.includes("set search_path = public"),
+  "signature_admin_stats() must be SECURITY DEFINER with search_path locked to public (search_path hijacking defense) — it reads the full signatures table, same trust level as signature_region_count().",
+);
+
+const adminStatsFunctionMatch = adminStatsSqlNoComments.match(
+  /create or replace function signature_admin_stats\(p_since timestamptz\).*?as \$\$(.*?)\$\$;/,
+);
+assert(
+  adminStatsFunctionMatch,
+  "signature_admin_stats() must have a $$ ... $$ SQL body immediately after its signature.",
+);
+const adminStatsFunctionBody = adminStatsFunctionMatch[1].trim();
+const expectedAdminStatsBody =
+  "select jsonb_build_object( 'regioncounts', ( select coalesce( jsonb_agg(jsonb_build_object('regiontop', region_top, 'count', region_cnt)), '[]'::jsonb ) from ( select region_top, count(*) as region_cnt from signatures where region_top <> '미상' group by region_top ) region_agg ), 'unknownregioncount', ( select count(*) from signatures where region_top = '미상' ), 'namepublicratebase', ( select count(*) from signatures where region_top <> '미상' ), 'namepublictruecount', ( select count(*) filter (where name_public) from signatures ), 'duplicatecandidates', ( select coalesce( jsonb_agg( jsonb_build_object( 'name', name, 'regiontop', region_top, 'regionsub', region_sub, 'count', dup_cnt ) order by dup_cnt desc, name ), '[]'::jsonb ) from ( select name, region_top, region_sub, count(*) as dup_cnt from signatures where region_top <> '미상' group by name, region_top, region_sub having count(*) > 1 ) dup_agg ), 'dailycounts', ( select coalesce( jsonb_agg(jsonb_build_object('date', day, 'count', day_cnt) order by day), '[]'::jsonb ) from ( select to_char((created_at at time zone 'asia/seoul')::date, 'yyyy-mm-dd') as day, count(*) as day_cnt from signatures where created_at >= p_since group by day ) daily_agg ) );";
+assert(
+  adminStatsFunctionBody === expectedAdminStatsBody,
+  `signature_admin_stats()'s $$ ... $$ body must match exactly — got "${adminStatsFunctionBody}". A body missing the region_top <> '미상' exclusion (region/duplicate/rate stats) or the created_at >= p_since / Asia/Seoul day bucketing would silently reproduce the exact JS bugs this RPC exists to prevent (legacy-row dilution, UTC-day chart drift).`,
+);
+assert(
+  adminStatsSqlNoComments.includes(
+    "revoke all on function signature_admin_stats(timestamptz) from public, anon, authenticated",
+  ),
+  "signature_admin_stats() must revoke EXECUTE from public/anon/authenticated — it is a SECURITY DEFINER function reading the full signatures table, so leaving it callable by anon/authenticated is a privilege-escalation hole exactly like signature_region_count() guards against.",
+);
+// 순수 .includes()는 GRANT를 "느슨하게" 만드는 공격(예: service_role 뒤에
+// ", authenticated"를 덧붙임)을 놓친다 — "...to service_role"이 "...to
+// service_role, authenticated"의 부분 문자열이라 그대로 통과해버린다(이 파일이
+// 흉내 낸 signature_region_count() 쪽 검사에도 같은 결함이 있다 — 리포트에
+// 기록). 문장이 정확히 "to service_role;"로 끝나는지(뒤에 다른 역할이
+// 이어붙지 않는지) 정규식으로 못박는다.
+assert(
+  /grant execute on function signature_admin_stats\(timestamptz\) to service_role;/.test(
+    adminStatsSqlNoComments,
+  ),
+  "signature_admin_stats() must be granted to service_role ONLY (the GRANT statement must end right after service_role, not widen to `, authenticated` or any other role) — src/lib/data/signatures.ts calls it via createSupabaseServiceClient(), not the cookie-scoped anon/authenticated client.",
+);
+
+// ---------------------------------------------------------------------------
+// 테스트 행(id=1) 삭제 마이그레이션 — 2026-08-29, 사용자 결정. 20260828000000·
+// 20260829000000 둘 다 건드리지 않는 별도 파일이다. 이 DELETE가 id=1만 보고
+// 지우면 백업 복원 등으로 순번이 어긋났을 때 실제 서명자를 지울 수 있다 —
+// name·email·두 동의 컬럼까지 전부 일치해야만 지우는 방어적 WHERE인지
+// 검사한다.
+// ---------------------------------------------------------------------------
+
+const removeTestSignatureMigrationPath =
+  "supabase/migrations/20260829000001_remove_test_signature.sql";
+assert(
+  existsSync(join(root, removeTestSignatureMigrationPath)),
+  `${removeTestSignatureMigrationPath} must exist.`,
+);
+const removeTestSignatureSqlNoComments = readProjectFile(removeTestSignatureMigrationPath)
+  .split("\n")
+  .map((line) => line.replace(/--.*$/, ""))
+  .join("\n")
+  .toLowerCase()
+  .replace(/\s+/g, " ");
+
+const deleteStatementMatch = removeTestSignatureSqlNoComments.match(
+  /delete from (?:public\.)?signatures\s+where\s+([^;]*);/,
+);
+assert(
+  deleteStatementMatch,
+  `${removeTestSignatureMigrationPath} must contain a single "DELETE FROM signatures WHERE ...;" statement.`,
+);
+const deleteWhereBody = deleteStatementMatch[1];
+
+for (const requiredCondition of [
+  "id = 1",
+  "name = '테스트'",
+  "email = 'test@example.com'",
+  "consent_privacy is false",
+  "consent_age is false",
+]) {
+  assert(
+    deleteWhereBody.includes(requiredCondition),
+    `${removeTestSignatureMigrationPath}'s DELETE must require "${requiredCondition}" in its WHERE clause — id alone is not enough (a restored/reseeded environment could have a different row at id=1; matching name/email/consent columns too means a mismatch deletes nothing instead of the wrong signer).`,
+  );
+}
 
 const wallModulePath = "src/lib/signatures/api/wall.ts";
 assert(existsSync(join(root, wallModulePath)), `${wallModulePath} must exist.`);

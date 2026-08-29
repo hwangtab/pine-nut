@@ -187,11 +187,22 @@ assert(
   "signatures.ts must page through results with .range() instead of a single unpaginated select — otherwise region/duplicate aggregation silently truncates past max_rows (1000).",
 );
 
-// 지역 원본 조회(region_top, name_public 등)가 fetchAllRows 경유인지 — 별도의
-// 페이지네이션 없는 select(...)로 같은 컬럼을 다시 긁어오는 회귀를 막는다.
+// 지역·중복·공개동의율 집계는 2026-08-29 팔로업에서 signature_admin_stats()
+// SQL 집계 RPC로 옮겨갔다(supabase/migrations/20260829000000_signature_admin_stats.sql) —
+// fetchAllRows<SignatureRegionRow>로 전체 행을 Node로 끌어와 계산하던 예전 경로는
+// 없어졌다. 회귀를 막는 두 가지: (a) 그 옛 경로가 되살아나지 않았는지, (b) 새 RPC를
+// 서비스 롤 클라이언트로 실제로 호출하는지.
 assert(
-  /fetchAllRows<SignatureRegionRow>/.test(signaturesDataSource),
-  "region/duplicate/name-public-rate aggregation must go through fetchAllRows (paginated), not a bare .select().",
+  !/fetchAllSignatureRegionRows|fetchAllRows<SignatureRegionRow>/.test(signaturesDataSource),
+  "region/duplicate/name-public-rate aggregation must NOT go back to pulling every signature row into Node (fetchAllSignatureRegionRows / fetchAllRows<SignatureRegionRow>) — it must be computed by the signature_admin_stats() DB aggregate instead (see check-signature-security.mjs for that function's own checks).",
+);
+assert(
+  signaturesDataSource.includes('.rpc("signature_admin_stats"'),
+  "getSignatureStats must call the signature_admin_stats() RPC for region/duplicate/name-public-rate/daily aggregation.",
+);
+assert(
+  /fetchSignatureAdminStats\(serviceClient,\s*since\)/.test(signaturesDataSource),
+  "getSignatureStats must call signature_admin_stats() with the service-role client (createSupabaseServiceClient), not the cookie-scoped anon/authenticated client — the RPC's EXECUTE grant is service_role-only.",
 );
 assert(
   /fetchAllRows<SignatureExportDbRow>/.test(signaturesDataSource),
@@ -319,21 +330,28 @@ assert(
 
 // ────────────────────────────────────────────────────────────────────────
 // 8) dailyCounts도 같은 max_rows 함정에 노출돼 있었다 — 목표 10,000명 캠페인에서
-//    14일 창에 1,000건은 잘 되는 주의 정상치다. fetchAllRows로 페이지네이션됐는지
-//    확인한다.
+//    14일 창에 1,000건은 잘 되는 주의 정상치다. 2026-08-29 팔로업에서 이 집계도
+//    signature_admin_stats() SQL 집계로 옮겨갔다 — Node가 개별 행을 페이지네이션해
+//    끌어오는 대신 DB가 KST 일자별로 이미 묶어서 돌려주므로, PostgREST max_rows
+//    함정 자체가 이 경로에 더 이상 적용되지 않는다(옛 fetchAllSignatureDailyRows
+//    회귀만 막으면 된다). 화면 표시를 위해 서명 없는 날짜를 0으로 채우는 로직은
+//    여전히 이 파일(JS)에 남아 있어야 한다 — RPC는 값이 있는 날짜만 돌려준다.
 // ────────────────────────────────────────────────────────────────────────
 
 assert(
-  /function fetchAllSignatureDailyRows/.test(signaturesDataSource),
-  "signatures.ts must define fetchAllSignatureDailyRows using paginated fetchAllRows, not a bare unpaginated select for the daily-trend chart.",
+  !/fetchAllSignatureDailyRows/.test(signaturesDataSource),
+  "daily-trend aggregation must NOT go back to a paginated per-row fetch (fetchAllSignatureDailyRows) — it must come from the signature_admin_stats() DB aggregate instead.",
 );
 assert(
-  signaturesDataSource.includes("fetchAllSignatureDailyRows(supabase, since)"),
-  "getSignatureStats must fetch the daily-trend rows through fetchAllSignatureDailyRows (paginated).",
+  /since\s*=\s*kstDayStart\(new Date\(\),\s*periodDays - 1\)/.test(signaturesDataSource) &&
+    /fetchSignatureAdminStats\(serviceClient,\s*since\)/.test(signaturesDataSource),
+  "getSignatureStats must compute the KST-midnight `since` boundary and pass it into the signature_admin_stats() RPC call, so the daily chart's leftmost bucket is a full day, not partial.",
 );
 assert(
-  signaturesDataSource.includes("dailyResult.truncated || regionResult.truncated"),
-  "getSignatureStats must treat a truncated daily-rows fetch as seriously as a truncated region-rows fetch (both feed into the same paginationTruncated warning).",
+  /for \(let i = periodDays - 1; i >= 0; i--\) \{\s*dailyMap\.set\(kstDateKey\(kstDayStart\(now, i\)\.toISOString\(\)\), 0\);\s*\}/.test(
+    signaturesDataSource,
+  ),
+  "getSignatureStats must still zero-fill every day in the window before applying the RPC's per-day counts — the RPC only returns days that actually have signatures, and a missing zero-fill would shrink the chart's x-axis on sparse days.",
 );
 
 // ────────────────────────────────────────────────────────────────────────
