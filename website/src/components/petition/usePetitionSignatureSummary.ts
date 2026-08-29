@@ -2,44 +2,32 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { fetchSignatureSummary } from "@/lib/signatures/client";
+import type { SignatureSummary } from "@/lib/signatures/api/store";
 
-// NOTE(Task 5 compile-keeping shim): `GET /api/signatures` no longer returns
-// a `signatures[]` list (Task 3/4 moved recent-signature listing to the
-// dedicated `/api/signatures/wall` endpoint). This local type + the always-
-// empty `signatures` state below are a stopgap so this hook still compiles
-// against the new `SignatureSummary` shape. Rewiring `RecentSignatures`/this
-// hook onto `fetchSignatureWall` is Task 12's job, not done here.
-interface LegacyRecentSignature {
-  name: string;
-  message?: string;
-  created_at: string;
-}
+const EMPTY_SUMMARY: SignatureSummary = { count: 0, regionCount: 0, recent24h: 0, goal: 0 };
 
+// GET /api/signatures 요약만 다룬다. 개별 서명 목록(공개 동의자 명단)은
+// /api/signatures/wall 전용 엔드포인트로 분리되어 SignatureWall이 직접
+// fetchSignatureWall로 불러온다 — 이 훅은 더 이상 목록을 들고 있지 않는다.
 export function usePetitionSignatureSummary() {
-  const [signatureCount, setSignatureCount] = useState(0);
-  const [signatures] = useState<LegacyRecentSignature[]>([]);
-  const [loadingSignatures, setLoadingSignatures] = useState(true);
+  const [summary, setSummary] = useState<SignatureSummary>(EMPTY_SUMMARY);
+  const [loadingSummary, setLoadingSummary] = useState(true);
 
-  const refreshSignatures = useCallback(async () => {
+  const refreshSummary = useCallback(async () => {
     try {
       const data = await fetchSignatureSummary();
-      setSignatureCount(data.count);
+      setSummary(data);
     } catch (err) {
+      // 문구는 check-production-fail-closed.mjs가 리터럴로 단언한다 — 바꾸지 말 것.
       console.error("Failed to fetch signatures:", err);
     } finally {
-      setLoadingSignatures(false);
+      setLoadingSummary(false);
     }
   }, []);
 
   useEffect(() => {
-    refreshSignatures();
-  }, [refreshSignatures]);
+    refreshSummary();
+  }, [refreshSummary]);
 
-  return {
-    signatureCount,
-    setSignatureCount,
-    signatures,
-    loadingSignatures,
-    refreshSignatures,
-  };
+  return { summary, loadingSummary, refreshSummary };
 }

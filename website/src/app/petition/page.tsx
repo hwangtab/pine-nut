@@ -8,7 +8,6 @@ import PetitionAnimatedCounter from "@/components/petition/PetitionAnimatedCount
 import PetitionShareEditControls from "@/components/petition/PetitionShareEditControls";
 import PetitionSignatureForm from "@/components/petition/PetitionSignatureForm";
 import PetitionSuccess from "@/components/petition/PetitionSuccess";
-import RecentSignatures from "@/components/petition/RecentSignatures";
 import SignatureConfetti from "@/components/petition/SignatureConfetti";
 import { usePetitionSignatureSummary } from "@/components/petition/usePetitionSignatureSummary";
 import { PostmarkStamp } from "@/components/visuals/ForestLetterMotifs";
@@ -18,13 +17,13 @@ import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 /* ──────────────────────── Main Page ──────────────────────── */
 export default function PetitionPage() {
   const { getContent, isEditMode } = useAdminEdit();
-  const {
-    signatureCount,
-    setSignatureCount,
-    signatures,
-    loadingSignatures,
-    refreshSignatures,
-  } = usePetitionSignatureSummary();
+  // NOTE(Task 11 compile-keeping minimal patch): usePetitionSignatureSummary
+  // no longer returns a `signatures[]` list or a `setSignatureCount` setter
+  // (Task 3/4 moved individual signature listing to GET /api/signatures/wall,
+  // consumed by the new SignatureWall component instead). This page's actual
+  // reassembly — wiring in <SignatureWall>, dropping the `count: 0` shim in
+  // handleSignatureSubmitted below — is Task 12's job, not done here.
+  const { summary, refreshSummary } = usePetitionSignatureSummary();
   const [submitted, setSubmitted] = useState(false);
   const [submittedName, setSubmittedName] = useState("");
   const [showConfetti, setShowConfetti] = useState(false);
@@ -38,14 +37,19 @@ export default function PetitionPage() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleSignatureSubmitted = useCallback(
-    ({ name, count }: { name: string; count: number }) => {
-      setSignatureCount(count);
+    // NOTE(Task 11 compile-keeping minimal patch): `count` is currently
+    // always 0 (see usePetitionSignatureForm.ts's compile-keeping shim) and
+    // there is no setter for `summary` anymore, so it's intentionally
+    // unused here — refreshSummary() (called by the form hook right after
+    // onSubmitted) re-fetches the real count within one round trip. Task 12
+    // owns cleaning up this callback's shape.
+    ({ name }: { name: string; count: number }) => {
       setSubmittedName(name);
       setSubmitted(true);
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
     },
-    [setSignatureCount],
+    [],
   );
 
   const handleCopyUrl = async () => {
@@ -112,7 +116,7 @@ export default function PetitionPage() {
         metric={
           <div className="stamp-badge inline-block">
             <div className="stamp-badge__inner">
-              <PetitionAnimatedCounter target={signatureCount} />
+              <PetitionAnimatedCounter target={summary.count} />
               <EditableText
                 contentKey="petition.hero.metricLabel"
                 defaultValue="명이 함께하고 있습니다"
@@ -148,14 +152,14 @@ export default function PetitionPage() {
             <PetitionSignatureForm
               formRef={formRef}
               onSubmitted={handleSignatureSubmitted}
-              onRefreshSignatures={refreshSignatures}
+              onRefreshSignatures={refreshSummary}
             />
           </section>
         ) : (
           <div className="fade-in">
             <PetitionSuccess
               submittedName={submittedName}
-              signatureCount={signatureCount}
+              signatureCount={summary.count}
               urlCopied={urlCopied}
               onPrimaryShare={handleShareKakao}
               onShareTwitter={handleShareTwitter}
@@ -169,8 +173,9 @@ export default function PetitionPage() {
           </div>
         )}
 
-        {/* ── Recent Signatures ── */}
-        <RecentSignatures signatures={signatures} loading={loadingSignatures} />
+        {/* NOTE(Task 11 compile-keeping minimal patch): RecentSignatures was
+            deleted (Task 11) and replaced by SignatureWall, which Task 12
+            wires in here as part of the page's real reassembly. */}
 
         {/* ── Why Sign ── */}
         <section aria-label="서명이 왜 중요한가요">

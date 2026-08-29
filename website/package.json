@@ -46,6 +46,7 @@
     "region-select:check": "node scripts/check-region-select.mjs",
     "security:check": "node scripts/check-signature-security.mjs",
     "signature-form:refactor:check": "node scripts/check-signature-form-refactor.mjs",
+    "signature-wall:check": "node scripts/check-signature-wall.mjs",
     "share-buttons:refactor:check": "node scripts/check-share-buttons-refactor.mjs",
     "signatures-api:refactor:check": "node scripts/check-signatures-api-refactor.mjs",
     "site-builder-custom-card:refactor:check": "node scripts/check-site-builder-custom-card-refactor.mjs",
