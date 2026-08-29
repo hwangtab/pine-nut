@@ -70,7 +70,11 @@ export default function SignatureWall({ heading, emptyText, moreText, refreshTok
       if (generation !== generationRef.current) return;
       setInitialError(true);
     } finally {
-      if (generation === generationRef.current) setInitialLoading(false);
+      // generation 게이트는 "쓰기"(entries/cursor/hasMore/error)에만 걸어야 한다.
+      // 로딩 플래그 리셋까지 게이트에 가두면, stale 응답이 폐기되는 순간(위의
+      // 조기 return들) finally 안의 이 줄도 함께 건너뛰어 initialLoading이
+      // true로 영원히 굳는다 — 화면은 로딩 스피너에서 멈추고 복구 경로가 없다.
+      setInitialLoading(false);
     }
   }, []);
 
@@ -97,8 +101,13 @@ export default function SignatureWall({ heading, emptyText, moreText, refreshTok
       if (generation !== generationRef.current) return;
       setLoadMoreError(true);
     } finally {
+      // 위 loadFirstPage와 같은 이유: generation이 바뀌어 stale 응답의 데이터를
+      // 버리더라도(위의 조기 return들), 로딩 상태 리셋(loadMoreInFlightRef·
+      // loadingMore)은 반드시 실행돼야 한다. 그렇지 않으면 refreshToken이 로딩
+      // 도중 바뀔 때마다 "더 보기" 버튼이 disabled+aria-busy 상태로 영구히
+      // 잠기고, 새로 불러온 1페이지에서 다음 페이지를 영영 못 보게 된다.
       loadMoreInFlightRef.current = false;
-      if (generation === generationRef.current) setLoadingMore(false);
+      setLoadingMore(false);
     }
   }, [cursor, loadingMore]);
 

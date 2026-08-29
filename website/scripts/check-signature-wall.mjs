@@ -62,10 +62,13 @@ assert(
 // never reach this screen). Extract every `entry.<field>` access actually
 // used in the file and assert it's a subset of the four allowed fields —
 // a substring check for "email" alone would miss a renamed destructure
-// (`const { message } = entry`), so this also checks destructuring patterns.
+// (`const { message } = entry`), so this also checks destructuring patterns
+// AND bracket access (`entry["email"]` / `entry['email']`), which the plain
+// dot-access regex alone would not catch (review round 2 finding).
 const allowedEntryFields = new Set(["name", "regionTop", "regionSub", "createdAt"]);
 const dotAccessFields = [...source.matchAll(/\bentry\.(\w+)/g)].map((m) => m[1]);
-for (const field of dotAccessFields) {
+const bracketAccessFields = [...source.matchAll(/\bentry\[["'](\w+)["']\]/g)].map((m) => m[1]);
+for (const field of [...dotAccessFields, ...bracketAccessFields]) {
   assert(
     allowedEntryFields.has(field),
     `SignatureWall.tsx must not read WallEntry.${field} — only name/regionTop/regionSub/createdAt may reach the screen.`,
@@ -169,6 +172,52 @@ const lmWriteIdx = loadMoreBody.indexOf("setEntries((current)");
 assert(
   lmGuardIdx !== -1 && lmWriteIdx !== -1 && lmGuardIdx < lmWriteIdx,
   "handleLoadMore must check `generation !== generationRef.current` and bail out BEFORE appending via setEntries((current) => ...), so a load-more response that resolves after a refreshToken reset already replaced page 1 does not get appended on top of it.",
+);
+
+// ── Review round-2 finding: the generation gate must guard WRITES ONLY
+// (entries/cursor/hasMore/error), never the loading-flag reset in `finally`.
+// `return` inside try/catch still runs `finally` — if the loading-flag reset
+// there is ALSO wrapped in `if (generation === generationRef.current)`, then
+// discarding a stale response (the two checks just above) skips the reset
+// too, and the button/spinner locks into a permanent busy state with no
+// recovery path. Isolate each function's own `finally { ... }` block and
+// assert the reset statement appears there UNCONDITIONALLY — i.e. not
+// preceded on the same statement by a generation comparison.
+// Comments (both `//` and the Korean rationale prose) may legitimately
+// mention "generation" while explaining the fix — only the executable code
+// must be free of it, so strip `//...` line comments before scanning.
+function stripLineComments(body) {
+  return body
+    .split("\n")
+    .map((line) => line.replace(/\/\/.*$/, ""))
+    .join("\n");
+}
+
+const lfpFinallyMatch = loadFirstPageBody.match(/finally\s*\{([\s\S]*?)\}\s*$/);
+assert(lfpFinallyMatch, "Could not isolate loadFirstPage's finally block.");
+const lfpFinallyBody = lfpFinallyMatch[1];
+const lfpFinallyCode = stripLineComments(lfpFinallyBody);
+assert(
+  /(^|\n)\s*setInitialLoading\(false\);/.test(lfpFinallyCode),
+  "loadFirstPage's finally block must call `setInitialLoading(false);` unconditionally (not gated by an `if (generation === ...)` check) — otherwise a discarded stale response leaves the spinner stuck forever.",
+);
+assert(
+  !/generation/.test(lfpFinallyCode),
+  "loadFirstPage's finally block must not gate any statement on `generation` — the loading-flag reset must run whether or not the response was stale.",
+);
+
+const lmFinallyMatch = loadMoreBody.match(/finally\s*\{([\s\S]*?)\}\s*$/);
+assert(lmFinallyMatch, "Could not isolate handleLoadMore's finally block.");
+const lmFinallyBody = lmFinallyMatch[1];
+const lmFinallyCode = stripLineComments(lmFinallyBody);
+assert(
+  /(^|\n)\s*loadMoreInFlightRef\.current = false;/.test(lmFinallyCode) &&
+    /(^|\n)\s*setLoadingMore\(false\);/.test(lmFinallyCode),
+  "handleLoadMore's finally block must reset `loadMoreInFlightRef.current = false;` and call `setLoadingMore(false);` unconditionally (not gated by an `if (generation === ...)` check) — otherwise the \"더 보기\" button locks into disabled+aria-busy forever once a refreshToken reset races a load-more in flight.",
+);
+assert(
+  !/generation/.test(lmFinallyCode),
+  "handleLoadMore's finally block must not gate any statement on `generation` — the loading-flag reset must run whether or not the response was stale.",
 );
 
 // ── Error states: a failed fetch must not leave the screen silently empty.
