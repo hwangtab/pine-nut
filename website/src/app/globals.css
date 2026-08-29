@@ -339,6 +339,16 @@ html {
     color: var(--color-text-muted);
     opacity: 1;
   }
+  /* iOS Safari는 포커스한 입력 필드의 글자가 16px 미만이면 페이지를 자동으로
+     확대한다. 그 확대는 제출 후에도 풀리지 않아 가로 스크롤로 남는다.
+     `maximum-scale=1`로 확대를 막는 방법은 저시력 사용자의 핀치 줌까지
+     빼앗으므로 쓰지 않는다 — 이 캠페인의 주 사용자는 노년층이다.
+     터치 기기에서만 16px로 올려 데스크톱 시각 스케일은 그대로 둔다. */
+  @media (pointer: coarse) {
+    .paper-field {
+      font-size: 16px;
+    }
+  }
 
   /* 전체 화면 시트 (모바일 메뉴) — 불투명 한지 */
   .paper-sheet {
