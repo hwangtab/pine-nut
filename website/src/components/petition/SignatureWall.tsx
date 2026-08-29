@@ -70,11 +70,17 @@ export default function SignatureWall({ heading, emptyText, moreText, refreshTok
       if (generation !== generationRef.current) return;
       setInitialError(true);
     } finally {
-      // generation 게이트는 "쓰기"(entries/cursor/hasMore/error)에만 걸어야 한다.
-      // 로딩 플래그 리셋까지 게이트에 가두면, stale 응답이 폐기되는 순간(위의
-      // 조기 return들) finally 안의 이 줄도 함께 건너뛰어 initialLoading이
-      // true로 영원히 굳는다 — 화면은 로딩 스피너에서 멈추고 복구 경로가 없다.
-      setInitialLoading(false);
+      // NOTE(리뷰 라운드3 — 비대칭 규칙): loadFirstPage는 자기 자신과 겹칠 수
+      // 있다(React Strict Mode의 개발 모드 이펙트 이중 호출, 또는 refreshToken이
+      // 한 왕복 안에 두 번 바뀌는 경우) — handleLoadMore와 달리 동기 in-flight
+      // ref로 자기 중복 실행을 막고 있지 않기 때문이다. A(gen N)와 B(gen N+1)가
+      // 겹쳤을 때 A가 먼저 끝나면, generation 게이트 없이 무조건
+      // setInitialLoading(false)를 부르면 그 순간 entries는 아직 []이고
+      // initialError도 false라 화면이 "아직 서명이 없습니다"로 잠깐 떨어진다
+      // (B가 끝나면 채워지지만, 시민이 처음 보는 게 "아무도 서명 안 함"이 될 수
+      // 있다). 그래서 여기서만 generation 게이트를 유지한다 — A가 리셋을
+      // 건너뛰어도 B가 끝나며 결국 리셋하므로 고착이 생기지 않는다.
+      if (generation === generationRef.current) setInitialLoading(false);
     }
   }, []);
 
@@ -101,11 +107,15 @@ export default function SignatureWall({ heading, emptyText, moreText, refreshTok
       if (generation !== generationRef.current) return;
       setLoadMoreError(true);
     } finally {
-      // 위 loadFirstPage와 같은 이유: generation이 바뀌어 stale 응답의 데이터를
-      // 버리더라도(위의 조기 return들), 로딩 상태 리셋(loadMoreInFlightRef·
-      // loadingMore)은 반드시 실행돼야 한다. 그렇지 않으면 refreshToken이 로딩
-      // 도중 바뀔 때마다 "더 보기" 버튼이 disabled+aria-busy 상태로 영구히
-      // 잠기고, 새로 불러온 1페이지에서 다음 페이지를 영영 못 보게 된다.
+      // NOTE(리뷰 라운드3 — 비대칭 규칙, loadFirstPage와 반대): handleLoadMore는
+      // 자기 자신과 절대 겹치지 않는다 — 함수 맨 위 `loadMoreInFlightRef.current`
+      // 동기 체크가 두 번째 호출을 즉시 막고, generation은 handleLoadMore 자신이
+      // 아니라 loadFirstPage만 올린다. 그러므로 여기서 generation이 바뀌어
+      // stale 응답을 폐기하는 시점에는 다른 load-more가 진행 중일 수 없다 —
+      // 로딩 상태 리셋을 generation으로 게이트할 이유가 없고, 게이트하면 오히려
+      // refreshToken이 로딩 도중 바뀔 때마다 "더 보기" 버튼이 disabled+
+      // aria-busy 상태로 영구히 잠겨 다음 페이지를 영영 못 보게 되는 결함이
+      // 생긴다(라운드2에서 실제로 이 버그였다). 그래서 여기서는 무조건 리셋한다.
       loadMoreInFlightRef.current = false;
       setLoadingMore(false);
     }

@@ -174,18 +174,41 @@ assert(
   "handleLoadMore must check `generation !== generationRef.current` and bail out BEFORE appending via setEntries((current) => ...), so a load-more response that resolves after a refreshToken reset already replaced page 1 does not get appended on top of it.",
 );
 
-// ── Review round-2 finding: the generation gate must guard WRITES ONLY
-// (entries/cursor/hasMore/error), never the loading-flag reset in `finally`.
-// `return` inside try/catch still runs `finally` — if the loading-flag reset
-// there is ALSO wrapped in `if (generation === generationRef.current)`, then
-// discarding a stale response (the two checks just above) skips the reset
-// too, and the button/spinner locks into a permanent busy state with no
-// recovery path. Isolate each function's own `finally { ... }` block and
-// assert the reset statement appears there UNCONDITIONALLY — i.e. not
-// preceded on the same statement by a generation comparison.
-// Comments (both `//` and the Korean rationale prose) may legitimately
-// mention "generation" while explaining the fix — only the executable code
-// must be free of it, so strip `//...` line comments before scanning.
+// ── Review round-3 finding: the two functions need an ASYMMETRIC rule, not
+// a uniform "always reset unconditionally" rule (round 2's mistake).
+//
+//   - handleLoadMore: can never overlap itself (a synchronous in-flight ref
+//     blocks re-entry, and it never bumps `generationRef` itself — only
+//     loadFirstPage does). So when it discards a stale response, no sibling
+//     load-more can be in flight, and its loading-flag reset must be
+//     UNCONDITIONAL — gating it reproduces round 2's bug (the "more" button
+//     locks into disabled+aria-busy forever once a refreshToken reset races
+//     a load-more in flight).
+//   - loadFirstPage: CAN overlap itself (React Strict Mode's dev double-
+//     invoke, or refreshToken changing twice within one round trip). If the
+//     older of two overlapping calls resets the loading flag unconditionally
+//     after losing the generation race, the screen can flash "아직 서명이
+//     없습니다" between the two calls even though the newer one is still
+//     loading. So its reset must stay CONDITIONAL on the generation check.
+//
+// The check below does NOT depend on any particular identifier name (a
+// rename like `generation` → `genId` must not defeat it), and does NOT
+// require a literal `finally { ... }` block (an equivalent refactor that
+// resets at the tail of both the try and catch branches must still pass).
+// It works structurally: find the loading-reset statement's literal text
+// wherever it appears in the function, and determine — by scanning brace
+// nesting back to the statement — whether it sits inside an `if (...)`
+// (block form) or is itself the body of a braceless `if (...) stmt;`. This
+// stops short of a full AST parse (e.g. it does not understand `switch`,
+// ternaries used as statements, or verify that BOTH the try-tail and
+// catch-tail actually contain the reset when it's duplicated rather than
+// shared via `finally`) — for this file's actual shapes it is exact.
+// Korean rationale comments in this file legitimately quote the statement
+// text itself while explaining the fix (e.g. "무조건 setInitialLoading(false)를
+// 부르면..."). Strip `//` line comments before searching so a comment's
+// mention isn't mistaken for the real statement, and anchor the match on a
+// trailing `;` (the comment's prose never follows the call with one) so a
+// same-line comment fragment that survives stripping still can't match.
 function stripLineComments(body) {
   return body
     .split("\n")
@@ -193,31 +216,69 @@ function stripLineComments(body) {
     .join("\n");
 }
 
-const lfpFinallyMatch = loadFirstPageBody.match(/finally\s*\{([\s\S]*?)\}\s*$/);
-assert(lfpFinallyMatch, "Could not isolate loadFirstPage's finally block.");
-const lfpFinallyBody = lfpFinallyMatch[1];
-const lfpFinallyCode = stripLineComments(lfpFinallyBody);
+function isStatementConditional(rawBody, statement) {
+  const body = stripLineComments(rawBody);
+  const stmtMatch = new RegExp(statement.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*;").exec(body);
+  if (!stmtMatch) return null; // caller asserts existence separately
+  const stmtIdx = stmtMatch.index;
+
+  // Braceless form: `if (<anything>) statement;` on one line — the text
+  // immediately before the statement, back to the start of its line, ends
+  // in an `if (...)` header with no opening brace.
+  const lineStart = body.lastIndexOf("\n", stmtIdx) + 1;
+  const linePrefix = body.slice(lineStart, stmtIdx);
+  if (/if\s*\([^;{}]*\)\s*$/.test(linePrefix)) return true;
+
+  // Block form: walk every unmatched `{` up to the statement, and for each
+  // one, look at the text immediately before it (back to the previous `;`,
+  // `{`, or `}`) to see whether it's an `if (...) {` header. If any frame
+  // still open at the statement's position was opened by `if`, the
+  // statement is nested inside a conditional.
+  const stack = [];
+  for (let i = 0; i < stmtIdx; i++) {
+    if (body[i] === "{") {
+      const headStart = Math.max(
+        body.lastIndexOf(";", i),
+        body.lastIndexOf("{", i - 1),
+        body.lastIndexOf("}", i - 1),
+      );
+      const header = body.slice(headStart + 1, i);
+      stack.push(/if\s*\([^{}]*\)\s*$/.test(header) ? "if" : "other");
+    } else if (body[i] === "}") {
+      stack.pop();
+    }
+  }
+  return stack.includes("if");
+}
+
+const lfpInitialLoadingConditional = isStatementConditional(loadFirstPageBody, "setInitialLoading(false)");
 assert(
-  /(^|\n)\s*setInitialLoading\(false\);/.test(lfpFinallyCode),
-  "loadFirstPage's finally block must call `setInitialLoading(false);` unconditionally (not gated by an `if (generation === ...)` check) — otherwise a discarded stale response leaves the spinner stuck forever.",
+  lfpInitialLoadingConditional !== null,
+  "Could not find `setInitialLoading(false)` anywhere in loadFirstPage — it must reset the loading flag somewhere.",
 );
 assert(
-  !/generation/.test(lfpFinallyCode),
-  "loadFirstPage's finally block must not gate any statement on `generation` — the loading-flag reset must run whether or not the response was stale.",
+  lfpInitialLoadingConditional === true,
+  "loadFirstPage's `setInitialLoading(false)` must stay conditional on the stale-response check (e.g. `if (generation === generationRef.current) setInitialLoading(false);`) — loadFirstPage can overlap itself (Strict Mode double-invoke, or refreshToken changing twice in flight), so an unconditional reset from an older, losing call can flash an empty-list state while a newer call is still loading.",
 );
 
-const lmFinallyMatch = loadMoreBody.match(/finally\s*\{([\s\S]*?)\}\s*$/);
-assert(lmFinallyMatch, "Could not isolate handleLoadMore's finally block.");
-const lmFinallyBody = lmFinallyMatch[1];
-const lmFinallyCode = stripLineComments(lmFinallyBody);
+const lmLoadingMoreConditional = isStatementConditional(loadMoreBody, "setLoadingMore(false)");
 assert(
-  /(^|\n)\s*loadMoreInFlightRef\.current = false;/.test(lmFinallyCode) &&
-    /(^|\n)\s*setLoadingMore\(false\);/.test(lmFinallyCode),
-  "handleLoadMore's finally block must reset `loadMoreInFlightRef.current = false;` and call `setLoadingMore(false);` unconditionally (not gated by an `if (generation === ...)` check) — otherwise the \"더 보기\" button locks into disabled+aria-busy forever once a refreshToken reset races a load-more in flight.",
+  lmLoadingMoreConditional !== null,
+  "Could not find `setLoadingMore(false)` anywhere in handleLoadMore — it must reset the loading flag somewhere.",
 );
 assert(
-  !/generation/.test(lmFinallyCode),
-  "handleLoadMore's finally block must not gate any statement on `generation` — the loading-flag reset must run whether or not the response was stale.",
+  lmLoadingMoreConditional === false,
+  "handleLoadMore's `setLoadingMore(false)` must be unconditional (not gated by a stale-response check) — handleLoadMore can never overlap itself (the synchronous in-flight ref blocks re-entry, and it never bumps the generation counter itself), so gating this reset locks the \"더 보기\" button into disabled+aria-busy forever the moment a refreshToken reset races a load-more in flight.",
+);
+
+const lmInFlightRefConditional = isStatementConditional(loadMoreBody, "loadMoreInFlightRef.current = false");
+assert(
+  lmInFlightRefConditional !== null,
+  "Could not find `loadMoreInFlightRef.current = false` anywhere in handleLoadMore — it must reset the in-flight ref somewhere.",
+);
+assert(
+  lmInFlightRefConditional === false,
+  "handleLoadMore's `loadMoreInFlightRef.current = false` must be unconditional, for the same reason as `setLoadingMore(false)` above — a conditional reset here would leave the in-flight ref permanently `true` after a discarded stale response, blocking every future double-click guard from ever re-entering handleLoadMore.",
 );
 
 // ── Error states: a failed fetch must not leave the screen silently empty.
