@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { SITE_HOST } from "@/lib/site-config";
+import { SITE_HOST, SITE_URL } from "@/lib/site-config";
 
 export const runtime = "edge";
 export const alt = "우리가 나무다 — 풍천리 국민 연대서명";
@@ -16,10 +16,14 @@ const SUBTITLE = "홍천 풍천리 양수발전소 백지화 · 숲과 계곡을
 const STATS = ["사라질 나무 111,999그루", "물에 잠기는 51가구", "지켜온 8년"];
 // petition-statement.ts의 closing.p2와 정확히 같은 문장 — 성명서의 맺음 문구를
 // 그대로 인용한다(check-petition-og.mjs가 이 일치를 단언한다).
+//
+// 원래는 이 아래에 보조 문구("1937년부터 이어온 숲 · 국내 잣 생산량 62%…")를 한 줄
+// 더 넣었지만 뺐다 — 카드가 300px 폭 타임라인에서 렌더될 때(실제 공유 환경) 18px
+// 텍스트는 몇 픽셀로 짓눌려 어차피 안 읽힌다. 안 읽힐 정보를 넣는 건 공간과 스크림
+// 대비 예산만 쓰는 것이라, 제목·부제·수치 3종·맺음 문구로 줄였다.
 const CAPTION = "풍천리를 그대로. 숲을 그대로. 생명을 그대로.";
-const CAPTION_SUB = "1937년부터 이어온 숲 · 국내 잣 생산량 62%를 지켜온 마을";
 
-const OG_TEXT = [EYEBROW, TITLE, SUBTITLE, ...STATS, CAPTION, CAPTION_SUB, SITE_HOST].join("");
+const OG_TEXT = [EYEBROW, TITLE, SUBTITLE, ...STATS, CAPTION, SITE_HOST].join("");
 
 /**
  * satori(next/og)는 fonts를 주지 않으면 라틴 기본 폰트만 쓴다. 한글 글리프가 없으면
@@ -72,11 +76,19 @@ export default async function Image() {
           fontFamily: "NotoSansKR",
         }}
       >
-        {/* 홈(opengraph-image.tsx)의 드론 항공샷과 겹치지 않게, /petition 히어로가
-            실제로 쓰는 사진(연대 참가자들이 모인 강원생명평화기도회)을 그대로 쓴다 —
-            "서명·연대"라는 이 페이지의 주제와 더 맞고, 홈 카드와 형제이되 구별된다. */}
+        {/* 처음에는 /petition 히어로 사진(연대 집회 사진)을 그대로 썼는데, 인물·
+            현수막의 흰 글씨가 화면 전체에 흩어져 있어 어디에 텍스트를 얹어도 그
+            지점의 국소 대비가 튀었다(리뷰에서 실측 확인 — 특히 부제·하단 문구가
+            현수막 위에서 거의 안 읽혔다). 루트 카드가 잘 읽히는 이유는 배경이
+            "질감은 있되 균질한" 항공 사진이기 때문이다. 그래서 근경 잣나무숲
+            사진으로 바꿨다 — "우리가 나무다"라는 이 캠페인의 은유와도 더 맞고,
+            안개 낀 능선 전체가 캔버스 하단 2/3(실제 텍스트가 놓이는 영역)를
+            고르게 채워 어느 지점에 글자를 얹어도 국소 대비가 비슷하다.
+            public/images의 다른 숲 사진 후보들도 열어봤지만(forest-landscape는
+            하단에 밝은 바위, mountain-forest·forest-aerial은 우측에 강한 역광/
+            수면 반사) 이 사진만 좌측·하단이 실제로 균질했다. */}
         <img
-          src="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535383_std.jpg"
+          src={`${SITE_URL}/images/pine-forest-1.jpg`}
           alt=""
           style={{
             position: "absolute",
@@ -87,12 +99,15 @@ export default async function Image() {
           }}
         />
 
+        {/* 사진을 바꿨어도 스크림은 여전히 필요하다 — 안개 낀 상단은 밝고, 텍스트가
+            실제로 앉는 하단 2/3는 초기값(0.32~0.88)보다 더 일찍, 더 짙게 어둡혀야
+            흰 글씨가 어떤 배경에서도 안정적으로 읽힌다. */}
         <div
           style={{
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(180deg, rgba(16, 23, 12, 0.12) 0%, rgba(16, 23, 12, 0.32) 34%, rgba(16, 23, 12, 0.88) 100%)",
+              "linear-gradient(180deg, rgba(8, 14, 6, 0.18) 0%, rgba(8, 14, 6, 0.58) 28%, rgba(8, 14, 6, 0.90) 58%, rgba(8, 14, 6, 0.95) 100%)",
           }}
         />
 
@@ -183,8 +198,8 @@ export default async function Image() {
                     alignItems: "center",
                     padding: "12px 18px",
                     borderRadius: "999px",
-                    backgroundColor: "rgba(45, 80, 22, 0.4)",
-                    border: "1px solid rgba(108, 184, 61, 0.45)",
+                    backgroundColor: "rgba(20, 34, 12, 0.66)",
+                    border: "1px solid rgba(120, 190, 70, 0.5)",
                     fontSize: "22px",
                     fontWeight: 600,
                     color: "rgba(255,255,255,0.96)",
@@ -207,28 +222,13 @@ export default async function Image() {
             >
               <div
                 style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "6px",
+                  fontSize: "25px",
+                  fontWeight: 700,
+                  color: "rgba(255,255,255,0.97)",
+                  textShadow: "0 2px 12px rgba(0,0,0,0.4)",
                 }}
               >
-                <div
-                  style={{
-                    fontSize: "20px",
-                    fontWeight: 700,
-                    color: "rgba(255,255,255,0.92)",
-                  }}
-                >
-                  {CAPTION}
-                </div>
-                <div
-                  style={{
-                    fontSize: "18px",
-                    color: "rgba(255,255,255,0.70)",
-                  }}
-                >
-                  {CAPTION_SUB}
-                </div>
+                {CAPTION}
               </div>
               <div
                 style={{
