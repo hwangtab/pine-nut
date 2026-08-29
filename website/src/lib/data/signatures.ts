@@ -375,6 +375,17 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
       ...fallback,
       totalCount: count ?? 0,
       recentSignatures,
+      // usingFallback은 이 파일 밖에서 오직 admin/signatures/page.tsx 한 곳만
+      // 소비한다 — stats.warning이 이미 참일 때, "현재 수치는 fallback 상태
+      // 기준이며 실제 운영 데이터가 아닐 수 있습니다."라는 문장을 추가로
+      // 붙일지 말지를 이 값으로 결정한다. 여기서 ...fallback을 스프레드하면
+      // usingFallback: true가 그대로 따라와, 방금 채운 실측 totalCount·
+      // recentSignatures까지 "믿지 말라"는 문장과 정면으로 모순되는 배너가
+      // 뜬다(예: "총 서명 수는 정상이며 ..." 바로 뒤에 "실제 운영 데이터가
+      // 아닐 수 있습니다"). totalCount·recentSignatures는 이 분기에서 실측값
+      // 그대로이므로 false로 명시해 그 모순을 없앤다 — 무엇이 얼마나
+      // 못 미더운지는 이미 위 warning 문장이 정확히 설명한다.
+      usingFallback: false,
       warning: !serviceClient
         ? "서명 통계 집계에 필요한 서비스 키(SUPABASE_SERVICE_ROLE_KEY)가 설정되지 않았습니다. 총 서명 수·최근 서명 목록은 정상이며, 지역·동의율·중복 후보·일별 추이만 집계되지 않았습니다."
         : "지역·동의율·중복 후보·일별 추이 통계를 불러오지 못했습니다. 총 서명 수·최근 서명 목록은 정상입니다.",
