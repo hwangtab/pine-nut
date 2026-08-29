@@ -235,9 +235,14 @@ for (const [column, defaultLiteral] of [
 // region_top/region_sub 컬럼의 DROP DEFAULT를 통째로 금지한다 — 이 파일에는 그
 // 두 컬럼의 DEFAULT를 없앨 이유가 애초에 없다(어느 테이블이든).
 for (const column of ["region_top", "region_sub"]) {
+  // COLUMN 키워드는 Postgres에서 선택이다 — "ALTER TABLE signatures ALTER
+  // region_top DROP DEFAULT;"가 유효한 SQL이라 COLUMN을 고정 리터럴로 요구하면
+  // 이 변형이 새어나간다. 인용 식별자("region_top")도 마찬가지로 통과해야
+  // 한다. 둘 다 선택 요소로 두는 정규식으로 막는다.
+  const dropDefaultPattern = new RegExp(`alter (?:column )?"?${column}"? drop default`);
   assert(
-    !solidaritySqlWithoutComments.includes(`alter column ${column} drop default`),
-    `${solidarityMigrationPath} must NOT DROP DEFAULT on ${column} — this migration already shipped to production. Dropping the DEFAULT here would silently remove the rollback-window safety net that this same file's own comment says is deferred to a separate, later migration once the deploy is confirmed safe.`,
+    !dropDefaultPattern.test(solidaritySqlWithoutComments),
+    `${solidarityMigrationPath} must NOT DROP DEFAULT on ${column} (with or without the optional COLUMN keyword, quoted or unquoted) — this migration already shipped to production. Dropping the DEFAULT here would silently remove the rollback-window safety net that this same file's own comment says is deferred to a separate, later migration once the deploy is confirmed safe.`,
   );
 }
 
@@ -368,11 +373,17 @@ assert(
   ),
   "signature_region_count() must revoke EXECUTE from public/anon/authenticated — a SECURITY DEFINER function left callable by anon is a privilege-escalation hole.",
 );
+// 순수 .includes()는 GRANT를 느슨하게 만드는 공격(예: service_role 뒤에
+// ", authenticated"를 덧붙임)을 놓친다 — "...to service_role"이 "...to
+// service_role, authenticated"의 부분 문자열이라 그대로 통과해버린다. 아래
+// signature_admin_stats() GRANT 검사를 만들다가 이 결함을 실제로 재현해
+// 발견했다 — 같은 반경의 기존 함수를 뚫린 채 두지 않도록 여기도 문장이
+// 정확히 "to service_role;"로 끝나는지 정규식으로 못박는다.
 assert(
-  normalizedSolidaritySql.includes(
-    "grant execute on function signature_region_count() to service_role",
+  /grant execute on function signature_region_count\(\) to service_role;/.test(
+    normalizedSolidaritySql,
   ),
-  "signature_region_count() must be granted to service_role only — that's the only caller (the server-side signatures API).",
+  "signature_region_count() must be granted to service_role ONLY (the GRANT statement must end right after service_role, not widen to `, authenticated` or any other role) — that's the only caller (the server-side signatures API).",
 );
 
 // ---------------------------------------------------------------------------
@@ -419,7 +430,7 @@ assert(
 );
 const adminStatsFunctionBody = adminStatsFunctionMatch[1].trim();
 const expectedAdminStatsBody =
-  "select jsonb_build_object( 'regioncounts', ( select coalesce( jsonb_agg(jsonb_build_object('regiontop', region_top, 'count', region_cnt)), '[]'::jsonb ) from ( select region_top, count(*) as region_cnt from signatures where region_top <> '미상' group by region_top ) region_agg ), 'unknownregioncount', ( select count(*) from signatures where region_top = '미상' ), 'namepublicratebase', ( select count(*) from signatures where region_top <> '미상' ), 'namepublictruecount', ( select count(*) filter (where name_public) from signatures ), 'duplicatecandidates', ( select coalesce( jsonb_agg( jsonb_build_object( 'name', name, 'regiontop', region_top, 'regionsub', region_sub, 'count', dup_cnt ) order by dup_cnt desc, name ), '[]'::jsonb ) from ( select name, region_top, region_sub, count(*) as dup_cnt from signatures where region_top <> '미상' group by name, region_top, region_sub having count(*) > 1 ) dup_agg ), 'dailycounts', ( select coalesce( jsonb_agg(jsonb_build_object('date', day, 'count', day_cnt) order by day), '[]'::jsonb ) from ( select ((created_at at time zone 'asia/seoul')::date)::text as day, count(*) as day_cnt from signatures where created_at >= p_since group by day ) daily_agg ) );";
+  "select jsonb_build_object( 'regioncounts', ( select coalesce( jsonb_agg(jsonb_build_object('regiontop', region_top, 'count', region_cnt)), '[]'::jsonb ) from ( select region_top, count(*) as region_cnt from signatures where region_top <> '미상' group by region_top ) region_agg ), 'unknownregioncount', ( select count(*) from signatures where region_top = '미상' ), 'namepublicratebase', ( select count(*) from signatures where region_top <> '미상' ), 'namepublictruecount', ( select count(*) filter (where name_public) from signatures ), 'duplicatecandidates', ( select coalesce( jsonb_agg( jsonb_build_object( 'name', name, 'regiontop', region_top, 'regionsub', region_sub, 'count', dup_cnt ) order by dup_cnt desc, name ), '[]'::jsonb ) from ( select name, region_top, region_sub, count(*) as dup_cnt from signatures where region_top <> '미상' group by name, region_top, region_sub having count(*) > 1 ) dup_agg ), 'dailycounts', ( select coalesce( jsonb_agg(jsonb_build_object('date', day, 'count', day_cnt) order by day), '[]'::jsonb ) from ( select to_char((created_at at time zone 'asia/seoul')::date, 'yyyy-mm-dd') as day, count(*) as day_cnt from signatures where created_at >= p_since group by day ) daily_agg ) );";
 assert(
   adminStatsFunctionBody === expectedAdminStatsBody,
   `signature_admin_stats()'s $$ ... $$ body must match exactly — got "${adminStatsFunctionBody}". A body missing the region_top <> '미상' exclusion (region/duplicate/rate stats) or the created_at >= p_since / Asia/Seoul day bucketing would silently reproduce the exact JS bugs this RPC exists to prevent (legacy-row dilution, UTC-day chart drift).`,

@@ -78,6 +78,13 @@ RETURNS jsonb LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $
     -- 벽시계 시각을 돌려주므로 ::date로 자르면 kstDateKey()(UTC 값에 9시간을
     -- 더한 뒤 날짜만 취함, src/lib/data/signatures.ts)와 정확히 같은 날짜가
     -- 나온다. UTC로 그냥 자르면 KST 00:00~09:00 서명이 전날 막대로 들어간다.
+    -- ::date를 ::text로 바로 캐스팅하지 않고 to_char(..., 'YYYY-MM-DD')로
+    -- 고정한다 — date::text의 출력 형식은 세션 DateStyle(예: SQL, GERMAN)에
+    -- 좌우되는데 이 함수는 search_path만 고정하고 DateStyle은 고정하지 않는다.
+    -- DateStyle이 ISO가 아닌 세션에서 실행되면 'YYYY-MM-DD'가 아닌 다른 형식이
+    -- 나와 JS의 dailyMap 키와 하나도 안 맞고, 에러 없이 차트가 전부 0으로
+    -- 보인다 — 조용한 실패라 더 위험하다. to_char는 DateStyle과 무관하게
+    -- 항상 이 형식을 낸다.
     'dailyCounts', (
       SELECT coalesce(
         jsonb_agg(jsonb_build_object('date', day, 'count', day_cnt) ORDER BY day),
@@ -85,7 +92,7 @@ RETURNS jsonb LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $
       )
       FROM (
         SELECT
-          ((created_at AT TIME ZONE 'Asia/Seoul')::date)::text AS day,
+          to_char((created_at AT TIME ZONE 'Asia/Seoul')::date, 'YYYY-MM-DD') AS day,
           count(*) AS day_cnt
         FROM signatures
         WHERE created_at >= p_since

@@ -202,10 +202,37 @@ interface SignatureAdminStatsRpcResult {
   dailyCounts: { date: string; count: number }[];
 }
 
+function isRegionCountEntry(value: unknown): value is { regionTop: string; count: number } {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  return typeof v.regionTop === "string" && typeof v.count === "number";
+}
+
+function isDuplicateCandidateEntry(value: unknown): value is SignatureDuplicateCandidate {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  return (
+    typeof v.name === "string" &&
+    typeof v.regionTop === "string" &&
+    typeof v.regionSub === "string" &&
+    typeof v.count === "number"
+  );
+}
+
+function isDailyCountEntry(value: unknown): value is { date: string; count: number } {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  return typeof v.date === "string" && typeof v.count === "number";
+}
+
 /** RPC 응답은 PostgREST를 거친 unknown JSON이라 TS 타입이 실제 모양을 보장하지
  * 않는다 — 함수 시그니처가 바뀌었는데 이 파일을 안 고치면 필드 하나가 조용히
- * undefined가 되어 화면 렌더링 중간에서 죽는다. 얕은 형태 검사로 그런 경우를
- * fail-closed(마이그레이션 아래 error 처리 경로로 합류)시킨다. */
+ * undefined가 되어 화면 렌더링 중간에서 죽는다. 배열 원소 형태까지 검사한다 —
+ * `Array.isArray`만 확인하면 SQL 쪽 키 오타(예: regionTop → regiontop)가
+ * 조용히 "전 지역 0건"으로 렌더링될 뿐 아무 에러도 안 낸다. (SQL 가드의
+ * $$ ... $$ 본문 일치 검사는 비교 전에 전체를 소문자화해서 이런 대소문자
+ * 오타를 못 잡는다 — 여기가 그 구멍을 막는 두 번째 방어선이다.) 형태가
+ * 어긋나면 error 경로로 합류시켜 fail-closed시킨다. */
 function isSignatureAdminStatsRpcResult(
   value: unknown,
 ): value is SignatureAdminStatsRpcResult {
@@ -213,11 +240,14 @@ function isSignatureAdminStatsRpcResult(
   const v = value as Record<string, unknown>;
   return (
     Array.isArray(v.regionCounts) &&
+    v.regionCounts.every(isRegionCountEntry) &&
     typeof v.unknownRegionCount === "number" &&
     typeof v.namePublicRateBase === "number" &&
     typeof v.namePublicTrueCount === "number" &&
     Array.isArray(v.duplicateCandidates) &&
-    Array.isArray(v.dailyCounts)
+    v.duplicateCandidates.every(isDuplicateCandidateEntry) &&
+    Array.isArray(v.dailyCounts) &&
+    v.dailyCounts.every(isDailyCountEntry)
   );
 }
 
@@ -268,22 +298,13 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
 
   if (!supabase) return fallback;
 
-  // signature_admin_stats()는 service_role 전용 RPC다(20260829000000 마이그레이션) —
-  // SUPABASE_SERVICE_ROLE_KEY가 없는 환경(로컬 개발 등)에서는 createSupabaseServiceClient()가
-  // null을 돌려준다. createSupabaseServerClient()가 non-null이어도(로컬은 URL·anon
-  // 키는 Vercel CLI로 받아오지만 서비스 키는 비워둔다) 이 경로는 반드시 fail-closed해야
-  // 한다 — 서비스 클라이언트 없이는 통계를 하나도 계산할 수 없다.
+  // signature_admin_stats()는 service_role 전용 RPC다(20260829000000
+  // 마이그레이션) — SUPABASE_SERVICE_ROLE_KEY가 없는 환경(키 회전 창, 설정
+  // 실수 등)에서는 createSupabaseServiceClient()가 null을 돌려준다. 이 경우
+  // RPC 호출 자체를 건너뛰고, 아래에서 그 사실을 "RPC 유래 통계만 부분
+  // fallback" 경로로 자연스럽게 합류시킨다 — 총 서명 수·최근 서명 목록까지
+  // 갈아엎지 않는다(바로 아래 countRecentError 처리 참고).
   const serviceClient = createSupabaseServiceClient();
-  if (!serviceClient) {
-    console.error(
-      "getSignatureStats: SUPABASE_SERVICE_ROLE_KEY missing — cannot call signature_admin_stats().",
-    );
-    return {
-      ...fallback,
-      warning:
-        "서명 통계 집계에 필요한 서비스 키(SUPABASE_SERVICE_ROLE_KEY)가 설정되지 않았습니다.",
-    };
-  }
 
   // 서명자도 운영진도 한국에 있다. UTC 기준으로 날짜를 자르면 KST 00:00~09:00의
   // 서명이 전날 막대에 들어가고, 오전에는 '오늘' 막대가 통째로 비어 보인다.
@@ -295,16 +316,31 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
       .select("name, email, message, created_at")
       .order("created_at", { ascending: false })
       .limit(20),
-    fetchSignatureAdminStats(serviceClient, since),
+    serviceClient
+      ? fetchSignatureAdminStats(serviceClient, since)
+      : Promise.resolve<{
+          data: SignatureAdminStatsRpcResult | null;
+          error: PostgrestError | Error | null;
+        }>({
+          data: null,
+          error: new Error(
+            "SUPABASE_SERVICE_ROLE_KEY missing — cannot call signature_admin_stats().",
+          ),
+        }),
   ]);
 
-  const signatureError = countResult.error ?? recentResult.error ?? statsResult.error;
-
-  if (signatureError) {
-    console.error("Failed to fetch signature stats:", signatureError);
+  // count·recentSignatures는 쿠키 세션 클라이언트(RLS 정책 signatures_admin_read)로
+  // 얻는 값이라 serviceClient 상태와 무관하게 신뢰할 수 있다 — 이 둘이
+  // 실패했을 때만 전체를 fallback으로 갈아엎는다. RPC 도입 전 코드가 지키던
+  // 원칙("totalCount·recentSignatures는 여전히 신뢰할 수 있으므로 전체를
+  // fallback으로 갈아엎지 않는다")을 그대로 되살린 것 — RPC를 끼워 넣으며
+  // 한 번 이 원칙을 깼던 걸 되돌린다.
+  const countRecentError = countResult.error ?? recentResult.error;
+  if (countRecentError) {
+    console.error("Failed to fetch signature stats (count/recent):", countRecentError);
     return {
       ...fallback,
-      warning: isMissingSupabaseRelationError(signatureError)
+      warning: isMissingSupabaseRelationError(countRecentError)
         ? formatSupabaseRelationWarning("signatures", "서명")
         : "서명 데이터를 불러오지 못했습니다. Supabase 연결 상태를 확인하세요.",
     };
@@ -312,18 +348,40 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
 
   const count = countResult.count;
   const recent = recentResult.data;
-  // signatureError가 없으면 statsResult.data는 isSignatureAdminStatsRpcResult를
-  // 통과한 값이다(fetchSignatureAdminStats가 형태 불일치를 error로 승격시킨다) —
-  // 그래도 non-null을 명시적으로 강제해 아래 필드 접근에서 타입 단언이 조용히
-  // 사실이 아니게 되는 경우를 막는다.
-  const stats = statsResult.data;
-  if (!stats) {
-    console.error("getSignatureStats: statsResult.data is null despite no error.");
+  const recentSignatures = (recent ?? []).map(
+    (r: {
+      name: string;
+      email: string | null;
+      message: string | null;
+      created_at: string | null;
+    }) => ({
+      name: r.name,
+      email: r.email,
+      message: r.message,
+      createdAt: r.created_at,
+    }),
+  );
+
+  // RPC 유래 통계(지역 분포·공개 동의율·중복 후보·일별 추이)만 부분
+  // fallback한다 — serviceClient가 없거나 RPC가 실패·형태 불일치여도 위에서
+  // 이미 확보한 count·recentSignatures는 그대로 살려서 반환한다. count·
+  // recentSignatures까지 0/빈 배열로 갈아엎으면(예전 실수) 서비스 키가
+  // 회전 중일 뿐인데 화면이 "총 0건"을 보여주게 된다.
+  if (!serviceClient || statsResult.error || !statsResult.data) {
+    if (statsResult.error) {
+      console.error("signature_admin_stats() 호출 실패:", statsResult.error);
+    }
     return {
       ...fallback,
-      warning: "서명 데이터를 불러오지 못했습니다. Supabase 연결 상태를 확인하세요.",
+      totalCount: count ?? 0,
+      recentSignatures,
+      warning: !serviceClient
+        ? "서명 통계 집계에 필요한 서비스 키(SUPABASE_SERVICE_ROLE_KEY)가 설정되지 않았습니다. 총 서명 수·최근 서명 목록은 정상이며, 지역·동의율·중복 후보·일별 추이만 집계되지 않았습니다."
+        : "지역·동의율·중복 후보·일별 추이 통계를 불러오지 못했습니다. 총 서명 수·최근 서명 목록은 정상입니다.",
     };
   }
+
+  const stats = statsResult.data;
 
   // 일별 버킷: RPC가 KST 기준으로 이미 (date, count)로 집계해 돌려준다(같은
   // kstDateKey 규칙, supabase/migrations/20260829000000). 여기서는 서명이 없는
@@ -349,19 +407,7 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
 
   return {
     totalCount: count ?? 0,
-    recentSignatures: (recent ?? []).map(
-      (r: {
-        name: string;
-        email: string | null;
-        message: string | null;
-        created_at: string | null;
-      }) => ({
-        name: r.name,
-        email: r.email,
-        message: r.message,
-        createdAt: r.created_at,
-      }),
-    ),
+    recentSignatures,
     dailyCounts: Array.from(dailyMap.entries()).map(([date, cnt]) => ({
       date,
       count: cnt,
