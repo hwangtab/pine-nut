@@ -100,7 +100,7 @@ export function defaultFooterLinks(): BuilderLinkItem[] {
     { id: "footer-press", label: "자료실", href: "/press" },
     { id: "footer-share", label: "카드뉴스", href: "/share" },
     { id: "footer-board", label: "게시판", href: "/board" },
-    { id: "footer-petition", label: "서명하기", href: "/petition" },
+    { id: "footer-petition", label: "연대서명", href: "/petition" },
     { id: "footer-donate", label: "후원하기", href: "/donate" },
   ];
 }

@@ -63,7 +63,7 @@ export default function DesktopNavigation({
       >
         <EditableText
           contentKey="nav.cta"
-          defaultValue="함께하기"
+          defaultValue="연대서명"
           as="span"
           page="nav"
           section="header"
