@@ -140,15 +140,44 @@ assert(
   !/(?<!\$)\{\s*isOpen\s*(?:&&|\?)/.test(componentSource),
   "PetitionFAQ.tsx must not conditionally render with `{isOpen && …}` / `{isOpen ? … : …}` — the answer must stay in the DOM (the FAQPage schema in layout.tsx must not claim invisible content).",
 );
+// 답변·질문이 실제로 렌더되는지부터 확인한다. 이 두 단언이 없으면 답변 <p>를
+// 통째로 지운 파일이 아래의 "분기 없음" 검사를 통과해버린다 —
+// indexOf가 -1을 내고 slice(start, -1)이 파일 끝까지가 되면서 그 구간에
+// 우연히 &&도 `? (`도 없기 때문이다. 그 상태야말로 이 가드가 막아야 할
+// 최악(JSON-LD는 답변 5개를 주장하는데 화면엔 한 글자도 없음)이다.
+const ANSWER_EXPR = "{item.a}";
+const QUESTION_EXPR = "{item.q}";
+assert(
+  componentSource.includes(ANSWER_EXPR),
+  "PetitionFAQ.tsx must render {item.a} — the FAQPage JSON-LD in layout.tsx claims these answers are on the page.",
+);
+// `{item.q}`가 파일 어딘가에 있는 것만으로는 부족하다 — React key(`key={item.q}`)로만
+// 쓰이고 화면 문구는 딴 걸 보여줘도 통과해버린다. 실제로 토글 버튼의 자식으로
+// 렌더되는지를 본다.
+const buttonInnerStart = componentSource.indexOf("id={buttonId}");
+assert(buttonInnerStart !== -1, "PetitionFAQ.tsx's toggle button must carry id={buttonId}.");
+const buttonInnerEnd = componentSource.indexOf("</button>", buttonInnerStart);
+assert(buttonInnerEnd !== -1, "PetitionFAQ.tsx must close its toggle button.");
+assert(
+  componentSource.slice(buttonInnerStart, buttonInnerEnd).includes(QUESTION_EXPR),
+  "PetitionFAQ.tsx must render {item.q} as the toggle button's visible label — a React key alone does not put the question on the page the FAQPage JSON-LD claims it is on.",
+);
+
 // 패널 컨테이너부터 답변 텍스트까지 사이에 조건 분기가 끼어들 수 없다.
-const panelToAnswer = componentSource.slice(
-  componentSource.indexOf("id={panelId}"),
-  componentSource.indexOf("{item.a}"),
+// 두 인덱스 모두 -1이 아님을 확인한 뒤에만 slice 한다(위 존재 단언 + 아래 방어).
+const panelStart = componentSource.indexOf("id={panelId}");
+const answerStart = componentSource.indexOf(ANSWER_EXPR);
+assert(
+  panelStart !== -1,
+  "PetitionFAQ.tsx must give the collapsible answer panel id={panelId}.",
 );
 assert(
-  panelToAnswer.length > 0 &&
-    !panelToAnswer.includes("&&") &&
-    !/\?\s*\(/.test(panelToAnswer),
+  answerStart > panelStart,
+  "PetitionFAQ.tsx must render {item.a} inside the panel container (after id={panelId}), not before or outside it.",
+);
+const panelToAnswer = componentSource.slice(panelStart, answerStart);
+assert(
+  !panelToAnswer.includes("&&") && !/\?\s*\(/.test(panelToAnswer),
   "PetitionFAQ.tsx must render {item.a} unconditionally inside the panel — no branch may sit between the panel container and the answer text.",
 );
 assert(
@@ -294,9 +323,27 @@ assert(
 
 const successTag = pageSource.match(/<PetitionSuccess\b[\s\S]*?\/?>/);
 assert(successTag, "/petition/page.tsx must render <PetitionSuccess …>.");
+const signatureCountProp = successTag[0].match(/signatureCount=\{([^}]*)\}/);
+assert(signatureCountProp, "PetitionSuccess must receive a signatureCount prop.");
 assert(
-  /signatureCount=\{summary\.count\}/.test(successTag[0]),
-  "PetitionSuccess must read the real count from the summary hook (signatureCount={summary.count}), not a locally seeded 0.",
+  /\bsummary\.count\b/.test(signatureCountProp[1]),
+  `PetitionSuccess must read the real count from the summary hook (summary.count), not a locally seeded 0. Found: ${signatureCountProp[1]}`,
+);
+// 요약 조회가 실패해 카운트를 모르는 경우에는 0이 아니라 null을 넘겨야 한다 —
+// 그래야 PetitionSuccess가 서수 문장을 감춘다. 0을 넘기면 방금 서명한 시민이
+// "0번째로 함께해주셨습니다"를 읽게 된다.
+assert(
+  /\bnull\b/.test(signatureCountProp[1]),
+  `PetitionSuccess's signatureCount must pass null when the count is unknown, never a 0 fallback. Found: ${signatureCountProp[1]}`,
+);
+const successPropsSource = read("src/components/petition/PetitionSuccess.tsx");
+assert(
+  /signatureCount:\s*number\s*\|\s*null;/.test(successPropsSource),
+  "PetitionSuccess must accept `signatureCount: number | null` so an unknown count can be represented without lying with 0.",
+);
+assert(
+  /\{signatureCount !== null &&/.test(successPropsSource),
+  "PetitionSuccess must hide the ordinal count sentence entirely when signatureCount is null.",
 );
 for (const banned of ["setSignatureCount", "count: 0"]) {
   assert(
@@ -380,5 +427,90 @@ assert(
   !pageSource.includes("풍천리를 지켜주세요"),
   '/petition/page.tsx must not keep the old share copy "풍천리를 지켜주세요" — this page is now the 연대서명 campaign.',
 );
+
+// ---------------------------------------------------------------------------
+// 10. 요약 조회 실패를 "0"으로 위장하지 않는다.
+//
+//     훅의 catch가 콘솔 로그만 남기고 finally가 loading을 내려버리면, 실패와
+//     "정말 0명"이 화면에서 구별되지 않는다. 최악은 성공 화면이다 — 방금
+//     서명한 시민에게 "0번째로 함께해주셨습니다"가 나간다.
+// ---------------------------------------------------------------------------
+const summaryHookPath = "src/components/petition/usePetitionSignatureSummary.ts";
+const summaryHookSource = read(summaryHookPath);
+
+assert(
+  /const \[summaryError, setSummaryError\] = useState\(false\)/.test(summaryHookSource),
+  "usePetitionSignatureSummary must track a summaryError state — without it the page cannot tell a failed fetch from a real 0.",
+);
+const catchBody = extractBlockAfter(summaryHookSource, summaryHookSource.indexOf("} catch ("));
+assert(catchBody, "usePetitionSignatureSummary's refreshSummary must have a catch block.");
+assert(
+  /setSummaryError\(true\)/.test(catchBody),
+  "usePetitionSignatureSummary must set summaryError in the catch block — logging to the console does not reach the screen.",
+);
+assert(
+  /setSummary\(data\);[\s\S]{0,80}setSummaryError\(false\)/.test(summaryHookSource),
+  "usePetitionSignatureSummary must clear summaryError on a successful fetch, or a retry can never recover the UI.",
+);
+const summaryReturn = extractBlockAfter(summaryHookSource, summaryHookSource.lastIndexOf("return {"));
+assert(
+  summaryReturn && /\bsummaryError\b/.test(summaryReturn),
+  "usePetitionSignatureSummary must return summaryError to its consumers.",
+);
+
+// 페이지가 그 신호를 실제로 소비하는가.
+assert(
+  /const countKnown = !loadingSummary && !summaryError;/.test(pageSource),
+  "/petition/page.tsx must derive `countKnown` from both loadingSummary and summaryError — an unknown count must never render as 0.",
+);
+const progressIndex = pageSource.search(/<PetitionProgress\b/);
+const progressGuardIndex = pageSource.indexOf("{summaryError ? (");
+assert(
+  progressGuardIndex !== -1 && progressGuardIndex < progressIndex,
+  "/petition/page.tsx must branch on summaryError before rendering <PetitionProgress> — a failed fetch must not be shown as 0 / 0%.",
+);
+// 히어로 배지도 같은 거짓말을 한다("0명이 함께하고 있습니다").
+assert(
+  /\{countKnown && \([\s\S]{0,400}?stamp-badge/.test(pageSource),
+  "/petition/page.tsx must hide the hero count badge while the count is unknown (home/HomeCtaSection's convention), not animate it to 0.",
+);
+
+// ---------------------------------------------------------------------------
+// 11. 히어로에서 서명 폼으로 가는 경로가 존재한다.
+//
+//     PetitionActionCards의 "서명하기" 카드를 걷어내면서 #signature-form을
+//     가리키는 링크가 저장소에서 사라졌다. 그대로 두면 시민이 폼에 닿으려면
+//     성명서 전문을 끝까지 스크롤해야 한다.
+// ---------------------------------------------------------------------------
+assert(
+  /const handleScrollToForm = useCallback\(\(\) => \{[\s\S]{0,200}?signatureSectionRef\.current\?\.scrollIntoView/.test(
+    pageSource,
+  ),
+  "/petition/page.tsx must define handleScrollToForm that scrolls signatureSectionRef into view.",
+);
+const heroCtaMatch = pageSource.match(/<button[^>]*onClick=\{handleScrollToForm\}[\s\S]{0,200}?>/);
+assert(
+  heroCtaMatch,
+  "/petition/page.tsx must render a hero CTA button wired to handleScrollToForm — otherwise the only way to the form is scrolling past the whole statement.",
+);
+assert(
+  /letter-btn--primary/.test(heroCtaMatch[0]),
+  "The hero signature CTA must use letter-btn--primary (--color-warm) — that colour role is reserved for exactly this: the CTA / signature action.",
+);
+// 스크롤 목표는 폼과 성공 화면을 **모두** 감싸는 안정적인 래퍼여야 한다.
+// 폼 쪽 분기에만 달면 제출 후 ref가 null이 되어 CTA가 조용히 죽는다.
+const anchorIndex = pageSource.indexOf('<div ref={signatureSectionRef} id="signature-form">');
+assert(
+  anchorIndex !== -1,
+  '/petition/page.tsx must anchor the scroll target on a stable wrapper: <div ref={signatureSectionRef} id="signature-form">.',
+);
+const wallIndex = pageSource.search(/<SignatureWall\b/);
+for (const inner of ["<PetitionSignatureForm", "<PetitionSuccess"]) {
+  const innerIndex = pageSource.indexOf(inner);
+  assert(
+    innerIndex > anchorIndex && innerIndex < wallIndex,
+    `${inner} must sit inside the signatureSectionRef wrapper — if the scroll anchor only covers one branch, the hero CTA breaks in the other state.`,
+  );
+}
 
 console.log("PetitionFAQ checks passed.");

@@ -344,12 +344,16 @@ const returnedKeys = returnMatch[1]
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
+// summaryError는 Task 12 통합에서 더해졌다 — 조회 실패와 "정말 0명"을 화면이
+// 구별하지 못하면 방금 서명한 시민에게 "0번째로 함께해주셨습니다"가 나간다.
+// 그래서 선택 항목이 아니라 계약의 일부다.
 assert(
-  returnedKeys.length === 3 &&
+  returnedKeys.length === 4 &&
     returnedKeys.includes("summary") &&
     returnedKeys.includes("loadingSummary") &&
+    returnedKeys.includes("summaryError") &&
     returnedKeys.includes("refreshSummary"),
-  `usePetitionSignatureSummary must return exactly { summary, loadingSummary, refreshSummary }, found { ${returnedKeys.join(", ")} }.`,
+  `usePetitionSignatureSummary must return exactly { summary, loadingSummary, summaryError, refreshSummary }, found { ${returnedKeys.join(", ")} }.`,
 );
 
 // The old signatures[]/signatureCount/setSignatureCount shape must be gone —
