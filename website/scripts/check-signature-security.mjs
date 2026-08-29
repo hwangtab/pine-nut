@@ -180,6 +180,59 @@ assert(
   "solidarity migration must run the '미상' backfill UPDATE before ALTER COLUMN region_top SET NOT NULL, not after.",
 );
 
+// ---------------------------------------------------------------------------
+// region_top/region_sub의 DEFAULT — 배포 창(deployment window) 안전망.
+//
+// 마이그레이션은 코드보다 먼저 적용된다(supabase db push → Vercel 빌드·배포).
+// 그 사이 구 코드가 여전히 살아서 {name, email, message, ip_hash,
+// consent_privacy, consent_age} 여섯 컬럼만 INSERT한다(git show
+// f2d0ead:website/src/lib/signatures/api/store.ts). region_top/region_sub에
+// DEFAULT 없이 NOT NULL만 걸리면 그 INSERT가 전부 23502 not_null_violation으로
+// 죽어 시민에게 "서명 제출에 실패했습니다."가 뜬다. 새 코드에 문제가 생겨
+// 이전 배포로 롤백하면 그 순간 다시 같은 상태가 되므로, 이 DEFAULT는 배포가
+// 끝나면 없어도 되는 임시물이 아니라 롤백 안전망이다.
+//
+// "NOT NULL인데 DEFAULT가 왜 있지"라며 지우는 일이 없도록 여기서 고정한다.
+// 주석에만 적힌 SET DEFAULT가 통과하지 않도록 주석을 제거한 SQL로 검사한다.
+const solidaritySqlWithoutComments = solidarityMigration
+  .split("\n")
+  .map((line) => line.replace(/--.*$/, ""))
+  .join("\n")
+  .toLowerCase()
+  .replace(/\s+/g, " ");
+
+for (const [column, defaultLiteral] of [
+  ["region_top", "'미상'"],
+  ["region_sub", "''"],
+]) {
+  assert(
+    solidaritySqlWithoutComments.includes(
+      `alter column ${column} set default ${defaultLiteral}`,
+    ),
+    `solidarity migration must give ${column} a DEFAULT (${defaultLiteral}) — the schema lands before the new code deploys, and the still-live old code INSERTs without ${column}. Without the DEFAULT every signature submitted during that window (and after any rollback to the previous deploy) fails with 23502 not_null_violation.`,
+  );
+}
+
+const regionTopSetDefaultIndex = solidaritySqlWithoutComments.indexOf(
+  "alter column region_top set default",
+);
+const regionTopSetNotNullIndexNoComments = solidaritySqlWithoutComments.indexOf(
+  "alter column region_top set not null",
+);
+const regionTopCheckIndexNoComments = solidaritySqlWithoutComments.indexOf(
+  "add constraint signatures_region_top_check",
+);
+assert(
+  regionTopSetNotNullIndexNoComments !== -1 &&
+    regionTopSetDefaultIndex > regionTopSetNotNullIndexNoComments,
+  "the region DEFAULTs must come after ALTER COLUMN region_top SET NOT NULL — placing them earlier would let a later edit reorder the backfill/NOT NULL pair around them.",
+);
+assert(
+  regionTopCheckIndexNoComments !== -1 &&
+    regionTopSetDefaultIndex < regionTopCheckIndexNoComments,
+  "the region DEFAULTs must come before ADD CONSTRAINT signatures_region_top_check, so the '미상' default is written while the CHECK that must accept it is still being defined right below.",
+);
+
 assert(
   normalizedSolidaritySql.includes("add constraint signatures_region_top_check"),
   "solidarity migration must constrain region_top to the known province list.",

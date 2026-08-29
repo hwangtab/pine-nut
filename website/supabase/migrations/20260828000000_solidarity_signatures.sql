@@ -20,6 +20,14 @@ ALTER TABLE signatures
   ALTER COLUMN region_top SET NOT NULL,
   ALTER COLUMN region_sub SET NOT NULL;
 
+-- 스키마 선적용 → 코드 후배포 사이의 창에서, 아직 살아 있는 구 코드의 INSERT가
+-- 23502로 실패하지 않게 한다. 그 창에 들어온 서명은 레거시 65건과 같은
+-- '미상' 취급을 받는다(집계·동의율 분모에서 제외) — 실패보다 낫다.
+-- 신규 코드 배포 확인 후 별도 마이그레이션으로 DROP DEFAULT 한다.
+ALTER TABLE signatures
+  ALTER COLUMN region_top SET DEFAULT '미상',
+  ALTER COLUMN region_sub SET DEFAULT '';
+
 ALTER TABLE signatures
   -- '미상': 2026-08-28 이전 서명 65건은 지역을 수집하지 않았다. 폼은 이 값을
   -- 만들 수 없다(src/lib/regions.ts의 isValidRegionPair가 거부) — 레거시 백필
