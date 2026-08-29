@@ -112,4 +112,9 @@ for (const fact of ["1937", "2017", "111,999", "2,256", "600", "62", "51", "80"]
   );
 }
 
+assert(
+  !existsSync(join(root, "src/components/petition/PetitionActionCards.tsx")),
+  "PetitionActionCards must be removed once no page renders it.",
+);
+
 console.log("Petition refactor checks passed.");

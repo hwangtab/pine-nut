@@ -55,6 +55,15 @@ export const EXISTING_PAGE_SECTIONS: Partial<
     { id: "stake", label: "What's at Stake" },
     { id: "help", label: "How You Can Help" },
   ],
+  petition: [
+    { id: "hero", label: "히어로" },
+    { id: "progress", label: "진행률" },
+    { id: "statement", label: "성명서" },
+    { id: "form", label: "서명 폼" },
+    { id: "wall", label: "서명자 명단" },
+    { id: "share", label: "공유" },
+    { id: "faq", label: "자주 묻는 질문" },
+  ],
 };
 
 // 라우트 → 빌더 페이지 id. CustomSectionsHost와 PublicShell이 같은 출처를 봐야
