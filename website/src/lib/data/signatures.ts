@@ -210,6 +210,11 @@ export interface SignatureStats {
    * 이 형태를 고정한다) 그 배열엔 '미상'이 낄 자리가 없다 — 별도 필드로 빼지 않으면
    * 이 65건이 지역 분포 화면에서 조용히 사라진다. */
   unknownRegionCount: number;
+  /** namePublicRate의 분모(레거시 '미상' 서명 제외). 레거시 65건은
+   * name_public이 DEFAULT false로 강제 백필된 것이지 동의 여부를 물은 적이
+   * 없다 — 분모에 넣으면 신규 서명자가 전원 동의해도 동의율이 과거분에
+   * 희석되어 낮게 보인다. 화면에 "N건 기준" 캡션을 달 때 이 값을 쓴다. */
+  namePublicRateBase: number;
   namePublicRate: number;
   duplicateCandidates: SignatureDuplicateCandidate[];
   usingFallback: boolean;
@@ -229,6 +234,7 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
     dailyCounts: [],
     regionCounts: REGION_TOPS.map((regionTop) => ({ regionTop, count: 0 })),
     unknownRegionCount: 0,
+    namePublicRateBase: 0,
     namePublicRate: 0,
     duplicateCandidates: [],
     usingFallback: true,
@@ -296,11 +302,24 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
   // src/lib/regions.ts를 유일한 출처로 삼는다.
   const regionMap = new Map<string, number>(REGION_TOPS.map((regionTop) => [regionTop, 0]));
   let publicCount = 0;
+  // '미상' 행을 제외한, 실제로 공개 동의를 물어본 서명 수. namePublicRate의
+  // 분모로 쓴다 — regionRaw.length를 그대로 쓰면 레거시 65건(동의를 물은 적
+  // 없이 DEFAULT false로 백필된 행)이 분모에 섞여 동의율이 항상 낮게 보인다.
+  let askedCount = 0;
   const duplicateMap = new Map<string, SignatureDuplicateCandidate>();
 
   for (const row of regionRaw) {
     regionMap.set(row.region_top, (regionMap.get(row.region_top) ?? 0) + 1);
     if (row.name_public) publicCount += 1;
+
+    const isLegacyUnknownRegion = row.region_top === REGION_UNKNOWN_LEGACY;
+    if (!isLegacyUnknownRegion) askedCount += 1;
+
+    // 중복 후보: 이름+지역(시·도+시·군·구) 조합이 판별자다. '미상' 행은 지역이
+    // 전부 '미상'|''로 뭉개져 판별자 구실을 못 한다 — 그대로 두면 이름만 같은
+    // 서로 무관한 레거시 서명자 두 명이 "중복 서명 후보"에 올라, 운영자가
+    // 정당한 서명을 지울 위험이 생긴다. 지역 판별자가 있는 행만 후보로 삼는다.
+    if (isLegacyUnknownRegion) continue;
 
     // 이름+지역 유니크 제약을 걸지 않은 대신(동명이인 차단·명단 벽 통한 참여 여부
     // 노출 방지), 운영자가 훑어서 거를 수 있게 동일 이름+지역(시·도+시·군·구)
@@ -340,7 +359,8 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
     // regionMap은 REGION_TOPS로 시드됐지만 Map.set은 없는 키도 그냥 추가한다 —
     // 행의 region_top이 '미상'이면 루프가 이 값을 자연스럽게 채워둔다.
     unknownRegionCount: regionMap.get(REGION_UNKNOWN_LEGACY) ?? 0,
-    namePublicRate: regionRaw.length > 0 ? publicCount / regionRaw.length : 0,
+    namePublicRateBase: askedCount,
+    namePublicRate: askedCount > 0 ? publicCount / askedCount : 0,
     duplicateCandidates: [...duplicateMap.values()]
       .filter((candidate) => candidate.count > 1)
       .sort((a, b) => b.count - a.count),

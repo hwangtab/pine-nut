@@ -49,6 +49,14 @@ export default async function AdminSignaturesPage() {
             {Math.round(stats.namePublicRate * 100)}
             <span className="text-lg sm:text-xl md:text-2xl font-normal text-[var(--color-admin-muted)]/70 ml-2">%</span>
           </p>
+          {/* 분모를 밝힌다 — 레거시 '미상' 서명(동의를 물은 적 없이 DEFAULT
+              false로 백필됨)은 이 비율 계산에서 빠진다. 그 사실을 캡션 없이
+              숨기면 %가 어디서 나온 숫자인지 운영자가 알 수 없다. */}
+          <p className="text-xs text-[var(--color-admin-muted)]/70 mt-1">
+            {stats.namePublicRateBase.toLocaleString("ko-KR")}건 기준
+            {stats.unknownRegionCount > 0 &&
+              ` (지역 미상 ${stats.unknownRegionCount.toLocaleString("ko-KR")}건 제외)`}
+          </p>
         </div>
       </div>
 

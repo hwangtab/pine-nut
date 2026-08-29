@@ -154,6 +154,12 @@ assert(
   !normalizedSolidaritySql.includes("truncate"),
   "solidarity migration must NOT truncate signatures — the existing 65 rows (2026-03-10~08-28) are preserved by decision, not deleted.",
 );
+// TRUNCATE와 같은 결말(65건 소실)을 DELETE FROM으로 대신 저지를 수 있다 —
+// 철자만 다를 뿐 같은 실패 모드라 별도 단언으로 막는다.
+assert(
+  !/delete\s+from\s+(public\.)?signatures\b/.test(normalizedSolidaritySql),
+  "solidarity migration must NOT DELETE FROM signatures — same data-loss outcome as TRUNCATE, just spelled differently; the existing 65 rows are preserved by decision.",
+);
 
 // 기존 65건은 지역을 수집하지 않았다 — region_top을 NOT NULL로 걸기 전에
 // '미상' 센티넬로 백필해야 한다. 순서도 검사한다: 백필이 SET NOT NULL보다
@@ -256,11 +262,24 @@ assert(
     normalizedSolidaritySql.includes("set search_path = public"),
   "signature_region_count() must be SECURITY DEFINER with search_path locked to public (search_path hijacking defense).",
 );
+
+// 앞의 `.includes(...)` 방식은 그 문자열이 함수 몸통이 아니라 그냥 파일 어딘가
+// (예: 주석)에만 있어도, 또는 실제 WHERE 절 뒤에 `OR true`가 붙어 제외가
+// 무력화돼도 통과한다. `$$ ... $$` 본문을 실제로 캡처해 그 안의 SQL과 정확히
+// 일치하는지 봐야 두 우회를 모두 막는다.
+const regionCountFunctionMatch = normalizedSolidaritySql.match(
+  /create or replace function signature_region_count\(\).*?as \$\$(.*?)\$\$;/,
+);
 assert(
-  normalizedSolidaritySql.includes(
-    "select count(distinct region_top)::int from signatures where region_top <> '미상'",
-  ),
-  "signature_region_count() must exclude the legacy '미상' sentinel — otherwise the public 참여 지역 N곳 stat is inflated by one region that isn't real.",
+  regionCountFunctionMatch,
+  "solidarity migration must define signature_region_count() with a $$ ... $$ SQL body immediately after its signature.",
+);
+const regionCountFunctionBody = regionCountFunctionMatch[1].trim();
+const expectedRegionCountBody =
+  "select count(distinct region_top)::int from signatures where region_top <> '미상'";
+assert(
+  regionCountFunctionBody === expectedRegionCountBody,
+  `signature_region_count()'s $$ ... $$ body must be exactly "${expectedRegionCountBody}" (excludes the legacy '미상' sentinel) — got "${regionCountFunctionBody}". A body with an extra clause (e.g. "OR true") or an exclusion mentioned only in a comment outside the $$ ... $$ block would defeat a plain substring check.`,
 );
 assert(
   normalizedSolidaritySql.includes(
