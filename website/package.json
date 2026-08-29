@@ -40,6 +40,7 @@
     "petition:refactor:check": "node scripts/check-petition-refactor.mjs",
     "petition-progress:check": "node scripts/check-petition-progress.mjs",
     "petition-statement:check": "node scripts/check-petition-statement.mjs",
+    "petition-og:check": "node scripts/check-petition-og.mjs",
     "petition-faq:check": "node scripts/check-petition-faq.mjs",
     "petition-copy:refactor:check": "node scripts/check-petition-copy-refactor.mjs",
     "petition-form-ui:refactor:check": "node scripts/check-petition-form-ui-refactor.mjs",
