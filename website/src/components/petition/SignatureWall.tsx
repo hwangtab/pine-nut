@@ -160,13 +160,15 @@ export default function SignatureWall({ heading, emptyText, moreText, refreshTok
                 className={`paper px-5 py-4 ${index % 2 === 0 ? "paper-tilt-l" : "paper-tilt-r"}`}
               >
                 <div className="relative z-[1] flex items-center justify-between gap-3">
-                  {/* flex 자식의 기본 min-width는 auto라 내용 폭 아래로 줄지 않는다.
-                      이름/닉네임은 최대 50자, 해외 지역은 자유입력 40자까지 들어오는데
-                      공백 없는 문자열이면 항목이 뷰포트를 밀어내 가로 스크롤이 생긴다.
-                      min-w-0로 축소를 허용하고 anywhere로 줄바꿈 기회를 만든다
-                      (전역 word-break: keep-all이 공백 없는 한글을 안 끊는다). */}
-                  <span className="font-semibold text-[var(--color-text)] min-w-0 [overflow-wrap:anywhere]">{entry.name}</span>
-                  <span className="text-sm text-[var(--color-text-muted)] text-right min-w-0 [overflow-wrap:anywhere]">
+                  {/* flex 자식의 기본 min-width는 auto라 내용의 min-content 폭 아래로
+                      줄지 않는다. 이름/닉네임은 최대 50자, 해외 지역은 자유입력 40자까지
+                      들어오므로 공백 없는 문자열이면 항목이 뷰포트를 밀어내 가로 스크롤이
+                      생긴다(320px에서 127px 초과 실측). 줄바꿈 자체는 body의 전역
+                      overflow-wrap: break-word가 이미 처리하므로 min-w-0로 폭 제약만
+                      풀어주면 된다 — break-word는 min-content 폭을 줄이지 못해서
+                      min-width: auto가 남아 있는 한 무력했던 것이다. */}
+                  <span className="font-semibold text-[var(--color-text)] min-w-0">{entry.name}</span>
+                  <span className="text-sm text-[var(--color-text-muted)] text-right min-w-0">
                     {entry.regionTop} {entry.regionSub}
                     <br />
                     <time dateTime={entry.createdAt}>{formatWallDate(entry.createdAt)}</time>
