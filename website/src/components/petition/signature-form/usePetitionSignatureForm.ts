@@ -171,14 +171,11 @@ export function usePetitionSignatureForm({
           return;
         }
 
-        // NOTE(Task 5 compile-keeping shim): the POST response no longer
-        // carries a fresh count (contract shrank to `{ok:true}`). `count: 0`
-        // is a placeholder — `onRefreshSignatures()` below re-fetches the
-        // real summary immediately after, so any UI reading this value sees
-        // it overwritten within one round trip. Task 11/12 owns wiring this
-        // properly (e.g. dropping `count` from the callback entirely), since
-        // the fix has to land in /petition/page.tsx's handler at the same time.
-        onSubmitted({ name, count: 0 });
+        // POST 응답은 갱신된 카운트를 싣지 않는다(계약이 `{ok:true}`로
+        // 줄었다). 그래서 이 콜백은 이름만 넘기고, 성공 화면이 보여줄 실제
+        // 서명 수는 바로 아래 onRefreshSignatures()가 다시 불러온 요약
+        // (usePetitionSignatureSummary의 summary.count)에서 나온다.
+        onSubmitted({ name });
         events.signatureComplete();
         onRefreshSignatures();
       } catch (err) {

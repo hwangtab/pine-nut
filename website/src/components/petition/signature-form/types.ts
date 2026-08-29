@@ -9,7 +9,7 @@ export type SignatureFormErrorKey = keyof SignatureFormErrors;
 
 export interface PetitionSignatureFormProps {
   formRef: RefObject<HTMLFormElement | null>;
-  onSubmitted: (result: { name: string; count: number }) => void;
+  onSubmitted: (result: { name: string }) => void;
   onRefreshSignatures: () => void;
   copy?: PetitionSignatureFormCopy;
 }
