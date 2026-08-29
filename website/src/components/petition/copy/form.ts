@@ -31,7 +31,7 @@ export const koreanPetitionFormCopy: PetitionSignatureFormCopy = {
     namePublicLabel: {
       contentKey: "petition.form.namePublicLabel",
       defaultValue:
-        "이름 또는 닉네임과 거주 지역을 이 페이지의 서명자 명단과 향후 성명서·서명 결과 발표 자료에 공개하는 것에 동의하시나요?",
+        "이름 또는 닉네임과 거주 지역, 서명한 날짜를 이 페이지의 서명자 명단과 향후 성명서·서명 결과 발표 자료에 공개하고, 이름 또는 닉네임을 홈 화면의 최근 서명 알림에 표시하는 것에 동의하시나요?",
     },
     namePublicYes: {
       contentKey: "petition.form.namePublicYes",
@@ -44,7 +44,7 @@ export const koreanPetitionFormCopy: PetitionSignatureFormCopy = {
     namePublicNote: {
       contentKey: "petition.form.namePublicNote",
       defaultValue:
-        "공개에 동의하시면 이 페이지 하단 명단에 이름 또는 닉네임과 지역, 서명한 날짜가 표시됩니다. 이름 또는 닉네임의 공개 여부와 연대서명 참여 여부는 별도로 선택할 수 있습니다.",
+        "공개에 동의하시면 이 페이지 하단 명단에 이름 또는 닉네임과 지역, 서명한 날짜가 표시되고, 홈 화면에도 최근 서명 알림(예: 방금 OOO님이 서명했습니다)으로 이름 또는 닉네임이 잠시 표시됩니다. 이름 또는 닉네임의 공개 여부와 연대서명 참여 여부는 별도로 선택할 수 있습니다.",
     },
     privacyPrefix: {
       contentKey: "petition.form.privacyPrefix",

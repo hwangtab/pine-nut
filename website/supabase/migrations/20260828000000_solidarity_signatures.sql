@@ -10,7 +10,7 @@ ALTER TABLE signatures
 
 ALTER TABLE signatures ALTER COLUMN email DROP NOT NULL;
 
--- 기존 서명은 지역을 수집하지 않았다 — 18개 시·도 중 어느 것을 넣어도 거짓
+-- 기존 서명은 지역을 수집하지 않았다 — 17개 시·도(+해외) 중 어느 것을 넣어도 거짓
 -- 데이터가 된다. NOT NULL을 걸기 전에 '미상' 센티넬로 백필한다(아래 CHECK
 -- 제약에 '미상'을 허용값으로 추가한 이유도 이것이다). region_sub는 세종특별
 -- 자치시(시·군·구 없음)와 같은 형태로 빈 문자열을 쓴다.

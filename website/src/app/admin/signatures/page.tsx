@@ -109,7 +109,7 @@ export default async function AdminSignaturesPage() {
             {stats.unknownRegionCount > 0 && (
               <>
                 {/* 지역 미상: 2026-08-28 이전 서명 65건(지역 미수집)을 백필한
-                    '미상' 센티넬. 18개 시·도와 섞이지 않도록 구분선 아래,
+                    '미상' 센티넬. 17개 시·도 + 해외와 섞이지 않도록 구분선 아래,
                     다른 색조(sky 대신 amber)로 별도 표기한다. */}
                 <div className="border-t border-dashed border-[var(--color-admin-border)] my-3" />
                 <div className="flex items-center gap-3">

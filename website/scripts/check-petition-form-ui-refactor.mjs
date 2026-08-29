@@ -177,6 +177,13 @@ assert(
   /거주 지역/.test(namePublicLabelDefault[1]),
   "copy.labels.namePublicLabel must state that the region is disclosed too, not just the name — SignatureWall.tsx renders regionTop and regionSub next to every name.",
 );
+// 벽은 이름·지역과 함께 **서명한 날짜**도 공개한다. 그 사실이 note에만 있고
+// 질문에는 없으면, 질문을 열거형으로 쓴 이상 같은 틈이 남는다 — 동의를
+// 구하는 문장 하나 안에서 공개 항목 셋을 모두 닫는다.
+assert(
+  /서명한 날짜/.test(namePublicLabelDefault[1]),
+  "copy.labels.namePublicLabel must also name the signing date — SignatureWall.tsx renders <time dateTime={entry.createdAt}> for every entry, and the question enumerates what gets disclosed, so leaving the date to the note below reopens the exact gap this anchor exists to close.",
+);
 
 function renderAnchor(key) {
   const anchor = `text={copy.labels.${key}}`;

@@ -243,6 +243,70 @@ for (const optional of ["이메일", "소속", "제안 한마디"]) {
 }
 
 // ---------------------------------------------------------------------------
+// 3c. 홈 화면 최근 서명 알림(토스트) — 다섯 번째 공개 창구.
+//
+//     명단 벽만이 공개 지점이 아니다. useHomeSignatureActivity가 명단 벽과
+//     같은 엔드포인트에서 이름을 받아 홈 첫 화면에 "방금 OOO님이 서명했습니다"
+//     토스트로 **마스킹 없이** 띄운다. 홈은 성명서 발표 자료도 /petition
+//     명단도 아니다 — 고지가 공개 장소를 열거하면서 이 창구를 빼면, 이 파일이
+//     3·3b절에서 세운 "열거형 고지는 사실보다 좁으면 안 된다"는 원칙을 스스로
+//     어기는 셈이다. 전제(토스트가 실제로 이름을 렌더한다)와 고지 넷을 한
+//     묶음으로 못박아, 나중에 한쪽만 바뀌면 걸리게 한다.
+// ---------------------------------------------------------------------------
+const homeToastComponentPath = "src/components/home/HomeSocialProofToast.tsx";
+const homeActivityPath = "src/components/home/useHomeSignatureActivity.ts";
+const homeClientPath = "src/components/home/HomeClient.tsx";
+const homeToastSource = read(homeToastComponentPath);
+const homeActivitySource = read(homeActivityPath);
+const homeClientSource = read(homeClientPath);
+
+// 전제 ①: 토스트가 서명자 이름을 그대로(마스킹 없이) 렌더한다.
+assert(
+  /\{name\}/.test(homeToastSource),
+  `${homeToastComponentPath} must render {name} — the notices' claim that the home page shows signer names depends on it.`,
+);
+// 전제 ②: 그 이름의 출처가 명단 벽 엔드포인트다(= name_public 동의자만).
+assert(
+  /fetchSignatureWall\(\)/.test(homeActivitySource),
+  `${homeActivityPath} must feed the toast from fetchSignatureWall() — this is what makes the home toast a disclosure venue for the same consented names.`,
+);
+// 전제 ③: 홈이 실제로 그 토스트를 렌더한다.
+assert(
+  /<HomeSocialProofToast[\s/>]/.test(homeClientSource),
+  `${homeClientPath} must render <HomeSocialProofToast> — if it stops, these disclosure sentences become over-broad and should be revisited (fail loudly rather than drift).`,
+);
+
+// 고지 넷 — 국문 셋은 "홈 화면", 영문은 "home page"를 말해야 한다.
+const namePublicLabelDefaultForVenue = formCopySource.match(
+  /namePublicLabel:\s*\{[\s\S]*?defaultValue:\s*\n?\s*((?:"[\s\S]*?"|`[\s\S]*?`))/,
+);
+assert(
+  namePublicLabelDefaultForVenue !== null,
+  `${formCopyPath} must declare labels.namePublicLabel with a defaultValue string.`,
+);
+for (const [label, text] of [
+  ["copy/form.ts's namePublicLabel (the consent question itself)", namePublicLabelDefaultForVenue[1]],
+  ["copy/form.ts's namePublicNote", namePublicNoteDefault[1]],
+  ["privacy.section1.wallContent", wallContent],
+]) {
+  assert(
+    /홈 화면/.test(text),
+    `${label} must name the home-page recent-signature notice ("홈 화면") as a disclosure venue — HomeSocialProofToast renders the signer's name there unmasked, and an enumerated notice that lists only the /petition list and future statement materials is narrower than what actually happens.`,
+  );
+}
+// 영문판도 같은 창구를 말해야 한다. (enWallContent는 아래 8절에서 다시 뽑아
+// 그쪽 단언에 쓴다 — 여기서 미리 참조하면 TDZ에 걸리므로 지역 변수로 읽는다.)
+const enWallContentForVenue = extractDefaultValue(
+  enPrivacySource,
+  "en.privacy.section1.wallContent",
+  enPrivacyPagePath,
+);
+assert(
+  /home page/i.test(enWallContentForVenue),
+  'en.privacy.section1.wallContent must name the home-page recent-signature notice ("home page") as a disclosure venue, matching the Korean notices\' 홈 화면.',
+);
+
+// ---------------------------------------------------------------------------
 // 4. 기존 65건 경과 — 명단에 없는 이유를 설명하는가.
 // ---------------------------------------------------------------------------
 assert(
