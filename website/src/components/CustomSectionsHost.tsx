@@ -96,6 +96,11 @@ export default function CustomSectionsHost() {
                     ))}
                   </div>
                 )}
+                {/* 버튼 라벨은 사이트빌더에서 길이 제한 없이 입력된다. 라벨 텍스트는
+                    inline-flex 안의 익명 flex 항목이라 min-w-0로 앵커를 줄여도 텍스트
+                    상자 자체가 안 줄어든다(288px에서 min-w-0만 적용 시 43px 잉크 넘침).
+                    overflow-wrap: anywhere는 min-content 폭을 실제로 줄이므로 이 자리에서는
+                    이쪽이 맞는 도구다 — 288px 넘침 133px → 0px 실측. */}
                 {(section.primaryButton.label || section.secondaryButton.label) && (
                   <div
                     className={`mt-8 flex flex-wrap gap-3 ${
@@ -105,7 +110,7 @@ export default function CustomSectionsHost() {
                     {section.primaryButton.label &&
                       renderSectionLink(
                         section.primaryButton.href,
-                        `inline-flex min-h-[48px] items-center justify-center rounded-xl px-6 py-3 text-sm font-bold transition-colors ${
+                        `inline-flex min-h-[48px] items-center justify-center rounded-xl [overflow-wrap:anywhere] px-6 py-3 text-sm font-bold transition-colors ${
                           isForest
                             ? "bg-white text-[var(--color-forest)] hover:bg-white/90"
                             : "bg-[var(--color-forest)] text-white hover:bg-[var(--color-forest-light)]"
@@ -115,7 +120,7 @@ export default function CustomSectionsHost() {
                     {section.secondaryButton.label &&
                       renderSectionLink(
                         section.secondaryButton.href,
-                        `inline-flex min-h-[48px] items-center justify-center rounded-xl border px-6 py-3 text-sm font-bold transition-colors ${secondaryClassName}`,
+                        `inline-flex min-h-[48px] items-center justify-center rounded-xl [overflow-wrap:anywhere] border px-6 py-3 text-sm font-bold transition-colors ${secondaryClassName}`,
                         section.secondaryButton.label,
                       )}
                   </div>

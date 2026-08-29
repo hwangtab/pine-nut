@@ -27,7 +27,10 @@ export function VersionHistoryEntryCard({
   return (
     <div className="rounded-3xl border border-[var(--color-admin-border)] bg-[var(--color-admin-surface)] p-5">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div className="space-y-2">
+        {/* min-w-0: md 이상에서 flex-row가 되면 이 칼럼이 flex 자식이 된다.
+            감사 로그 요약에는 게시글 제목(최대 200자)이 그대로 들어오므로 공백 없는
+            제목이면 카드를 밀어낸다 — 900px 컨테이너에서 scrollWidth 3142px 실측. */}
+        <div className="min-w-0 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-full bg-[var(--color-bg)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-admin-muted)]">
               {entry.table_name}

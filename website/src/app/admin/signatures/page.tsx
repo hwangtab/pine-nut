@@ -146,7 +146,11 @@ export default async function AdminSignaturesPage() {
                 key={`${c.name}-${c.regionTop}-${c.regionSub}`}
                 className="flex items-center justify-between text-sm"
               >
-                <span className="text-[var(--color-admin-text)]">
+                {/* min-w-0: flex 자식의 기본 min-width는 auto라 공백 없는 긴
+                    이름(최대 50자)이나 해외 자유입력 지역(40자)이 들어오면 줄지
+                    않고 카드를 밀어낸다 — 288px 폭에서 72px 초과 실측. 폭 제약만
+                    풀면 body의 전역 overflow-wrap: break-word가 줄바꿈을 맡는다. */}
+                <span className="min-w-0 text-[var(--color-admin-text)]">
                   {c.name} · {c.regionTop} {c.regionSub}
                 </span>
                 <span className="text-[var(--color-admin-muted)]">{c.count}건</span>
