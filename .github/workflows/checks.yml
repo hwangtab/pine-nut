@@ -1,0 +1,30 @@
+# 이 저장소에는 테스트 프레임워크가 없다 — website/scripts/check-*.mjs 가드 52종이
+# 그 역할을 대신하고, 그중 상당수가 개인정보 노출 경계(명단 벽 4필드 화이트리스트,
+# CSV 권한 블록, 고지 문구 앵커)를 지키는 유일한 장치다. 그런데 npm run check:all을
+# 사람이 직접 쳐야만 돌아서, 잊으면 그대로 main에 들어간다. 이 워크플로가 그
+# 자리를 채운다.
+name: checks
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  guards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          # Vercel 프로젝트 런타임과 맞춘다(Next 16의 요구치는 >=20.9.0).
+          # 저장소에 .nvmrc·engines 핀이 없으므로 여기가 사실상의 기준이 된다.
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - run: npm ci
+        working-directory: website
+      - run: npm run check:all
+        working-directory: website
+      - run: npx tsc --noEmit
+        working-directory: website

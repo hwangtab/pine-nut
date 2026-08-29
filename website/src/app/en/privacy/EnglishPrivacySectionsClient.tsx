@@ -3,7 +3,9 @@
 import { EditableList } from "@/components/editable";
 
 const privacyPurposeItems = [
-  { text: "To collect petition signatures and manage signature counts" },
+  { text: "To collect and tally signatures for the National Solidarity Petition" },
+  { text: "To publish a public statement and support related public advocacy activities" },
+  { text: "If you provide an email address, to update you on campaign progress" },
   { text: "To improve the website through basic analytics on site usage" },
 ];
 

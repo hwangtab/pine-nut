@@ -1,12 +1,29 @@
+import { REGION_SUB_MAX_LENGTH } from "@/lib/regions";
+
+export { REGION_SUB_MAX_LENGTH };
+
+// 서명 이메일(선택 필드) 형식 검사. 서버 검증(api/validation.ts)과 클라이언트
+// 검증(lib/signatures/form.ts)이 각자 로컬 정규식을 복제해두면 한쪽만 고쳐질 때
+// 조용히 어긋난다 — 이 상수 하나로 단일화한다.
+export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 export const RATE_LIMIT_MAX = 5;
-export const MESSAGE_MAX_LENGTH = 100;
+export const MESSAGE_MAX_LENGTH = 500;
+export const NAME_MAX_LENGTH = 50;
+export const AFFILIATION_MAX_LENGTH = 60;
+export const SIGNATURE_GOAL = 10000;
+export const WALL_PAGE_SIZE = 30;
 export const IS_PRODUCTION = process.env.NODE_ENV === "production";
 
 export const SERVICE_UNAVAILABLE_MESSAGE =
   "서명 서비스가 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도해주세요.";
 export const DUPLICATE_SIGNATURE_MESSAGE = "이미 서명하셨습니다. 참여해주셔서 감사합니다.";
 export const RATE_LIMIT_MESSAGE = "너무 많은 요청입니다. 잠시 후 다시 시도해주세요.";
-export const INVALID_JSON_MESSAGE = "Invalid JSON";
-export const FETCH_SIGNATURES_ERROR_MESSAGE = "Failed to fetch signatures";
-export const SUBMIT_SIGNATURE_ERROR_MESSAGE = "Failed to submit signature";
+export const INVALID_JSON_MESSAGE = "잘못된 요청입니다. 다시 시도해주세요.";
+export const INVALID_REGION_MESSAGE = "거주 지역을 선택해주세요.";
+export const INVALID_NAME_PUBLIC_MESSAGE = "이름 공개 여부를 선택해주세요.";
+export const FETCH_SIGNATURES_ERROR_MESSAGE = "서명 현황을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.";
+export const SUBMIT_SIGNATURE_ERROR_MESSAGE = "서명 제출에 실패했습니다. 잠시 후 다시 시도해주세요.";
+export const FETCH_SIGNATURE_WALL_ERROR_MESSAGE =
+  "명단을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.";

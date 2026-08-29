@@ -1,22 +1,20 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type {
-  SignatureSummary,
-  SubmitSignatureResult,
-} from "@/lib/signatures/client";
 import {
   DUPLICATE_SIGNATURE_MESSAGE,
   RATE_LIMIT_MAX,
   RATE_LIMIT_MESSAGE,
   RATE_LIMIT_WINDOW_MS,
+  SIGNATURE_GOAL,
 } from "./config";
-import { hashIp } from "./request";
 import { SignatureApiError } from "./responses";
 import type { ValidSignatureSubmission } from "./validation";
 
-function maskName(name: string): string {
-  if (name.length <= 1) return name;
-  if (name.length === 2) return name[0] + "*";
-  return name[0] + "*".repeat(name.length - 2) + name[name.length - 1];
+export interface SignatureSummary {
+  count: number;
+  regionCount: number;
+  recent24h: number;
+  goal: number;
+  demo?: boolean;
 }
 
 export async function fetchSignatureSummary(
@@ -28,31 +26,38 @@ export async function fetchSignatureSummary(
 
   if (countError) throw countError;
 
-  const { data: signatures, error: signatureError } = await supabase
-    .from("signatures")
-    .select("name, message, created_at")
-    .order("created_at", { ascending: false })
-    .limit(10);
+  // region_top의 distinct count는 DB에서 집계한다 — select("region_top")로 전체
+  // 테이블을 끌어오면 max_rows(1000, supabase/config.toml)에 걸려 서명이 1000건을
+  // 넘는 순간 앞쪽 1000행만 조용히 반환되고 그 뒤로는 regionCount가 절대 늘지 않는다.
+  const { data: regionCountResult, error: regionError } =
+    await supabase.rpc("signature_region_count");
 
-  if (signatureError) throw signatureError;
+  if (regionError) throw regionError;
+
+  const regionCount =
+    typeof regionCountResult === "number" ? regionCountResult : 0;
+
+  const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { count: recent24h, error: recentError } = await supabase
+    .from("signatures")
+    .select("id", { count: "exact", head: true })
+    .gte("created_at", dayAgo);
+
+  if (recentError) throw recentError;
 
   return {
     count: count || 0,
-    signatures: (signatures || []).map((signature) => ({
-      name: maskName(signature.name),
-      message: signature.message || "",
-      created_at: signature.created_at,
-    })),
-    demo: false,
+    regionCount,
+    recent24h: recent24h || 0,
+    goal: SIGNATURE_GOAL,
   };
 }
 
 export async function submitSignatureToStore(
   supabase: SupabaseClient,
-  submission: ValidSignatureSubmission,
-  ip: string,
-): Promise<SubmitSignatureResult> {
-  const ipHash = hashIp(ip);
+  value: ValidSignatureSubmission,
+  ipHash: string,
+): Promise<void> {
   const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
 
   const { count: recentCount, error: rateLimitError } = await supabase
@@ -68,12 +73,16 @@ export async function submitSignatureToStore(
   }
 
   const { error: insertError } = await supabase.from("signatures").insert({
-    name: submission.name,
-    email: submission.normalizedEmail,
-    message: submission.messageText,
+    name: value.name,
+    email: value.normalizedEmail,
+    message: value.messageText,
+    region_top: value.regionTop,
+    region_sub: value.regionSub,
+    affiliation: value.affiliation,
+    name_public: value.namePublic,
     ip_hash: ipHash,
-    consent_privacy: submission.agreePrivacy,
-    consent_age: submission.agreeAge,
+    consent_privacy: value.agreePrivacy,
+    consent_age: value.agreeAge,
   });
 
   if (insertError) {
@@ -88,16 +97,4 @@ export async function submitSignatureToStore(
     }
     throw insertError;
   }
-
-  const { count, error: countError } = await supabase
-    .from("signatures")
-    .select("id", { count: "exact", head: true });
-
-  if (countError) throw countError;
-
-  return {
-    success: true,
-    count: count || 0,
-    demo: false,
-  };
 }

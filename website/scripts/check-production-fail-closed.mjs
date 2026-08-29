@@ -47,9 +47,13 @@ assert(
   ),
   "admin timeline must not unconditionally show editable-looking fallback data.",
 );
+// /en/petition은 Task 15에서 폼 없는 정적 요약 페이지로 축소됐다 — 더 이상
+// Supabase에서 서명 데이터를 읽지 않으므로, "production에서 조용히 fallback으로
+// 새지 않는가"라는 이 가드의 관심사 자체가 이 파일에는 적용되지 않는다. 대신
+// 그 사실(데이터 페칭 표면이 전혀 없다는 것)을 직접 검증한다.
 assert(
-  englishPetitionPage.includes("usePetitionSignatureSummary"),
-  "English petition page must use the shared signature summary hook.",
+  !englishPetitionPage.includes("usePetitionSignatureSummary"),
+  "English petition page is a static summary page and must not fetch live signature data.",
 );
 assert(
   petitionSignatureSummaryHook.includes('console.error("Failed to fetch signatures:"'),

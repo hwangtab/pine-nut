@@ -24,7 +24,7 @@ export default function EnglishPrivacyPage() {
     <div className="min-h-screen bg-[var(--color-bg)]">
       <UtilityHeader
         title={<EditableText contentKey="en.privacy.header.title" defaultValue="Privacy Policy" as="span" page="en/privacy" section="header" />}
-        subtitle={<EditableText contentKey="en.privacy.header.subtitle" defaultValue="Last updated: March 10, 2026" as="span" page="en/privacy" section="header" />}
+        subtitle={<EditableText contentKey="en.privacy.header.subtitle" defaultValue="Last updated: August 28, 2026" as="span" page="en/privacy" section="header" />}
         eyebrow={<EditableText contentKey="en.privacy.header.eyebrow" defaultValue="Legal Notice" as="span" page="en/privacy" section="header" />}
         tone="warm"
       />
@@ -44,8 +44,16 @@ export default function EnglishPrivacyPage() {
             <EditableText contentKey="en.privacy.section1.title" defaultValue="1. Information We Collect" as="h2" page="en/privacy" section="section1" className="text-xl font-bold text-[var(--color-forest)] mb-4" />
             <div className="space-y-4">
               <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] p-5">
-                <EditableText contentKey="en.privacy.section1.signupTitle" defaultValue="When signing the petition" as="h3" page="en/privacy" section="section1" className="font-semibold text-[var(--color-text)] mb-2" />
-                <EditableRichText contentKey="en.privacy.section1.signupContent" defaultValue="Name, email address, and an optional message of support" page="en/privacy" section="section1" renderMode="paragraph" className="text-[var(--color-text-muted)] text-[15px] leading-relaxed" />
+                <EditableText contentKey="en.privacy.section1.signupTitle" defaultValue="When joining the National Solidarity Petition" as="h3" page="en/privacy" section="section1" className="font-semibold text-[var(--color-text)] mb-2" />
+                <EditableRichText contentKey="en.privacy.section1.signupContent" defaultValue="We collect your name or nickname (required), region of residence — province/city and county/district (required), affiliated organization or group (optional), email address (optional), and a message or suggestion (optional), together with your consent on whether your name may be published (required). If you provide an email address, we use it only to update you on campaign progress. Participants must confirm they are at least 14 years old." page="en/privacy" section="section1" renderMode="paragraph" className="text-[var(--color-text-muted)] text-[15px] leading-relaxed" />
+              </div>
+              <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] p-5">
+                <EditableText contentKey="en.privacy.section1.wallTitle" defaultValue="Publication of the signer list" as="h3" page="en/privacy" section="section1" className="font-semibold text-[var(--color-text)] mb-2" />
+                <EditableRichText contentKey="en.privacy.section1.wallContent" defaultValue="If you consent to publish your name, your name or nickname, your region of residence (province/city and county/district), and the date you signed are shown in the signer list at the bottom of the /petition page, and your name or nickname also appears briefly in the recent-signature notice on the home page. Your email address, affiliation, message, and access information are never published. If you do not consent, your signature still counts toward the total signature count but will not appear in the list. Signatures received before August 28, 2026 (65 signatures) did not collect region information and are not included in the list, though they remain counted in the total." page="en/privacy" section="section1" renderMode="paragraph" className="text-[var(--color-text-muted)] text-[15px] leading-relaxed" />
+              </div>
+              <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] p-5">
+                <EditableText contentKey="en.privacy.section1.antiAbuseTitle" defaultValue="Automatically collected information for abuse prevention" as="h3" page="en/privacy" section="section1" className="font-semibold text-[var(--color-text)] mb-2" />
+                <EditableRichText contentKey="en.privacy.section1.antiAbuseContent" defaultValue="If you provide an email address, we check it for duplicate signatures. Separately, to limit repeated submissions from the same IP address within a short window (60 seconds), we hash your IP address and store only the hash — the original IP address is never stored." page="en/privacy" section="section1" renderMode="paragraph" className="text-[var(--color-text-muted)] text-[15px] leading-relaxed" />
               </div>
               <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] p-5">
                 <EditableText contentKey="en.privacy.section1.autoTitle" defaultValue="Automatically collected website data" as="h3" page="en/privacy" section="section1" className="font-semibold text-[var(--color-text)] mb-2" />
@@ -61,7 +69,7 @@ export default function EnglishPrivacyPage() {
 
           <section>
             <EditableText contentKey="en.privacy.section3.title" defaultValue="3. Retention Period" as="h2" page="en/privacy" section="section3" className="text-xl font-bold text-[var(--color-forest)] mb-4" />
-            <EditableRichText contentKey="en.privacy.section3.content" defaultValue="Collected personal information is retained until the campaign ends and deleted without delay afterward. If a user requests deletion earlier, the data will be removed within seven days of the request." page="en/privacy" section="section3" renderMode="paragraph" className="text-[var(--color-text)] text-[15px] leading-relaxed" />
+            <EditableRichText contentKey="en.privacy.section3.content" defaultValue="Personal information related to the solidarity petition is retained until the purposes of the petition and related public advocacy activities have been achieved, and is deleted without delay afterward. If a user requests deletion earlier, the data will be removed within seven days of the request." page="en/privacy" section="section3" renderMode="paragraph" className="text-[var(--color-text)] text-[15px] leading-relaxed" />
           </section>
 
           <section>

@@ -1,82 +1,101 @@
+import { isValidRegionPair } from "@/lib/regions";
+import {
+  AFFILIATION_MAX_LENGTH,
+  EMAIL_PATTERN,
+  MESSAGE_MAX_LENGTH,
+  NAME_MAX_LENGTH,
+} from "@/lib/signatures/api/config";
 import {
   submitSignature,
-  isValidEmail,
-  type SubmitSignatureInput,
+  type SignaturePayload,
 } from "@/lib/signatures/client";
-
-export type SignatureFormErrorKey = "name" | "email" | "agreePrivacy" | "agreeAge";
-export type SignatureFormErrors = Partial<Record<SignatureFormErrorKey, string>>;
 
 export interface SignatureFormValues {
   name: string;
   email: string;
+  message: string;
+  regionTop: string;
+  regionSub: string;
+  affiliation: string;
+  namePublic: boolean | null;
+  agreePrivacy: boolean;
+  agreeAge: boolean;
+}
+
+export interface SignatureFormErrors {
+  name?: string;
+  email?: string;
   message?: string;
-  agreePrivacy?: boolean;
-  agreeAge?: boolean;
+  region?: string;
+  affiliation?: string;
+  namePublic?: string;
+  agreePrivacy?: string;
+  agreeAge?: string;
 }
 
-export interface SignatureValidationMessages {
-  name: string;
-  emailRequired: string;
-  emailInvalid: string;
-  privacy: string;
-  age: string;
-}
-
-export interface SignatureValidationOptions {
-  requirePrivacy?: boolean;
-  requireAge?: boolean;
-}
-
-export function validateSignatureForm(
-  values: SignatureFormValues,
-  messages: SignatureValidationMessages,
-  options: SignatureValidationOptions = {},
-): { valid: boolean; errors: SignatureFormErrors } {
-  const requirePrivacy = options.requirePrivacy ?? true;
-  const requireAge = options.requireAge ?? true;
+export function validateSignatureForm(values: SignatureFormValues): SignatureFormErrors {
   const errors: SignatureFormErrors = {};
+
+  const name = values.name.trim();
+  if (!name) {
+    errors.name = "이름 또는 닉네임을 입력해주세요.";
+  } else if (name.length > NAME_MAX_LENGTH) {
+    errors.name = "이름이 너무 깁니다.";
+  }
+
+  if (!values.regionTop || !isValidRegionPair(values.regionTop, values.regionSub)) {
+    errors.region = "거주 지역을 선택해주세요.";
+  }
+
+  if (values.affiliation.trim().length > AFFILIATION_MAX_LENGTH) {
+    errors.affiliation = `소속은 ${AFFILIATION_MAX_LENGTH}자 이내로 입력해주세요.`;
+  }
+
   const email = values.email.trim();
-
-  if (!values.name.trim()) {
-    errors.name = messages.name;
-  }
-  if (!email) {
-    errors.email = messages.emailRequired;
-  } else if (!isValidEmail(email)) {
-    errors.email = messages.emailInvalid;
-  }
-  if (requirePrivacy && !values.agreePrivacy) {
-    errors.agreePrivacy = messages.privacy;
-  }
-  if (requireAge && !values.agreeAge) {
-    errors.agreeAge = messages.age;
+  if (email && !EMAIL_PATTERN.test(email)) {
+    errors.email = "올바른 이메일을 입력해주세요.";
   }
 
-  return {
-    valid: Object.keys(errors).length === 0,
-    errors,
-  };
+  if (values.message.length > MESSAGE_MAX_LENGTH) {
+    errors.message = `제안은 ${MESSAGE_MAX_LENGTH}자 이내로 입력해주세요.`;
+  }
+
+  if (values.namePublic === null) {
+    errors.namePublic = "이름 공개 여부를 선택해주세요.";
+  }
+
+  if (!values.agreePrivacy) {
+    errors.agreePrivacy = "개인정보 수집·이용 동의가 필요합니다.";
+  }
+
+  if (!values.agreeAge) {
+    errors.agreeAge = "만 14세 이상만 서명할 수 있습니다.";
+  }
+
+  return errors;
 }
 
-function toSubmitSignatureInput(values: SignatureFormValues): SubmitSignatureInput {
+function toSignaturePayload(values: SignatureFormValues): SignaturePayload {
   return {
     name: values.name.trim(),
     email: values.email.trim(),
-    message: (values.message ?? "").trim(),
-    agreePrivacy: values.agreePrivacy === true,
-    agreeAge: values.agreeAge === true,
+    message: values.message.trim(),
+    regionTop: values.regionTop,
+    regionSub: values.regionSub.trim(),
+    affiliation: values.affiliation.trim(),
+    namePublic: values.namePublic === true,
+    agreePrivacy: values.agreePrivacy,
+    agreeAge: values.agreeAge,
   };
 }
 
 export async function submitSignatureForm(
   values: SignatureFormValues,
-): Promise<{ name: string; count: number }> {
-  const input = toSubmitSignatureInput(values);
-  const result = await submitSignature(input);
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const errors = validateSignatureForm(values);
+  if (Object.keys(errors).length > 0) {
+    return { ok: false, error: "입력값을 다시 확인해주세요." };
+  }
 
-  return {
-    name: input.name,
-    count: result.count,
-  };
+  return submitSignature(toSignaturePayload(values));
 }

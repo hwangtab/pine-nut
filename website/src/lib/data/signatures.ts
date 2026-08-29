@@ -1,8 +1,15 @@
+import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
+import { REGION_TOPS } from "@/lib/regions";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import {
   formatSupabaseRelationWarning,
   isMissingSupabaseRelationError,
 } from "@/lib/supabase-errors";
+
+// supabase/migrations/20260828000000_solidarity_signatures.sql가 정의한 레거시
+// 백필 센티넬. 폼(src/lib/regions.ts의 isValidRegionPair)은 이 값을 절대 만들지
+// 못한다 — 2026-08-28 이전 서명 65건에만 DB 마이그레이션이 직접 채워 넣은 값이다.
+const REGION_UNKNOWN_LEGACY = "미상";
 
 const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
 
@@ -17,20 +24,214 @@ function kstDayStart(base: Date, daysAgo = 0): Date {
   return new Date(midnightKst - KST_OFFSET_MS);
 }
 
-/** UTC 시각을 KST 기준 YYYY-MM-DD로 바꾼다. */
-function kstDateKey(iso: string): string {
+/** UTC 시각을 KST 기준 YYYY-MM-DD로 바꾼다. 이 파일 밖(CSV 내보내기 파일명 등)에서도
+ * "이 프로젝트는 KST 기준"이라는 규칙을 그대로 따르도록 export한다 — 별도로
+ * `new Date().toISOString()`을 쓰면 KST 00:00~09:00 사이에 하루 어긋난 날짜가 찍힌다. */
+export function kstDateKey(iso: string): string {
   return new Date(new Date(iso).getTime() + KST_OFFSET_MS)
     .toISOString()
     .split("T")[0];
 }
 
+// Supabase PostgREST의 기본 max_rows(1000, supabase/config.toml)를 넘는 테이블은
+// select()가 앞쪽 1000행만 "에러 없이" 조용히 반환한다. 이전에 signature_region_count()
+// RPC 없이 select("region_top")로 전체를 끌어오려다 정확히 이 함정에 걸려 regionCount가
+// 1000건을 넘는 순간부터 영구히 틀린 값이 됐던 사례가 있다(supabase/migrations/
+// 20260828000000_solidarity_signatures.sql 참고). 지역 분포·공개 동의율·중복 후보·
+// 최근 N일 추이·CSV 내보내기는 목표 서명 수(10,000명)를 감안해 range()로 페이지를
+// 나눠 전량을 끌어와야 한다.
+const SUPABASE_PAGE_SIZE = 1000;
+// 안전판: 목표 10,000명의 10배를 넉넉히 잡는다. 이 상한에 실제로 닿으면 "일부만
+// 가져온 결과를 전체인 척" 보고하지 않고 truncated:true로 알린다(아래 fetchAllRows).
+const MAX_PAGINATED_ROWS = 100_000;
+
+interface PageResult<T> {
+  data: T[] | null;
+  error: PostgrestError | null;
+  /** true면 안전판(MAX_PAGINATED_ROWS)에 걸려 루프를 중단했다는 뜻 — data가 전체가
+   * 아닐 수 있다. 호출부는 이 경우를 error와 똑같이(또는 더 엄격하게) 다뤄야 한다. */
+  truncated: boolean;
+}
+
+/**
+ * fetchPage(from, to)를 max_rows 페이지 크기로 반복 호출해 전체 행을 모은다.
+ * 마지막 페이지가 페이지 크기보다 작게 오면(또는 비면) 종료한다.
+ */
+async function fetchAllRows<T>(
+  fetchPage: (
+    from: number,
+    to: number,
+  ) => PromiseLike<{ data: T[] | null; error: PostgrestError | null }>,
+): Promise<PageResult<T>> {
+  const rows: T[] = [];
+  let from = 0;
+  while (from < MAX_PAGINATED_ROWS) {
+    const { data, error } = await fetchPage(from, from + SUPABASE_PAGE_SIZE - 1);
+    if (error) return { data: rows, error, truncated: false };
+    if (!data || data.length === 0) return { data: rows, error: null, truncated: false };
+    rows.push(...data);
+    if (data.length < SUPABASE_PAGE_SIZE) return { data: rows, error: null, truncated: false };
+    from += SUPABASE_PAGE_SIZE;
+  }
+  // 루프가 안전판에 걸려 끝났다 — 마지막으로 읽은 페이지까지 계속 꽉 차 있었으므로
+  // 그 뒤에 더 남아있을 가능성이 있다. 일부만 모아놓고 "전체"라고 반환하면 CSV
+  // 내보내기가 명부 일부를 완전한 명부인 척 내보내게 된다.
+  console.error(
+    `fetchAllRows: pagination safety cap reached (${MAX_PAGINATED_ROWS} rows) — refusing to report a partial result as complete.`,
+  );
+  return { data: rows, error: null, truncated: true };
+}
+
+interface SignatureRegionRow {
+  name: string;
+  region_top: string;
+  region_sub: string;
+  name_public: boolean;
+}
+
+/** 지역 분포·공개 동의율·중복 후보 계산에 쓰는 전량 조회. id 기준 오름차순으로
+ * range() 페이지네이션해 max_rows 상한을 우회한다(정렬 기준이 유일 PK라 페이지
+ * 경계에서 행이 누락되거나 중복되지 않는다). */
+function fetchAllSignatureRegionRows(
+  supabase: SupabaseClient,
+): Promise<PageResult<SignatureRegionRow>> {
+  return fetchAllRows<SignatureRegionRow>((from, to) =>
+    supabase
+      .from("signatures")
+      .select("name, region_top, region_sub, name_public")
+      .order("id", { ascending: true })
+      .range(from, to),
+  );
+}
+
+interface SignatureDailyRow {
+  created_at: string;
+}
+
+/** 최근 N일 서명 추이 원본 조회. 같은 max_rows 함정을 피하려고 fetchAllRows로
+ * 페이지네이션한다 — 목표 서명 수(10,000명) 캠페인에서 14일 창에 1,000건은
+ * 정상적으로 일어날 수 있는 수치라, 페이지네이션 없이는 그 뒤로 차트가 에러
+ * 없이 추세를 축소 보고하게 된다. */
+function fetchAllSignatureDailyRows(
+  supabase: SupabaseClient,
+  since: Date,
+): Promise<PageResult<SignatureDailyRow>> {
+  return fetchAllRows<SignatureDailyRow>((from, to) =>
+    supabase
+      .from("signatures")
+      .select("created_at")
+      // 구간 시작을 KST 자정으로 내림한다. 그러지 않으면 가장 왼쪽 날짜가
+      // '하루치'가 아니라 '조회 시각 이후분'만 집계되어 항상 작게 나온다.
+      .gte("created_at", since.toISOString())
+      .order("id", { ascending: true })
+      .range(from, to),
+  );
+}
+
+export interface SignatureExportRow {
+  id: number;
+  name: string;
+  namePublic: boolean;
+  regionTop: string;
+  regionSub: string;
+  affiliation: string | null;
+  email: string | null;
+  message: string | null;
+  createdAt: string | null;
+}
+
+interface SignatureExportDbRow {
+  id: number;
+  name: string;
+  name_public: boolean;
+  region_top: string;
+  region_sub: string;
+  affiliation: string | null;
+  email: string | null;
+  message: string | null;
+  // DB 컬럼은 DEFAULT NOW()일 뿐 NOT NULL이 아니다(supabase/migrations/
+  // 20260310_create_signatures.sql) — TS 타입도 그 사실을 정직하게 반영한다.
+  created_at: string | null;
+}
+
+/** CSV 내보내기용 전량 조회. 같은 max_rows 함정을 피하려고 fetchAllRows로 페이지네이션한다.
+ * truncated:true면 안전판에 걸려 일부만 모은 것 — 호출부(CSV 라우트)는 이를 반드시
+ * 에러로 취급해 "부분 명부"를 "전체 명부"인 척 내보내지 않아야 한다. */
+export async function getAllSignaturesForExport(
+  supabase: SupabaseClient,
+): Promise<{ rows: SignatureExportRow[]; error: PostgrestError | null; truncated: boolean }> {
+  const { data, error, truncated } = await fetchAllRows<SignatureExportDbRow>((from, to) =>
+    supabase
+      .from("signatures")
+      .select(
+        "id, name, name_public, region_top, region_sub, affiliation, email, message, created_at",
+      )
+      .order("id", { ascending: true })
+      .range(from, to),
+  );
+
+  return {
+    rows: (data ?? []).map((r) => ({
+      id: r.id,
+      name: r.name,
+      namePublic: r.name_public,
+      regionTop: r.region_top,
+      regionSub: r.region_sub,
+      affiliation: r.affiliation,
+      email: r.email,
+      message: r.message,
+      createdAt: r.created_at,
+    })),
+    error,
+    truncated,
+  };
+}
+
+export interface SignatureRegionCount {
+  regionTop: string;
+  count: number;
+}
+
+export interface SignatureDuplicateCandidate {
+  name: string;
+  regionTop: string;
+  regionSub: string;
+  count: number;
+}
+
 export interface SignatureStats {
   totalCount: number;
-  recentSignatures: { name: string; email: string; message: string | null; createdAt: string }[];
+  /** email은 이 브랜치에서 nullable이 됐고(연대서명 전환: 이메일 선택 필드),
+   *  created_at도 스키마상 NOT NULL이 아니다. SignatureExportRow는 이미 둘 다
+   *  `| null`로 정직하게 선언돼 있다 — 여기만 거짓말을 하면 화면이 null을
+   *  new Date()에 넣어 "1970. 1. 1."을 띄운다. */
+  recentSignatures: {
+    name: string;
+    email: string | null;
+    message: string | null;
+    createdAt: string | null;
+  }[];
   dailyCounts: { date: string; count: number }[];
+  regionCounts: SignatureRegionCount[];
+  /** '미상'(supabase/migrations/20260828000000_solidarity_signatures.sql) 서명 건수 —
+   * 2026-08-28 이전 65건은 지역을 수집하지 않아 이 센티넬로 백필됐다. regionCounts는
+   * REGION_TOPS(17개 시·도 + 해외)로만 시드·구성되므로(admin-signatures-export 가드가
+   * 이 형태를 고정한다) 그 배열엔 '미상'이 낄 자리가 없다 — 별도 필드로 빼지 않으면
+   * 이 65건이 지역 분포 화면에서 조용히 사라진다. */
+  unknownRegionCount: number;
+  /** namePublicRate의 분모(레거시 '미상' 서명 제외). 레거시 65건은
+   * name_public이 DEFAULT false로 강제 백필된 것이지 동의 여부를 물은 적이
+   * 없다 — 분모에 넣으면 신규 서명자가 전원 동의해도 동의율이 과거분에
+   * 희석되어 낮게 보인다. 화면에 "N건 기준" 캡션을 달 때 이 값을 쓴다. */
+  namePublicRateBase: number;
+  namePublicRate: number;
+  duplicateCandidates: SignatureDuplicateCandidate[];
   usingFallback: boolean;
   warning: string | null;
 }
+
+const PAGINATION_TRUNCATED_WARNING =
+  "서명 수가 안전 상한을 넘어 일부 통계가 잘렸을 수 있습니다. 개발자에게 문의하세요.";
 
 export async function getSignatureStats(days = 14): Promise<SignatureStats> {
   const supabase = await createSupabaseServerClient();
@@ -40,6 +241,11 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
     totalCount: 0,
     recentSignatures: [],
     dailyCounts: [],
+    regionCounts: REGION_TOPS.map((regionTop) => ({ regionTop, count: 0 })),
+    unknownRegionCount: 0,
+    namePublicRateBase: 0,
+    namePublicRate: 0,
+    duplicateCandidates: [],
     usingFallback: true,
     warning: formatSupabaseRelationWarning("signatures", "서명"),
   };
@@ -50,24 +256,19 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
   // 서명자도 운영진도 한국에 있다. UTC 기준으로 날짜를 자르면 KST 00:00~09:00의
   // 서명이 전날 막대에 들어가고, 오전에는 '오늘' 막대가 통째로 비어 보인다.
   const since = kstDayStart(new Date(), periodDays - 1);
-  const [countResult, recentResult, dailyResult] = await Promise.all([
+  const [countResult, recentResult, dailyResult, regionResult] = await Promise.all([
     supabase.from("signatures").select("*", { count: "exact", head: true }),
     supabase
       .from("signatures")
       .select("name, email, message, created_at")
       .order("created_at", { ascending: false })
       .limit(20),
-    supabase
-      .from("signatures")
-      .select("created_at")
-      // 구간 시작을 KST 자정으로 내림한다. 그러지 않으면 가장 왼쪽 날짜가
-      // '하루치'가 아니라 '조회 시각 이후분'만 집계되어 항상 작게 나온다.
-      .gte("created_at", since.toISOString())
-      .order("created_at", { ascending: true }),
+    fetchAllSignatureDailyRows(supabase, since),
+    fetchAllSignatureRegionRows(supabase),
   ]);
 
   const signatureError =
-    countResult.error ?? recentResult.error ?? dailyResult.error;
+    countResult.error ?? recentResult.error ?? dailyResult.error ?? regionResult.error;
 
   if (signatureError) {
     console.error("Failed to fetch signature stats:", signatureError);
@@ -79,9 +280,20 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
     };
   }
 
+  // 안전판(100,000행)에 걸린 경우: 위 error 체크와 달리 totalCount·recentSignatures는
+  // 여전히 신뢰할 수 있으므로(페이지네이션과 무관한 별도 조회) 전체를 fallback으로
+  // 갈아엎지 않는다 — 대신 경고만 얹어 화면이 이 사실을 알 수 있게 한다.
+  const paginationTruncated = dailyResult.truncated || regionResult.truncated;
+  if (paginationTruncated) {
+    console.error(
+      "getSignatureStats: pagination safety cap reached — daily/region/duplicate statistics below may be incomplete.",
+    );
+  }
+
   const count = countResult.count;
   const recent = recentResult.data;
   const dailyRaw = dailyResult.data;
+  const regionRaw = regionResult.data ?? [];
 
   const dailyMap = new Map<string, number>();
   const now = new Date();
@@ -94,19 +306,79 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
     if (dailyMap.has(day)) dailyMap.set(day, (dailyMap.get(day) ?? 0) + 1);
   });
 
+  // 지역 분포: REGION_TOPS(17개 시·도 + 해외)를 0으로 먼저 채워, 서명이 없는
+  // 지역도 목록에서 사라지지 않게 한다. 하드코딩된 별도 목록을 두지 않고
+  // src/lib/regions.ts를 유일한 출처로 삼는다.
+  const regionMap = new Map<string, number>(REGION_TOPS.map((regionTop) => [regionTop, 0]));
+  let publicCount = 0;
+  // '미상' 행을 제외한, 실제로 공개 동의를 물어본 서명 수. namePublicRate의
+  // 분모로 쓴다 — regionRaw.length를 그대로 쓰면 레거시 65건(동의를 물은 적
+  // 없이 DEFAULT false로 백필된 행)이 분모에 섞여 동의율이 항상 낮게 보인다.
+  let askedCount = 0;
+  const duplicateMap = new Map<string, SignatureDuplicateCandidate>();
+
+  for (const row of regionRaw) {
+    regionMap.set(row.region_top, (regionMap.get(row.region_top) ?? 0) + 1);
+    if (row.name_public) publicCount += 1;
+
+    const isLegacyUnknownRegion = row.region_top === REGION_UNKNOWN_LEGACY;
+    if (!isLegacyUnknownRegion) askedCount += 1;
+
+    // 중복 후보: 이름+지역(시·도+시·군·구) 조합이 판별자다. '미상' 행은 지역이
+    // 전부 '미상'|''로 뭉개져 판별자 구실을 못 한다 — 그대로 두면 이름만 같은
+    // 서로 무관한 레거시 서명자 두 명이 "중복 서명 후보"에 올라, 운영자가
+    // 정당한 서명을 지울 위험이 생긴다. 지역 판별자가 있는 행만 후보로 삼는다.
+    if (isLegacyUnknownRegion) continue;
+
+    // 이름+지역 유니크 제약을 걸지 않은 대신(동명이인 차단·명단 벽 통한 참여 여부
+    // 노출 방지), 운영자가 훑어서 거를 수 있게 동일 이름+지역(시·도+시·군·구)
+    // 조합만 후보로 모은다. 실제 중복 여부 판단은 운영진 몫이다.
+    const key = `${row.name}|${row.region_top}|${row.region_sub}`;
+    const existing = duplicateMap.get(key);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      duplicateMap.set(key, {
+        name: row.name,
+        regionTop: row.region_top,
+        regionSub: row.region_sub,
+        count: 1,
+      });
+    }
+  }
+
   return {
     totalCount: count ?? 0,
-    recentSignatures: (recent ?? []).map((r: { name: string; email: string; message: string | null; created_at: string }) => ({
-      name: r.name,
-      email: r.email,
-      message: r.message,
-      createdAt: r.created_at,
-    })),
+    recentSignatures: (recent ?? []).map(
+      (r: {
+        name: string;
+        email: string | null;
+        message: string | null;
+        created_at: string | null;
+      }) => ({
+        name: r.name,
+        email: r.email,
+        message: r.message,
+        createdAt: r.created_at,
+      }),
+    ),
     dailyCounts: Array.from(dailyMap.entries()).map(([date, cnt]) => ({
       date,
       count: cnt,
     })),
+    regionCounts: REGION_TOPS.map((regionTop) => ({
+      regionTop,
+      count: regionMap.get(regionTop) ?? 0,
+    })),
+    // regionMap은 REGION_TOPS로 시드됐지만 Map.set은 없는 키도 그냥 추가한다 —
+    // 행의 region_top이 '미상'이면 루프가 이 값을 자연스럽게 채워둔다.
+    unknownRegionCount: regionMap.get(REGION_UNKNOWN_LEGACY) ?? 0,
+    namePublicRateBase: askedCount,
+    namePublicRate: askedCount > 0 ? publicCount / askedCount : 0,
+    duplicateCandidates: [...duplicateMap.values()]
+      .filter((candidate) => candidate.count > 1)
+      .sort((a, b) => b.count - a.count),
     usingFallback: false,
-    warning: null,
+    warning: paginationTruncated ? PAGINATION_TRUNCATED_WARNING : null,
   };
 }

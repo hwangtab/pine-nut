@@ -14,8 +14,19 @@ export interface PetitionSignatureFormCopy {
   labels: {
     name: PetitionEditableTextCopy;
     email: PetitionEditableTextCopy;
+    emailOptional: PetitionEditableTextCopy;
+    emailNote: PetitionEditableTextCopy;
     message: PetitionEditableTextCopy;
     messageOptional: PetitionEditableTextCopy;
+    regionLabel: PetitionEditableTextCopy;
+    /** 세종처럼 시·군·구가 없는 시·도를 골랐을 때 띄우는 안내. */
+    regionNoSubNote: PetitionEditableTextCopy;
+    affiliationLabel: PetitionEditableTextCopy;
+    affiliationOptional: PetitionEditableTextCopy;
+    namePublicLabel: PetitionEditableTextCopy;
+    namePublicYes: PetitionEditableTextCopy;
+    namePublicNo: PetitionEditableTextCopy;
+    namePublicNote: PetitionEditableTextCopy;
     privacyPrefix?: PetitionEditableTextCopy;
     privacyToggle: PetitionEditableTextCopy;
     privacySuffix: PetitionEditableTextCopy;
@@ -27,13 +38,15 @@ export interface PetitionSignatureFormCopy {
     name: PetitionEditableValueCopy;
     email: PetitionEditableValueCopy;
     message: PetitionEditableValueCopy;
+    affiliationPlaceholder: PetitionEditableValueCopy;
+    regionTopPlaceholder: PetitionEditableValueCopy;
+    regionSubPlaceholder: PetitionEditableValueCopy;
+    overseasSubPlaceholder: PetitionEditableValueCopy;
   };
   errors: {
-    name: PetitionEditableValueCopy;
-    emailRequired: PetitionEditableValueCopy;
-    emailInvalid: PetitionEditableValueCopy;
-    privacy: PetitionEditableValueCopy;
-    age: PetitionEditableValueCopy;
+    /** 제출 실패 폴백 문구. 필드 검증 문구는 src/lib/signatures/form.ts가
+     *  소유한다 — 예전엔 여기에도 name/email/privacy/age가 있었지만 읽는
+     *  쪽이 사라져 편집해도 화면이 바뀌지 않는 죽은 카피였다. */
     submit: PetitionEditableValueCopy;
   };
   privacyLines: PetitionEditableTextCopy[];

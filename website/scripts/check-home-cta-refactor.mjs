@@ -15,42 +15,49 @@ function read(path) {
 }
 
 const inlineFormPath = "src/components/home/HomeInlineSignatureForm.tsx";
-assert(existsSync(join(root, inlineFormPath)), "Home inline signature form must be extracted.");
+assert(
+  !existsSync(join(root, inlineFormPath)),
+  "Home inline signature form must be removed — the petition flow now lives only at /petition.",
+);
+assert(
+  !existsSync(join(root, "src/components/home/inline-signature")),
+  "src/components/home/inline-signature must be removed along with the inline form.",
+);
 
 const sectionSource = read("src/components/home/HomeCtaSection.tsx");
-assert(
-  sectionSource.includes("HomeInlineSignatureForm"),
-  "HomeCtaSection must render the extracted HomeInlineSignatureForm.",
-);
 for (const banned of [
-  "inlineName",
-  "inlineEmail",
-  "inlineSubmitting",
-  "inlineSuccess",
-  "inlineError",
+  "HomeInlineSignatureForm",
+  "onSignatureCountChange",
+  "inline-signature",
   "validateSignatureForm",
   "submitSignatureForm",
-  "EditableValue",
-  "type FormEvent",
 ]) {
   assert(
     !sectionSource.includes(banned),
-    `HomeCtaSection must not keep inline signature form internals: found ${banned}.`,
+    `HomeCtaSection must not reference the removed inline form: found ${banned}.`,
   );
 }
 
-const formSource = [
-  read(inlineFormPath),
-  read("src/components/home/inline-signature/useHomeInlineSignatureForm.ts"),
-  read("src/components/home/inline-signature/HomeInlineSignatureEditControls.tsx"),
-].join("\n");
-for (const expected of [
-  "validateSignatureForm",
-  "submitSignatureForm",
-  "onSignatureCountChange",
-  "EditableValue",
-]) {
-  assert(formSource.includes(expected), `HomeInlineSignatureForm must include ${expected}.`);
-}
+// 부분문자열 검사만으로는 주석·죽은 변수에 "/petition" 텍스트만 남아도 통과한다.
+// 실제 <a>/<EditableLink> 태그 블록 안에서 href를 찾아야 한다 — 주석은 먼저 제거한다.
+const sourceWithoutComments = sectionSource
+  .replace(/\/\*[\s\S]*?\*\//g, "")
+  .replace(/\/\/.*$/gm, "");
+const linkTags = sourceWithoutComments.match(/<(?:a|EditableLink)\b[^>]*>/g) ?? [];
+const hasWorkingPetitionLink = linkTags.some(
+  (tag) =>
+    /(?:^|\s)href=["']\/petition["']/.test(tag) ||
+    /(?:^|\s)defaultHref=["']\/petition["']/.test(tag),
+);
+assert(
+  hasWorkingPetitionLink,
+  "HomeCtaSection must render a working <a>/<EditableLink> tag whose href/defaultHref is literally \"/petition\" — a comment or dead reference does not count.",
+);
+
+const clientSource = read("src/components/home/HomeClient.tsx");
+assert(
+  !clientSource.includes("onSignatureCountChange"),
+  "HomeClient must not wire onSignatureCountChange into HomeCtaSection anymore.",
+);
 
 console.log("Home CTA refactor checks passed.");

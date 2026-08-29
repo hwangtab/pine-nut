@@ -42,7 +42,13 @@ export default function PetitionSuccess({
   copy = koreanPetitionSuccessCopy,
 }: {
   submittedName: string;
-  signatureCount: number;
+  /**
+   * 확정된 서명 수. 요약 조회가 실패해 카운트를 모를 때는 `null`을 넘긴다 —
+   * 그 경우 서수 문장("N번째로 함께해주셨습니다")을 통째로 감춘다. 0을 넘겨
+   * "0번째로 함께해주셨습니다"를 렌더하는 일은 절대 없어야 한다.
+   * (home/HomeCtaSection의 `signatureCount: number | null`과 같은 관례.)
+   */
+  signatureCount: number | null;
   urlCopied: boolean;
   onPrimaryShare: () => void;
   onShareTwitter: () => void;
@@ -64,19 +70,22 @@ export default function PetitionSuccess({
           {submittedName}
           <SuccessText copy={copy} text={copy.titleSuffix} />
         </h2>
-        <p className="text-lg text-[var(--color-text-muted)] mb-8">
-          {copy.countPrefix && (
-            <>
-              <SuccessText copy={copy} text={copy.countPrefix} />{" "}
-            </>
-          )}
-          <span className="font-bold text-[var(--color-warm)]">
-            {signatureCount.toLocaleString(copy.countLocale)}
-          </span>
-          <SuccessText copy={copy} text={copy.countSuffix} />
-        </p>
+        {signatureCount !== null && (
+          <p className="text-lg text-[var(--color-text-muted)] mb-8">
+            {copy.countPrefix && (
+              <>
+                <SuccessText copy={copy} text={copy.countPrefix} />{" "}
+              </>
+            )}
+            <span className="font-bold text-[var(--color-warm)]">
+              {signatureCount.toLocaleString(copy.countLocale)}
+            </span>
+            <SuccessText copy={copy} text={copy.countSuffix} />
+          </p>
+        )}
 
-        <div className="space-y-3">
+        {/* 카운트 문단이 숨겨지면 그 mb-8 여백도 함께 사라지므로 여기서 보충한다. */}
+        <div className={signatureCount !== null ? "space-y-3" : "space-y-3 mt-8"}>
           {copy.sharePrompt && (
             <p className="text-[15px] font-semibold text-[var(--color-text)] mb-4">
               <SuccessText copy={copy} text={copy.sharePrompt} />

@@ -540,6 +540,12 @@ OVERSEAS_REGION = "해외"
 
 - [ ] **Step 6: 🛑 원격 적용 — Step 2의 승인이 있을 때만 실행**
 
+  > ⚠️ **이 결정은 뒤집혔다** — 기존 서명 65건은 TRUNCATE로 삭제하지 않고 '미상'
+  > 센티넬로 백필해 **보존**한다. 따라서 아래 Step 6의 `TRUNCATE` 전제와
+  > `grep -c "INSERT INTO"` = `0` 검증은 더 이상 유효하지 않다(보존 후 기대값은
+  > 65다). 결정 경위는 `.superpowers/sdd/2026-08-28-solidarity-petition/progress.md`
+  > 의 Task 2b 참조.
+
   > 이 명령은 프로덕션 DB에 `TRUNCATE`를 포함한 마이그레이션을 적용한다. Step 2에서 사용자
   > 승인을 받지 못했다면 이 단계를 실행하지 않는다.
 

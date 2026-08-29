@@ -1,52 +1,65 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useCallback, useRef, useState } from "react";
 import SubHero from "@/components/SubHero";
-import { EditableText, EditableList } from "@/components/editable";
-import PetitionActionCards from "@/components/petition/PetitionActionCards";
+import ShareButtons from "@/components/ShareButtons";
+import { EditableText } from "@/components/editable";
 import PetitionAnimatedCounter from "@/components/petition/PetitionAnimatedCounter";
+import PetitionFAQ from "@/components/petition/PetitionFAQ";
+import PetitionProgress from "@/components/petition/PetitionProgress";
 import PetitionShareEditControls from "@/components/petition/PetitionShareEditControls";
 import PetitionSignatureForm from "@/components/petition/PetitionSignatureForm";
+import PetitionStatement from "@/components/petition/PetitionStatement";
 import PetitionSuccess from "@/components/petition/PetitionSuccess";
-import RecentSignatures from "@/components/petition/RecentSignatures";
 import SignatureConfetti from "@/components/petition/SignatureConfetti";
+import SignatureWall from "@/components/petition/SignatureWall";
+import { koreanPetitionShareDefaults } from "@/components/petition/petition-copy";
 import { usePetitionSignatureSummary } from "@/components/petition/usePetitionSignatureSummary";
-import { PostmarkStamp } from "@/components/visuals/ForestLetterMotifs";
 import { events } from "@/lib/analytics";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
+import { SIGNATURE_GOAL } from "@/lib/signatures/api/config";
+import { SITE_URL } from "@/lib/site-config";
 
 /* ──────────────────────── Main Page ──────────────────────── */
 export default function PetitionPage() {
   const { getContent, isEditMode } = useAdminEdit();
-  const {
-    signatureCount,
-    setSignatureCount,
-    signatures,
-    loadingSignatures,
-    refreshSignatures,
-  } = usePetitionSignatureSummary();
+  const { summary, loadingSummary, summaryError, refreshSummary } = usePetitionSignatureSummary();
+  // 요약 조회에 실패했거나 아직 안 끝났으면 서명 수를 "모른다". 이 상태에서
+  // 0을 확신에 차서 렌더하면(히어로 배지·진행률·성공 화면) 실패가 "정말 0명"
+  // 으로 위장된다 — 특히 방금 서명한 시민에게 "0번째"라고 말하게 된다.
+  const countKnown = !loadingSummary && !summaryError;
   const [submitted, setSubmitted] = useState(false);
   const [submittedName, setSubmittedName] = useState("");
   const [showConfetti, setShowConfetti] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
+  // 서명이 접수되면 값을 올려 명단 벽을 1페이지째부터 다시 불러오게 한다.
+  // 재로드가 실패하면 SignatureWall은 이미 받아둔 항목을 에러 블록 뒤로 감추고
+  // "다시 시도" 버튼을 보여준다(항목 상태 자체는 남아 재시도 성공 시 복귀한다).
+  const [wallRefreshToken, setWallRefreshToken] = useState(0);
 
-  const shareTitle = getContent("petition.share.title") ?? "풍천리를 지켜주세요";
-  const shareText =
-    getContent("petition.share.text") ?? "풍천리 주민들의 양수발전소 건설 반대 서명에 함께해주세요!";
+  // 폴백 문구는 CMS 편집 칩(PetitionShareEditControls)이 보여주는 기본값과
+  // 같은 상수를 쓴다 — 여기서 리터럴을 따로 들고 있으면 관리자가 보는 기본값과
+  // 실제로 공유되는 문구가 어긋난다.
+  const shareTitle = getContent("petition.share.title") ?? koreanPetitionShareDefaults.title;
+  const shareText = getContent("petition.share.text") ?? koreanPetitionShareDefaults.text;
   const shareCopyFallback =
-    getContent("petition.share.copyFallback") ?? "링크가 복사되었습니다.";
+    getContent("petition.share.copyFallback") ?? koreanPetitionShareDefaults.copyFallback;
   const formRef = useRef<HTMLFormElement>(null);
+  // 폼과 성공 화면 중 무엇이 떠 있든 히어로 CTA가 닿을 수 있게, 두 분기를
+  // 모두 감싸는 안정적인 래퍼에 ref를 건다(formRef는 제출 후 null이 된다).
+  const signatureSectionRef = useRef<HTMLDivElement>(null);
 
-  const handleSignatureSubmitted = useCallback(
-    ({ name, count }: { name: string; count: number }) => {
-      setSignatureCount(count);
-      setSubmittedName(name);
-      setSubmitted(true);
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 3000);
-    },
-    [setSignatureCount],
-  );
+  const handleSignatureSubmitted = useCallback(({ name }: { name: string }) => {
+    setSubmittedName(name);
+    setSubmitted(true);
+    setShowConfetti(true);
+    setWallRefreshToken((token) => token + 1);
+    setTimeout(() => setShowConfetti(false), 3000);
+  }, []);
+
+  const handleScrollToForm = useCallback(() => {
+    signatureSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
 
   const handleCopyUrl = async () => {
     try {
@@ -91,137 +104,140 @@ export default function PetitionPage() {
     }
   }, [shareCopyFallback, shareText, shareTitle]);
 
-  const handleScrollToForm = useCallback(() => {
-    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
-
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       {showConfetti && <SignatureConfetti />}
 
-      {/* ── Header ── */}
+      {/* ── 1. 히어로 ── */}
       <SubHero
         imageUrl="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535383_std.jpg"
         imageContentKey="petition.hero.image"
         imagePage="petition"
         imageSection="hero"
-        title={<EditableText contentKey="petition.hero.title" defaultValue="함께해주세요" as="span" page="petition" section="hero" />}
-        subtitle={<EditableText contentKey="petition.hero.subtitle" defaultValue="서명, 후원, 공유 중 지금 할 수 있는 행동으로 풍천리 주민들과 함께해주세요" as="span" page="petition" section="hero" />}
-        eyebrow={<EditableText contentKey="petition.hero.eyebrow" defaultValue="참여하기" as="span" page="petition" section="hero" />}
+        title={<EditableText contentKey="petition.hero.title" defaultValue="우리가 나무다" as="span" page="petition" section="hero" />}
+        subtitle={<EditableText contentKey="petition.hero.subtitle" defaultValue="홍천 풍천리 양수발전소 백지화와 숲·계곡 보전을 위한 국민 연대서명" as="span" page="petition" section="hero" />}
+        eyebrow={<EditableText contentKey="petition.hero.eyebrow" defaultValue="국민 연대서명" as="span" page="petition" section="hero" />}
         variant="emphasis"
         metric={
-          <div className="stamp-badge inline-block">
-            <div className="stamp-badge__inner">
-              <PetitionAnimatedCounter target={signatureCount} />
+          <div className="flex flex-col items-center gap-6">
+            {/* 카운트를 모를 때는 배지를 통째로 감춘다 — home/HomeCtaSection과 같은 관례. */}
+            {countKnown && (
+              <div className="stamp-badge inline-block">
+                <div className="stamp-badge__inner">
+                  <PetitionAnimatedCounter target={summary.count} />
+                  <EditableText
+                    contentKey="petition.hero.metricLabel"
+                    defaultValue="명이 함께하고 있습니다"
+                    as="p"
+                    page="petition"
+                    section="hero"
+                    className="text-sm text-[var(--color-text-muted)] mt-1"
+                  />
+                </div>
+              </div>
+            )}
+            {/* 성명서 전문을 끝까지 스크롤해야 폼에 닿던 문제 — 히어로에서 바로 간다. */}
+            <button
+              type="button"
+              onClick={handleScrollToForm}
+              className="letter-btn letter-btn--primary"
+            >
               <EditableText
-                contentKey="petition.hero.metricLabel"
-                defaultValue="명이 함께하고 있습니다"
-                as="p"
+                contentKey="petition.hero.cta"
+                defaultValue="지금 서명하기"
+                as="span"
                 page="petition"
                 section="hero"
-                className="text-sm text-[var(--color-text-muted)] mt-1"
               />
-            </div>
+            </button>
           </div>
         }
       />
 
       <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 space-y-16">
-        <PetitionActionCards onScrollToForm={handleScrollToForm} />
-
-        {/* Emotional prompt */}
-        <div className="relative">
-          <PostmarkStamp className="absolute -top-6 right-0 hidden w-16 h-16 text-[var(--color-forest)]/30 rotate-6 sm:block" />
-          <EditableText
-            contentKey="petition.emotional.prompt"
-            defaultValue="705번의 외침에 당신의 이름을 더해주세요"
-            as="p"
-            page="petition"
-            section="emotional"
-            className="text-center text-xl font-serif-display text-[var(--color-text-muted)] mb-6"
-          />
-        </div>
-
-        {/* ── Form / Success ── */}
-        {!submitted ? (
-          <section className="fade-in" id="signature-form" aria-label="서명 양식">
-            <PetitionSignatureForm
-              formRef={formRef}
-              onSubmitted={handleSignatureSubmitted}
-              onRefreshSignatures={refreshSignatures}
-            />
+        {/* ── 2. 진행률 ── */}
+        {summaryError ? (
+          // 실패를 0%로 위장하지 않는다. 명단 벽(SignatureWall)의 오류 블록과
+          // 같은 형태로 사실을 말하고 재시도 경로를 준다.
+          <section className="paper p-6 sm:p-8 text-center" aria-label="서명 진행 현황">
+            <div className="relative z-[1] space-y-3" role="alert">
+              <p className="text-[var(--color-text-muted)]">
+                서명 현황을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.
+              </p>
+              <button
+                type="button"
+                onClick={() => void refreshSummary()}
+                className="letter-btn letter-btn--outline-light"
+              >
+                다시 시도
+              </button>
+            </div>
           </section>
         ) : (
-          <div className="fade-in">
-            <PetitionSuccess
-              submittedName={submittedName}
-              signatureCount={signatureCount}
-              urlCopied={urlCopied}
-              onPrimaryShare={handleShareKakao}
-              onShareTwitter={handleShareTwitter}
-              onCopyUrl={handleCopyUrl}
-              onReset={() => {
-                setSubmitted(false);
-                setSubmittedName("");
-                setUrlCopied(false);
-              }}
-            />
-          </div>
+          <PetitionProgress
+            count={summary.count}
+            goal={SIGNATURE_GOAL}
+            regionCount={summary.regionCount}
+            recent24h={summary.recent24h}
+            loading={loadingSummary}
+          />
         )}
 
-        {/* ── Recent Signatures ── */}
-        <RecentSignatures signatures={signatures} loading={loadingSignatures} />
+        {/* ── 3. 성명서 (숫자 카드 포함) ── */}
+        <PetitionStatement />
 
-        {/* ── Why Sign ── */}
-        <section aria-label="서명이 왜 중요한가요">
-          <EditableText
-            contentKey="petition.reasons.heading"
-            defaultValue="서명이 왜 중요한가요?"
-            as="h2"
-            page="petition"
-            section="reasons"
-            className="text-left font-serif-display font-bold text-xl sm:text-2xl mb-6 text-[var(--color-text)]"
-          />
-          <EditableList
-            contentKey="petition.reasons.items"
-            defaultItems={[
-              { title: "국회와 정부에 전달됩니다", desc: "모아진 서명은 국회 환경노동위원회와 기후에너지환경부에 공식 제출되어, 주민들의 목소리가 정책 결정 과정에 반영될 수 있도록 합니다." },
-              { title: "숫자가 곧 주민들의 힘입니다", desc: "서명 참여자가 많을수록 언론과 여론의 관심이 커집니다. 한 명 한 명의 서명이 모여 거대한 변화를 만듭니다." },
-              { title: "주민들에게 큰 위안이 됩니다", desc: "\u201C우리만의 싸움이 아니구나\u201D라는 사실이 풍천리 어르신들에게 가장 큰 힘이 됩니다." },
-            ]}
-            page="petition"
-            section="reasons"
-            fields={[
-              { key: "title", label: "제목" },
-              { key: "desc", label: "설명", type: "textarea" },
-            ]}
-          >
-            {(items) => (
-              <div className="paper p-6 sm:p-8">
-                <div className="relative z-[1] space-y-5">
-                  {items.map((item, i) => (
-                    <div key={i} className="flex gap-4 items-start">
-                      <span
-                        className="shrink-0 w-10 h-10 rounded-full bg-[var(--color-forest)]/10 flex items-center justify-center text-[var(--color-forest)] font-bold"
-                        aria-hidden="true"
-                      >
-                        {i + 1}
-                      </span>
-                      <div>
-                        <h3 className="font-semibold text-[var(--color-text)] mb-1">
-                          {item.title}
-                        </h3>
-                        <p className="text-[var(--color-text-muted)] text-[15px]">
-                          {item.desc}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </EditableList>
-        </section>
+        {/* ── 4. 서명 폼 / 제출 후 성공 화면 ── */}
+        <div ref={signatureSectionRef} id="signature-form">
+          {!submitted ? (
+            <section className="fade-in" aria-label="서명 양식">
+              <PetitionSignatureForm
+                formRef={formRef}
+                onSubmitted={handleSignatureSubmitted}
+                onRefreshSignatures={refreshSummary}
+              />
+            </section>
+          ) : (
+            <div className="fade-in">
+              {/* 서명 수는 제출 응답이 아니라 방금 다시 불러온 요약에서 온다 —
+                  응답 계약에 카운트가 없어 예전에는 0이 한 순간 보였다.
+                  재조회마저 실패해 카운트를 모르면 null을 넘겨 서수 문장을
+                  통째로 감춘다("0번째로 함께해주셨습니다"를 막는다). */}
+              <PetitionSuccess
+                submittedName={submittedName}
+                signatureCount={countKnown ? summary.count : null}
+                urlCopied={urlCopied}
+                onPrimaryShare={handleShareKakao}
+                onShareTwitter={handleShareTwitter}
+                onCopyUrl={handleCopyUrl}
+                onReset={() => {
+                  setSubmitted(false);
+                  setSubmittedName("");
+                  setUrlCopied(false);
+                }}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* ── 5. 명단 벽 ── */}
+        <SignatureWall
+          heading="함께한 사람들"
+          emptyText="아직 공개된 서명이 없습니다. 첫 번째로 이름을 남겨주세요!"
+          moreText="더 보기"
+          refreshToken={wallRefreshToken}
+        />
+
+        {/* ── 6. 공유 ── */}
+        <ShareButtons
+          title={shareTitle}
+          url={`${SITE_URL}/petition`}
+          page="petition"
+          section="share"
+          locale="ko"
+        />
+
+        {/* ── 7. FAQ ── */}
+        <PetitionFAQ />
       </div>
 
       {isEditMode && <PetitionShareEditControls />}

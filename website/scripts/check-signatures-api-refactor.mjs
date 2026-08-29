@@ -42,6 +42,7 @@ for (const required of [
   "submitDemoSignature",
   "fetchSignatureSummary",
   "submitSignatureToStore",
+  "hashIp",
 ]) {
   assert(routeSource.includes(required), `signature route must use ${required}.`);
 }
@@ -67,9 +68,20 @@ for (const required of [
   "IS_PRODUCTION",
   "SERVICE_UNAVAILABLE_MESSAGE",
   "DUPLICATE_SIGNATURE_MESSAGE",
+  "NAME_MAX_LENGTH",
+  "AFFILIATION_MAX_LENGTH",
+  "REGION_SUB_MAX_LENGTH",
+  "SIGNATURE_GOAL",
+  "WALL_PAGE_SIZE",
+  "INVALID_REGION_MESSAGE",
+  "INVALID_NAME_PUBLIC_MESSAGE",
 ]) {
   assert(configSource.includes(required), `signatures api config must contain ${required}.`);
 }
+assert(
+  configSource.includes("MESSAGE_MAX_LENGTH = 500"),
+  "signatures api config must raise MESSAGE_MAX_LENGTH to 500.",
+);
 
 const validationSource = read("src/lib/signatures/api/validation.ts");
 for (const required of [
@@ -79,13 +91,25 @@ for (const required of [
   "MESSAGE_MAX_LENGTH",
   "agreePrivacy",
   "agreeAge",
+  "regionTop",
+  "regionSub",
+  "namePublic",
+  "affiliation",
+  "isValidRegionPair",
 ]) {
   assert(validationSource.includes(required), `signatures api validation must contain ${required}.`);
 }
+assert(
+  validationSource.includes("isValidRegionPair(regionTop, regionSub)"),
+  "signatures api validation must actually call isValidRegionPair(regionTop, regionSub), not just import it.",
+);
+assert(
+  validationSource.includes('typeof body.namePublic !== "boolean"'),
+  "signatures api validation must reject a missing/non-boolean namePublic (required choice, no default).",
+);
 
 const demoSource = read("src/lib/signatures/api/demo.ts");
 for (const required of [
-  "DEMO_SIGNATURES",
   "devRateLimitMap",
   "getDemoSignatureSummary",
   "submitDemoSignature",
@@ -93,18 +117,45 @@ for (const required of [
 ]) {
   assert(demoSource.includes(required), `signatures api demo module must contain ${required}.`);
 }
+assert(
+  demoSource.includes("demo: true"),
+  "signatures api demo summary must set demo: true so client.ts shows the dev demo badge.",
+);
 
 const storeSource = read("src/lib/signatures/api/store.ts");
 for (const required of [
   "fetchSignatureSummary",
   "submitSignatureToStore",
-  "maskName",
-  "hashIp",
   "ip_hash",
   "DUPLICATE_SIGNATURE_MESSAGE",
+  "regionCount",
+  "recent24h",
 ]) {
   assert(storeSource.includes(required), `signatures api store module must contain ${required}.`);
 }
+assert(
+  !storeSource.includes("maskName"),
+  "signatures api store module must not mask names — the wall only shows opt-in real names.",
+);
+for (const requiredInsertField of [
+  "region_top: value.regionTop",
+  "region_sub: value.regionSub",
+  "affiliation: value.affiliation",
+  "name_public: value.namePublic",
+]) {
+  assert(
+    storeSource.includes(requiredInsertField),
+    `signatures api store module's insert payload must include ${requiredInsertField} — a dropped field passes app validation but fails a DB NOT NULL/CHECK constraint as an unmapped 500.`,
+  );
+}
+assert(
+  storeSource.includes('rpc("signature_region_count")'),
+  "signatures api store module must aggregate regionCount via the signature_region_count() DB function, not by pulling all rows client-side.",
+);
+assert(
+  !storeSource.includes('.select("region_top")'),
+  "signatures api store module must not select all region_top rows client-side — Supabase's default max_rows (1000) silently truncates the aggregate once signatures exceed 1000.",
+);
 
 const responseSource = read("src/lib/signatures/api/responses.ts");
 for (const required of [
@@ -115,5 +166,41 @@ for (const required of [
 ]) {
   assert(responseSource.includes(required), `signatures api responses module must contain ${required}.`);
 }
+
+const wallModulePath = "src/lib/signatures/api/wall.ts";
+assert(existsSync(join(root, wallModulePath)), `${wallModulePath} must exist.`);
+
+const wallSource = read(wallModulePath);
+for (const required of [
+  "export interface WallEntry",
+  "export interface WallPage",
+  "export async function fetchSignatureWall",
+  "WALL_PAGE_SIZE",
+]) {
+  assert(wallSource.includes(required), `signatures api wall module must contain ${required}.`);
+}
+assert(
+  /name:\s*string;[\s\S]*regionTop:\s*string;[\s\S]*regionSub:\s*string;[\s\S]*createdAt:\s*string;/.test(
+    wallSource,
+  ),
+  "WallEntry must expose exactly name/regionTop/regionSub/createdAt — Task 11's SignatureWall consumes this shape verbatim.",
+);
+assert(
+  wallSource.includes("entries: WallEntry[]") && wallSource.includes("nextCursor: string | null"),
+  "WallPage must expose { entries: WallEntry[]; nextCursor: string | null }.",
+);
+
+const wallRoutePath = "src/app/api/signatures/wall/route.ts";
+assert(existsSync(join(root, wallRoutePath)), `${wallRoutePath} must exist.`);
+
+const wallRouteSource = read(wallRoutePath);
+assert(
+  wallRouteSource.includes("fetchSignatureWall"),
+  "signature wall route must delegate query logic to fetchSignatureWall — the route stays a thin orchestrator.",
+);
+assert(
+  !/\.from\(\s*["']signatures["']\s*\)/.test(wallRouteSource),
+  "signature wall route must not query the signatures table directly — that query logic belongs in wall.ts.",
+);
 
 console.log("Signatures API refactor checks passed.");

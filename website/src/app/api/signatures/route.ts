@@ -8,6 +8,7 @@ import {
 } from "@/lib/signatures/api/config";
 import {
   getClientIp,
+  hashIp,
   readSignatureRequestBody,
 } from "@/lib/signatures/api/request";
 import {
@@ -59,14 +60,13 @@ export async function POST(request: NextRequest) {
     if (IS_PRODUCTION) return missingSignatureServiceResponse();
     const demoResult = submitDemoSignature(ip);
     return demoResult.ok
-      ? NextResponse.json(demoResult.body)
+      ? NextResponse.json({ success: true })
       : jsonErrorResponse(demoResult.error, demoResult.status);
   }
 
   try {
-    return NextResponse.json(
-      await submitSignatureToStore(supabase, validation.value, ip),
-    );
+    await submitSignatureToStore(supabase, validation.value, hashIp(ip));
+    return NextResponse.json({ success: true });
   } catch (error) {
     return signatureApiErrorResponse(
       "Failed to submit signature:",

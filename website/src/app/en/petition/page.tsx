@@ -1,196 +1,71 @@
-"use client";
-
-import { useCallback, useRef, useState } from "react";
 import SubHero from "@/components/SubHero";
-import { EditableText } from "@/components/editable";
-import PetitionActionCards from "@/components/petition/PetitionActionCards";
-import PetitionAnimatedCounter from "@/components/petition/PetitionAnimatedCounter";
-import PetitionShareEditControls from "@/components/petition/PetitionShareEditControls";
-import PetitionSignatureForm from "@/components/petition/PetitionSignatureForm";
-import PetitionSuccess from "@/components/petition/PetitionSuccess";
-import RecentSignatures from "@/components/petition/RecentSignatures";
-import SignatureConfetti from "@/components/petition/SignatureConfetti";
-import {
-  englishPetitionFormCopy,
-  englishPetitionShareEditFields,
-  englishPetitionSuccessCopy,
-} from "@/components/petition/petition-copy";
-import { usePetitionSignatureSummary } from "@/components/petition/usePetitionSignatureSummary";
-import { PostmarkStamp } from "@/components/visuals/ForestLetterMotifs";
-import { events } from "@/lib/analytics";
-import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
+import { EditableLink, EditableRichText, EditableText } from "@/components/editable";
+import ShareButtons from "@/components/ShareButtons";
+
+const STATEMENT_PARAGRAPHS = [
+  `The pine forest of Pungcheon-ri has stood here since 1937. In 2017, Korea's forest authority named it one of the country's ten finest forests, and it still ranks among the nation's 100 finest forests today. This village produces 62 percent of Korea's domestic pine nuts. Its forest and valley are home to residents who have lived here for generations — and to species the state has pledged by law to protect: the Korean goral and the otter, both Class Ⅰ endangered species and natural monuments, and the yellow-throated marten, a Class Ⅱ endangered species.`,
+  `A 600-megawatt pumped-storage hydroelectric plant is now planned for this site. If it proceeds, 111,999 trees will be cut down; 2,256 have already fallen for a relocation road. 51 households will be flooded out or forced to leave. Residents of Pungcheon-ri have been fighting to protect this forest and village for eight years — most of them elderly people who have lived here their whole lives.`,
+  `Pumped-storage hydro is not a way of generating electricity — it is a way of storing it. Electricity is used to pump water uphill, then released downhill later to generate power again. The U.S. Energy Information Administration (EIA) and the National Renewable Energy Laboratory (NREL) put its round-trip efficiency at roughly 80 percent: about a fifth of the electricity put in is lost in the process of storing and retrieving it.`,
+  `We do not deny that Korea needs energy storage. What we ask for is transparency: is this project truly necessary, what are its real storage gains and losses, how much public money is at stake, and on what legal grounds was it approved? We ask that a way be found to meet the country's storage needs without destroying the forest and valley of Pungcheon-ri. We are not asking for compensation. We are asking that Pungcheon-ri's forest, valley, and the lives within it be left as they are.`,
+].join("\n\n");
 
 export default function EnglishPetitionPage() {
-  const { getContent, isEditMode } = useAdminEdit();
-  const {
-    signatureCount,
-    setSignatureCount,
-    signatures,
-    loadingSignatures,
-    refreshSignatures,
-  } = usePetitionSignatureSummary();
-  const [submitted, setSubmitted] = useState(false);
-  const [submittedName, setSubmittedName] = useState("");
-  const [showConfetti, setShowConfetti] = useState(false);
-  const [urlCopied, setUrlCopied] = useState(false);
-
-  const shareTitle = getContent("en.petition.share.title") ?? "Save Pungcheon-ri";
-  const shareText =
-    getContent("en.petition.share.text") ?? "Stand with residents of Pungcheon-ri and sign the petition.";
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const handleSignatureSubmitted = useCallback(
-    ({ name, count }: { name: string; count: number }) => {
-      setSignatureCount(count);
-      setSubmittedName(name);
-      setSubmitted(true);
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 3000);
-    },
-    [setSignatureCount],
-  );
-
-  const handleCopyUrl = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      events.shareClick("copy_url");
-      setUrlCopied(true);
-      setTimeout(() => setUrlCopied(false), 2000);
-    } catch {
-      // no-op
-    }
-  }, []);
-
-  const handleShareX = useCallback(() => {
-    const text = encodeURIComponent(shareText);
-    const url = encodeURIComponent(window.location.href);
-    events.shareClick("twitter");
-    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
-  }, [shareText]);
-
-  const handleShare = useCallback(async () => {
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({
-          title: shareTitle,
-          text: shareText,
-          url: window.location.href,
-        });
-        events.shareClick("web_share");
-      } catch {
-        // no-op
-      }
-    } else {
-      void handleCopyUrl();
-    }
-  }, [handleCopyUrl, shareText, shareTitle]);
-
-  const handleScrollToForm = useCallback(() => {
-    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
-
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
-      {showConfetti && <SignatureConfetti />}
-
       <SubHero
         imageUrl="https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535383_std.jpg"
         imageContentKey="en.petition.hero.image"
         imagePage="en/petition"
         imageSection="hero"
-        title={<EditableText contentKey="en.petition.hero.title" defaultValue="Take Action" as="span" page="en/petition" section="hero" />}
-        subtitle={<EditableText contentKey="en.petition.hero.subtitle" defaultValue="Sign, donate, or share. Any action you can take today helps residents keep fighting." as="span" page="en/petition" section="hero" />}
-        eyebrow={<EditableText contentKey="en.petition.hero.eyebrow" defaultValue="Petition" as="span" page="en/petition" section="hero" />}
+        title={<EditableText contentKey="en.petition.hero.title" defaultValue="We Are the Trees" as="span" page="en/petition" section="hero" />}
+        subtitle={<EditableText contentKey="en.petition.hero.subtitle" defaultValue="A national solidarity petition to stop the Pungcheon-ri pumped-storage project and protect its forest and valley" as="span" page="en/petition" section="hero" />}
+        eyebrow={<EditableText contentKey="en.petition.hero.eyebrow" defaultValue="National Solidarity Petition" as="span" page="en/petition" section="hero" />}
         variant="emphasis"
-        metric={
-          <div className="stamp-badge inline-block">
-            <div className="stamp-badge__inner">
-              <PetitionAnimatedCounter target={signatureCount} locale="en-US" />
-              <EditableText
-                contentKey="en.petition.hero.metricLabel"
-                defaultValue="people have signed so far"
-                as="p"
-                page="en/petition"
-                section="hero"
-                className="text-sm text-[var(--color-text-muted)] mt-1"
-              />
-            </div>
-          </div>
-        }
       />
 
-      <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 space-y-16">
-        <PetitionActionCards
-          onScrollToForm={handleScrollToForm}
-          ariaLabel="Ways to help"
-          contentKey="en.petition.cta.cards"
+      <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 space-y-10">
+        <EditableRichText
+          contentKey="en.petition.statement.summary"
+          defaultValue={STATEMENT_PARAGRAPHS}
           page="en/petition"
-          defaultItems={[
-            { title: "Sign", desc: "Add your name to strengthen the residents' public voice." },
-            { title: "Donate", desc: "Help cover transport, legal costs, and campaign materials." },
-            { title: "Share", desc: "Spread the story so the project cannot advance quietly." },
-          ]}
-          titleLabel="Title"
-          descLabel="Description"
-          donateHrefKey="en.petition.cta.cards.1.href"
-          donateDefaultHref="/en/donate"
-          shareHrefKey="en.petition.cta.cards.2.href"
-          shareDefaultHref="/en/share"
+          section="statement"
+          className="space-y-5 text-[var(--color-text)] leading-relaxed text-base md:text-lg"
         />
 
-        <div className="relative">
-          <PostmarkStamp className="absolute -top-6 right-0 hidden w-16 h-16 text-[var(--color-forest)]/30 rotate-6 sm:block" />
+        <div className="flex flex-col items-center gap-4 py-4">
+          <EditableLink
+            contentKey="en.petition.cta.signHref"
+            defaultHref="/petition"
+            page="en/petition"
+            section="cta"
+            className="letter-btn letter-btn--primary min-h-[48px] px-8"
+          >
+            <EditableText
+              contentKey="en.petition.cta.signLabel"
+              defaultValue="Sign the petition (Korean)"
+              as="span"
+              page="en/petition"
+              section="cta"
+            />
+          </EditableLink>
           <EditableText
-            contentKey="en.petition.emotional.prompt"
-            defaultValue="Add your name to more than 705 cries of resistance"
+            contentKey="en.petition.cta.note"
+            defaultValue="The petition form is in Korean. Your name, region, and message are welcome in any language."
             as="p"
             page="en/petition"
-            section="emotional"
-            className="text-center text-xl font-serif-display text-[var(--color-text-muted)] mb-6"
+            section="cta"
+            className="text-sm text-[var(--color-text-muted)] text-center max-w-md"
           />
         </div>
 
-        {!submitted ? (
-          <section className="fade-in" id="signature-form" aria-label="Signature form">
-            <PetitionSignatureForm
-              formRef={formRef}
-              onSubmitted={handleSignatureSubmitted}
-              onRefreshSignatures={refreshSignatures}
-              copy={englishPetitionFormCopy}
-            />
-          </section>
-        ) : (
-          <div className="fade-in">
-            <PetitionSuccess
-              submittedName={submittedName}
-              signatureCount={signatureCount}
-              urlCopied={urlCopied}
-              onPrimaryShare={handleShare}
-              onShareTwitter={handleShareX}
-              onCopyUrl={handleCopyUrl}
-              copy={englishPetitionSuccessCopy}
-            />
-          </div>
-        )}
-
-        <RecentSignatures
-          signatures={signatures}
-          loading={loadingSignatures}
-          ariaLabel="Recent signatures"
+        <ShareButtons
+          title="We Are the Trees — Save Pungcheon-ri"
           page="en/petition"
-          headingKey="en.petition.recent.heading"
-          headingDefault="Recent signatures"
-          loadingKey="en.petition.recent.loading"
-          loadingDefault="Loading..."
-          emptyKey="en.petition.recent.empty"
-          emptyDefault="No signatures yet. Be the first to add your name."
-          dateLocale="en-US"
+          section="share"
+          contentPrefix="en.petition.share"
+          locale="en"
         />
       </div>
-
-      {isEditMode && (
-        <PetitionShareEditControls fields={englishPetitionShareEditFields} />
-      )}
     </div>
   );
 }
