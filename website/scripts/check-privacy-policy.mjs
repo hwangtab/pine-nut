@@ -159,6 +159,88 @@ assert(
   ),
   `${wallPath}'s WallEntry must stay limited to {name, regionTop, regionSub, createdAt} — this check's claim that email/affiliation/message/ip are never exposed on the wall depends on it.`,
 );
+// 명단 벽은 이름·지역만이 아니라 **서명한 날짜**도 공개한다(SignatureWall.tsx의
+// <time dateTime={entry.createdAt}>). 세 고지(폼 namePublicNote·국문 방침·영문
+// 방침)가 모두 "이름과 지역"만 열거하면, 열거형 고지가 사실과 어긋나 고지 전체의
+// 신뢰가 깨진다. 벽이 날짜를 렌더한다는 전제와 세 고지의 날짜 언급을 함께 못박아
+// 어느 한쪽만 바뀌는 드리프트를 막는다.
+assert(
+  /<time dateTime=\{entry\.createdAt\}>/.test(wallComponentSource),
+  `${wallComponentPath} must render <time dateTime={entry.createdAt}> — the three notices' claim that the signing date is published depends on it (see check-signature-wall.mjs, which also requires this element).`,
+);
+assert(
+  wallContent.includes("서명한 날짜"),
+  "privacy.section1.wallContent must disclose that the signing date is published on the wall — SignatureWall.tsx renders <time dateTime={entry.createdAt}>, so an enumerated notice that lists only name and region is factually wrong.",
+);
+const namePublicNoteDefault = formCopySource.match(
+  /namePublicNote:\s*\{[\s\S]*?defaultValue:\s*\n?\s*((?:"[\s\S]*?"|`[\s\S]*?`))/,
+);
+assert(
+  namePublicNoteDefault !== null,
+  `${formCopyPath} must declare labels.namePublicNote with a defaultValue string.`,
+);
+assert(
+  /서명한 날짜/.test(namePublicNoteDefault[1]),
+  `${formCopyPath}'s namePublicNote must disclose the signing date alongside name and region — that notice sits at the moment consent is given, so it must not be narrower than the wall's actual disclosure.`,
+);
+
+// ---------------------------------------------------------------------------
+// 3b. 폼 안 "수집 항목" 고지 ↔ /privacy §1 상호 대조.
+//
+//     동의를 받는 시점에 사람이 실제로 읽는 문장은 체크박스 옆 패널
+//     (copy/form.ts의 privacyLines[0])이지 별도 페이지의 방침이 아니다. 그
+//     패널이 방침보다 좁으면 — 예컨대 제안 한마디·이름 공개 동의 여부·IP
+//     해시를 빼먹으면 — 실질적으로 작동하는 고지가 사실보다 좁아진다.
+//     양쪽이 같은 항목을 열거하는지 상호 대조해 다음 드리프트를 막는다.
+// ---------------------------------------------------------------------------
+const privacyLinesMatch = formCopySource.match(/privacyLines:\s*\[([\s\S]*?)\n\s*\],/);
+assert(privacyLinesMatch, `${formCopyPath} must declare a privacyLines array.`);
+const privacyLineDefaults = [
+  ...privacyLinesMatch[1].matchAll(/defaultValue:\s*\n?\s*"((?:[^"\\]|\\.)*)"/g),
+].map((m) => m[1]);
+assert(
+  privacyLineDefaults.length >= 1,
+  `${formCopyPath}'s privacyLines must carry defaultValue strings.`,
+);
+const formCollectionNotice = privacyLineDefaults[0];
+assert(
+  formCollectionNotice.startsWith("수집 항목:"),
+  `${formCopyPath}'s privacyLines[0] must be the "수집 항목:" line, found: "${formCollectionNotice}".`,
+);
+
+// 각 항목은 (a) 폼 고지와 (b) /privacy §1(수집 항목 블록 + 부정 참여 방지 블록)
+// 양쪽에 모두 있어야 한다. 어느 한쪽에서 사라지면 여기서 잡힌다.
+// §1은 "국민 연대서명 참여 시" 블록과 "부정 참여 방지를 위한 자동 수집 정보"
+// 블록으로 나뉜다 — IP 해시는 후자에만 있으므로 둘을 합쳐 대조한다.
+// (antiAbuseContent는 아래 5절에서 다시 뽑아 그쪽 단언에 쓴다 — 여기서 미리
+// 참조하면 TDZ에 걸리므로 지역 변수로 따로 읽는다.)
+const section1AntiAbuse = extractDefaultValue(privacySource, "privacy.section1.antiAbuseContent");
+const privacySection1Text = `${signupContent}\n${section1AntiAbuse}`;
+for (const [term, why] of [
+  ["이름 또는 닉네임", "the name field"],
+  ["거주 지역", "the region fields"],
+  ["소속", "the optional affiliation field"],
+  ["이메일", "the optional email field"],
+  ["제안 한마디", "the optional message field — it is stored, so the consent-point notice must say so"],
+  ["이름 공개 동의 여부", "the name-publication consent flag stored on every row"],
+  ["IP", "the hashed access IP stored for duplicate/rate-limit protection"],
+]) {
+  assert(
+    formCollectionNotice.includes(term),
+    `${formCopyPath}'s privacyLines[0] must list "${term}" (${why}) — /privacy §1 already discloses it, and the panel people actually read at the moment of consent must not be narrower than the policy page.`,
+  );
+  assert(
+    privacySection1Text.includes(term),
+    `privacy §1 (signupContent + antiAbuseContent) must list "${term}" (${why}) — copy/form.ts's privacyLines[0] discloses it, so the policy page must not fall behind.`,
+  );
+}
+// 선택 항목 표기도 양쪽이 같아야 한다 — 필수/선택이 뒤바뀌면 동의의 의미가 달라진다.
+for (const optional of ["이메일", "소속", "제안 한마디"]) {
+  assert(
+    new RegExp(`${optional}[^,]{0,20}\\(선택\\)`).test(formCollectionNotice),
+    `${formCopyPath}'s privacyLines[0] must mark "${optional}" as (선택), matching /privacy §1.`,
+  );
+}
 
 // ---------------------------------------------------------------------------
 // 4. 기존 65건 경과 — 명단에 없는 이유를 설명하는가.
@@ -326,6 +408,12 @@ assert(
 assert(
   wallContent.includes("2026년 8월 28일") === enWallContent.includes("August 28, 2026"),
   "privacy.section1.wallContent (KO) and en.privacy.section1.wallContent (EN) must agree on whether the 2026-08-28 cutover is disclosed.",
+);
+// 국문 wallContent와 같은 이유로, 영문판도 "서명한 날짜"가 공개된다는 사실을
+// 담아야 한다 — 한 언어만 고치면 다른 언어가 계속 좁은 고지를 하게 된다.
+assert(
+  /date you signed|signing date|date of (?:your )?signature/i.test(enWallContent),
+  "en.privacy.section1.wallContent must disclose that the signing date is published, matching the Korean wallContent's 서명한 날짜 (SignatureWall.tsx renders <time dateTime={entry.createdAt}>).",
 );
 
 const enAntiAbuseContent = extractDefaultValue(

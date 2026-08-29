@@ -31,7 +31,7 @@ export const koreanPetitionFormCopy: PetitionSignatureFormCopy = {
     namePublicLabel: {
       contentKey: "petition.form.namePublicLabel",
       defaultValue:
-        "연대서명 참여자의 이름 또는 닉네임을 향후 성명서·서명 결과 발표 자료 등에 공개하는 것에 동의하시나요?",
+        "이름 또는 닉네임과 거주 지역을 이 페이지의 서명자 명단과 향후 성명서·서명 결과 발표 자료에 공개하는 것에 동의하시나요?",
     },
     namePublicYes: {
       contentKey: "petition.form.namePublicYes",
@@ -44,7 +44,7 @@ export const koreanPetitionFormCopy: PetitionSignatureFormCopy = {
     namePublicNote: {
       contentKey: "petition.form.namePublicNote",
       defaultValue:
-        "공개에 동의하시면 이 페이지 하단 명단에 이름 또는 닉네임과 지역이 표시됩니다. 이름 또는 닉네임의 공개 여부와 연대서명 참여 여부는 별도로 선택할 수 있습니다.",
+        "공개에 동의하시면 이 페이지 하단 명단에 이름 또는 닉네임과 지역, 서명한 날짜가 표시됩니다. 이름 또는 닉네임의 공개 여부와 연대서명 참여 여부는 별도로 선택할 수 있습니다.",
     },
     privacyPrefix: {
       contentKey: "petition.form.privacyPrefix",
@@ -102,32 +102,11 @@ export const koreanPetitionFormCopy: PetitionSignatureFormCopy = {
       buttonLabel: "해외 거주지 안내",
     },
   },
+  // name/emailRequired/emailInvalid/privacy/age는 여기 있었지만 전부 죽은
+  // 카피였다 — 검증 문구의 소유권이 src/lib/signatures/form.ts로 옮겨간 뒤로
+  // 이 상수들은 어디서도 읽히지 않았고, 관리자가 편집해도 화면은 그대로였다.
+  // submit만 남는다(usePetitionSignatureForm의 formSubmitFallbackError).
   errors: {
-    name: {
-      contentKey: "petition.form.errorName",
-      defaultValue: "이름을 입력해주세요.",
-      buttonLabel: "이름 오류",
-    },
-    emailRequired: {
-      contentKey: "petition.form.errorEmailRequired",
-      defaultValue: "이메일을 입력해주세요.",
-      buttonLabel: "이메일 필수",
-    },
-    emailInvalid: {
-      contentKey: "petition.form.errorEmailInvalid",
-      defaultValue: "올바른 이메일 형식을 입력해주세요.",
-      buttonLabel: "이메일 형식",
-    },
-    privacy: {
-      contentKey: "petition.form.errorPrivacy",
-      defaultValue: "개인정보 수집·이용에 동의해주세요.",
-      buttonLabel: "개인정보 오류",
-    },
-    age: {
-      contentKey: "petition.form.errorAge",
-      defaultValue: "만 14세 이상 확인이 필요합니다.",
-      buttonLabel: "연령 오류",
-    },
     submit: {
       contentKey: "petition.form.errorSubmit",
       defaultValue: "서명 제출에 실패했습니다. 다시 시도해주세요.",
@@ -137,7 +116,8 @@ export const koreanPetitionFormCopy: PetitionSignatureFormCopy = {
   privacyLines: [
     {
       contentKey: "petition.form.privacyLine1",
-      defaultValue: "수집 항목: 이름 또는 닉네임, 거주 지역, 이메일(선택), 소속 단체 또는 모임(선택)",
+      defaultValue:
+        "수집 항목: 이름 또는 닉네임(필수), 거주 지역 시·도 및 시·군·구(필수), 이름 공개 동의 여부(필수), 이메일(선택), 소속 단체 또는 모임(선택), 제안 한마디(선택), 부정 참여 방지를 위한 접속 IP 주소의 해시값(자동 수집, 원본 IP 주소는 저장하지 않습니다)",
     },
     {
       contentKey: "petition.form.privacyLine2",

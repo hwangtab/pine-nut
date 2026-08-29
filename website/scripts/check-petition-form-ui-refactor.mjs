@@ -156,6 +156,27 @@ assert(
   namePublicNoteDefault !== null && /하단 명단/.test(namePublicNoteDefault[1]),
   "copy.labels.namePublicNote must still disclose that consenting signers appear on this page's bottom list wall ('하단 명단').",
 );
+// 법적으로 작동하는 문장은 라디오 위의 **질문**이다. 질문이 "향후 성명서·서명
+// 결과 발표 자료 등에 공개"만 물으면, 실제로 벌어지는 일 — 이름과 거주 지역이
+// 지금 이 페이지 하단 명단에 즉시 뜨는 것 — 은 바로 아래 note에만 남는다.
+// 노년 사용자에게 "발표 자료 등에"와 "지금 이 페이지에 즉시"는 체감이 전혀
+// 다르다. 그래서 note뿐 아니라 질문 자체가 (a) 이 페이지의 명단 공개와
+// (b) 공개 대상에 거주 지역이 포함된다는 사실을 담고 있어야 한다.
+const namePublicLabelDefault = copyFormSource.match(
+  /namePublicLabel:\s*\{[\s\S]*?defaultValue:\s*\n?\s*((?:"[\s\S]*?"|`[\s\S]*?`))/,
+);
+assert(
+  namePublicLabelDefault !== null,
+  "copy/form.ts must declare labels.namePublicLabel with a defaultValue string.",
+);
+assert(
+  /이 페이지의 서명자 명단/.test(namePublicLabelDefault[1]),
+  "copy.labels.namePublicLabel — the consent question itself, not just the note below it — must say the disclosure happens on this page's signer list ('이 페이지의 서명자 명단'), because that is what actually happens the moment the radio is chosen.",
+);
+assert(
+  /거주 지역/.test(namePublicLabelDefault[1]),
+  "copy.labels.namePublicLabel must state that the region is disclosed too, not just the name — SignatureWall.tsx renders regionTop and regionSub next to every name.",
+);
 
 function renderAnchor(key) {
   const anchor = `text={copy.labels.${key}}`;

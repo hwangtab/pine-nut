@@ -193,13 +193,14 @@ export function usePetitionSignatureForm({
     setSignatureStartedTracked(true);
   }, [signatureStartedTracked]);
 
-  // copy.errors.name/emailRequired/emailInvalid/privacy/age used to be
-  // editable here because the old validateSignatureForm read those messages
-  // from copy at validation time. It no longer does — form.ts now owns fixed
-  // Korean copy for those errors — so editing them here would have zero
-  // effect. Only copy.errors.submit remains meaningful (still read above as
-  // formSubmitFallbackError). Labels and notes stay inline-editable through
-  // PetitionFormText, so only the value-type copy needs a chip here.
+  // copy.errors used to also carry name/emailRequired/emailInvalid/privacy/age
+  // because the old validateSignatureForm read those messages from copy at
+  // validation time. It no longer does — src/lib/signatures/form.ts now owns
+  // fixed Korean copy for those errors — so those constants were dead copy and
+  // have been removed from copy/form.ts entirely. Only copy.errors.submit
+  // remains (read above as formSubmitFallbackError). Labels and notes stay
+  // inline-editable through PetitionFormText, so only the value-type copy
+  // needs a chip here.
   const editFields = [
     copy.placeholders.name,
     copy.placeholders.email,
