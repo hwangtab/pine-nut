@@ -147,10 +147,33 @@ assert(
   normalizedSolidaritySql.includes("alter column email drop not null"),
   "solidarity migration must make email optional.",
 );
+// 2026-08-29: 사용자가 삭제 방침을 보존으로 바꿨다 — 백업(65건, 2026-03-10~08-28)을
+// 실제로 확인한 뒤의 결정이다. TRUNCATE는 다시는 이 마이그레이션에 들어오면 안
+// 된다(되돌아오면 그 65건이 영구 소실된다).
 assert(
-  normalizedSolidaritySql.includes("truncate signatures restart identity"),
-  "solidarity migration must truncate existing signature data after backup.",
+  !normalizedSolidaritySql.includes("truncate"),
+  "solidarity migration must NOT truncate signatures — the existing 65 rows (2026-03-10~08-28) are preserved by decision, not deleted.",
 );
+
+// 기존 65건은 지역을 수집하지 않았다 — region_top을 NOT NULL로 걸기 전에
+// '미상' 센티넬로 백필해야 한다. 순서도 검사한다: 백필이 SET NOT NULL보다
+// 먼저 나오지 않으면 그 SET NOT NULL 자체가 기존 NULL 행 때문에 실패한다.
+const legacyBackfillPattern =
+  "update signatures set region_top = '미상', region_sub = '' where region_top is null";
+assert(
+  normalizedSolidaritySql.includes(legacyBackfillPattern),
+  "solidarity migration must backfill legacy rows (region_top IS NULL) to the '미상' sentinel (region_sub '') before enforcing NOT NULL.",
+);
+const legacyBackfillIndex = normalizedSolidaritySql.indexOf(legacyBackfillPattern);
+const regionTopSetNotNullIndex = normalizedSolidaritySql.indexOf(
+  "alter column region_top set not null",
+);
+assert(
+  regionTopSetNotNullIndex !== -1 &&
+    legacyBackfillIndex < regionTopSetNotNullIndex,
+  "solidarity migration must run the '미상' backfill UPDATE before ALTER COLUMN region_top SET NOT NULL, not after.",
+);
+
 assert(
   normalizedSolidaritySql.includes("add constraint signatures_region_top_check"),
   "solidarity migration must constrain region_top to the known province list.",
@@ -176,13 +199,27 @@ const regionCheckLiterals = [
   ...regionCheckMatch[1].matchAll(/'([^']+)'/g),
 ].map((match) => match[1]);
 
+// '미상'은 유일하게 허용되는 예외(폼이 절대 만들 수 없는 레거시 백필 전용
+// 센티넬)다. 정확히 그 한 값만 예외로 두어, "개수만 맞으면 통과"하는 우회로
+// 다른 값이 '미상' 자리를 대신 차지하며 몰래 들어오는 걸 막는다.
+const REGION_LEGACY_SENTINEL = "미상";
+const regionCheckSentinelCount = regionCheckLiterals.filter(
+  (value) => value === REGION_LEGACY_SENTINEL,
+).length;
 assert(
-  regionCheckLiterals.length === regionTops.length,
-  `solidarity migration's region_top CHECK must list exactly the ${regionTops.length} values from src/lib/regions.ts (found ${regionCheckLiterals.length}).`,
+  regionCheckSentinelCount === 1,
+  `solidarity migration's region_top CHECK must include the legacy '${REGION_LEGACY_SENTINEL}' sentinel exactly once (found ${regionCheckSentinelCount}).`,
+);
+const regionCheckWithoutSentinel = regionCheckLiterals.filter(
+  (value) => value !== REGION_LEGACY_SENTINEL,
+);
+assert(
+  regionCheckWithoutSentinel.length === regionTops.length,
+  `solidarity migration's region_top CHECK must list exactly the ${regionTops.length} values from src/lib/regions.ts plus the '${REGION_LEGACY_SENTINEL}' sentinel (found ${regionCheckLiterals.length} total, ${regionCheckWithoutSentinel.length} non-sentinel).`,
 );
 for (const top of regionTops) {
   assert(
-    regionCheckLiterals.includes(top),
+    regionCheckWithoutSentinel.includes(top),
     `solidarity migration's region_top CHECK must include '${top}' from src/lib/regions.ts, character-for-character.`,
   );
 }
@@ -218,6 +255,12 @@ assert(
   normalizedSolidaritySql.includes("security definer") &&
     normalizedSolidaritySql.includes("set search_path = public"),
   "signature_region_count() must be SECURITY DEFINER with search_path locked to public (search_path hijacking defense).",
+);
+assert(
+  normalizedSolidaritySql.includes(
+    "select count(distinct region_top)::int from signatures where region_top <> '미상'",
+  ),
+  "signature_region_count() must exclude the legacy '미상' sentinel — otherwise the public 참여 지역 N곳 stat is inflated by one region that isn't real.",
 );
 assert(
   normalizedSolidaritySql.includes(

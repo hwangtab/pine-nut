@@ -1,5 +1,6 @@
--- 국민 연대서명 전환: 지역·소속·이름 공개 여부 컬럼 추가, 이메일 선택화,
--- 기존 3필드 서명 데이터 전량 삭제(사전에 CSV/SQL 백업 완료 후 실행).
+-- 국민 연대서명 전환: 지역·소속·이름 공개 여부 컬럼 추가, 이메일 선택화.
+-- 기존 서명(65건, 2026-03-10~08-28)은 보존한다 — 백업 뒤 폐기하려던 원래 계획을
+-- 실제 건수·서명 시점을 확인한 뒤 사용자가 보존으로 변경했다.
 
 ALTER TABLE signatures
   ADD COLUMN region_top   TEXT,
@@ -9,18 +10,24 @@ ALTER TABLE signatures
 
 ALTER TABLE signatures ALTER COLUMN email DROP NOT NULL;
 
--- ⚠️ 되돌릴 수 없음: 이 시점 이후 기존 서명 전량 소실. 백업 확인 필수.
-TRUNCATE signatures RESTART IDENTITY;
+-- 기존 서명은 지역을 수집하지 않았다 — 18개 시·도 중 어느 것을 넣어도 거짓
+-- 데이터가 된다. NOT NULL을 걸기 전에 '미상' 센티넬로 백필한다(아래 CHECK
+-- 제약에 '미상'을 허용값으로 추가한 이유도 이것이다). region_sub는 세종특별
+-- 자치시(시·군·구 없음)와 같은 형태로 빈 문자열을 쓴다.
+UPDATE signatures SET region_top = '미상', region_sub = '' WHERE region_top IS NULL;
 
 ALTER TABLE signatures
   ALTER COLUMN region_top SET NOT NULL,
   ALTER COLUMN region_sub SET NOT NULL;
 
 ALTER TABLE signatures
+  -- '미상': 2026-08-28 이전 서명 65건은 지역을 수집하지 않았다. 폼은 이 값을
+  -- 만들 수 없다(src/lib/regions.ts의 isValidRegionPair가 거부) — 레거시 백필
+  -- 전용 값이다.
   ADD CONSTRAINT signatures_region_top_check CHECK (region_top IN (
     '서울특별시','부산광역시','대구광역시','인천광역시','광주광역시','대전광역시',
     '울산광역시','세종특별자치시','경기도','강원특별자치도','충청북도','충청남도',
-    '전북특별자치도','전라남도','경상북도','경상남도','제주특별자치도','해외')),
+    '전북특별자치도','전라남도','경상북도','경상남도','제주특별자치도','해외','미상')),
   ADD CONSTRAINT signatures_affiliation_len  CHECK (affiliation IS NULL OR char_length(affiliation) <= 60);
 
 DROP INDEX IF EXISTS idx_signatures_unique_normalized_email;
@@ -40,9 +47,11 @@ CREATE INDEX idx_signatures_region ON signatures (region_top);
 -- 서명이 1000건을 넘으면 select("region_top") 전체 스캔이 조용히 앞쪽 1000행만
 -- 반환하고, 그 뒤로는 regionCount가 절대 늘지 않는 문제를 막기 위함.
 -- idx_signatures_region이 있어 count(distinct region_top) 비용은 낮다.
+-- region_top <> '미상': 지역을 수집하지 않은 레거시 65건이 "참여 지역 N곳"을
+-- 실제보다 1 부풀리지 않도록 집계에서 제외한다.
 CREATE OR REPLACE FUNCTION signature_region_count()
 RETURNS integer LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
-  SELECT count(DISTINCT region_top)::int FROM signatures
+  SELECT count(DISTINCT region_top)::int FROM signatures WHERE region_top <> '미상'
 $$;
 REVOKE ALL ON FUNCTION signature_region_count() FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION signature_region_count() TO service_role;

@@ -3,10 +3,15 @@ import { getSignatureStats } from "@/lib/data/signatures";
 export default async function AdminSignaturesPage() {
   const stats = await getSignatureStats(14);
   const maxDaily = Math.max(...stats.dailyCounts.map((d) => d.count), 1);
-  const maxRegion = Math.max(...stats.regionCounts.map((r) => r.count), 1);
+  const maxRegion = Math.max(
+    ...stats.regionCounts.map((r) => r.count),
+    stats.unknownRegionCount,
+    1,
+  );
   const activeRegions = stats.regionCounts
     .filter((r) => r.count > 0)
     .sort((a, b) => b.count - a.count);
+  const hasRegionData = activeRegions.length > 0 || stats.unknownRegionCount > 0;
 
   return (
     <div className="p-6 md:p-10 max-w-4xl mx-auto">
@@ -75,7 +80,7 @@ export default async function AdminSignaturesPage() {
       {/* Region distribution */}
       <div className="bg-[var(--color-admin-surface)] rounded-2xl border border-[var(--color-admin-border)] p-6 mb-8">
         <h2 className="text-lg font-bold text-[var(--color-admin-text)] mb-4">지역 분포 (시·도)</h2>
-        {activeRegions.length === 0 ? (
+        {!hasRegionData ? (
           <p className="text-[var(--color-admin-muted)] text-center py-4">서명 데이터가 없습니다.</p>
         ) : (
           <div className="space-y-2">
@@ -93,6 +98,29 @@ export default async function AdminSignaturesPage() {
                 </span>
               </div>
             ))}
+            {stats.unknownRegionCount > 0 && (
+              <>
+                {/* 지역 미상: 2026-08-28 이전 서명 65건(지역 미수집)을 백필한
+                    '미상' 센티넬. 18개 시·도와 섞이지 않도록 구분선 아래,
+                    다른 색조(sky 대신 amber)로 별도 표기한다. */}
+                <div className="border-t border-dashed border-[var(--color-admin-border)] my-3" />
+                <div className="flex items-center gap-3">
+                  <span className="w-24 shrink-0 text-sm text-amber-700">지역 미상</span>
+                  <div className="flex-1 h-3 rounded-full bg-[var(--color-admin-border)] overflow-hidden">
+                    <div
+                      className="h-full bg-amber-400"
+                      style={{ width: `${(stats.unknownRegionCount / maxRegion) * 100}%` }}
+                    />
+                  </div>
+                  <span className="w-10 shrink-0 text-right text-sm text-amber-700">
+                    {stats.unknownRegionCount}
+                  </span>
+                </div>
+                <p className="text-xs text-[var(--color-admin-muted)]/70 pl-0">
+                  2026-08-28 이전 서명 — 지역 정보 없이 접수됨
+                </p>
+              </>
+            )}
           </div>
         )}
       </div>

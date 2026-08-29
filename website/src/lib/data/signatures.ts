@@ -6,6 +6,11 @@ import {
   isMissingSupabaseRelationError,
 } from "@/lib/supabase-errors";
 
+// supabase/migrations/20260828000000_solidarity_signatures.sql가 정의한 레거시
+// 백필 센티넬. 폼(src/lib/regions.ts의 isValidRegionPair)은 이 값을 절대 만들지
+// 못한다 — 2026-08-28 이전 서명 65건에만 DB 마이그레이션이 직접 채워 넣은 값이다.
+const REGION_UNKNOWN_LEGACY = "미상";
+
 const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
 
 /** 기준 시각에서 daysAgo일 전의 "KST 자정"에 해당하는 UTC 시각. */
@@ -199,6 +204,12 @@ export interface SignatureStats {
   recentSignatures: { name: string; email: string; message: string | null; createdAt: string }[];
   dailyCounts: { date: string; count: number }[];
   regionCounts: SignatureRegionCount[];
+  /** '미상'(supabase/migrations/20260828000000_solidarity_signatures.sql) 서명 건수 —
+   * 2026-08-28 이전 65건은 지역을 수집하지 않아 이 센티넬로 백필됐다. regionCounts는
+   * REGION_TOPS(18개 시·도 + 해외)로만 시드·구성되므로(admin-signatures-export 가드가
+   * 이 형태를 고정한다) 그 배열엔 '미상'이 낄 자리가 없다 — 별도 필드로 빼지 않으면
+   * 이 65건이 지역 분포 화면에서 조용히 사라진다. */
+  unknownRegionCount: number;
   namePublicRate: number;
   duplicateCandidates: SignatureDuplicateCandidate[];
   usingFallback: boolean;
@@ -217,6 +228,7 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
     recentSignatures: [],
     dailyCounts: [],
     regionCounts: REGION_TOPS.map((regionTop) => ({ regionTop, count: 0 })),
+    unknownRegionCount: 0,
     namePublicRate: 0,
     duplicateCandidates: [],
     usingFallback: true,
@@ -325,6 +337,9 @@ export async function getSignatureStats(days = 14): Promise<SignatureStats> {
       regionTop,
       count: regionMap.get(regionTop) ?? 0,
     })),
+    // regionMap은 REGION_TOPS로 시드됐지만 Map.set은 없는 키도 그냥 추가한다 —
+    // 행의 region_top이 '미상'이면 루프가 이 값을 자연스럽게 채워둔다.
+    unknownRegionCount: regionMap.get(REGION_UNKNOWN_LEGACY) ?? 0,
     namePublicRate: regionRaw.length > 0 ? publicCount / regionRaw.length : 0,
     duplicateCandidates: [...duplicateMap.values()]
       .filter((candidate) => candidate.count > 1)
