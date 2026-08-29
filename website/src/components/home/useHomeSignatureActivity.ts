@@ -1,26 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { fetchSignatureSummary } from "@/lib/signatures/client";
+import { fetchSignatureSummary, fetchSignatureWall } from "@/lib/signatures/client";
 
 const MAX_TOASTS = 5;
 const INITIAL_DELAY_MS = 5000;
 const TOAST_INTERVAL_MS = 8000;
 const TOAST_DISPLAY_MS = 4000;
 
-// NOTE(Task 5 compile-keeping shim): mirrors the `PublicSignature` shape that
-// used to live in `@/lib/signatures/client` before Task 3/4 moved recent-
-// signature listing to `/api/signatures/wall`. `GET /api/signatures` no
-// longer returns a `signatures[]` list, so `recentSignatures` below is never
-// populated and the social-proof toast is silently inert until a later task
-// wires this hook onto `fetchSignatureWall`.
-interface LegacyRecentSignature {
-  name: string;
-}
-
 export function useHomeSignatureActivity() {
   const [signatureCount, setSignatureCount] = useState<number | null>(null);
-  const [recentSignatures] = useState<LegacyRecentSignature[]>([]);
+  // 토스트가 돌려쓰는 이름 풀. 출처는 명단 벽과 동일한 `/api/signatures/wall`
+  // 첫 페이지다 — 그 엔드포인트는 `.eq("name_public", true)`로 이름 공개에
+  // 동의한 서명자만 돌려주므로, 예전의 마스킹(maskName) 방식보다 오히려
+  // 안전하다. 여기서는 이름 외의 필드(지역·날짜)를 쓰지 않으므로 문자열
+  // 배열로만 담아, 나중에 다른 필드가 실수로 홈 화면에 새어 나갈 여지를 없앤다.
+  const [recentNames, setRecentNames] = useState<string[]>([]);
   const [toastName, setToastName] = useState<string | null>(null);
   const [toastVisible, setToastVisible] = useState(false);
   const toastCountRef = useRef(0);
@@ -36,13 +31,21 @@ export function useHomeSignatureActivity() {
   }, []);
 
   useEffect(() => {
-    if (recentSignatures.length === 0) return;
+    fetchSignatureWall()
+      .then((page) => {
+        setRecentNames(page.entries.map((entry) => entry.name));
+      })
+      .catch(() => {
+        /* graceful degradation: no social-proof toast */
+      });
+  }, []);
+
+  useEffect(() => {
+    if (recentNames.length === 0) return;
 
     const showToast = () => {
       if (toastCountRef.current >= MAX_TOASTS) return;
-      const randomSig =
-        recentSignatures[Math.floor(Math.random() * recentSignatures.length)];
-      setToastName(randomSig.name);
+      setToastName(recentNames[Math.floor(Math.random() * recentNames.length)]);
       setToastVisible(true);
       toastCountRef.current += 1;
 
@@ -68,7 +71,7 @@ export function useHomeSignatureActivity() {
       clearTimeout(initialTimer);
       if (intervalId) clearInterval(intervalId);
     };
-  }, [recentSignatures]);
+  }, [recentNames]);
 
   return {
     signatureCount,
