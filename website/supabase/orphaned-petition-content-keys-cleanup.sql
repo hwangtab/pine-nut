@@ -1,0 +1,28 @@
+-- 대기 중 — 실행 금지. supabase/migrations/에 넣지 않았다(그 폴더는 `supabase
+-- db push`가 그대로 적용한다). 컨트롤러가 검토 후 적용 여부·시점을 정한다.
+--
+-- 배경: 2026-08-29 마이그레이션 팔로업(chore/petition-followup)에서
+-- website/src/components/petition/copy/form.ts의 검증 카피 5종
+-- (errors.name/emailRequired/emailInvalid/privacy/age)이 죽은 상수로 판정돼
+-- 코드에서 제거됐다(커밋 414019a). 검증 문구의 소유권이
+-- src/lib/signatures/form.ts로 옮겨간 뒤로 이 5개 contentKey를 읽는 코드가
+-- 하나도 남지 않았다 — 관리자가 /admin에서 이 키를 오버라이드했다면 그 값은
+-- page_content 테이블에 고아로 남아 있을 수 있다(확인 방법은 이 브랜치의
+-- 리포트 참고, 코드베이스 전체 grep으로 contentKey 선언·getContent 호출
+-- 양쪽에서 0건 확인).
+--
+-- 대상 5개 키(전부 "petition.form." 접두):
+--   errorName, errorEmailRequired, errorEmailInvalid, errorPrivacy, errorAge
+--
+-- 아래는 그 결과로 적용했을 SQL이다. 실행하려면 컨트롤러가 이 파일을
+-- supabase/migrations/로 옮기고 타임스탬프 파일명을 붙인 뒤 주석을 해제해야
+-- 한다 — 이 파일 자체는 어떤 자동화로도 적용되지 않는다.
+
+-- DELETE FROM page_content
+-- WHERE content_key IN (
+--   'petition.form.errorName',
+--   'petition.form.errorEmailRequired',
+--   'petition.form.errorEmailInvalid',
+--   'petition.form.errorPrivacy',
+--   'petition.form.errorAge'
+-- );
