@@ -89,7 +89,7 @@ export default function PrivacyPage() {
                 />
                 <EditableRichText
                   contentKey="privacy.section1.antiAbuseContent"
-                  defaultValue="이메일을 입력하신 경우 이메일을 기준으로 중복 서명 여부를 확인합니다. 아울러 짧은 시간 내 동일 IP에서 반복 제출되는 것을 막기 위해 접속 IP 주소를 해시(hash)값으로 변환해 저장하며, 원본 IP 주소는 저장하지 않습니다."
+                  defaultValue="이메일을 입력하신 경우 이메일을 기준으로 중복 서명 여부를 확인하며, 이와 별도로 짧은 시간(60초) 동안 동일 접속 IP에서 반복 제출되는 것도 함께 제한합니다. 이를 위해 접속 IP 주소를 해시(hash)값으로 변환해 저장하며, 원본 IP 주소는 저장하지 않습니다."
                   page="privacy"
                   section="section1"
                   renderMode="paragraph"

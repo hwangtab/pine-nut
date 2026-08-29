@@ -13,6 +13,10 @@ import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 
+// 정확 일치 패턴이다 — "node scripts/check-x.mjs --strict"처럼 뒤에 플래그가
+// 붙는 가드가 생기면 이 정규식에 걸리지 않아 조용히 이 목록에서 빠진다. 지금은
+// 그런 가드가 없지만, 새 가드를 추가할 때 이 제약을 잊지 말 것 — 플래그가
+// 필요하면 이 패턴도 함께 넓혀야 한다.
 const CHECK_SCRIPT_PATTERN = /^node scripts\/check-[\w-]+\.mjs$/;
 
 const guardNames = Object.entries(pkg.scripts)

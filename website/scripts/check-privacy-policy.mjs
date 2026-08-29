@@ -41,9 +41,13 @@ const storePath = "src/lib/signatures/api/store.ts";
 const requestPath = "src/lib/signatures/api/request.ts";
 const wallComponentPath = "src/components/petition/SignatureWall.tsx";
 const migrationPath = "supabase/migrations/20260828000000_solidarity_signatures.sql";
+const enPrivacyPagePath = "src/app/en/privacy/page.tsx";
+const enPrivacySectionsPath = "src/app/en/privacy/EnglishPrivacySectionsClient.tsx";
 
 const privacySource = read(privacyPagePath);
 const sectionsSource = read(privacySectionsPath);
+const enPrivacySource = read(enPrivacyPagePath);
+const enSectionsSource = read(enPrivacySectionsPath);
 const formCopySource = read(formCopyPath);
 const validationSource = read(validationPath);
 const wallSource = read(wallPath);
@@ -52,11 +56,11 @@ const requestSource = read(requestPath);
 const wallComponentSource = read(wallComponentPath);
 const migrationSource = read(migrationPath);
 
-function extractDefaultValue(source, contentKey) {
+function extractDefaultValue(source, contentKey, fileLabel = privacyPagePath) {
   const keyIndex = source.indexOf(`contentKey="${contentKey}"`);
-  assert(keyIndex !== -1, `${privacyPagePath} must declare an EditableText/EditableRichText with contentKey="${contentKey}".`);
+  assert(keyIndex !== -1, `${fileLabel} must declare an EditableText/EditableRichText with contentKey="${contentKey}".`);
   const match = source.slice(keyIndex).match(/defaultValue="((?:[^"\\]|\\.)*)"/);
-  assert(match, `contentKey="${contentKey}" must carry a defaultValue="…" string.`);
+  assert(match, `${fileLabel}'s contentKey="${contentKey}" must carry a defaultValue="…" string.`);
   return match[1];
 }
 
@@ -196,6 +200,25 @@ assert(
   !/\bip:\s*ip\b/.test(insertBlock),
   `${storePath} must not insert a raw "ip" field alongside ip_hash.`,
 );
+// 중복·남용 방지는 두 기제(이메일 중복 확인 + IP 해시 기반 레이트리밋)가 함께
+// 작동한다 — 문구가 이메일만 언급하고 IP 쪽 레이트리밋을 뺀 채 다시 쓰이면
+// "부정 참여 방지"의 절반이 사라진 셈이라 여기서 둘 다 assert한다.
+assert(
+  antiAbuseContent.includes("이메일") && antiAbuseContent.includes("중복"),
+  "privacy.section1.antiAbuseContent must keep disclosing email-based duplicate detection.",
+);
+assert(
+  antiAbuseContent.includes("반복 제출") || antiAbuseContent.includes("레이트리밋"),
+  "privacy.section1.antiAbuseContent must keep disclosing the IP-hash based repeat-submission limit, not just email dedup.",
+);
+assert(
+  antiAbuseContent.includes("60초"),
+  `privacy.section1.antiAbuseContent must state the actual rate-limit window (60초) — see ${storePath}'s RATE_LIMIT_WINDOW_MS.`,
+);
+assert(
+  /export const RATE_LIMIT_WINDOW_MS = 60 \* 1000;/.test(read("src/lib/signatures/api/config.ts")),
+  "src/lib/signatures/api/config.ts's RATE_LIMIT_WINDOW_MS must still be 60 seconds — this check's claim of a 60-second window depends on it.",
+);
 
 // ---------------------------------------------------------------------------
 // 6. 이용 목적 — 연대서명 집계·성명서 발표·공론화 활동 + 이메일 별도 목적.
@@ -244,6 +267,115 @@ assert(
 assert(
   /이용 범위:[\s\S]*?목적을 달성할 때까지/.test(formCopySource),
   `${formCopyPath}'s privacyLine3 must still promise retention until 목적을 달성할 때까지 — this check's cross-reference depends on it.`,
+);
+
+// ---------------------------------------------------------------------------
+// 8. /en/privacy — 국문과 같은 사실을 말하는가.
+//
+//    자연어 문서 두 벌을 문자열 동치로 비교할 수는 없다. 대신 핵심 사실이
+//    영문 쪽에도 "존재하는지"만 앵커한다: 갱신일, 명단 공개 조건, 비공개 시
+//    총계 반영, 2026-08-28 경과, 보유기간 표현, IP 해시 고지. 국문판이 이미
+//    구현과 대조 검증됐으므로, 영문판이 같은 사실을 언급하는지만 확인하면
+//    "다른 언어가 다른 말을 하는" 상황을 막을 수 있다.
+// ---------------------------------------------------------------------------
+const enSubtitle = extractDefaultValue(enPrivacySource, "en.privacy.header.subtitle", enPrivacyPagePath);
+assert(
+  enSubtitle.includes("August") && enSubtitle.includes("2026"),
+  `en.privacy.header.subtitle must reflect the 2026-08 revision date, found: "${enSubtitle}".`,
+);
+assert(
+  !enSubtitle.includes("March"),
+  "en.privacy.header.subtitle must no longer show the stale March 10, 2026 date.",
+);
+
+const enSignupContent = extractDefaultValue(
+  enPrivacySource,
+  "en.privacy.section1.signupContent",
+  enPrivacyPagePath,
+);
+for (const term of ["region", "email", "14 years old"]) {
+  assert(
+    enSignupContent.toLowerCase().includes(term.toLowerCase()),
+    `en.privacy.section1.signupContent must mention "${term}" — the Korean signupContent covers the same fact.`,
+  );
+}
+assert(
+  !enSignupContent.includes("message of support"),
+  "en.privacy.section1.signupContent must not keep the pre-solidarity-petition 3-field copy (\"message of support\").",
+);
+
+const enWallContent = extractDefaultValue(enPrivacySource, "en.privacy.section1.wallContent", enPrivacyPagePath);
+assert(
+  enWallContent.includes("/petition"),
+  "en.privacy.section1.wallContent must name the /petition page, matching the Korean wallContent.",
+);
+assert(
+  /publish/i.test(enWallContent),
+  "en.privacy.section1.wallContent must disclose that consenting signers' names/regions are published on the wall.",
+);
+assert(
+  /total signature count/i.test(enWallContent),
+  "en.privacy.section1.wallContent must state non-public signatures still count toward the total, matching the Korean 총 서명 수 claim.",
+);
+assert(
+  enWallContent.includes("August 28, 2026"),
+  "en.privacy.section1.wallContent must disclose the 2026-08-28 cutover, matching the Korean wallContent's 이전 65건 note.",
+);
+// 국문·영문이 같은 컷오버 날짜를 말하는지 상호 anchoring — 한쪽만 날짜가
+// 바뀌면(예: 국문만 갱신) 여기서 잡힌다.
+assert(
+  wallContent.includes("2026년 8월 28일") === enWallContent.includes("August 28, 2026"),
+  "privacy.section1.wallContent (KO) and en.privacy.section1.wallContent (EN) must agree on whether the 2026-08-28 cutover is disclosed.",
+);
+
+const enAntiAbuseContent = extractDefaultValue(
+  enPrivacySource,
+  "en.privacy.section1.antiAbuseContent",
+  enPrivacyPagePath,
+);
+assert(
+  /hash/i.test(enAntiAbuseContent),
+  "en.privacy.section1.antiAbuseContent must disclose IP hashing, matching the Korean antiAbuseContent.",
+);
+assert(
+  /original ip .*never stored|never store.*original ip/i.test(enAntiAbuseContent),
+  "en.privacy.section1.antiAbuseContent must state the original IP is never stored.",
+);
+
+const enSection3Content = extractDefaultValue(enPrivacySource, "en.privacy.section3.content", enPrivacyPagePath);
+assert(
+  /purposes .*(have been )?achieved|until.*achieved/i.test(enSection3Content),
+  'en.privacy.section3.content must state retention until the purpose is achieved ("목적을 달성할 때까지"), not a fixed campaign-end date.',
+);
+assert(
+  !/campaign ends/i.test(enSection3Content),
+  "en.privacy.section3.content must not keep the stale \"until the campaign ends\" wording.",
+);
+
+// 영문 목적 목록도 같은 4가지 사실(연대서명 집계·성명서 발표·이메일 안내·GA)을
+// 담아야 한다 — 국문 section2와 항목 수·핵심어를 맞춘다.
+const enPurposeItemsStart = enSectionsSource.indexOf("const privacyPurposeItems = [");
+assert(enPurposeItemsStart !== -1, `${enPrivacySectionsPath} must declare privacyPurposeItems.`);
+const enPurposeItemsBlock = enSectionsSource.slice(
+  enPurposeItemsStart,
+  enSectionsSource.indexOf("];", enPurposeItemsStart),
+);
+const enPurposeTexts = [...enPurposeItemsBlock.matchAll(/text:\s*"((?:[^"\\]|\\.)*)"/g)].map((m) => m[1]);
+assert(
+  enPurposeTexts.length === purposeTexts.length,
+  `en.privacy.section2 purpose list must declare the same number of items as the Korean list (${purposeTexts.length}), found ${enPurposeTexts.length}.`,
+);
+assert(
+  enPurposeTexts.some((t) => /solidarity petition/i.test(t)),
+  "en.privacy.section2 purpose list must include the solidarity-petition tally purpose.",
+);
+assert(
+  enPurposeTexts.some((t) => /statement/i.test(t) && /advocacy/i.test(t)),
+  "en.privacy.section2 purpose list must include the public-statement / advocacy purpose.",
+);
+assert(
+  enPurposeTexts.some((t) => /email/i.test(t) && /progress/i.test(t)),
+  "en.privacy.section2 purpose list must include the email-specific update purpose.",
 );
 
 console.log("Privacy policy checks passed.");
