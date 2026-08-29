@@ -16,7 +16,7 @@ export default function PrivacyPage() {
     <div className="min-h-screen bg-[var(--color-bg)]">
       <UtilityHeader
         title={<EditableText contentKey="privacy.header.title" defaultValue="개인정보처리방침" as="span" page="privacy" section="header" />}
-        subtitle={<EditableText contentKey="privacy.header.subtitle" defaultValue="최종 수정일: 2026년 3월 10일" as="span" page="privacy" section="header" />}
+        subtitle={<EditableText contentKey="privacy.header.subtitle" defaultValue="최종 수정일: 2026년 8월 28일" as="span" page="privacy" section="header" />}
         eyebrow={<EditableText contentKey="privacy.header.eyebrow" defaultValue="법적 안내" as="span" page="privacy" section="header" />}
         tone="warm"
       />
@@ -45,7 +45,7 @@ export default function PrivacyPage() {
               <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] p-5">
                 <EditableText
                   contentKey="privacy.section1.signupTitle"
-                  defaultValue="서명 참여 시"
+                  defaultValue="국민 연대서명 참여 시"
                   as="h3"
                   page="privacy"
                   section="section1"
@@ -53,7 +53,43 @@ export default function PrivacyPage() {
                 />
                 <EditableRichText
                   contentKey="privacy.section1.signupContent"
-                  defaultValue="이름, 이메일 주소, 응원 메시지(선택)"
+                  defaultValue="이름 또는 닉네임(필수), 거주 지역 시·도 및 시·군·구(필수), 소속 단체 또는 모임(선택), 이메일 주소(선택), 제안 한마디(선택), 이름 공개 동의 여부(필수)를 수집합니다. 이메일을 입력하신 경우, 활동 진행 상황 안내에만 사용합니다. 만 14세 이상만 참여하실 수 있으며, 참여 시 이를 확인합니다."
+                  page="privacy"
+                  section="section1"
+                  renderMode="paragraph"
+                  className="text-[var(--color-text-muted)] text-[15px] leading-relaxed"
+                />
+              </div>
+              <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] p-5">
+                <EditableText
+                  contentKey="privacy.section1.wallTitle"
+                  defaultValue="서명자 명단 공개"
+                  as="h3"
+                  page="privacy"
+                  section="section1"
+                  className="font-semibold text-[var(--color-text)] mb-2"
+                />
+                <EditableRichText
+                  contentKey="privacy.section1.wallContent"
+                  defaultValue="이름 공개에 동의하신 분에 한해 이름 또는 닉네임과 거주 지역(시·도, 시·군·구)이 /petition 페이지 하단 서명자 명단에 공개됩니다. 이메일, 소속 단체, 제안 한마디, 접속 정보는 공개되지 않습니다. 공개에 동의하지 않으셔도 서명은 총 서명 수에 그대로 반영되며, 명단에는 표시되지 않습니다. 2026년 8월 28일 이전에 접수된 서명(65건)은 거주 지역을 수집하지 않아 명단에 포함되지 않으며, 총 서명 수에는 그대로 포함됩니다."
+                  page="privacy"
+                  section="section1"
+                  renderMode="paragraph"
+                  className="text-[var(--color-text-muted)] text-[15px] leading-relaxed"
+                />
+              </div>
+              <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] p-5">
+                <EditableText
+                  contentKey="privacy.section1.antiAbuseTitle"
+                  defaultValue="부정 참여 방지를 위한 자동 수집 정보"
+                  as="h3"
+                  page="privacy"
+                  section="section1"
+                  className="font-semibold text-[var(--color-text)] mb-2"
+                />
+                <EditableRichText
+                  contentKey="privacy.section1.antiAbuseContent"
+                  defaultValue="이메일을 입력하신 경우 이메일을 기준으로 중복 서명 여부를 확인합니다. 아울러 짧은 시간 내 동일 IP에서 반복 제출되는 것을 막기 위해 접속 IP 주소를 해시(hash)값으로 변환해 저장하며, 원본 IP 주소는 저장하지 않습니다."
                   page="privacy"
                   section="section1"
                   renderMode="paragraph"
@@ -104,7 +140,7 @@ export default function PrivacyPage() {
             />
             <EditableRichText
               contentKey="privacy.section3.content"
-              defaultValue="수집된 개인정보는 캠페인 종료 시까지 보유하며, 캠페인 종료 후 지체 없이 파기합니다. 이용자가 삭제를 요청하는 경우 요청일로부터 7일 이내에 해당 정보를 삭제합니다."
+              defaultValue="연대서명 관련 개인정보는 연대서명 및 관련 공론화 활동의 목적을 달성할 때까지 보유하며, 목적 달성 후 지체 없이 파기합니다. 이용자가 삭제를 요청하는 경우 요청일로부터 7일 이내에 해당 정보를 삭제합니다."
               page="privacy"
               section="section3"
               renderMode="paragraph"
