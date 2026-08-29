@@ -454,6 +454,49 @@ assert(
   "signature_admin_stats() must be granted to service_role ONLY (the GRANT statement must end right after service_role, not widen to `, authenticated` or any other role) — src/lib/data/signatures.ts calls it via createSupabaseServiceClient(), not the cookie-scoped anon/authenticated client.",
 );
 
+// ---------------------------------------------------------------------------
+// 테스트 행(id=1) 삭제 마이그레이션 — 2026-08-29, 사용자 결정. 20260828000000·
+// 20260829000000 둘 다 건드리지 않는 별도 파일이다. 이 DELETE가 id=1만 보고
+// 지우면 백업 복원 등으로 순번이 어긋났을 때 실제 서명자를 지울 수 있다 —
+// name·email·두 동의 컬럼까지 전부 일치해야만 지우는 방어적 WHERE인지
+// 검사한다.
+// ---------------------------------------------------------------------------
+
+const removeTestSignatureMigrationPath =
+  "supabase/migrations/20260829000001_remove_test_signature.sql";
+assert(
+  existsSync(join(root, removeTestSignatureMigrationPath)),
+  `${removeTestSignatureMigrationPath} must exist.`,
+);
+const removeTestSignatureSqlNoComments = readProjectFile(removeTestSignatureMigrationPath)
+  .split("\n")
+  .map((line) => line.replace(/--.*$/, ""))
+  .join("\n")
+  .toLowerCase()
+  .replace(/\s+/g, " ");
+
+const deleteStatementMatch = removeTestSignatureSqlNoComments.match(
+  /delete from (?:public\.)?signatures\s+where\s+([^;]*);/,
+);
+assert(
+  deleteStatementMatch,
+  `${removeTestSignatureMigrationPath} must contain a single "DELETE FROM signatures WHERE ...;" statement.`,
+);
+const deleteWhereBody = deleteStatementMatch[1];
+
+for (const requiredCondition of [
+  "id = 1",
+  "name = '테스트'",
+  "email = 'test@example.com'",
+  "consent_privacy is false",
+  "consent_age is false",
+]) {
+  assert(
+    deleteWhereBody.includes(requiredCondition),
+    `${removeTestSignatureMigrationPath}'s DELETE must require "${requiredCondition}" in its WHERE clause — id alone is not enough (a restored/reseeded environment could have a different row at id=1; matching name/email/consent columns too means a mismatch deletes nothing instead of the wrong signer).`,
+  );
+}
+
 const wallModulePath = "src/lib/signatures/api/wall.ts";
 assert(existsSync(join(root, wallModulePath)), `${wallModulePath} must exist.`);
 
