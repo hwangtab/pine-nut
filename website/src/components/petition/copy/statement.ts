@@ -97,6 +97,16 @@ export const petitionStatementBlocks: StatementBlockCopy[] = [
     headingDefault: "우리가 요구하는 것",
     paragraphs: [
       {
+        key: "petition.statement.block4.violence",
+        defaultValue:
+          "이재명 정부는 절차와 법이란 핑계로 풍천리에 국가폭력을 행사하고 있습니다. 양수발전소 절차가 거짓이면 그것은 개발이 아니라 폭력입니다.",
+      },
+      {
+        key: "petition.statement.block4.succession",
+        defaultValue:
+          "윤석열 정부가 밀어붙인 사업을 이재명 정부가 진행하려 합니다. 시골 노인 다 죽이는 사업으로 주민과 숲을 밀어버리겠다는 것입니까?",
+      },
+      {
         key: "petition.statement.block4.p1",
         defaultValue:
           "전력을 저장할 설비가 필요하다는 것 자체를 부정하지 않습니다. 우리가 요구하는 것은 확인입니다.",
