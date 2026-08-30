@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { fetchSignatureSummary } from "@/lib/signatures/client";
+import { fetchSignatureSummary, type FetchOptions } from "@/lib/signatures/client";
 import type { SignatureSummary } from "@/lib/signatures/api/store";
 
 const EMPTY_SUMMARY: SignatureSummary = { count: 0, regionCount: 0, recent24h: 0, goal: 0 };
@@ -21,9 +21,9 @@ export function usePetitionSignatureSummary() {
   // 폼 훅의 `onRefreshSignatures: () => void`가 반환값을 기다리지 않는
   // fire-and-forget이기 때문이다. 실패 사실은 던지는 대신 summaryError로
   // 내보내고, 화면은 그 값을 보고 "모름"을 표현한다.
-  const refreshSummary = useCallback(async () => {
+  const refreshSummary = useCallback(async (options?: FetchOptions) => {
     try {
-      const data = await fetchSignatureSummary();
+      const data = await fetchSignatureSummary(options);
       setSummary(data);
       setSummaryError(false);
     } catch (err) {

@@ -151,7 +151,7 @@ assert(
 // and require the guard to appear before that function's own state-write,
 // so removing either one's guard fails for the right reason.
 const loadFirstPageMatch = source.match(
-  /const loadFirstPage = useCallback\(async \(\) => \{([\s\S]*?)\n {2}\}, \[\]\);/,
+  /const loadFirstPage = useCallback\(async \([^)]*\) => \{([\s\S]*?)\n {2}\}, \[\]\);/,
 );
 assert(loadFirstPageMatch, "Could not isolate loadFirstPage's body for the stale-response guard check.");
 const loadFirstPageBody = loadFirstPageMatch[1];
@@ -163,7 +163,7 @@ assert(
 );
 
 const loadMoreMatch = source.match(
-  /const handleLoadMore = useCallback\(async \(\) => \{([\s\S]*?)\n {2}\}, \[cursor, loadingMore\]\);/,
+  /const handleLoadMore = useCallback\(async \([^)]*\) => \{([\s\S]*?)\n {2}\}, \[cursor, loadingMore\]\);/,
 );
 assert(loadMoreMatch, "Could not isolate handleLoadMore's body for the stale-response guard check.");
 const loadMoreBody = loadMoreMatch[1];
@@ -291,8 +291,11 @@ assert(
 );
 const errorTextMatch = source.match(/const WALL_ERROR_TEXT\s*=\s*"([^"]{5,})"/);
 assert(errorTextMatch, 'SignatureWall.tsx must define non-trivial WALL_ERROR_TEXT copy (5+ chars).');
+// loadFirstPage는 캐시 우회 옵션을 받으므로 핸들러를 그대로 넘기면 클릭
+// 이벤트가 옵션 자리에 들어간다 — 감싼 형태도 허용한다. 단언하려는 계약은
+// "재시도 버튼이 loadFirstPage로 연결돼 있다"이지 핸들러의 표기법이 아니다.
 assert(
-  /onClick=\{loadFirstPage\}/.test(source),
+  /onClick=\{(?:loadFirstPage|\(\) => (?:void )?loadFirstPage\([^)]*\))\}/.test(source),
   "The initial-load error state must offer a retry button wired to loadFirstPage.",
 );
 

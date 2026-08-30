@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { fetchSignatureWall } from "@/lib/signatures/client";
+import { fetchSignatureWall, type FetchOptions } from "@/lib/signatures/client";
 import type { WallEntry } from "@/lib/signatures/api/wall";
 
 export interface SignatureWallProps {
@@ -54,12 +54,12 @@ export default function SignatureWall({ heading, emptyText, moreText, refreshTok
   const generationRef = useRef(0);
   const loadMoreInFlightRef = useRef(false);
 
-  const loadFirstPage = useCallback(async () => {
+  const loadFirstPage = useCallback(async (options?: FetchOptions) => {
     const generation = ++generationRef.current;
     setInitialLoading(true);
     setInitialError(false);
     try {
-      const page = await fetchSignatureWall(null);
+      const page = await fetchSignatureWall(null, options);
       if (generation !== generationRef.current) return; // stale — 그사이 새 로드가 시작됨
       setEntries(page.entries);
       setCursor(page.nextCursor);
@@ -85,8 +85,10 @@ export default function SignatureWall({ heading, emptyText, moreText, refreshTok
   }, []);
 
   useEffect(() => {
-    loadFirstPage();
-    // refreshToken 이 바뀌면(= 서명 제출 성공) 1페이지째부터 다시 불러온다.
+    // 최초 로드는 엣지 캐시를 그대로 쓴다. refreshToken이 0보다 크면 방금
+    // 서명이 접수됐다는 뜻이라, 그때만 캐시를 우회해 본인 이름이 바로
+    // 보이게 한다 — 60초 캐시가 "내 이름이 없다"로 보이면 안 된다.
+    loadFirstPage({ fresh: refreshToken > 0 });
   }, [loadFirstPage, refreshToken]);
 
   const handleLoadMore = useCallback(async () => {
@@ -143,7 +145,7 @@ export default function SignatureWall({ heading, emptyText, moreText, refreshTok
           <p className="text-[var(--color-text-muted)]">{WALL_ERROR_TEXT}</p>
           <button
             type="button"
-            onClick={loadFirstPage}
+            onClick={() => void loadFirstPage()}
             className="letter-btn letter-btn--outline-light"
           >
             {WALL_RETRY_TEXT}

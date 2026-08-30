@@ -12,6 +12,7 @@ import {
   readSignatureRequestBody,
 } from "@/lib/signatures/api/request";
 import {
+  cachedPublicJsonResponse,
   jsonErrorResponse,
   missingSignatureServiceResponse,
   signatureApiErrorResponse,
@@ -28,11 +29,11 @@ export async function GET() {
 
   if (!supabase) {
     if (IS_PRODUCTION) return missingSignatureServiceResponse();
-    return NextResponse.json(getDemoSignatureSummary());
+    return cachedPublicJsonResponse(getDemoSignatureSummary());
   }
 
   try {
-    return NextResponse.json(await fetchSignatureSummary(supabase));
+    return cachedPublicJsonResponse(await fetchSignatureSummary(supabase));
   } catch (error) {
     return signatureApiErrorResponse(
       "Failed to fetch signatures:",

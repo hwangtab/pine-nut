@@ -16,6 +16,21 @@ export const SIGNATURE_GOAL = 10000;
 export const WALL_PAGE_SIZE = 30;
 export const IS_PRODUCTION = process.env.NODE_ENV === "production";
 
+// 공개 조회(GET) 응답의 CDN 캐시 정책. 서명 현황·명단은 방문자마다 같은 값이라
+// 방문자 수만큼 함수를 깨울 이유가 없다 — Vercel 엣지가 60초 동안 같은 응답을
+// 함수 호출 없이 돌려주게 한다. 방문자가 분당 1만 명이어도 엔드포인트당 실제
+// 호출은 분당 1회다.
+//
+// 60초를 고른 이유: 서명 수가 최대 1분 늦게 보이는 것은 청원 카운터에 무해한
+// 반면, 방금 서명한 시민이 자기 이름을 명단에서 못 보는 것은 무해하지 않다.
+// 그 경로(제출 직후 재조회)는 client.ts가 `fresh` 파라미터로 캐시를 우회한다.
+//
+// stale-while-revalidate: TTL이 끝난 뒤에도 10분 동안은 낡은 응답을 즉시 주면서
+// 뒤에서 갱신한다 — 트래픽이 몰릴 때 만료 순간 요청이 한꺼번에 오리진으로
+// 쏟아지는 것(cache stampede)을 막는다.
+export const PUBLIC_READ_CACHE_SECONDS = 60;
+export const PUBLIC_READ_CACHE_CONTROL = `public, s-maxage=${PUBLIC_READ_CACHE_SECONDS}, stale-while-revalidate=600`;
+
 export const SERVICE_UNAVAILABLE_MESSAGE =
   "서명 서비스가 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도해주세요.";
 export const DUPLICATE_SIGNATURE_MESSAGE = "이미 서명하셨습니다. 참여해주셔서 감사합니다.";

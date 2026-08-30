@@ -58,8 +58,26 @@ export async function submitSignature(
   }
 }
 
-export async function fetchSignatureSummary(): Promise<SignatureSummary> {
-  const response = await fetch("/api/signatures");
+export interface FetchOptions {
+  /**
+   * 엣지 캐시를 우회한다. 서명 제출 직후처럼 "방금 내가 만든 변화"를 즉시
+   * 봐야 하는 경로에서만 켠다.
+   *
+   * CDN 캐시 키는 쿼리스트링을 포함한 URL 전체이므로, 매번 달라지는 값을
+   * 하나 붙이면 그 요청만 확실하게 오리진까지 간다. `cache: "no-store"`로는
+   * 안 된다 — 그건 브라우저 캐시 지시일 뿐이고 엣지가 무엇을 돌려줄지는
+   * 보장하지 못한다.
+   */
+  fresh?: boolean;
+}
+
+function freshParam(options?: FetchOptions): string | null {
+  return options?.fresh ? String(Date.now()) : null;
+}
+
+export async function fetchSignatureSummary(options?: FetchOptions): Promise<SignatureSummary> {
+  const fresh = freshParam(options);
+  const response = await fetch(fresh ? `/api/signatures?fresh=${fresh}` : "/api/signatures");
   if (!response.ok) {
     throw new Error(await readApiErrorMessage(response, "서명 현황을 불러오지 못했습니다."));
   }
@@ -73,8 +91,15 @@ export async function fetchSignatureSummary(): Promise<SignatureSummary> {
   };
 }
 
-export async function fetchSignatureWall(cursor: string | null = null): Promise<WallPage> {
-  const query = cursor ? `?cursor=${encodeURIComponent(cursor)}` : "";
+export async function fetchSignatureWall(
+  cursor: string | null = null,
+  options?: FetchOptions,
+): Promise<WallPage> {
+  const params = new URLSearchParams();
+  if (cursor) params.set("cursor", cursor);
+  const fresh = freshParam(options);
+  if (fresh) params.set("fresh", fresh);
+  const query = params.size > 0 ? `?${params}` : "";
   const response = await fetch(`/api/signatures/wall${query}`);
   if (!response.ok) {
     throw new Error(await readApiErrorMessage(response, "명단을 불러오지 못했습니다."));

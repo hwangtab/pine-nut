@@ -49,6 +49,13 @@ export default function PetitionPage() {
   // 모두 감싸는 안정적인 래퍼에 ref를 건다(formRef는 제출 후 null이 된다).
   const signatureSectionRef = useRef<HTMLDivElement>(null);
 
+  // 제출 직후 요약 재조회만 엣지 캐시를 우회한다(SignatureWall도 refreshToken으로
+  // 같은 일을 한다). 새 함수를 매 렌더 만들면 폼 훅의 제출 핸들러 의존성이 매번
+  // 바뀌므로 useCallback으로 고정한다.
+  const handleRefreshAfterSubmit = useCallback(() => {
+    void refreshSummary({ fresh: true });
+  }, [refreshSummary]);
+
   const handleSignatureSubmitted = useCallback(({ name }: { name: string }) => {
     setSubmittedName(name);
     setSubmitted(true);
@@ -193,7 +200,7 @@ export default function PetitionPage() {
               <PetitionSignatureForm
                 formRef={formRef}
                 onSubmitted={handleSignatureSubmitted}
-                onRefreshSignatures={refreshSummary}
+                onRefreshSignatures={handleRefreshAfterSubmit}
               />
             </section>
           ) : (

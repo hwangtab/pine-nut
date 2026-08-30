@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import {
   FETCH_SIGNATURE_WALL_ERROR_MESSAGE,
   IS_PRODUCTION,
 } from "@/lib/signatures/api/config";
 import {
+  cachedPublicJsonResponse,
   missingSignatureServiceResponse,
   signatureApiErrorResponse,
 } from "@/lib/signatures/api/responses";
@@ -25,11 +26,11 @@ export async function GET(request: NextRequest) {
 
   if (!supabase) {
     if (IS_PRODUCTION) return missingSignatureServiceResponse();
-    return NextResponse.json(DEMO_WALL_PAGE);
+    return cachedPublicJsonResponse(DEMO_WALL_PAGE);
   }
 
   try {
-    return NextResponse.json(await fetchSignatureWall(supabase, cursor));
+    return cachedPublicJsonResponse(await fetchSignatureWall(supabase, cursor));
   } catch (error) {
     return signatureApiErrorResponse(
       "Failed to fetch signature wall:",
