@@ -6,6 +6,7 @@ import ShareButtons from "@/components/ShareButtons";
 import { EditableText } from "@/components/editable";
 import PetitionAnimatedCounter from "@/components/petition/PetitionAnimatedCounter";
 import PetitionFAQ from "@/components/petition/PetitionFAQ";
+import UpcomingConcertCard from "@/components/concert/UpcomingConcertCard";
 import PetitionProgress from "@/components/petition/PetitionProgress";
 import PetitionShareEditControls from "@/components/petition/PetitionShareEditControls";
 import PetitionSignatureForm from "@/components/petition/PetitionSignatureForm";
@@ -244,7 +245,10 @@ export default function PetitionPage() {
           refreshToken={wallRefreshToken}
         />
 
-        {/* ── 6. 공유 ── */}
+        {/* ── 6. 다음에 만날 자리 ── */}
+        <UpcomingConcertCard />
+
+        {/* ── 7. 공유 ── */}
         <ShareButtons
           title={shareTitle}
           url={`${SITE_URL}/petition`}
@@ -253,7 +257,7 @@ export default function PetitionPage() {
           locale="ko"
         />
 
-        {/* ── 7. FAQ ── */}
+        {/* ── 8. FAQ ── */}
         <PetitionFAQ />
       </div>
 
