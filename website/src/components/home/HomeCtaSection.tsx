@@ -47,7 +47,7 @@ export default function HomeCtaSection({ signatureCount }: HomeCtaSectionProps) 
         />
         <EditableText
           contentKey="home.cta.subtitle"
-          defaultValue="당신의 이름 하나가 숲을 지키는 국민 연대서명에 힘을 더합니다"
+          defaultValue="당신의 이름 하나가 숲을 지키는 연대서명에 힘을 더합니다"
           as="p"
           page="home"
           section="cta"
@@ -93,7 +93,7 @@ export default function HomeCtaSection({ signatureCount }: HomeCtaSectionProps) 
         >
           <EditableText
             contentKey="home.cta.signatureLinkLabel"
-            defaultValue="국민 연대서명 하러 가기"
+            defaultValue="연대서명 하러 가기"
             as="span"
             page="home"
             section="cta"

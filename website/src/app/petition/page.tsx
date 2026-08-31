@@ -131,8 +131,8 @@ export default function PetitionPage() {
         imagePage="petition"
         imageSection="hero"
         title={<EditableText contentKey="petition.hero.title" defaultValue="우리가 나무다" as="span" page="petition" section="hero" />}
-        subtitle={<EditableText contentKey="petition.hero.subtitle" defaultValue="홍천 풍천리 양수발전소 백지화와 숲·계곡 보전을 위한 국민 연대서명" as="span" page="petition" section="hero" />}
-        eyebrow={<EditableText contentKey="petition.hero.eyebrow" defaultValue="국민 연대서명" as="span" page="petition" section="hero" />}
+        subtitle={<EditableText contentKey="petition.hero.subtitle" defaultValue="홍천 풍천리 양수발전소 백지화와 숲·계곡 보전을 위한 연대서명" as="span" page="petition" section="hero" />}
+        eyebrow={<EditableText contentKey="petition.hero.eyebrow" defaultValue="연대서명" as="span" page="petition" section="hero" />}
         variant="emphasis"
         metric={
           <div className="flex flex-col items-center gap-6">

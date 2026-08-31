@@ -12,7 +12,10 @@ export const RATE_LIMIT_MAX = 5;
 export const MESSAGE_MAX_LENGTH = 500;
 export const NAME_MAX_LENGTH = 50;
 export const AFFILIATION_MAX_LENGTH = 60;
-export const SIGNATURE_GOAL = 10000;
+// 사라질 잣나무 수(111,999그루)와 같은 수를 목표로 잡는다 — 성명서·통계 카드가
+// 쓰는 그 숫자다. 임의의 라운드 넘버(1만)보다 "나무 한 그루에 이름 하나"라는
+// 뜻이 분명하다. 바꿀 때는 성명서(copy/statement.ts)의 수치와 어긋나지 않게.
+export const SIGNATURE_GOAL = 111999;
 export const WALL_PAGE_SIZE = 30;
 export const IS_PRODUCTION = process.env.NODE_ENV === "production";
 

@@ -45,7 +45,7 @@ export default function PrivacyPage() {
               <div className="bg-[var(--color-bg)] rounded-[var(--radius-card)] p-5">
                 <EditableText
                   contentKey="privacy.section1.signupTitle"
-                  defaultValue="국민 연대서명 참여 시"
+                  defaultValue="연대서명 참여 시"
                   as="h3"
                   page="privacy"
                   section="section1"

@@ -12,13 +12,13 @@ import { localeAlternates } from "@/lib/seo-alternates";
 // 같은 소셜 문구를 공유하므로(다른 채널일 뿐 목적은 같다) 상수로 한 번만 적는다.
 const SOCIAL_TITLE = "우리가 나무다 — 풍천리 숲을 지키는 서명에 함께해주세요";
 const SOCIAL_DESCRIPTION =
-  "홍천 풍천리 양수발전소로 사라질 나무 111,999그루. 숲과 계곡을 그대로 지키는 국민 연대서명에 지금 함께해주세요.";
+  "홍천 풍천리 양수발전소로 사라질 나무 111,999그루. 숲과 계곡을 그대로 지키는 연대서명에 지금 함께해주세요.";
 
 export const metadata: Metadata = {
   alternates: localeAlternates("/petition", "/en/petition"),
   title: "홍천 양수발전소 반대 연대서명 — 풍천리를 지켜주세요",
   description:
-    "홍천 풍천리 양수발전소가 들어서면 나무 111,999그루가 사라지고 51가구가 떠나야 합니다. 지금 국민 연대서명에 참여해주세요.",
+    "홍천 풍천리 양수발전소가 들어서면 나무 111,999그루가 사라지고 51가구가 떠나야 합니다. 지금 연대서명에 참여해주세요.",
   openGraph: {
     title: SOCIAL_TITLE,
     description: SOCIAL_DESCRIPTION,

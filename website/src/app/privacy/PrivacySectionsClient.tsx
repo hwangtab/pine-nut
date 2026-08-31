@@ -3,7 +3,7 @@
 import { EditableList } from "@/components/editable";
 
 const privacyPurposeItems = [
-  { text: "국민 연대서명 접수 및 집계" },
+  { text: "연대서명 접수 및 집계" },
   { text: "성명서 발표 및 관련 공론화 활동" },
   { text: "이메일을 제공하신 경우, 활동 진행 상황 안내" },
   { text: "웹사이트 이용 통계 분석을 통한 서비스 개선" },

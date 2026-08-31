@@ -8,7 +8,7 @@ export const contentType = "image/png";
 
 // 이 카드에 실제로 찍히는 글자들. Google Fonts의 text= 서브셋에 그대로 넘긴다.
 // (src/app/opengraph-image.tsx와 같은 패턴 — 아래 loadKoreanFont 주석 참고.)
-const EYEBROW = "국민 연대서명";
+const EYEBROW = "연대서명";
 const TITLE = "우리가 나무다";
 const SUBTITLE = "홍천 풍천리 양수발전소 백지화 · 숲과 계곡을 지키는 서명";
 // 성명서(copy/statement.ts)에 있는 사실 그대로만 고른다 — 서명 수·목표치처럼
