@@ -1,7 +1,7 @@
-export type { SignatureSummary } from "@/lib/signatures/api/store";
+export type { SignatureSubmitMode, SignatureSummary } from "@/lib/signatures/api/store";
 export type { WallEntry, WallPage } from "@/lib/signatures/api/wall";
 
-import type { SignatureSummary } from "@/lib/signatures/api/store";
+import type { SignatureSubmitMode, SignatureSummary } from "@/lib/signatures/api/store";
 import type { WallPage } from "@/lib/signatures/api/wall";
 
 export interface SignaturePayload {
@@ -35,7 +35,7 @@ async function readApiErrorMessage(response: Response, fallback: string): Promis
 
 export async function submitSignature(
   payload: SignaturePayload,
-): Promise<{ ok: true } | { ok: false; error: string }> {
+): Promise<{ ok: true; mode: SignatureSubmitMode } | { ok: false; error: string }> {
   // 이 함수는 예외를 던지지 않는 판별 유니온 계약(`{ok:true}|{ok:false,error}`)을
   // 약속한다. 오프라인·DNS 실패 등으로 fetch() 자체가 reject하는 경로까지
   // 포함해 전체를 감싼다 — 농촌·모바일 환경이 많은 캠페인 사이트라 실제로
@@ -51,7 +51,13 @@ export async function submitSignature(
       return { ok: false, error: await readApiErrorMessage(response, "서명 제출에 실패했습니다.") };
     }
 
-    return { ok: true };
+    // 응답 바디의 mode를 신뢰하되 값은 좁혀서 읽는다 — 낡은 클라이언트가
+    // 캐시된 채로 새 서버와 만나거나 그 반대인 과도기에는 mode가 없을 수 있고,
+    // 그때는 종전 동작("새 서명")으로 떨어지는 편이 안전하다.
+    const data = await response.json().catch(() => null);
+    const mode: SignatureSubmitMode =
+      data && typeof data === "object" && data.mode === "updated" ? "updated" : "created";
+    return { ok: true, mode };
   } catch (err) {
     console.error("submitSignature: network request failed", err);
     return { ok: false, error: NETWORK_ERROR_MESSAGE };

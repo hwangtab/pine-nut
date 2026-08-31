@@ -501,9 +501,11 @@ const wallModulePath = "src/lib/signatures/api/wall.ts";
 assert(existsSync(join(root, wallModulePath)), `${wallModulePath} must exist.`);
 
 const wallModule = readProjectFile(wallModulePath);
+// message는 2026-08-31부터 공개 항목이다 — 명단 벽이 이름 아래에 제안 한마디를
+// 함께 싣기로 했고(사업주 결정), 서명 폼의 공개 동의 문구와 국·영문 개인정보
+// 처리방침이 이를 열거하도록 함께 고쳤다. 나머지 넷은 그대로 금지다.
 for (const forbiddenField of [
   "email",
-  "message",
   "affiliation",
   "ip_hash",
   "consent_",
@@ -521,7 +523,7 @@ for (const forbiddenField of [
 // 매핑을 별도로 금지한다.
 assert(
   wallModule.includes(
-    '.select("id, name, region_top, region_sub, created_at")',
+    '.select("id, name, region_top, region_sub, created_at, message")',
   ),
   "signature wall module must select an explicit, exact column list — not a wildcard.",
 );
@@ -538,13 +540,47 @@ assert(
   "signature wall module must filter to name_public rows only.",
 );
 
+// ── 재서명 갱신(submit_signature RPC)이 남의 서명을 덮어쓰는 수단이 되지
+// 않는지. 이메일만으로 갱신을 허용하면, 남의 이메일을 아는 사람이 그 사람의
+// 이름·공개 여부·명단에 실리는 제안 한마디를 통째로 바꿀 수 있다. DO UPDATE에
+// 이름 일치 조건이 붙어 있어야 하고, 조건이 깨졌을 때 조용히 통과하지 말고
+// 예외로 거절해야 한다. 앱은 그 예외를 사용자 안내 문구로 옮겨야 한다.
+const upsertMigrationPath =
+  "supabase/migrations/20260831000000_signature_resign_upsert.sql";
+assert(
+  existsSync(join(root, upsertMigrationPath)),
+  `${upsertMigrationPath} must exist — it defines the submit_signature upsert.`,
+);
+const upsertMigration = readProjectFile(upsertMigrationPath);
+assert(
+  /where\s+lower\(btrim\(signatures\.name\)\)\s*=\s*lower\(btrim\(excluded\.name\)\)/i.test(
+    upsertMigration,
+  ),
+  `${upsertMigrationPath}'s DO UPDATE must be gated on the existing row's name matching the submitted name — without it, knowing someone's email is enough to overwrite their signature (including the message published on the wall).`,
+);
+assert(
+  /raise exception 'signature_name_mismatch'/i.test(upsertMigration),
+  `${upsertMigrationPath} must raise signature_name_mismatch when the name gate blocks the update — a silently skipped update would report success while changing nothing.`,
+);
+assert(
+  /revoke execute on function public\.submit_signature/i.test(upsertMigration),
+  `${upsertMigrationPath} must revoke the default PUBLIC execute grant on submit_signature — otherwise the anon key can call it directly and bypass the API's validation and rate limiting.`,
+);
+const upsertStoreSource = readProjectFile("src/lib/signatures/api/store.ts");
+assert(
+  upsertStoreSource.includes("signature_name_mismatch") &&
+    upsertStoreSource.includes("SIGNATURE_NAME_MISMATCH_MESSAGE"),
+  "src/lib/signatures/api/store.ts must translate the signature_name_mismatch exception into the user-facing 409 message, not surface a raw Postgres error.",
+);
+
 const wallRoutePath = "src/app/api/signatures/wall/route.ts";
 assert(existsSync(join(root, wallRoutePath)), `${wallRoutePath} must exist.`);
 
 const wallRoute = readProjectFile(wallRoutePath);
+// message는 2026-08-31부터 공개 항목이다(위 wall.ts 주석 참조) — 데모 응답도
+// 실제 응답과 같은 모양이어야 하므로 여기서도 금지 목록에서 뺀다.
 for (const forbiddenField of [
   "email",
-  "message",
   "affiliation",
   "ip_hash",
   "consent_",

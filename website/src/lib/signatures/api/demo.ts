@@ -1,5 +1,5 @@
 import { RATE_LIMIT_MAX, RATE_LIMIT_MESSAGE, RATE_LIMIT_WINDOW_MS, SIGNATURE_GOAL } from "./config";
-import type { SignatureSummary } from "./store";
+import type { SignatureSubmitMode, SignatureSummary } from "./store";
 
 interface DemoRateLimitEntry {
   count: number;
@@ -8,6 +8,9 @@ interface DemoRateLimitEntry {
 
 interface DemoSignatureSubmitSuccess {
   ok: true;
+  // Supabase 없이 도는 로컬 개발 경로도 실제 응답과 같은 모양을 돌려준다 —
+  // 데모에는 저장소가 없어 갱신 판정을 할 수 없으므로 항상 "created"다.
+  mode: SignatureSubmitMode;
 }
 
 interface DemoSignatureSubmitError {
@@ -46,5 +49,5 @@ export function submitDemoSignature(
     return { ok: false, error: RATE_LIMIT_MESSAGE, status: 429 };
   }
 
-  return { ok: true };
+  return { ok: true, mode: "created" };
 }

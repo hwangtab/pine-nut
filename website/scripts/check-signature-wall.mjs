@@ -57,21 +57,24 @@ assert(
   "SignatureWall.tsx must default-export a function component named SignatureWall.",
 );
 
-// ── Personal-info discipline: WallEntry only carries name/regionTop/
-// regionSub/createdAt (spec §6 — email/message/affiliation/ip_hash/id must
-// never reach this screen). Extract every `entry.<field>` access actually
-// used in the file and assert it's a subset of the four allowed fields —
-// a substring check for "email" alone would miss a renamed destructure
-// (`const { message } = entry`), so this also checks destructuring patterns
+// ── Personal-info discipline: WallEntry carries name/regionTop/regionSub/
+// createdAt/message — email/affiliation/ip_hash/id must never reach this
+// screen. message was on the banned list until 2026-08-31, when the project
+// owner decided the 제안 한마디 should be published alongside the name (the
+// signature form's public-consent wording was updated to enumerate it). The
+// remaining four stay banned. Extract every `entry.<field>` access actually
+// used in the file and assert it's a subset of the allowed fields — a
+// substring check for "email" alone would miss a renamed destructure
+// (`const { email } = entry`), so this also checks destructuring patterns
 // AND bracket access (`entry["email"]` / `entry['email']`), which the plain
 // dot-access regex alone would not catch (review round 2 finding).
-const allowedEntryFields = new Set(["name", "regionTop", "regionSub", "createdAt"]);
+const allowedEntryFields = new Set(["name", "regionTop", "regionSub", "createdAt", "message"]);
 const dotAccessFields = [...source.matchAll(/\bentry\.(\w+)/g)].map((m) => m[1]);
 const bracketAccessFields = [...source.matchAll(/\bentry\[["'](\w+)["']\]/g)].map((m) => m[1]);
 for (const field of [...dotAccessFields, ...bracketAccessFields]) {
   assert(
     allowedEntryFields.has(field),
-    `SignatureWall.tsx must not read WallEntry.${field} — only name/regionTop/regionSub/createdAt may reach the screen.`,
+    `SignatureWall.tsx must not read WallEntry.${field} — only name/regionTop/regionSub/createdAt/message may reach the screen.`,
   );
 }
 // Word-bounded (not plain substring) so identifiers like `liveMessage` or
@@ -83,7 +86,7 @@ const destructuredFields = destructureMatch
 for (const field of destructuredFields) {
   assert(
     allowedEntryFields.has(field),
-    `SignatureWall.tsx must not destructure WallEntry.${field} — only name/regionTop/regionSub/createdAt may reach the screen.`,
+    `SignatureWall.tsx must not destructure WallEntry.${field} — only name/regionTop/regionSub/createdAt/message may reach the screen.`,
   );
 }
 for (const banned of ["email", "affiliation", "ip_hash", "namePublic"]) {

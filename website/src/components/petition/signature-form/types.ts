@@ -1,3 +1,4 @@
+import type { SignatureSubmitMode } from "@/lib/signatures/client";
 import type { FormEvent, RefObject } from "react";
 import type {
   PetitionEditableValueCopy,
@@ -9,7 +10,7 @@ export type SignatureFormErrorKey = keyof SignatureFormErrors;
 
 export interface PetitionSignatureFormProps {
   formRef: RefObject<HTMLFormElement | null>;
-  onSubmitted: (result: { name: string }) => void;
+  onSubmitted: (result: { name: string; mode: SignatureSubmitMode }) => void;
   onRefreshSignatures: () => void;
   copy?: PetitionSignatureFormCopy;
 }

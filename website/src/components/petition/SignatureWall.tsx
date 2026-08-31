@@ -161,7 +161,7 @@ export default function SignatureWall({ heading, emptyText, moreText, refreshTok
                 key={`${entry.name}-${entry.regionTop}-${entry.regionSub}-${entry.createdAt}-${index}`}
                 className={`paper px-5 py-4 ${index % 2 === 0 ? "paper-tilt-l" : "paper-tilt-r"}`}
               >
-                <div className="relative z-[1] flex items-center justify-between gap-3">
+                <div className="relative z-[1] flex items-start justify-between gap-3">
                   {/* flex 자식의 기본 min-width는 auto라 내용의 min-content 폭 아래로
                       줄지 않는다. 이름/닉네임은 최대 50자, 해외 지역은 자유입력 40자까지
                       들어오므로 공백 없는 문자열이면 항목이 뷰포트를 밀어내 가로 스크롤이
@@ -176,6 +176,15 @@ export default function SignatureWall({ heading, emptyText, moreText, refreshTok
                     <time dateTime={entry.createdAt}>{formatWallDate(entry.createdAt)}</time>
                   </span>
                 </div>
+                {/* 제안 한마디는 선택 입력이라 대부분의 항목에는 없다. 있는 항목만
+                    이름 줄 아래에 인용으로 덧붙인다 — 빈 blockquote가 남으면 카드
+                    높이만 들쭉날쭉해진다. API가 공백뿐인 값을 이미 null로 접어
+                    보내므로 여기서는 존재 여부만 본다. */}
+                {entry.message && (
+                  <blockquote className="relative z-[1] mt-3 border-l-2 border-[var(--color-forest)]/25 pl-3 text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+                    {entry.message}
+                  </blockquote>
+                )}
               </li>
             ))}
           </ul>

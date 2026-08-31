@@ -34,6 +34,12 @@ export const PUBLIC_READ_CACHE_CONTROL = `public, s-maxage=${PUBLIC_READ_CACHE_S
 export const SERVICE_UNAVAILABLE_MESSAGE =
   "서명 서비스가 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도해주세요.";
 export const DUPLICATE_SIGNATURE_MESSAGE = "이미 서명하셨습니다. 참여해주셔서 감사합니다.";
+// 같은 이메일의 기존 서명을 고쳐 쓰려면 처음 서명할 때 쓴 이름과 같아야 한다
+// (submit_signature RPC의 DO UPDATE ... WHERE). 남의 이메일만 알면 그 사람의
+// 서명을 덮어쓸 수 있는 상태를 막기 위한 조건이라, 문구도 "이미 서명됨"이 아니라
+// 무엇을 해야 하는지 알려주는 쪽으로 쓴다.
+export const SIGNATURE_NAME_MISMATCH_MESSAGE =
+  "이 이메일로 이미 서명이 접수돼 있습니다. 서명 내용을 고치시려면 처음 서명하실 때 쓰신 이름과 똑같이 입력해주세요.";
 export const RATE_LIMIT_MESSAGE = "너무 많은 요청입니다. 잠시 후 다시 시도해주세요.";
 export const INVALID_JSON_MESSAGE = "잘못된 요청입니다. 다시 시도해주세요.";
 export const INVALID_REGION_MESSAGE = "거주 지역을 선택해주세요.";

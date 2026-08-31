@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -151,13 +151,38 @@ assert(
   wallContent.includes("시·도") && wallContent.includes("시·군·구"),
   'privacy.section1.wallContent must disclose both 시·도 and 시·군·구 are shown on the wall — not just 시·도 (SignatureWall.tsx renders regionTop AND regionSub).',
 );
-// 비공개 시 노출되지 않는 항목(이메일·소속·제안·접속 정보)이 실제로 wall.ts 응답에
-// 없는지 — WallEntry는 name/regionTop/regionSub/createdAt 네 필드만 갖는다.
+// 노출되지 않는 항목(이메일·소속·접속 정보)이 실제로 wall.ts 응답에 없는지 —
+// WallEntry는 name/regionTop/regionSub/createdAt/message 다섯 필드만 갖는다.
+// message는 2026-08-31에 비공개→공개로 바뀐 유일한 항목이고, 그 대신 아래에서
+// 국·영문 고지가 그 사실을 열거하는지 양성 단언한다.
 assert(
-  /export interface WallEntry \{\s*name: string;\s*regionTop: string;\s*regionSub: string;\s*createdAt: string;\s*\}/.test(
-    wallSource,
-  ),
-  `${wallPath}'s WallEntry must stay limited to {name, regionTop, regionSub, createdAt} — this check's claim that email/affiliation/message/ip are never exposed on the wall depends on it.`,
+  /export interface WallEntry \{[\s\S]*?\n\}/.test(wallSource),
+  `${wallPath} must declare an exported WallEntry interface.`,
+);
+const wallEntryBody = wallSource.match(/export interface WallEntry \{([\s\S]*?)\n\}/)[1];
+const wallEntryFields = [...wallEntryBody.matchAll(/^\s*(\w+)\s*[?:]/gm)].map((m) => m[1]);
+const allowedWallEntryFields = new Set(["name", "regionTop", "regionSub", "createdAt", "message"]);
+for (const field of wallEntryFields) {
+  assert(
+    allowedWallEntryFields.has(field),
+    `${wallPath}'s WallEntry must stay limited to {name, regionTop, regionSub, createdAt, message} — found "${field}", and this check's claim that email/affiliation/ip are never exposed on the wall depends on it.`,
+  );
+}
+
+// 제안 한마디는 이제 공개된다. 전제(벽이 실제로 렌더한다)와 국·영문 고지 두
+// 벌을 한 묶음으로 못박아, 렌더만 되돌리거나 고지만 되돌리는 반쪽 드리프트를
+// 막는다 — 3절이 날짜에 대해 세운 것과 같은 규칙이다.
+assert(
+  /\{entry\.message\}/.test(wallComponentSource),
+  `${wallComponentPath} must render {entry.message} — the notices' claim that the 제안 한마디 is published depends on it.`,
+);
+assert(
+  wallContent.includes("제안 한마디"),
+  "privacy.section1.wallContent must disclose that the 제안 한마디 is published on the wall — SignatureWall.tsx renders it, so an enumerated notice that omits it is factually wrong.",
+);
+assert(
+  !/제안 한마디[^.]{0,40}공개되지 않/.test(wallContent),
+  "privacy.section1.wallContent must no longer claim the 제안 한마디 is never published — the wall now shows it.",
 );
 // 명단 벽은 이름·지역만이 아니라 **서명한 날짜**도 공개한다(SignatureWall.tsx의
 // <time dateTime={entry.createdAt}>). 세 고지(폼 namePublicNote·국문 방침·영문
@@ -183,6 +208,25 @@ assert(
   /서명한 날짜/.test(namePublicNoteDefault[1]),
   `${formCopyPath}'s namePublicNote must disclose the signing date alongside name and region — that notice sits at the moment consent is given, so it must not be narrower than the wall's actual disclosure.`,
 );
+// 동의를 받는 바로 그 문장이 공개 범위를 빠짐없이 열거해야 한다. 제안 한마디는
+// 2026-08-31부터 명단에 함께 실리므로 동의 질문과 그 아래 안내 둘 다 이를
+// 말해야 한다 — 한쪽만 말하면 실제로 읽히는 문장이 사실보다 좁아진다.
+const namePublicLabelDefaultForMessage = formCopySource.match(
+  /namePublicLabel:\s*\{[\s\S]*?defaultValue:\s*\n?\s*((?:"[\s\S]*?"|`[\s\S]*?`))/,
+);
+assert(
+  namePublicLabelDefaultForMessage !== null,
+  `${formCopyPath} must declare labels.namePublicLabel with a defaultValue string.`,
+);
+for (const [label, text] of [
+  ["namePublicLabel (the consent question itself)", namePublicLabelDefaultForMessage[1]],
+  ["namePublicNote", namePublicNoteDefault[1]],
+]) {
+  assert(
+    /제안 한마디/.test(text),
+    `${formCopyPath}'s ${label} must disclose that the 제안 한마디 is published on the wall — SignatureWall.tsx renders it, so the consent-point notice must not be narrower.`,
+  );
+}
 
 // ---------------------------------------------------------------------------
 // 3b. 폼 안 "수집 항목" 고지 ↔ /privacy §1 상호 대조.
@@ -334,17 +378,32 @@ assert(
   /export function hashIp\(ip: string\): string \{\s*return createHash\("sha256"\)/.test(requestSource),
   `${requestPath}'s hashIp must hash with sha256 — this check's claim of hashing (not storing raw IP) depends on it.`,
 );
-const insertCallStart = storeSource.indexOf(".from(\"signatures\").insert({");
-assert(insertCallStart !== -1, `${storePath} must insert into signatures with an object literal.`);
-const insertBlock = extractBlockAfter(storeSource, insertCallStart);
-assert(insertBlock, `${storePath}'s signatures insert must have a body.`);
+// 서명 저장은 2026-08-31부터 submit_signature RPC를 거친다(재서명 시 기존 행을
+// 갱신하려면 INSERT ... ON CONFLICT가 필요한데, PostgREST의 insert()로는 표현식
+// 부분 유일 인덱스를 대상으로 한 upsert를 쓸 수 없다). 그래서 "원본 IP를
+// 저장하지 않는다"는 주장의 근거를 두 군데서 함께 확인한다 — 앱이 해시만
+// 넘기는지, 그리고 RPC 본문이 그 해시를 ip_hash 컬럼에만 넣는지.
+const rpcCallStart = storeSource.indexOf('.rpc("submit_signature", {');
+assert(rpcCallStart !== -1, `${storePath} must submit signatures through the submit_signature RPC.`);
+const rpcArgsBlock = extractBlockAfter(storeSource, rpcCallStart);
+assert(rpcArgsBlock, `${storePath}'s submit_signature call must have an argument object.`);
 assert(
-  /ip_hash:\s*ipHash/.test(insertBlock),
-  `${storePath} must store ip_hash (not a raw ip column) — this check's claim that the original IP is never stored depends on it.`,
+  /p_ip_hash:\s*ipHash/.test(rpcArgsBlock),
+  `${storePath} must pass the hashed IP as p_ip_hash (not a raw ip argument) — this check's claim that the original IP is never stored depends on it.`,
 );
 assert(
-  !/\bip:\s*ip\b/.test(insertBlock),
-  `${storePath} must not insert a raw "ip" field alongside ip_hash.`,
+  !/\bp_ip:\s*ip\b/.test(rpcArgsBlock),
+  `${storePath} must not pass a raw "p_ip" argument alongside p_ip_hash.`,
+);
+const upsertMigrationPath = "supabase/migrations/20260831000000_signature_resign_upsert.sql";
+assert(
+  existsSync(join(root, upsertMigrationPath)),
+  `${upsertMigrationPath} must exist — it defines submit_signature.`,
+);
+const upsertMigration = read(upsertMigrationPath);
+assert(
+  /ip_hash/.test(upsertMigration) && !/\bp_ip\b/.test(upsertMigration),
+  `${upsertMigrationPath}'s submit_signature must store the hash in ip_hash and never take or store a raw IP.`,
 );
 // 중복·남용 방지는 두 기제(이메일 중복 확인 + IP 해시 기반 레이트리밋)가 함께
 // 작동한다 — 문구가 이메일만 언급하고 IP 쪽 레이트리밋을 뺀 채 다시 쓰이면
@@ -462,6 +521,10 @@ assert(
 assert(
   /total signature count/i.test(enWallContent),
   "en.privacy.section1.wallContent must state non-public signatures still count toward the total, matching the Korean 총 서명 수 claim.",
+);
+assert(
+  /message/i.test(enWallContent) && !/message[^.]{0,60}never published/i.test(enWallContent),
+  "en.privacy.section1.wallContent must disclose that the signer's message is published (and must not still claim it is never published), matching the Korean 제안 한마디 disclosure.",
 );
 assert(
   enWallContent.includes("August 28, 2026"),

@@ -59,6 +59,11 @@ export interface PetitionSuccessCopy {
   titleSuffix: PetitionEditableTextCopy;
   countPrefix?: PetitionEditableTextCopy;
   countSuffix: PetitionEditableTextCopy;
+  /**
+   * 같은 이메일로 다시 서명해 기존 서명이 갱신된 경우에만 뜨는 안내.
+   * 이때는 총 서명 수가 늘지 않으므로 서수 문장(countSuffix)을 대신한다.
+   */
+  updatedNote: PetitionEditableTextCopy;
   sharePrompt?: PetitionEditableTextCopy;
   primaryShare: PetitionEditableTextCopy;
   primaryShareClassName: string;

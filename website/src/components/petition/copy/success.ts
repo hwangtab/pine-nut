@@ -9,6 +9,11 @@ export const koreanPetitionSuccessCopy: PetitionSuccessCopy = {
     contentKey: "petition.success.countSuffix",
     defaultValue: "번째로 함께해주셨습니다.",
   },
+  updatedNote: {
+    contentKey: "petition.success.updatedNote",
+    defaultValue:
+      "이미 같은 이메일로 서명하신 기록이 있어, 이번에 적어주신 내용으로 바꿔 두었습니다. 서명 수는 그대로입니다.",
+  },
   sharePrompt: {
     contentKey: "petition.success.sharePrompt",
     defaultValue: "더 많은 사람에게 알려주세요",

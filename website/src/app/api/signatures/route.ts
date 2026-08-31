@@ -61,13 +61,15 @@ export async function POST(request: NextRequest) {
     if (IS_PRODUCTION) return missingSignatureServiceResponse();
     const demoResult = submitDemoSignature(ip);
     return demoResult.ok
-      ? NextResponse.json({ success: true })
+      ? NextResponse.json({ success: true, mode: demoResult.mode })
       : jsonErrorResponse(demoResult.error, demoResult.status);
   }
 
   try {
-    await submitSignatureToStore(supabase, validation.value, hashIp(ip));
-    return NextResponse.json({ success: true });
+    const mode = await submitSignatureToStore(supabase, validation.value, hashIp(ip));
+    // mode: "created" | "updated" — 같은 이메일의 재서명이면 총 서명 수가 늘지
+    // 않는다. 성공 화면이 서수 문장을 감추려면 이 사실이 응답에 실려야 한다.
+    return NextResponse.json({ success: true, mode });
   } catch (error) {
     return signatureApiErrorResponse(
       "Failed to submit signature:",

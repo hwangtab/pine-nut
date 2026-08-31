@@ -8,6 +8,7 @@ import {
 import {
   submitSignature,
   type SignaturePayload,
+  type SignatureSubmitMode,
 } from "@/lib/signatures/client";
 
 export interface SignatureFormValues {
@@ -91,7 +92,7 @@ function toSignaturePayload(values: SignatureFormValues): SignaturePayload {
 
 export async function submitSignatureForm(
   values: SignatureFormValues,
-): Promise<{ ok: true } | { ok: false; error: string }> {
+): Promise<{ ok: true; mode: SignatureSubmitMode } | { ok: false; error: string }> {
   const errors = validateSignatureForm(values);
   if (Object.keys(errors).length > 0) {
     return { ok: false, error: "입력값을 다시 확인해주세요." };

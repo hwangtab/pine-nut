@@ -192,7 +192,7 @@ for (const required of [
 // 서버(api/validation.ts)는 name.trim()을 저장하는데, onSubmitted가 trim 전
 // 값을 넘기면 앞뒤 공백을 넣은 사람이 성공 화면에서 다른 이름을 본다.
 assert(
-  /onSubmitted\(\{ name: name\.trim\(\) \}\)/.test(hookSource),
+  /onSubmitted\(\{ name: name\.trim\(\), mode: result\.mode \}\)/.test(hookSource),
   "usePetitionSignatureForm must pass the trimmed name to onSubmitted — the server stores name.trim() (src/lib/signatures/api/validation.ts), so an untrimmed name shows the signer a different name on the success screen than the one that lands in the DB and on the wall.",
 );
 assert(

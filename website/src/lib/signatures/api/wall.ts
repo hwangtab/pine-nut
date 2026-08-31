@@ -6,6 +6,8 @@ export interface WallEntry {
   regionTop: string;
   regionSub: string;
   createdAt: string;
+  /** 제안 한마디. 선택 입력이라 비워둔 서명이 많다 — 빈 값은 null로 정규화한다. */
+  message: string | null;
 }
 
 export interface WallPage {
@@ -19,6 +21,7 @@ interface WallRow {
   region_top: string;
   region_sub: string;
   created_at: string;
+  message: string | null;
 }
 
 const CURSOR_SEPARATOR = "|";
@@ -84,7 +87,7 @@ export async function fetchSignatureWall(
 ): Promise<WallPage> {
   let query = supabase
     .from("signatures")
-    .select("id, name, region_top, region_sub, created_at")
+    .select("id, name, region_top, region_sub, created_at, message")
     .eq("name_public", true)
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
@@ -114,6 +117,8 @@ export async function fetchSignatureWall(
       regionTop: row.region_top,
       regionSub: row.region_sub,
       createdAt: row.created_at,
+      // 공백만 남은 값은 화면에서 빈 따옴표로 보이므로 여기서 null로 접는다.
+      message: row.message?.trim() ? row.message.trim() : null,
     })),
     nextCursor: hasMore ? encodeCursor(page[page.length - 1]) : null,
   };

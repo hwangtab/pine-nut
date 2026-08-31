@@ -18,6 +18,7 @@ import { usePetitionSignatureSummary } from "@/components/petition/usePetitionSi
 import { events } from "@/lib/analytics";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 import { SIGNATURE_GOAL } from "@/lib/signatures/api/config";
+import type { SignatureSubmitMode } from "@/lib/signatures/client";
 import { SITE_URL } from "@/lib/site-config";
 
 /* ──────────────────────── Main Page ──────────────────────── */
@@ -30,6 +31,9 @@ export default function PetitionPage() {
   const countKnown = !loadingSummary && !summaryError;
   const [submitted, setSubmitted] = useState(false);
   const [submittedName, setSubmittedName] = useState("");
+  // 이번 제출이 새 서명이었는지, 같은 이메일의 기존 서명을 고쳐 쓴 것인지.
+  // 성공 화면의 서수 문장을 감출지 판단하는 데 쓴다.
+  const [submitMode, setSubmitMode] = useState<SignatureSubmitMode>("created");
   const [showConfetti, setShowConfetti] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
   // 서명이 접수되면 값을 올려 명단 벽을 1페이지째부터 다시 불러오게 한다.
@@ -56,13 +60,17 @@ export default function PetitionPage() {
     void refreshSummary({ fresh: true });
   }, [refreshSummary]);
 
-  const handleSignatureSubmitted = useCallback(({ name }: { name: string }) => {
-    setSubmittedName(name);
-    setSubmitted(true);
-    setShowConfetti(true);
-    setWallRefreshToken((token) => token + 1);
-    setTimeout(() => setShowConfetti(false), 3000);
-  }, []);
+  const handleSignatureSubmitted = useCallback(
+    ({ name, mode }: { name: string; mode: SignatureSubmitMode }) => {
+      setSubmittedName(name);
+      setSubmitMode(mode);
+      setSubmitted(true);
+      setShowConfetti(true);
+      setWallRefreshToken((token) => token + 1);
+      setTimeout(() => setShowConfetti(false), 3000);
+    },
+    [],
+  );
 
   const handleScrollToForm = useCallback(() => {
     signatureSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -211,6 +219,7 @@ export default function PetitionPage() {
                   통째로 감춘다("0번째로 함께해주셨습니다"를 막는다). */}
               <PetitionSuccess
                 submittedName={submittedName}
+                submitMode={submitMode}
                 signatureCount={countKnown ? summary.count : null}
                 urlCopied={urlCopied}
                 onPrimaryShare={handleShareKakao}
@@ -219,6 +228,7 @@ export default function PetitionPage() {
                 onReset={() => {
                   setSubmitted(false);
                   setSubmittedName("");
+                  setSubmitMode("created");
                   setUrlCopied(false);
                 }}
               />

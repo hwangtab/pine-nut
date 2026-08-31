@@ -178,7 +178,10 @@ export function usePetitionSignatureForm({
         // 서버는 name.trim()을 저장한다(api/validation.ts). 여기서 trim 전
         // 값을 넘기면 앞뒤 공백을 넣은 사람이 성공 화면과 명단 벽에서 서로
         // 다른 이름을 보게 된다.
-        onSubmitted({ name: name.trim() });
+        // mode를 함께 넘긴다 — 같은 이메일로 다시 서명한 경우(mode === "updated")
+        // 총 서명 수는 그대로이므로 성공 화면이 "N번째로 함께해주셨습니다"를
+        // 띄우면 사실과 다르다.
+        onSubmitted({ name: name.trim(), mode: result.mode });
         events.signatureComplete();
         onRefreshSignatures();
       } catch (err) {

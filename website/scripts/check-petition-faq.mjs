@@ -313,8 +313,8 @@ assert(
   `onSubmitted must not carry a \`count\` any more — the POST response no longer returns one, so it was always the placeholder 0. Found: ${onSubmittedDecl[0]}`,
 );
 assert(
-  /onSubmitted\(\{\s*name:\s*name\.trim\(\)\s*\}\)/.test(formHookSource),
-  "usePetitionSignatureForm must call onSubmitted({ name: name.trim() }) — the name only (no count placeholder), and trimmed so the success screen shows the same name the server stores.",
+  /onSubmitted\(\{\s*name:\s*name\.trim\(\)\s*,\s*mode:\s*result\.mode\s*\}\)/.test(formHookSource),
+  "usePetitionSignatureForm must call onSubmitted({ name: name.trim(), mode: result.mode }) — the trimmed name so the success screen shows the same name the server stores, plus the submit mode so a re-signing (which does not raise the total) never renders the ordinal sentence. Still no count placeholder.",
 );
 assert(
   !/count:\s*0/.test(formHookSource),
@@ -342,8 +342,26 @@ assert(
   "PetitionSuccess must accept `signatureCount: number | null` so an unknown count can be represented without lying with 0.",
 );
 assert(
-  /\{signatureCount !== null &&/.test(successPropsSource),
+  /signatureCount !== null &&/.test(successPropsSource),
   "PetitionSuccess must hide the ordinal count sentence entirely when signatureCount is null.",
+);
+// 재서명(같은 이메일로 다시 제출)은 총 서명 수를 올리지 않는다. 그런데도 서수
+// 문장("N번째로 함께해주셨습니다")을 띄우면 이미 서명한 사람에게 자기 서명이
+// 두 번 집계된 것처럼 읽힌다. 갱신일 때는 서수 대신 무엇이 바뀌었는지 알리는
+// 문장(updatedNote)이 나가야 한다 — 두 분기가 배타적인지까지 못박는다.
+assert(
+  /submitMode\?:\s*SignatureSubmitMode;/.test(successPropsSource),
+  "PetitionSuccess must accept `submitMode?: SignatureSubmitMode` so a re-signing can be told apart from a new signature.",
+);
+assert(
+  /submitMode === "updated" \?[\s\S]{0,400}copy\.updatedNote[\s\S]{0,200}\) : signatureCount !== null &&/.test(
+    successPropsSource,
+  ),
+  'PetitionSuccess must render copy.updatedNote INSTEAD OF the ordinal sentence when submitMode === "updated" — a re-signing does not raise the total, so showing "N번째로 함께해주셨습니다" tells the signer their signature was counted twice.',
+);
+assert(
+  /updatedNote:\s*PetitionEditableTextCopy;/.test(read("src/components/petition/copy/types.ts")),
+  "PetitionSuccessCopy must declare updatedNote — the assertion above depends on that copy field existing.",
 );
 for (const banned of ["setSignatureCount", "count: 0"]) {
   assert(
