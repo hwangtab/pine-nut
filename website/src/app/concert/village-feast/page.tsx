@@ -19,6 +19,7 @@ import {
   FEAST_ADDRESS,
   FEAST_DATE_LABEL,
   FEAST_LINEUP,
+  FEAST_TIMETABLE,
   FEAST_PHONE_COMMITTEE,
   FEAST_PHONE_STAGE,
   FEAST_PHONE_STAGE_NAME,
@@ -80,6 +81,17 @@ const eventJsonLd = {
 };
 
 const LINEUP_NAMES = FEAST_LINEUP.map((artist) => artist.name).join("·");
+
+// 목록은 포스터 순서가 아니라 무대에 서는 순서로 보여준다 — 관객이 이 페이지에서
+// 가장 알고 싶은 것은 "누가 언제 나오나"이기 때문이다. 이름이 어긋나면 팀이
+// 조용히 목록에서 빠지므로, 짝을 못 찾은 칸은 빌드 때 바로 터뜨린다.
+const TIMETABLE_ROWS = FEAST_TIMETABLE.map((slot) => {
+  const artist = FEAST_LINEUP.find((a) => a.name === slot.name);
+  if (!artist) {
+    throw new Error(`FEAST_TIMETABLE 의 "${slot.name}" 가 FEAST_LINEUP 에 없습니다.`);
+  }
+  return { slot, artist };
+});
 
 // 사진 출처는 페이지에 밝힌다 — 우리가 찍은 사진이 아니다.
 const PHOTO_CREDITS = [
@@ -143,7 +155,7 @@ const FAQ = [
   },
   {
     q: "몇 시에 끝나나요?",
-    a: "오후 1시에 시작합니다. 끝나는 시간과 공연 순서는 준비 상황에 따라 정해지며, 확정되면 이 페이지로 안내드립니다.",
+    a: "오후 1시에 경하와 세민의 무대로 시작해, 오후 3시 40분 삼각전파사가 마지막으로 오릅니다. 4시에 다 함께 단체사진을 찍고 마칩니다. 팀별 시각은 위 라인업에 있습니다.",
   },
   {
     q: "어떻게 가나요?",
@@ -266,16 +278,14 @@ export default function VillageFeastPage() {
             함께하는 음악가 {FEAST_LINEUP.length}팀
           </h2>
           <p className="mt-3 break-keep text-sm text-[var(--color-text-muted)]">
-            포스터에 실린 순서입니다. 공연 순서와 시간은 현장에서 안내합니다.
+            무대에 서는 순서입니다. 한 팀이 15분씩 노래하고 5분씩 무대를 바꿉니다.
+            현장 사정에 따라 시각은 조금씩 밀릴 수 있습니다.
           </p>
 
           <ul className="mt-10 space-y-2">
-            {FEAST_LINEUP.map((artist, i) => (
-              <li key={artist.name} className="paper">
+            {TIMETABLE_ROWS.map(({ slot, artist }) => (
+              <li key={slot.name} className="paper">
                 <div className="relative z-[1] flex items-start gap-4 px-5 py-5">
-                  <span className="mt-1 w-7 shrink-0 text-sm font-bold text-[var(--color-forest)]">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
 
                   {/* 사진이 없는 팀도 같은 자리를 차지해야 이름 줄이 어긋나지 않는다 */}
                   <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full sm:h-20 sm:w-20">
@@ -298,7 +308,12 @@ export default function VillageFeastPage() {
                   </div>
 
                   <div className="min-w-0">
-                    <h3 className="break-keep text-lg font-bold leading-snug text-[var(--color-text)]">
+                    {/* 시각을 왼쪽 칸으로 세우면 사진과 함께 좁은 화면에서 이름을
+                        밀어낸다. 이름 위 한 줄로 얹으면 폭을 먹지 않는다. */}
+                    <p className="text-sm font-bold tabular-nums text-[var(--color-forest)]">
+                      {slot.start} – {slot.end}
+                    </p>
+                    <h3 className="mt-0.5 break-keep text-lg font-bold leading-snug text-[var(--color-text)]">
                       {artist.name}
                     </h3>
                     {artist.blurb ? (
@@ -310,6 +325,12 @@ export default function VillageFeastPage() {
                 </div>
               </li>
             ))}
+            <li className="rounded-[var(--radius-card)] border border-dashed border-[var(--color-border)] px-5 py-5">
+              <p className="text-sm font-bold tabular-nums text-[var(--color-text-muted)]">16:00</p>
+              <p className="mt-0.5 break-keep text-base font-semibold text-[var(--color-text-muted)]">
+                다 함께 단체사진
+              </p>
+            </li>
           </ul>
 
           <p className="mt-6 break-keep text-xs leading-relaxed text-[var(--color-text-muted)]">

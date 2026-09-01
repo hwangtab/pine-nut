@@ -109,6 +109,22 @@ export interface FeastArtist {
   photoCredit?: string;
 }
 
+// 진행 순서: 세트 15분 + 전환 5분이라 한 팀이 20분씩 차지한다. 「베어지기 전에」와
+// 같은 ConcertSlot 을 쓴다. 여기 없는 순서(인사말·발언·식사)는 넣지 않는다 —
+// 정해지지 않은 것을 표에 적으면 확정된 일정처럼 읽힌다. 단체사진 한 줄만
+// 페이지에서 별도 표기한다.
+export const FEAST_TIMETABLE: ConcertSlot[] = [
+  { start: "13:00", end: "13:15", name: "경하와 세민" },
+  { start: "13:20", end: "13:35", name: "박지휘" },
+  { start: "13:40", end: "13:55", name: "마쓰모토 코타" },
+  { start: "14:00", end: "14:15", name: "최양다음 NEXT" },
+  { start: "14:20", end: "14:35", name: "자이" },
+  { start: "14:40", end: "14:55", name: "김동산과 블루이웃" },
+  { start: "15:00", end: "15:15", name: "길가는밴드 장현호" },
+  { start: "15:20", end: "15:35", name: "ZSTHYGER" },
+  { start: "15:40", end: "15:55", name: "삼각전파사" },
+];
+
 // 포스터에 적힌 순서 그대로. 소개는 확인된 것만 적는다 — source 가 있으면 공개
 // 웹자료, 없으면(마쓰모토 코타·박지휘) 주최 측에서 받은 소개글을 다듬은 것이다.
 export const FEAST_LINEUP: FeastArtist[] = [
