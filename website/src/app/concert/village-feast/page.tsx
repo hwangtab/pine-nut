@@ -155,7 +155,7 @@ const FAQ = [
   },
   {
     q: "몇 시에 끝나나요?",
-    a: "오후 1시에 경하와 세민의 무대로 시작해, 오후 3시 40분 삼각전파사가 마지막으로 오릅니다. 4시에 다 함께 단체사진을 찍고 마칩니다. 팀별 시각은 위 라인업에 있습니다.",
+    a: "오후 1시에 열어 한 시간 동안 함께 밥을 먹고 춤추고 이야기합니다. 2시에 경하와 세민의 무대로 공연을 시작해, 4시 40분 삼각전파사가 마지막으로 오릅니다. 5시에 다 함께 단체사진을 찍고 마칩니다. 팀별 시각은 위 라인업에 있습니다.",
   },
   {
     q: "어떻게 가나요?",
@@ -278,11 +278,20 @@ export default function VillageFeastPage() {
             함께하는 음악가 {FEAST_LINEUP.length}팀
           </h2>
           <p className="mt-3 break-keep text-sm text-[var(--color-text-muted)]">
-            무대에 서는 순서입니다. 한 팀이 15분씩 노래하고 5분씩 무대를 바꿉니다.
-            현장 사정에 따라 시각은 조금씩 밀릴 수 있습니다.
+            오후 1시에 열어 밥 먹고 춤추고 이야기하다가, 2시부터 무대가 이어집니다.
+            한 팀이 15분씩 노래하고 5분씩 무대를 바꿉니다. 현장 사정에 따라 시각은
+            조금씩 밀릴 수 있습니다.
           </p>
 
           <ul className="mt-10 space-y-2">
+            <li className="rounded-[var(--radius-card)] border border-dashed border-[var(--color-border)] px-5 py-5">
+              <p className="text-sm font-bold tabular-nums text-[var(--color-text-muted)]">
+                13:00 – 14:00
+              </p>
+              <p className="mt-0.5 break-keep text-base font-semibold text-[var(--color-text-muted)]">
+                식사 · 댄스 · 수다
+              </p>
+            </li>
             {TIMETABLE_ROWS.map(({ slot, artist }) => (
               <li key={slot.name} className="paper">
                 <div className="relative z-[1] flex items-start gap-4 px-5 py-5">
@@ -326,7 +335,7 @@ export default function VillageFeastPage() {
               </li>
             ))}
             <li className="rounded-[var(--radius-card)] border border-dashed border-[var(--color-border)] px-5 py-5">
-              <p className="text-sm font-bold tabular-nums text-[var(--color-text-muted)]">16:00</p>
+              <p className="text-sm font-bold tabular-nums text-[var(--color-text-muted)]">17:00</p>
               <p className="mt-0.5 break-keep text-base font-semibold text-[var(--color-text-muted)]">
                 다 함께 단체사진
               </p>
