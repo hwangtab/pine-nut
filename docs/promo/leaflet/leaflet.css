@@ -1,0 +1,66 @@
+/* 마을 잔치 리플렛 — A4 가로 3단 감싸접기.
+   좌표는 모두 재단 후(297×210) 기준이고, 재단 여백 3㎜는 .trim 이 흡수한다. */
+@import url("fonts.css");
+
+@font-face {
+  font-family: 'MaruBuri';
+  src: url("../../../website/public/fonts/maruburi/MaruBuri-Regular.woff2") format('woff2');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'MaruBuri';
+  src: url("../../../website/public/fonts/maruburi/MaruBuri-Bold.woff2") format('woff2');
+  font-weight: 700;
+}
+
+:root {
+  --forest: #2D5016;
+  --warm: #C75000;
+  --ink: #1a1a1a;
+  --bleed: 3mm;
+}
+
+@page { size: 303mm 216mm; margin: 0; }
+
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Pretendard Variable', 'Pretendard', sans-serif;
+  color: var(--ink);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* 한 면 = 재단 여백까지 포함한 실제 인쇄 크기 */
+.sheet {
+  position: relative;
+  width: 303mm;
+  height: 216mm;
+  overflow: hidden;
+  page-break-after: always;
+}
+.sheet:last-child { page-break-after: auto; }
+
+/* 재단선 안쪽. 여기 좌표가 접지선 계산의 기준이다. */
+.trim {
+  position: absolute;
+  left: var(--bleed);
+  top: var(--bleed);
+  width: 297mm;
+  height: 210mm;
+}
+
+/* 겉면: 플랩 97.5 / 뒤표지 99.5 / 표지 100 */
+.outside { display: flex; height: 100%; }
+.panel-flap  { width: 97.5mm; height: 100%; }
+.panel-back  { width: 99.5mm; height: 100%; }
+.panel-cover { width: 100mm;  height: 100%; }
+
+/* 안면: 세 칸을 나누지 않고 한 판으로 쓴다 */
+.inside { width: 297mm; height: 100%; position: relative; }
+
+/* 접지선 안내선 — 시험 출력용. 최종 출력 전에 body 에 .final 을 붙여 끈다. */
+.fold {
+  position: absolute; top: 0; bottom: 0;
+  width: 0; border-left: 0.2mm dashed rgba(255,0,0,.6);
+}
+body.final .fold { display: none; }

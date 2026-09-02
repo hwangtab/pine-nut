@@ -4,7 +4,9 @@
 _workspace/
 
 # 홍보 운영 문서 — 기자 개인 이메일이 들어 있어 공개 저장소에 올리지 않는다
-docs/promo/
+# (리플렛 판형 파일은 공개 인쇄물이라 예외로 추적한다)
+docs/promo/*
+!docs/promo/leaflet/
 
 # 서명 데이터 백업 — 서명자 평문 이메일이 들어 있어 공개 저장소에 올리지 않는다
 signature-backups/
