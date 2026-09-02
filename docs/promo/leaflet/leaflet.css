@@ -73,6 +73,16 @@ body {
 .in-head h2 { font-size: 24pt; font-weight: 800; color: var(--forest);
   margin: 0 0 2.5mm; }
 .in-head p { font-size: 9.5pt; margin: 0; color: #555; }
+/* 인용문 — 안면 접지선(트림 기준 100 / 199.5㎜) 사이, 양쪽 8㎜ 이상을 남긴
+   트림 좌표 108~191㎜(=시트 기준 111~194㎜)에 절대 배치한다. 헤더 상단과
+   높이를 맞추고, 칸 시작선(헤더 아래 약 45㎜) 위에서 끝나도록 크기를 억제한다. */
+.in-quote { position: absolute; left: 109mm; top: 15mm; width: 82mm;
+  margin: 0; font-family: 'MaruBuri', serif; }
+.in-quote p { margin: 0; font-size: 14pt; line-height: 1.4; font-weight: 700;
+  color: var(--forest); }
+.in-quote cite { display: block; font-family: 'Pretendard Variable', sans-serif;
+  font-style: normal; font-weight: 400; font-size: 8pt; color: #666;
+  margin-top: 3mm; line-height: 1.4; }
 /* 헤더 아래 남는 세로 공간을 세 칸이 통째로 나눠 갖는다 — 칸 높이는
    .inside 의 세로 여백(패딩 + 헤더)을 뺀 만큼 자동으로 정해진다. */
 .in-cols { display: flex; flex: 1 1 auto; min-height: 0; }
@@ -139,21 +149,21 @@ body.final .fold { display: none; }
    쪽)은 패널 경계가 안 바뀌었으니 그대로 8mm. */
 .flap-body { padding: 17mm 8mm 17mm 11mm; height: 100%; box-sizing: border-box;
   display: flex; flex-direction: column; }
-.flap-eyebrow { font-size: 8pt; font-weight: 800; letter-spacing: .18em;
-  color: var(--warm); margin: 0 0 3mm; }
-.flap-h { font-size: 14.5pt; line-height: 1.3; margin: 0 0 6mm;
+.flap-eyebrow { font-size: 7.5pt; font-weight: 800; letter-spacing: .18em;
+  color: var(--warm); margin: 0 0 2.5mm; }
+.flap-h { font-size: 13.5pt; line-height: 1.25; margin: 0 0 4mm;
   font-weight: 800; color: var(--forest); }
-.flap-quote { font-family: 'MaruBuri', serif; font-size: 16.5pt; line-height: 1.45;
-  font-weight: 700; margin: 0 0 8mm; padding-left: 4mm; border-left: .8mm solid var(--forest);
-  color: var(--forest); }
-.flap-quote cite { display: block; font-family: 'Pretendard Variable', sans-serif;
-  font-size: 7.5pt; font-style: normal; font-weight: 400; opacity: .7; margin-top: 3mm; line-height: 1.4; }
-.flap-facts { list-style: none; padding: 0; margin: 0; }
-.flap-facts li { margin-bottom: 5mm; }
-.flap-facts b { display: block; font-size: 12pt; color: var(--warm); font-weight: 800; }
-.flap-facts span { display: block; font-size: 8.5pt; line-height: 1.5; margin-top: 1mm; }
-.flap-tail { margin: auto 0 0; font-size: 10pt; font-weight: 700;
-  color: var(--forest); border-top: .3mm solid rgba(45,80,22,.3); padding-top: 4mm; }
+.flap-lede { font-size: 8.3pt; line-height: 1.55; margin: 0 0 4.5mm;
+  color: var(--ink); }
+.flap-facts { list-style: none; padding: 0; margin: 0 0 4mm; }
+.flap-facts li { margin-bottom: 3.2mm; }
+.flap-facts b { display: block; font-size: 10.5pt; color: var(--warm); font-weight: 800; }
+.flap-facts span { display: block; font-size: 8pt; line-height: 1.45; margin-top: 0.8mm; }
+.flap-note { font-size: 7.8pt; line-height: 1.5; margin: 0 0 2mm; color: #444; }
+.flap-note + .flap-note { margin-top: 2mm; padding-top: 2.5mm;
+  border-top: .2mm solid rgba(45,80,22,.2); }
+.flap-tail { margin: auto 0 0; font-size: 9.5pt; font-weight: 700;
+  color: var(--forest); border-top: .3mm solid rgba(45,80,22,.3); padding-top: 3.5mm; }
 
 /* ── 겉면: 뒤표지 ── */
 .panel-back { background: var(--forest); color: #fff; }
@@ -181,5 +191,16 @@ body.final .fold { display: none; }
 .contact { margin-top: 7mm; font-size: 9pt; line-height: 1.6; }
 .contact p { margin: 0; }
 .contact p:first-child { font-size: 8pt; opacity: .7; margin-bottom: 1mm; }
+
+.demands { margin-top: 6mm; }
+.demands-h { font-size: 9.5pt; font-weight: 800; letter-spacing: .1em;
+  margin: 0 0 3mm; opacity: .9; }
+.demands-list { list-style: none; counter-reset: demand; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 2.5mm; }
+.demands-list li { counter-increment: demand; position: relative;
+  padding-left: 6mm; font-size: 11pt; font-weight: 800; line-height: 1.35; }
+.demands-list li::before { content: counter(demand) "."; position: absolute;
+  left: 0; top: 0; color: #EAF3D9; font-weight: 800; }
+
 .host { margin: auto 0 0; font-size: 8.5pt; font-weight: 700; }
 .credit { font-size: 6.5pt; opacity: .65; margin: 2mm 0 0; line-height: 1.45; }
