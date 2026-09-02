@@ -159,11 +159,15 @@ body.final .fold { display: none; }
 .flap-facts li { margin-bottom: 3.2mm; }
 .flap-facts b { display: block; font-size: 10.5pt; color: var(--warm); font-weight: 800; }
 .flap-facts span { display: block; font-size: 8pt; line-height: 1.45; margin-top: 0.8mm; }
-.flap-note { font-size: 7.8pt; line-height: 1.5; margin: 0 0 2mm; color: #444; }
-.flap-note + .flap-note { margin-top: 2mm; padding-top: 2.5mm;
+.flap-note { font-size: 8.3pt; line-height: 1.58; margin: 0 0 3mm; color: #444; }
+.flap-note + .flap-note { margin-top: 3mm; padding-top: 3.2mm;
   border-top: .2mm solid rgba(45,80,22,.2); }
+.flap-note-latest { color: #333; background: rgba(199,80,0,.08);
+  border-radius: 1.5mm; padding: 3mm 3.2mm; margin-top: 3mm !important;
+  border-top: none !important; }
 .flap-tail { margin: auto 0 0; font-size: 9.5pt; font-weight: 700;
-  color: var(--forest); border-top: .3mm solid rgba(45,80,22,.3); padding-top: 3.5mm; }
+  line-height: 1.45; color: var(--forest); border-top: .3mm solid rgba(45,80,22,.3);
+  padding-top: 3.5mm; }
 
 /* ── 겉면: 뒤표지 ── */
 .panel-back { background: var(--forest); color: #fff; }
