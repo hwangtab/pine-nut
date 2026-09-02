@@ -93,6 +93,29 @@ body.final .fold { display: none; }
   padding-top: 3mm; }
 .cover-foot span { font-weight: 400; opacity: .8; }
 
+/* ── 겉면: 플랩 ── */
+.panel-flap { background: #F4F1E8; }
+/* 플랩 칸은 왼쪽(바깥 가장자리)으로 3㎜, 위아래로 3㎜씩 재단 여백을 더
+   갖게 됐으므로 그만큼 안쪽 여백을 늘린다. 오른쪽(뒤표지와 맞닿는 접지선
+   쪽)은 패널 경계가 안 바뀌었으니 그대로 8mm. */
+.flap-body { padding: 17mm 8mm 17mm 11mm; height: 100%; box-sizing: border-box;
+  display: flex; flex-direction: column; }
+.flap-eyebrow { font-size: 8pt; font-weight: 800; letter-spacing: .18em;
+  color: var(--warm); margin: 0 0 3mm; }
+.flap-h { font-size: 19pt; line-height: 1.25; margin: 0 0 7mm;
+  font-weight: 800; color: var(--forest); }
+.flap-quote { font-family: 'MaruBuri', serif; font-size: 13pt; line-height: 1.5;
+  margin: 0 0 8mm; padding-left: 4mm; border-left: .8mm solid var(--forest);
+  color: var(--forest); }
+.flap-quote cite { display: block; font-family: 'Pretendard Variable', sans-serif;
+  font-size: 7.5pt; font-style: normal; opacity: .7; margin-top: 3mm; line-height: 1.4; }
+.flap-facts { list-style: none; padding: 0; margin: 0; }
+.flap-facts li { margin-bottom: 5mm; }
+.flap-facts b { display: block; font-size: 14pt; color: var(--warm); font-weight: 800; }
+.flap-facts span { display: block; font-size: 8.5pt; line-height: 1.5; margin-top: 1mm; }
+.flap-tail { margin: auto 0 0; font-size: 10pt; font-weight: 700;
+  color: var(--forest); border-top: .3mm solid rgba(45,80,22,.3); padding-top: 4mm; }
+
 /* ── 겉면: 뒤표지 ── */
 .panel-back { background: var(--forest); color: #fff; }
 /* 뒤표지 칸은 좌우 폭이 안 바뀌었지만(99.5㎜ 그대로), 위아래로 3㎜씩
