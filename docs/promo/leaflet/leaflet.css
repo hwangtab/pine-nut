@@ -109,7 +109,7 @@ body {
 /* 항목 수가 적은 칸(2칸=3개)은 space-between 이 만드는 간격이 더 넓게
    벌어지는데, 그 칸만 사진·활자를 한 단계 더 키워 빈 리듬을 메운다. */
 .in-col:nth-child(2) .slot img { width: 34mm; height: 34mm; flex-basis: 34mm; }
-.in-col:nth-child(2) .slot .n { font-size: 16pt; }
+.in-col:nth-child(2) .slot .n { font-size: 14.5pt; }
 .in-col:nth-child(2) .slot .b { font-size: 9.5pt; line-height: 1.65; }
 
 /* 접지선 안내선 — 시험 출력용. 최종 출력 전에 body 에 .final 을 붙여 끈다. */
@@ -126,7 +126,7 @@ body.final .fold { display: none; }
    왼쪽(뒤표지와 맞닿는 접지선 쪽)은 패널 경계가 안 바뀌었으니 그대로 10mm. */
 .cover-body { padding: 17mm 13mm 17mm 10mm; height: 100%; box-sizing: border-box;
   display: flex; flex-direction: column; }
-.cover-title { font-size: 34pt; line-height: 1.08; font-weight: 800;
+.cover-title { font-size: 40pt; line-height: 1.08; font-weight: 800;
   margin: 0; letter-spacing: -0.02em; }
 .cover-when { font-size: 15pt; font-weight: 700; margin: 8mm 0 0;
   line-height: 1.35; color: #EAF3D9; }
@@ -208,3 +208,29 @@ body.final .fold { display: none; }
 
 .host { margin: auto 0 0; font-size: 8.5pt; font-weight: 700; }
 .credit { font-size: 6.5pt; opacity: .65; margin: 2mm 0 0; line-height: 1.45; }
+
+/* ── 큰 글씨는 세리프(마루부리)로 ──────────────────────────────────
+   사이트가 제목에 쓰는 활자와 같은 계열이라 인쇄물에서도 결이 이어진다.
+   숫자·시각·계좌번호·본문은 산세리프로 둔다 — 세리프 숫자는 작은 크기에서
+   획이 가늘어져 인쇄에서 읽기가 떨어진다. */
+.cover-title,
+.flap-h,
+.flap-tail,
+.back-h,
+.in-head h2,
+.slot .n,
+.slot-open .n {
+  font-family: 'MaruBuri', serif;
+}
+
+/* 마루부리는 Regular·Bold 두 굵기뿐이다. 800 을 그대로 두면 브라우저가
+   가짜 굵기를 만들어 인쇄에서 획이 뭉친다. */
+.cover-title,
+.flap-h,
+.flap-tail,
+.back-h,
+.in-head h2,
+.slot .n,
+.slot-open .n {
+  font-weight: 700;
+}
