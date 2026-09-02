@@ -60,8 +60,33 @@ body {
 .panel-back  { width: 99.5mm;  height: 100%; }
 .panel-cover { width: 103mm;   height: 100%; }
 
-/* 안면: 세 칸을 나누지 않고 한 판으로 쓴다 */
-.inside { width: 297mm; height: 100%; position: relative; }
+/* 안면: 세 칸을 나누지 않고 한 판으로 쓴다.
+   배경이 흰색이고 종이도 흰색이라 재단 여백을 칠할 필요가 없으므로
+   .trim(재단 후 좌표, 297×210) 안에 그대로 둔다 — 겉면과 달리 +3mm 보정 없음. */
+.inside { width: 297mm; height: 100%; position: relative;
+  background: #fff; box-sizing: border-box; padding: 15mm 0 12mm; }
+.in-head { padding: 0 10mm; margin-bottom: 11mm; }
+.in-head h2 { font-size: 24pt; font-weight: 800; color: var(--forest);
+  margin: 0 0 2.5mm; }
+.in-head p { font-size: 9.5pt; margin: 0; color: #555; }
+.in-cols { display: flex; }
+/* 칸 폭은 접지선과 같아야 한다 — 안면 접지선은 100 / 199.5 */
+.in-col:nth-child(1) { width: 100mm; }
+.in-col:nth-child(2) { width: 99.5mm; }
+.in-col:nth-child(3) { width: 97.5mm; }
+.in-col { box-sizing: border-box; padding: 0 8mm; }
+/* 접지선에 글자가 닿지 않도록 칸 사이에 숨 쉴 자리를 둔다 */
+.slot { display: flex; gap: 4.5mm; margin-bottom: 9mm; align-items: flex-start; }
+.slot img { width: 25mm; height: 25mm; border-radius: 50%; object-fit: cover;
+  flex: 0 0 25mm; }
+.slot .t { font-size: 10pt; font-weight: 800; color: var(--warm);
+  margin: 0; font-variant-numeric: tabular-nums; }
+.slot .n { font-size: 13pt; font-weight: 800; margin: 1mm 0 0;
+  color: var(--ink); }
+.slot .b { font-size: 8.5pt; line-height: 1.55; margin: 2mm 0 0; color: #444; }
+.slot-open { display: block; background: #F4F1E8; border-radius: 2mm;
+  padding: 6mm; }
+.slot-open .n { font-size: 14pt; color: var(--forest); }
 
 /* 접지선 안내선 — 시험 출력용. 최종 출력 전에 body 에 .final 을 붙여 끈다. */
 .fold {
