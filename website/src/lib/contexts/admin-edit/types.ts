@@ -53,8 +53,5 @@ export interface AdminEditContextType {
 
 export interface AdminEditProviderProps {
   children: ReactNode;
-  isAdmin: boolean;
-  isActiveAdmin: boolean;
-  isLoggedIn: boolean;
   initialContent: Record<string, PageContent>;
 }

@@ -1,3 +1,4 @@
+import { createSupabaseAnonClient } from "@/lib/supabase-anon";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { newsItems as fallbackNews, type NewsItem } from "@/data/news";
 
@@ -46,8 +47,13 @@ function rowToNewsItem(row: NewsRow): NewsItem {
   };
 }
 
+// 공개(비삭제) 콘텐츠만 읽는 경로는 쿠키를 읽지 않는 익명 클라이언트를 쓴다.
+// createSupabaseServerClient()는 next/headers의 cookies()를 호출하고, 그 한 줄이
+// 이 함수를 부르는 페이지를 요청마다 서버 렌더로 못박는다 — 방문자가 누구든
+// 같은 기사·연혁을 보여주는 페이지들이 CDN 캐시에서 빠지는 이유였다.
+// 삭제분까지 봐야 하는 관리자용 조회는 아래에서 계속 쿠키 클라이언트를 쓴다.
 export async function getPublishedNews(): Promise<NewsItem[]> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAnonClient();
   if (!supabase) {
     return fallbackOrThrow(sortFallbackNews, "Supabase is not configured in production for published news.");
   }
@@ -68,8 +74,13 @@ export async function getPublishedNews(): Promise<NewsItem[]> {
   return data.map(rowToNewsItem);
 }
 
+// 공개(비삭제) 콘텐츠만 읽는 경로는 쿠키를 읽지 않는 익명 클라이언트를 쓴다.
+// createSupabaseServerClient()는 next/headers의 cookies()를 호출하고, 그 한 줄이
+// 이 함수를 부르는 페이지를 요청마다 서버 렌더로 못박는다 — 방문자가 누구든
+// 같은 기사·연혁을 보여주는 페이지들이 CDN 캐시에서 빠지는 이유였다.
+// 삭제분까지 봐야 하는 관리자용 조회는 아래에서 계속 쿠키 클라이언트를 쓴다.
 export async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAnonClient();
   if (!supabase) {
     return fallbackOrThrow(() => fallbackNews.find((n) => n.slug === slug) ?? null, "Supabase is not configured in production for news detail.");
   }

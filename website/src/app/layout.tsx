@@ -24,8 +24,6 @@ import Analytics from "@/components/Analytics";
 import AdminEditShell from "@/components/admin/AdminEditShell";
 import { SITE_URL } from "@/lib/site-config";
 import { getAllPageContent } from "@/lib/data/page-content";
-import { getMyAdminMember } from "@/lib/data/admin-members";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 export const metadata: Metadata = {
   title: "풍천리를 지켜주세요 — 양수발전소 건설 반대",
@@ -56,56 +54,23 @@ export const metadata: Metadata = {
   // 각 페이지가 자기 경로를 선언한다(홈은 src/app/page.tsx).
 };
 
-async function checkAdminFlags(): Promise<{
-  isAdmin: boolean;
-  isActiveAdmin: boolean;
-}> {
-  try {
-    const me = await getMyAdminMember();
-    return {
-      isActiveAdmin: me != null,
-      isAdmin: me?.role === "owner" || me?.role === "editor",
-    };
-  } catch {
-    return { isAdmin: false, isActiveAdmin: false };
-  }
-}
-
-async function checkIsLoggedIn(): Promise<boolean> {
-  try {
-    const supabase = await createSupabaseServerClient();
-    if (!supabase) return false;
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    return !!user;
-  } catch {
-    return false;
-  }
-}
-
+// 이 레이아웃은 방문자가 누구인지 묻지 않는다 — cookies()에 닿는 순간 그
+// 아래 모든 페이지가 요청마다 서버 렌더로 고정되어 CDN 캐시에서 빠지기
+// 때문이다. 로그인·권한 판정은 AdminEditProvider가 브라우저에서 하고
+// (lib/contexts/admin-edit/useAdminSession.ts), 여기서 읽는 CMS 오버라이드는
+// 방문자와 무관한 공개 데이터라 캐시된다.
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [{ isAdmin, isActiveAdmin }, isLoggedIn, initialContent] =
-    await Promise.all([
-      checkAdminFlags(),
-      checkIsLoggedIn(),
-      getAllPageContent(),
-    ]);
+  const initialContent = await getAllPageContent();
 
   return (
     <html lang="ko" className={`${nanumMyeongjo.variable} ${nanumPen.variable}`}>
       <body className="antialiased">
         <Analytics />
-        <AdminEditShell
-          isAdmin={isAdmin}
-          isActiveAdmin={isActiveAdmin}
-          isLoggedIn={isLoggedIn}
-          initialContent={initialContent}
-        >
+        <AdminEditShell initialContent={initialContent}>
           <PublicShell>{children}</PublicShell>
         </AdminEditShell>
       </body>

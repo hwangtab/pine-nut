@@ -25,6 +25,7 @@ import type {
   AdminEditProviderProps,
   StagedChange,
 } from "@/lib/contexts/admin-edit/types";
+import useAdminSession from "@/lib/contexts/admin-edit/useAdminSession";
 import useEditableSelection from "@/lib/contexts/admin-edit/useEditableSelection";
 
 const AdminEditContext = createContext<AdminEditContextType>({
@@ -54,11 +55,11 @@ export function useAdminEdit() {
 
 export function AdminEditProvider({
   children,
-  isAdmin,
-  isActiveAdmin,
-  isLoggedIn,
   initialContent,
 }: AdminEditProviderProps) {
+  // 로그인·권한은 서버가 아니라 여기(브라우저)에서 판정한다 — 루트 레이아웃이
+  // cookies()에 닿지 않아야 공개 페이지가 CDN에서 서빙되기 때문이다.
+  const { isAdmin, isActiveAdmin, isLoggedIn } = useAdminSession();
   const [isEditMode, setIsEditMode] = useState(false);
   const [stagedChanges, setStagedChanges] = useState<
     Map<string, StagedChange>
