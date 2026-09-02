@@ -155,21 +155,66 @@ docs/promo/leaflet/
   경로만 상대경로로 바꾼 사본을 `fonts.css` 로 둔다.
 - 사진: `website/public/images/concert/artists/*.jpg` 를 상대경로로 참조한다.
 - QR: `npx qrcode` 로 SVG 3개를 뽑아 `qr/` 에 둔다. 의존성은 추가하지 않는다.
-- 출력:
+- 1차 출력(교정용, 글자가 텍스트로 남는다):
   ```bash
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' \
-    --headless --disable-gpu --no-pdf-header-footer \
-    --print-to-pdf=docs/promo/leaflet/village-feast-leaflet.pdf \
+    --headless --disable-gpu --no-pdf-header-footer --virtual-time-budget=10000 \
+    --print-to-pdf=/tmp/leaflet-raw.pdf \
     docs/promo/leaflet/leaflet.html
   ```
+
+- 2차 처리(인쇄 발주용 `리플렛인쇄용.pdf`). **이 단계를 빼먹으면 안 된다.**
+  Chrome 은 Pretendard Variable 을 그대로 임베드하지 못해 **Type 3 폰트**로 바꿔
+  넣는다(폰트 객체가 130개 넘게 쪼개진다). Type 3 는 인쇄소 RIP 마다 처리가
+  달라 프리플라이트 경고의 단골이다. 게다가 Pretendard 서브셋에 없는 글자
+  (ä, 次, 翌)는 **애플 시스템 폰트로 폴백**되어 임베드되는데, 애플 폰트를
+  임베드해 배포하는 것은 라이선스상 깔끔하지 않다. 글자를 아웃라인(벡터
+  패스)으로 바꾸면 두 문제가 한꺼번에 사라진다.
+
+  Chrome 은 TrimBox 도 넣지 않는다(전부 303×216 으로 잡힌다). 재단 여백을
+  넣어놓고 재단선을 알려주지 않으면 인쇄소가 어디를 자를지 알 수 없으므로,
+  같은 단계에서 심는다.
+
+  ```bash
+  # 글자를 아웃라인으로
+  gs -o /tmp/leaflet-outlined.pdf -sDEVICE=pdfwrite -dNoOutputFonts \
+     -dAutoRotatePages=/None -dCompatibilityLevel=1.4 \
+     -dUseFastColor=true -sColorConversionStrategy=LeaveColorUnchanged \
+     -dDownsampleColorImages=false -dDownsampleGrayImages=false \
+     -dAutoFilterColorImages=false -dColorImageFilter=/DCTEncode \
+     /tmp/leaflet-raw.pdf
+
+  # 재단 상자 심기 (TrimBox = 재단 후 297×210, 사방 3㎜ 안쪽)
+  python3 - <<'EOF'
+  import re
+  src = open('/tmp/leaflet-outlined.pdf','rb').read()
+  box = (b"/TrimBox[8.5039 8.5039 850.4561 603.4961]"
+         b"/BleedBox[0 0 858.96 612]"
+         b"/ArtBox[8.5039 8.5039 850.4561 603.4961]")
+  out, n = re.subn(rb"/Type\s*/Page(?![sO])", box + rb"/Type/Page", src)
+  assert n == 2, n
+  open('docs/promo/leaflet/리플렛인쇄용.pdf','wb').write(out)
+  EOF
+  ```
+
+  `gs` 의 `-c "... /PAGES pdfmark"` 로는 TrimBox 가 들어가지 않는다(CropBox 만
+  먹는다). 그래서 페이지 객체에 직접 심는다.
 
 ## 6. 검증
 
 1. **접어본다** — 뽑은 PDF 를 A4 양면 인쇄해 실제로 접는다. 접지선에 얼굴이나
    글자가 걸리지 않는지, 플랩이 걸리지 않고 들어가는지 본다. 이 확인 없이
    인쇄소에 넘기지 않는다.
-2. **폰트 임베딩** — `pdffonts` 로 Pretendard 가 PDF 에 박혔는지 본다. 안 박히면
-   인쇄소에서 다른 활자로 대체된다.
+2. **폰트 아웃라인** — `pdffonts 리플렛인쇄용.pdf` 의 목록이 **비어 있어야** 한다.
+   한 줄이라도 남았으면 아웃라인 변환이 안 된 것이다. 함께 볼 것:
+   - `pdfinfo -box` 의 `TrimBox` 가 `8.50 8.50 850.46 603.50` 인가
+   - `pdfimages -list` 의 x-ppi 가 모두 240 이상인가 (현재 270~408)
+   - 아웃라인 전후를 같은 해상도로 렌더해 픽셀 비교했을 때 안티에일리어싱
+     수준(1~2%)을 넘는 차이가 없는가 — 글리프가 깨지면 여기서 잡힌다
+
+   참고: `pdfimages` 가 ICC 프로파일 읽기 경고를 뱉는데, Ghostscript 가 다시 쓴
+   프로파일을 poppler 가 못 읽는 것이고 파일 결함이 아니다. Ghostscript·
+   ImageMagick 렌더는 정상이다.
 3. **양면 맞춤** — Side 1 과 Side 2 의 접지선이 100㎜·199.5㎜ 에서 만나는지.
    뒤집었을 때 어긋나면 안면 내용이 접지선에 걸린다.
 4. **사실 대조** — 타임테이블·전화번호·URL·계좌번호를 `concert.ts`, 운영 중인
@@ -179,3 +224,7 @@ docs/promo/leaflet/
 ## 7. 정하지 않은 것
 
 - **인쇄 부수와 종이** — 인쇄소 견적에 따라 정한다. 설계에는 영향이 없다.
+- **색 공간** — 파일은 RGB 다(Chrome 출력). CMYK 변환은 인쇄소 몫으로 남긴다.
+  일반 프로파일로 미리 변환하면 사진이 탁해질 수 있고, 스펙 3절에서 애초에
+  CMYK 에서 안전한 짙은 초록으로 잡아둬 변환 손실이 작다. 인쇄소가 CMYK 파일을
+  요구하면 그쪽 프로파일을 받아 변환한다.
