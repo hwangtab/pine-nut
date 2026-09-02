@@ -49,11 +49,16 @@ body {
   height: 210mm;
 }
 
-/* 겉면: 플랩 97.5 / 뒤표지 99.5 / 표지 100 */
-.outside { display: flex; height: 100%; }
-.panel-flap  { width: 97.5mm; height: 100%; }
-.panel-back  { width: 99.5mm; height: 100%; }
-.panel-cover { width: 100mm;  height: 100%; }
+/* 겉면: .sheet(303×216) 전면에 배경을 깐다 — 재단선(.trim) 안쪽이 아니라
+   시트 전체에 깔아야 재단이 몇 밀리 어긋나도 흰 테두리가 드러나지 않는다.
+   플랩 100.5 / 뒤표지 99.5 / 표지 103(= 303㎜). 플랩은 왼쪽으로, 표지는
+   오른쪽으로 3㎜씩 재단 여백 몫을 더 가져간다. 접지선 좌표(97.5/197,
+   .trim 기준)는 바뀌지 않는다 — 뒤표지 칸의 좌우 경계는 그대로다. */
+.outside { position: absolute; left: 0; top: 0; width: 303mm; height: 216mm;
+  display: flex; }
+.panel-flap  { width: 100.5mm; height: 100%; }
+.panel-back  { width: 99.5mm;  height: 100%; }
+.panel-cover { width: 103mm;   height: 100%; }
 
 /* 안면: 세 칸을 나누지 않고 한 판으로 쓴다 */
 .inside { width: 297mm; height: 100%; position: relative; }
@@ -67,7 +72,10 @@ body.final .fold { display: none; }
 
 /* ── 겉면: 표지 ── */
 .panel-cover { background: var(--forest); color: #fff; }
-.cover-body { padding: 14mm 10mm; height: 100%; box-sizing: border-box;
+/* 표지 칸이 오른쪽으로 3㎜, 위아래로 3㎜씩 재단 여백을 더 갖게 됐으므로
+   그만큼 안쪽 여백을 늘려 글자 위치는 재단 후 기준으로 그대로 유지한다.
+   왼쪽(뒤표지와 맞닿는 접지선 쪽)은 패널 경계가 안 바뀌었으니 그대로 10mm. */
+.cover-body { padding: 17mm 13mm 17mm 10mm; height: 100%; box-sizing: border-box;
   display: flex; flex-direction: column; }
 .cover-title { font-size: 34pt; line-height: 1.08; font-weight: 800;
   margin: 0; letter-spacing: -0.02em; }
@@ -75,16 +83,21 @@ body.final .fold { display: none; }
   line-height: 1.35; color: #EAF3D9; }
 .cover-where { font-size: 11pt; margin: 4mm 0 0; line-height: 1.4; }
 .cover-where span { font-size: 9pt; opacity: .75; }
-.cover-lineup { list-style: none; padding: 0; margin: auto 0 0;
-  font-size: 9.5pt; line-height: 1.55; opacity: .9; }
-.cover-foot { margin: 6mm 0 0; font-size: 9pt; font-weight: 700;
+/* 출연진 목록을 장소 정보 바로 아래로 끌어올리고(더 이상 auto 여백으로
+   맨 아래까지 밀지 않는다), 대신 하단 여백은 cover-foot 쪽 auto 여백이
+   흡수해 하단에 자연스럽게 붙인다 — 가운데가 통째로 비어 보이던 문제 해소. */
+.cover-lineup { list-style: none; padding: 0; margin: 12mm 0 0;
+  font-size: 10.5pt; line-height: 1.7; opacity: .9; }
+.cover-foot { margin: auto 0 0; font-size: 9pt; font-weight: 700;
   display: flex; justify-content: space-between; border-top: .3mm solid rgba(255,255,255,.35);
   padding-top: 3mm; }
 .cover-foot span { font-weight: 400; opacity: .8; }
 
 /* ── 겉면: 뒤표지 ── */
 .panel-back { background: var(--forest); color: #fff; }
-.back-body { padding: 14mm 9mm; height: 100%; box-sizing: border-box;
+/* 뒤표지 칸은 좌우 폭이 안 바뀌었지만(99.5㎜ 그대로), 위아래로 3㎜씩
+   재단 여백을 더 갖게 됐으므로 위아래 안쪽 여백만 그만큼 늘린다. */
+.back-body { padding: 17mm 9mm; height: 100%; box-sizing: border-box;
   display: flex; flex-direction: column; }
 .back-h { font-size: 17pt; line-height: 1.25; margin: 0 0 7mm; font-weight: 800; }
 .qr-row { display: flex; gap: 4mm; }
