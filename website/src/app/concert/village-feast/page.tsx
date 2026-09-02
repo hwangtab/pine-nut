@@ -46,7 +46,10 @@ const eventJsonLd = {
   eventStatus: "https://schema.org/EventScheduled",
   eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
   url: FEAST_URL,
-  image: [`${SITE_URL}/images/concert/village-feast-poster.jpg`],
+  image: [
+    `${SITE_URL}/images/concert/village-feast-og.jpg`,
+    `${SITE_URL}/images/concert/village-feast-poster.jpg`,
+  ],
   description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}에서 열리는 마을 잔치. 홍천 양수발전소 건설에 8년째 반대해온 풍천리에서 음악가 ${FEAST_LINEUP.length}팀이 함께합니다. 관람료는 없습니다.`,
   isAccessibleForFree: true,
   inLanguage: "ko",
@@ -111,9 +114,17 @@ export const metadata: Metadata = {
         url: `${SITE_URL}/images/concert/village-feast-og.jpg`,
         width: 1200,
         height: 630,
-        alt: `${FEAST_TITLE} 포스터`,
+        alt: `${FEAST_TITLE} — ${FEAST_DATE_LABEL} ${FEAST_PLACE}`,
       },
     ],
+  },
+  // twitter:card 이 없으면 X 는 og:image 를 작은 정사각 썸네일로 줄여 붙인다.
+  // 1.91:1 카드를 만들어둔 이상 큰 가로 카드로 뜨게 명시한다.
+  twitter: {
+    card: "summary_large_image",
+    title: `${FEAST_TITLE} — 9·5 홍천 마을회관`,
+    description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 음악가 ${FEAST_LINEUP.length}팀이 마을로 내려옵니다.`,
+    images: [`${SITE_URL}/images/concert/village-feast-og.jpg`],
   },
 };
 
