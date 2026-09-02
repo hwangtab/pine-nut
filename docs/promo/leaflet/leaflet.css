@@ -109,7 +109,7 @@ body {
 /* 항목 수가 적은 칸(2칸=3개)은 space-between 이 만드는 간격이 더 넓게
    벌어지는데, 그 칸만 사진·활자를 한 단계 더 키워 빈 리듬을 메운다. */
 .in-col:nth-child(2) .slot img { width: 34mm; height: 34mm; flex-basis: 34mm; }
-.in-col:nth-child(2) .slot .n { font-size: 14.5pt; }
+.in-col:nth-child(2) .slot .n { font-size: 16pt; }
 .in-col:nth-child(2) .slot .b { font-size: 9.5pt; line-height: 1.65; }
 
 /* 접지선 안내선 — 시험 출력용. 최종 출력 전에 body 에 .final 을 붙여 끈다. */
@@ -219,7 +219,6 @@ body.final .fold { display: none; }
 .flap-tail,
 .back-h,
 .in-head h2,
-.slot .n,
 .slot-open .n {
   font-family: 'MaruBuri', serif;
 }
@@ -232,7 +231,6 @@ body.final .fold { display: none; }
 .flap-tail,
 .back-h,
 .in-head h2,
-.slot .n,
 .slot-open .n {
   font-weight: 700;
 }
