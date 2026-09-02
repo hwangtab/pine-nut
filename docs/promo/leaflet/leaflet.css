@@ -64,3 +64,44 @@ body {
   width: 0; border-left: 0.2mm dashed rgba(255,0,0,.6);
 }
 body.final .fold { display: none; }
+
+/* ── 겉면: 표지 ── */
+.panel-cover { background: var(--forest); color: #fff; }
+.cover-body { padding: 14mm 10mm; height: 100%; box-sizing: border-box;
+  display: flex; flex-direction: column; }
+.cover-title { font-size: 34pt; line-height: 1.08; font-weight: 800;
+  margin: 0; letter-spacing: -0.02em; }
+.cover-when { font-size: 15pt; font-weight: 700; margin: 8mm 0 0;
+  line-height: 1.35; color: #EAF3D9; }
+.cover-where { font-size: 11pt; margin: 4mm 0 0; line-height: 1.4; }
+.cover-where span { font-size: 9pt; opacity: .75; }
+.cover-lineup { list-style: none; padding: 0; margin: auto 0 0;
+  font-size: 9.5pt; line-height: 1.55; opacity: .9; }
+.cover-foot { margin: 6mm 0 0; font-size: 9pt; font-weight: 700;
+  display: flex; justify-content: space-between; border-top: .3mm solid rgba(255,255,255,.35);
+  padding-top: 3mm; }
+.cover-foot span { font-weight: 400; opacity: .8; }
+
+/* ── 겉면: 뒤표지 ── */
+.panel-back { background: var(--forest); color: #fff; }
+.back-body { padding: 14mm 9mm; height: 100%; box-sizing: border-box;
+  display: flex; flex-direction: column; }
+.back-h { font-size: 17pt; line-height: 1.25; margin: 0 0 7mm; font-weight: 800; }
+.qr-row { display: flex; gap: 4mm; }
+.qr-row figure { margin: 0; text-align: center; flex: 1; }
+/* QR 둘레 흰 여백이 없으면 인식률이 떨어진다 */
+.qr-row img { width: 100%; background: #fff; padding: 1.5mm; box-sizing: border-box;
+  border-radius: 1mm; display: block; }
+.qr-row figcaption { font-size: 7.5pt; margin-top: 1.5mm; line-height: 1.3; }
+.qr-row figcaption span { opacity: .7; }
+.account { margin-top: 8mm; border: .4mm solid rgba(255,255,255,.5);
+  border-radius: 1.5mm; padding: 4mm; }
+.account-label { font-size: 8pt; margin: 0; opacity: .8; }
+.account-no { font-size: 13.5pt; font-weight: 800; margin: 1.5mm 0 0;
+  letter-spacing: .01em; }
+.account-holder { font-size: 9pt; margin: 1mm 0 0; opacity: .85; }
+.contact { margin-top: 7mm; font-size: 9pt; line-height: 1.6; }
+.contact p { margin: 0; }
+.contact p:first-child { font-size: 8pt; opacity: .7; margin-bottom: 1mm; }
+.host { margin: auto 0 0; font-size: 8.5pt; font-weight: 700; }
+.credit { font-size: 6.5pt; opacity: .65; margin: 2mm 0 0; line-height: 1.45; }
