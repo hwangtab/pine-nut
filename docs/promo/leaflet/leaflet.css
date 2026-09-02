@@ -214,6 +214,7 @@ body.final .fold { display: none; }
    숫자·시각·계좌번호·본문은 산세리프로 둔다 — 세리프 숫자는 작은 크기에서
    획이 가늘어져 인쇄에서 읽기가 떨어진다. */
 .cover-title,
+.cover-when,
 .flap-h,
 .flap-tail,
 .back-h,
@@ -226,6 +227,7 @@ body.final .fold { display: none; }
 /* 마루부리는 Regular·Bold 두 굵기뿐이다. 800 을 그대로 두면 브라우저가
    가짜 굵기를 만들어 인쇄에서 획이 뭉친다. */
 .cover-title,
+.cover-when,
 .flap-h,
 .flap-tail,
 .back-h,
