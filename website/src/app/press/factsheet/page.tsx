@@ -19,7 +19,7 @@ const factSheetData = [
   { label: "수몰 가구", value: "51가구" },
   { label: "주민 생계", value: "약 70%가 잣 생산으로 생계 유지" },
   { label: "멸종위기종", value: "산양(천연기념물), 까막딱다구리, 수달 서식" },
-  { label: "투쟁 기간", value: "2019년 3월 ~ 현재 (7년+)" },
+  { label: "투쟁 기간", value: "2019년 3월 ~ 현재 (8년째)" },
   { label: "집회 횟수", value: "705회 이상" },
   { label: "주민 참여", value: "만장일치 반대" },
   {
@@ -32,7 +32,7 @@ const keyNumbers = [
   { number: "705+", label: "집회 횟수" },
   { number: "11만", label: "벌채 잣나무" },
   { number: "51", label: "수몰 가구" },
-  { number: "7년+", label: "투쟁 기간" },
+  { number: "8년째", label: "투쟁 기간" },
 ];
 
 export default function FactsheetPage() {
@@ -94,7 +94,7 @@ export default function FactsheetPage() {
 
         <PressRichCallout
           contentKey="press.factsheet.summary"
-          defaultValue="강원도 홍천군 풍천리 주민들은 2019년부터 한수원의 양수발전소 건설 계획에 맞서 7년 넘게 투쟁하고 있습니다. 이 사업은 산림청이 지정한 '100대 명품숲'을 파괴하고, 11만 그루의 잣나무를 벌채하며, 51가구의 삶의 터전을 수몰시킵니다."
+          defaultValue="강원도 홍천군 풍천리 주민들은 2019년부터 한수원의 양수발전소 건설 계획에 맞서 8년째 투쟁하고 있습니다. 이 사업은 산림청이 지정한 '100대 명품숲'을 파괴하고, 11만 그루의 잣나무를 벌채하며, 51가구의 삶의 터전을 수몰시킵니다."
           section="factsheet"
           className="text-base text-[var(--color-text)] leading-relaxed"
         />

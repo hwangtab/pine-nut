@@ -44,7 +44,7 @@ export default function HomeHeroSection({
         <div className="rise-in">
           <EditableText
             contentKey="home.hero.title"
-            defaultValue="7년, 705번의 외침"
+            defaultValue="8년째, 705번의 외침"
             as="h1"
             page="home"
             section="hero"
@@ -55,7 +55,7 @@ export default function HomeHeroSection({
         <div className="rise-in rise-in-1">
           <EditableText
             contentKey="home.hero.subtitle"
-            defaultValue="강원도 홍천, 잣나무 숲이 품은 작은 마을 풍천리. 주민들은 7년 넘게 양수발전소 건설에 맞서 삶의 터전과 숲을 지켜오고 있습니다"
+            defaultValue="강원도 홍천, 잣나무 숲이 품은 작은 마을 풍천리. 주민들은 8년째 양수발전소 건설에 맞서 삶의 터전과 숲을 지켜오고 있습니다"
             as="p"
             page="home"
             section="hero"

@@ -105,7 +105,7 @@ export const koreanTimelineConfig: TimelineConfig = {
     imageContentKey: "timeline.hero.image",
     imageSection: "hero",
     titleKey: "timeline.hero.title",
-    titleDefault: "7년의 기록",
+    titleDefault: "8년의 기록",
     subtitleKey: "timeline.hero.subtitle",
     subtitleDefault: "2019년부터 현재까지, 풍천리 주민들의 발자취",
     eyebrowKey: "timeline.hero.eyebrow",

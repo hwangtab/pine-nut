@@ -47,7 +47,7 @@ const eventJsonLd = {
   eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
   url: FEAST_URL,
   image: [`${SITE_URL}/images/concert/village-feast-poster.jpg`],
-  description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}에서 열리는 마을 잔치. 홍천 양수발전소 건설에 7년째 반대해온 풍천리에서 음악가 ${FEAST_LINEUP.length}팀이 함께합니다. 관람료는 없습니다.`,
+  description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}에서 열리는 마을 잔치. 홍천 양수발전소 건설에 8년째 반대해온 풍천리에서 음악가 ${FEAST_LINEUP.length}팀이 함께합니다. 관람료는 없습니다.`,
   isAccessibleForFree: true,
   inLanguage: "ko",
   location: {
@@ -102,7 +102,7 @@ const HAS_MISSING_PHOTO = FEAST_LINEUP.some((artist) => !artist.photo);
 export const metadata: Metadata = {
   alternates: localeAlternates("/concert/village-feast"),
   title: `${FEAST_TITLE} — 9·5 홍천 마을회관`,
-  description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 양수발전소에 맞서 7년을 싸워온 마을에서 여는 잔치입니다. ${LINEUP_NAMES} 등 ${FEAST_LINEUP.length}팀이 함께합니다.`,
+  description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 양수발전소에 맞서 8년째 싸워온 마을에서 여는 잔치입니다. ${LINEUP_NAMES} 등 ${FEAST_LINEUP.length}팀이 함께합니다.`,
   openGraph: {
     title: `${FEAST_TITLE} — 9·5 홍천 마을회관`,
     description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 음악가 ${FEAST_LINEUP.length}팀이 마을로 내려옵니다.`,
@@ -235,7 +235,7 @@ export default function VillageFeastPage() {
           </h2>
 
           <p className="mt-8 break-keep text-lg leading-loose text-[var(--color-text)] sm:text-xl">
-            <b className="font-bold">7년입니다.</b> 풍천리 사람들이 양수발전소에 반대하며 거리에 선
+            <b className="font-bold">8년째입니다.</b> 풍천리 사람들이 양수발전소에 반대하며 거리에 선
             시간이. 705번이 넘는 집회를 예순에서 여든의 손들이 지켜왔고, 그중 일곱 분은 지금
             재판을 받고 있습니다. 싸움이 길어질수록 마을에서 사라지는 건 나무만이 아닙니다.
             웃음이 먼저 사라집니다.

@@ -18,7 +18,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: localeAlternates("/story", "/en/story"),
-  title: "풍천리 이야기 — 잣나무 숲과 마을을 지키려는 7년간의 싸움",
+  title: "풍천리 이야기 — 잣나무 숲과 마을을 지키려는 8년의 싸움",
   description:
     "강원도 홍천군 풍천리 주민들이 양수발전소 건설에 맞서 마을과 자연을 지켜온 이야기를 전합니다.",
 };
@@ -52,7 +52,7 @@ export default function StoryPage() {
           imagePage="story"
           imageSection="hero"
           title={<EditableText contentKey="story.hero.title" defaultValue="풍천리 이야기" as="span" page="story" section="hero" />}
-          subtitle={<EditableText contentKey="story.hero.subtitle" defaultValue="잣나무 숲과 마을을 지키려는 7년간의 싸움" as="span" page="story" section="hero" />}
+          subtitle={<EditableText contentKey="story.hero.subtitle" defaultValue="잣나무 숲과 마을을 지키려는 8년의 싸움" as="span" page="story" section="hero" />}
           eyebrow={<EditableText contentKey="story.hero.eyebrow" defaultValue="마을의 목소리" as="span" page="story" section="hero" />}
         />
       </ManagedSection>
@@ -159,7 +159,7 @@ export default function StoryPage() {
             />
             <EditableText
               contentKey="story.video.description"
-              defaultValue="풍천리 주민들의 7년간의 투쟁과 잣나무 숲을 지키려는 이야기를 영상으로 만나보세요."
+              defaultValue="풍천리 주민들의 8년의 투쟁과 잣나무 숲을 지키려는 이야기를 영상으로 만나보세요."
               as="p"
               page="story"
               section="video"

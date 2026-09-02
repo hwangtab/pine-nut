@@ -235,7 +235,7 @@ export const CONCERTS: ConcertEntry[] = [
     posterImage: "/images/concert/village-feast-poster.jpg",
     posterAlt: "풍천리 잣나무 마을 잔치 포스터 — 2026년 9월 5일 토요일 오후 1시",
     summary:
-      "이번엔 음악가들이 마을로 내려옵니다. 7년을 싸워온 사람들이 하루쯤은 웃고 먹고 춤추는, 풍천리 마을회관 앞마당의 잔치입니다.",
+      "이번엔 음악가들이 마을로 내려옵니다. 8년째 싸워온 사람들이 하루쯤은 웃고 먹고 춤추는, 풍천리 마을회관 앞마당의 잔치입니다.",
     lineupCount: FEAST_LINEUP.length,
     upcoming: true,
   },

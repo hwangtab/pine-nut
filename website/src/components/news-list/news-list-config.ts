@@ -58,7 +58,7 @@ export const koreanNewsListConfig: NewsListConfig = {
   },
   intro: {
     contentKey: "news.intro.text",
-    defaultValue: "풍천리의 이야기는 계속되고 있습니다. 언론이 주목하는 7년의 기록.",
+    defaultValue: "풍천리의 이야기는 계속되고 있습니다. 언론이 주목하는 8년의 기록.",
   },
   empty: {
     contentKey: "news.empty.text",

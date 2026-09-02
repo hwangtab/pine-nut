@@ -191,7 +191,7 @@ export default function ConcertPage() {
           {/* 셋째 문단 — 강조 인용 블록 */}
           <div className="mt-12 rounded-[var(--radius-panel)] border-l-4 border-[var(--color-forest)] bg-[var(--color-bg-warm)] px-6 py-8 sm:px-10">
             <p className="break-keep text-lg leading-loose text-[var(--color-text)] sm:text-xl">
-              주민들은 2019년부터 7년 동안 705번 넘게 거리에 섰습니다. 예순에서 여든의 손들이
+              주민들은 2019년부터 8년째 705번 넘게 거리에 섰습니다. 예순에서 여든의 손들이
               팻말을 들었고, 그 가운데 일곱 분은 지금 재판을 받고 있습니다. 이제 음악가 열네
               팀이 그 손을 마주 잡으러 청와대 앞에 섭니다. 숲이 사라지기 전에, 우리 노래가
               가닿아야 할 곳이 있습니다.
