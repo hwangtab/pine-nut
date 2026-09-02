@@ -175,11 +175,17 @@ docs/promo/leaflet/
   넣어놓고 재단선을 알려주지 않으면 인쇄소가 어디를 자를지 알 수 없으므로,
   같은 단계에서 심는다.
 
+  색도 이 단계에서 CMYK 로 바꾼다. RGB 로 두고 아웃라인만 하면 Ghostscript 가
+  다시 쓴 ICC 프로파일을 **macOS Preview(CoreGraphics)가 읽지 못해 사진이
+  통째로 사라진다.** poppler·Ghostscript 렌더에서는 멀쩡해서 놓치기 쉽다.
+  CMYK 변환은 RGB ICC 프로파일을 걷어내므로 이 문제도 같이 없어진다.
+
   ```bash
-  # 글자를 아웃라인으로
+  # 글자를 아웃라인으로 + CMYK 변환
   gs -o /tmp/leaflet-outlined.pdf -sDEVICE=pdfwrite -dNoOutputFonts \
      -dAutoRotatePages=/None -dCompatibilityLevel=1.4 \
-     -dUseFastColor=true -sColorConversionStrategy=LeaveColorUnchanged \
+     -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK \
+     -dOverrideICC=true -dRenderIntent=1 \
      -dDownsampleColorImages=false -dDownsampleGrayImages=false \
      -dAutoFilterColorImages=false -dColorImageFilter=/DCTEncode \
      /tmp/leaflet-raw.pdf
@@ -212,9 +218,12 @@ docs/promo/leaflet/
    - 아웃라인 전후를 같은 해상도로 렌더해 픽셀 비교했을 때 안티에일리어싱
      수준(1~2%)을 넘는 차이가 없는가 — 글리프가 깨지면 여기서 잡힌다
 
-   참고: `pdfimages` 가 ICC 프로파일 읽기 경고를 뱉는데, Ghostscript 가 다시 쓴
-   프로파일을 poppler 가 못 읽는 것이고 파일 결함이 아니다. Ghostscript·
-   ImageMagick 렌더는 정상이다.
+   - `pdfimages -list` 의 color 열이 모두 `cmyk` 인가 — `icc` 가 남아 있으면
+     RGB 변환이 안 된 것이다
+   - **macOS Preview 로 2면을 열어 사진 아홉 장이 보이는가.** 렌더러마다 다르게
+     그리므로 poppler·Ghostscript 로 통과했다고 넘기지 않는다. 명령줄로는
+     `sips -s format png` 가 CoreGraphics 를 쓴다(첫 페이지만 그리므로 2면을
+     검사하려면 페이지 순서를 바꾼 사본을 만든다).
 3. **양면 맞춤** — Side 1 과 Side 2 의 접지선이 100㎜·199.5㎜ 에서 만나는지.
    뒤집었을 때 어긋나면 안면 내용이 접지선에 걸린다.
 4. **사실 대조** — 타임테이블·전화번호·URL·계좌번호를 `concert.ts`, 운영 중인
@@ -224,7 +233,7 @@ docs/promo/leaflet/
 ## 7. 정하지 않은 것
 
 - **인쇄 부수와 종이** — 인쇄소 견적에 따라 정한다. 설계에는 영향이 없다.
-- **색 공간** — 파일은 RGB 다(Chrome 출력). CMYK 변환은 인쇄소 몫으로 남긴다.
-  일반 프로파일로 미리 변환하면 사진이 탁해질 수 있고, 스펙 3절에서 애초에
-  CMYK 에서 안전한 짙은 초록으로 잡아둬 변환 손실이 작다. 인쇄소가 CMYK 파일을
-  요구하면 그쪽 프로파일을 받아 변환한다.
+- **색 공간** — 발주본은 CMYK 다(Ghostscript 기본 변환). 주요 색의 잉크값:
+  초록 C76 M43 Y100 K43(총 262%), 주황 C16 M80 Y100 K5(201%), 크림 C2 M3 Y7.
+  총 잉크량 300% 이하로 상업인쇄 범위 안이다. 인쇄소가 특정 프로파일
+  (예: Japan Color 2001 Coated)을 지정하면 `-sOutputICCProfile` 로 다시 뽑는다.
