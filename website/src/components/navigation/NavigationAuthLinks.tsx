@@ -46,11 +46,17 @@ export default function NavigationAuthLinks({
 
   if (!isLoggedIn) {
     return (
+      // prefetch를 끈다. 이 두 링크는 모든 공개 페이지의 내비게이션에 붙어 있어,
+      // 켜두면 Next가 화면에 보이는 링크를 미리 당겨오면서 로그인 화면의 인증
+      // 클라이언트 청크(gzip 약 55KB)를 방문자 전원의 브라우저로 끌어온다.
+      // useAdminSession에서 정적 import를 걷어낸 것이 이 경로로 되살아난다.
+      // 이 사이트의 주된 행동은 연대서명이지 로그인이 아니므로, 실제로 누른
+      // 사람만 그때 받으면 된다.
       <div className={containerClassName}>
-        <Link href="/login" className={linkClassName}>
+        <Link href="/login" prefetch={false} className={linkClassName}>
           로그인
         </Link>
-        <Link href="/signup" className={signupClassName}>
+        <Link href="/signup" prefetch={false} className={signupClassName}>
           회원가입
         </Link>
       </div>

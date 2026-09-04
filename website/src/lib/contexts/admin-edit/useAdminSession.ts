@@ -60,15 +60,15 @@ export default function useAdminSession(): AdminSessionState {
   const [state, setState] = useState<AdminSessionState>(SIGNED_OUT);
 
   useEffect(() => {
-    // 세션 쿠키가 없으면 여기서 끝난다 — 인증 클라이언트를 내려받지도 않는다.
-    // 로그인·로그아웃은 모두 전체 페이지 이동으로 끝나므로(login/signup 페이지,
-    // LogoutButton, AdminSidebar), 이 훅이 다시 마운트되며 세션을 집어든다.
-    if (!hasStoredSession()) return;
-
     let cancelled = false;
+    let booted = false;
     let unsubscribe: (() => void) | undefined;
 
     async function boot() {
+      // 세션 쿠키가 없으면 인증 클라이언트를 내려받지도 않고 끝낸다.
+      if (!hasStoredSession() || booted) return;
+      booted = true;
+
       const { createSupabaseBrowserClient } = await import("@/lib/supabase-browser");
       const client = createSupabaseBrowserClient();
       if (!client || cancelled) return;
@@ -124,8 +124,18 @@ export default function useAdminSession(): AdminSessionState {
 
     void boot();
 
+    // 이 탭이 다시 앞으로 나올 때 세션 쿠키를 한 번 더 본다. 로그인하지 않은
+    // 채로 열려 있던 탭은 위에서 구독을 걸지 않았으므로, 다른 탭에서 로그인해도
+    // 새로고침 전까지 로그아웃 상태로 남는다. 이 검사는 쿠키 문자열 하나를 읽을
+    // 뿐이고, 세션이 생겼을 때만 클라이언트를 내려받는다.
+    const recheck = () => {
+      if (document.visibilityState === "visible") void boot();
+    };
+    document.addEventListener("visibilitychange", recheck);
+
     return () => {
       cancelled = true;
+      document.removeEventListener("visibilitychange", recheck);
       unsubscribe?.();
     };
   }, []);

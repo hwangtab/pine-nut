@@ -74,13 +74,16 @@ export default async function BoardPostPage({
               요청마다 값이 달라진다. 최적화 캐시가 매번 빗나가고 원본 재요청만 늘어난다.
               대신 화면 밖 사진은 스크롤할 때까지 받지 않도록 지연 로딩을 건다: 사진 여러
               장이 붙은 글에서 전부를 한꺼번에 내려받던 것을 막는다. */}
-          {post.images.map((im) => (
+          {post.images.map((im, index) => (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               key={im.id}
               src={im.url}
               alt=""
-              loading="lazy"
+              // 첫 장은 글을 열면 곧바로 보이는 자리라 미루지 않는다. 화면 안에
+              // 있는 사진에 lazy를 걸면 발견이 한 박자 늦어져 오히려 손해다.
+              loading={index === 0 ? "eager" : "lazy"}
+              fetchPriority={index === 0 ? "high" : undefined}
               decoding="async"
               className="w-full rounded-[var(--radius-card)]"
             />
