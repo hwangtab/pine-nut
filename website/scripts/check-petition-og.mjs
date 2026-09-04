@@ -28,10 +28,22 @@ const layoutSource = read(layoutPath);
 const enLayoutSource = read(enLayoutPath);
 const statementSource = read(statementDataPath);
 
-// ── The OG image route must exist and be a real edge image route, not just a
+// ── The OG image route must exist and be a real image route, not just a
 // file that happens to be named right — assert the Next.js file-convention
 // contract it must satisfy to actually be picked up as /petition's og:image.
-assert(/export const runtime\s*=\s*["']edge["']/.test(ogImageSource), `${ogImagePath} must export runtime = "edge".`);
+//
+// 예전에는 여기서 runtime = "edge" 를 요구했다. 이제는 그 반대를 지킨다: edge는
+// Vercel에서 더 이상 권장되지 않고, 무엇보다 이 라우트를 요청마다 실행되는 동적
+// 라우트로 못박아 소셜 크롤러가 올 때마다 폰트·사진을 새로 받아오게 만들었다.
+// 카드 내용은 방문자와 무관하게 고정이므로 빌드 때 한 번 만들어 캐시한다.
+assert(
+  !/export const runtime\s*=\s*["']edge["']/.test(ogImageSource),
+  `${ogImagePath} must not pin the edge runtime — it forces per-request generation.`,
+);
+assert(
+  /export const revalidate\s*=\s*\d+/.test(ogImageSource),
+  `${ogImagePath} must export a revalidate so the card is cached, not rebuilt per request.`,
+);
 assert(
   /width:\s*1200/.test(ogImageSource) && /height:\s*630/.test(ogImageSource),
   `${ogImagePath} must declare size 1200x630 (the standard OG image dimensions).`,

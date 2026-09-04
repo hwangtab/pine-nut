@@ -44,6 +44,19 @@ const nextConfig: NextConfig = {
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
+      {
+        // public/images는 파일명에 해시가 없어 내용이 바뀌면 같은 이름으로 덮인다.
+        // 그래서 immutable은 못 쓰지만, 기본값대로 매번 재검증하게 두면 포스터
+        // 원본(1.2MB) 같은 파일이 재방문마다 조건부 요청을 낸다. 하루 캐시 +
+        // 한 달 stale-while-revalidate로 재방문을 즉시 응답시킨다.
+        source: "/images/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, stale-while-revalidate=2592000",
+          },
+        ],
+      },
     ];
   },
 };

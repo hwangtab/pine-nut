@@ -1,17 +1,16 @@
 import type { Metadata } from "next";
-import { Nanum_Myeongjo, Nanum_Pen_Script } from "next/font/google";
+import { Nanum_Pen_Script } from "next/font/google";
 import "./globals.css";
 import PublicShell from "@/components/PublicShell";
 
-// 나눔명조 셀프호스팅(next/font가 빌드 시 다운로드해 자체 서빙 — 구글 CSS 체인 제거).
-// Pretendard는 globals.css의 동적 서브셋(@font-face + unicode-range 92분할)로 서빙:
-// 페이지에 실제 쓰인 글자 범위의 조각만 내려받아 전송량이 2MB → 수십 KB로 줄어든다.
-const nanumMyeongjo = Nanum_Myeongjo({
-  weight: ["400", "700", "800"],
-  variable: "--font-nanum-myeongjo",
-  display: "swap",
-  preload: false,
-});
+// Pretendard(본문)와 MaruBuri(제목)는 globals.css의 동적 서브셋
+// (@font-face + unicode-range 92분할)로 서빙한다: 페이지에 실제 쓰인 글자
+// 범위의 조각만 내려받아 전송량이 통짜 대비 수십 KB로 줄어든다.
+//
+// 나눔명조는 여기서 뺐다. --font-serif-display 스택에서 MaruBuri 뒤 폴백이라
+// 화면에 나오는 일이 없는데도, next/font가 3웨이트 × 92서브셋 = @font-face
+// 277개를 렌더 차단 CSS에 실었다(gzip 43KB, 전 페이지 최대 CSS 덩어리).
+// MaruBuri가 같은 92개 범위를 모두 덮는 것을 확인하고 제거했다.
 
 // 나눔 펜 스크립트 셀프호스팅(손글씨 포인트 요소 전용, --font-hand)
 const nanumPen = Nanum_Pen_Script({
@@ -67,7 +66,7 @@ export default async function RootLayout({
   const initialContent = await getAllPageContent();
 
   return (
-    <html lang="ko" className={`${nanumMyeongjo.variable} ${nanumPen.variable}`}>
+    <html lang="ko" className={nanumPen.variable}>
       <body className="antialiased">
         <Analytics />
         <AdminEditShell initialContent={initialContent}>

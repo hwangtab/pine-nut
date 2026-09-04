@@ -72,6 +72,10 @@ export default function BoardImageManager({
               <img
                 src={img.url}
                 alt=""
+                loading="lazy"
+                decoding="async"
+                width={96}
+                height={96}
                 className="h-24 w-24 rounded-[var(--radius-card)] object-cover"
               />
               <button

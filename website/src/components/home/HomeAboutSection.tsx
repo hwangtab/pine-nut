@@ -53,6 +53,10 @@ export default function HomeAboutSection({ storyRef }: HomeAboutSectionProps) {
               section="about"
               width={1200}
               height={800}
+              // 이 사진이 놓이는 칸은 max-w-3xl(768px)을 넘지 않는다. sizes가 없으면
+              // next/image가 width(1200)를 기준으로 1x·2x만 내려보내 모바일에서도
+              // 1200px짜리가 온다 — 실제로 그려지는 폭의 두 배가 넘는다.
+              sizes="(max-width: 768px) 100vw, 768px"
               className="w-full rounded-[2px]"
             />
             <figcaption>

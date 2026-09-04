@@ -38,17 +38,38 @@ All commands must be run from the `website/` directory.
 - **Backend**: Supabase-backed API/data access. `POST /api/signatures` enforces consent + duplicate/rate-limit protections.
 - **Fail behavior**: In production, missing/broken Supabase access fails closed (no demo fallback responses).
 - **State**: Local `useState` hooks only — no global state library.
+- **Public pages stay static**: public routes must not touch `cookies()`/`headers()` or set
+  `dynamic = "force-dynamic"`. Read public content through `createSupabaseAnonClient()`
+  (cookie-free) and let admin mutations invalidate with `revalidatePath`/`revalidateTag`.
+  One `cookies()` call in a shared layout drops the whole subtree out of the CDN.
+- **Fetch only the columns the screen renders**: `getPublishedNewsSummaries()` and
+  `getAllPageContent()` deliberately avoid `select("*")` — those payloads are serialized into
+  every page's HTML *and* its RSC payload, so an unused column is paid for on every visit.
+- **supabase-js is never a static import in a client component reachable from the root
+  layout.** It costs ~55KB gzipped and anonymous visitors never use it. Load it with
+  `await import(...)` inside the handler or effect that actually needs a session
+  (`useAdminSession`, `LogoutButton`).
 
 ### Styling conventions
 
 - Tailwind CSS v4 with custom CSS variables in `globals.css`:
   - `--color-forest` (#2D5016), `--color-warm` (#C75000), `--color-sky` (#1B4965), `--color-earth` (#8B6914)
-- Typography: `Pretendard` / `Noto Sans KR` for body, `Nanum Myeongjo` (serif) for headings
+- Typography: `Pretendard` for body, `MaruBuri` (serif) for headings via `--font-serif-display`,
+  `Nanum Pen Script` for handwriting accents via `--font-hand`. Pretendard and MaruBuri are
+  self-hosted as 92 `unicode-range` subsets each (`src/app/fonts/*.css`, `public/fonts/*`) so a
+  page downloads only the slices its glyphs need. Keep both fonts on the same 92 range
+  boundaries — sharing boundaries keeps the request count flat. The whole-family
+  `MaruBuri-{Regular,Bold}.woff2` stay in `public/fonts/maruburi/` for the print leaflet
+  (`docs/promo/leaflet/leaflet.css`) and as the source for regenerating subsets; the site
+  itself never requests them.
 - Mobile-first responsive with standard Tailwind breakpoints
 
 ### Animation
 
-Framer Motion is used throughout for scroll-triggered animations (`useInView`), number counters, fade-ins with stagger, and page transitions.
+No animation library. Framer Motion was removed — do not reintroduce it. Scroll-triggered
+reveals use a hand-rolled `IntersectionObserver` hook (`src/lib/use-reveal.ts`) that toggles
+the CSS classes `.reveal` / `.is-visible` in `globals.css`. Number counters and staggered
+fade-ins are CSS transitions driven by the same hook.
 
 ### Analytics
 

@@ -62,7 +62,7 @@
   --color-text: var(--color-text);
   --color-text-muted: var(--color-text-muted);
   --color-border: var(--color-border);
-  --font-serif-display: 'MaruBuri', var(--font-nanum-myeongjo), 'Nanum Myeongjo', serif;
+  --font-serif-display: 'MaruBuri', serif;
   --font-hand: var(--font-nanum-pen), 'Nanum Pen Script', cursive;
   /* 데스크톱 가로 내비가 캡슐에 안전히 들어가는 최소 폭(≈1152px) */
   --breakpoint-nav: 72rem;
@@ -96,7 +96,7 @@ body {
   }
 
   /* 타이포: 제목·본문은 Pretendard 산세리프로 통일.
-     세리프(Nanum Myeongjo)는 인용문 블록 등 독립 요소에만 사용해 혼용을 피한다.
+     세리프(MaruBuri)는 인용문 블록 등 독립 요소에만 사용해 혼용을 피한다.
 
      여기 값은 기본값이다 — 요소에 leading-*·tracking-* 를 붙이면 그쪽이 이겨야 한다.
      레이어 밖에 두면 Tailwind v4에서 유틸리티가 절대 못 이기므로 @layer base 에 둔다.

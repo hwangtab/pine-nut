@@ -1,4 +1,4 @@
-import type { NewsItem } from "@/data/news";
+import type { NewsItem, NewsSummary } from "@/data/news";
 
 export type EnglishNewsCategory =
   | "Notice"
@@ -174,8 +174,28 @@ export function translateNewsItemToEnglish(item: NewsItem): EnglishNewsItem {
   };
 }
 
-export function translateNewsItemsToEnglish(
-  items: NewsItem[],
-): EnglishNewsItem[] {
-  return items.map(translateNewsItemToEnglish);
+/** 본문이 빠진 목록·이전글/다음글용 형태. 화면은 제목·요약만 그린다. */
+export type EnglishNewsSummary = Omit<EnglishNewsItem, "content">;
+
+export function translateNewsSummaryToEnglish(item: NewsSummary): EnglishNewsSummary {
+  const translated = newsTranslations[item.slug];
+
+  return {
+    id: item.id,
+    slug: item.slug,
+    title: translated?.title ?? item.title,
+    summary: translated?.summary ?? item.summary,
+    date: item.date,
+    category: translated?.category ?? categoryMap[item.category],
+    sourceUrl: item.sourceUrl,
+    sourceName: item.sourceName,
+    thumbnailUrl: item.thumbnailUrl,
+    isTranslated: Boolean(translated),
+  };
+}
+
+export function translateNewsSummariesToEnglish(
+  items: NewsSummary[],
+): EnglishNewsSummary[] {
+  return items.map(translateNewsSummaryToEnglish);
 }

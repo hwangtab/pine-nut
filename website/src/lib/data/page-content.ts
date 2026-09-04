@@ -1,17 +1,20 @@
 import { unstable_cache } from "next/cache";
 import { createSupabaseAnonClient } from "@/lib/supabase-anon";
 
+/**
+ * 화면이 실제로 읽는 필드만 담는다. 이 맵은 루트 레이아웃이 모든 페이지의
+ * HTML과 RSC 페이로드에 두 번 직렬화해 내보내므로, 안 쓰는 컬럼 하나가
+ * 전 페이지의 전송량이 된다. 예전에는 select("*")로 id·content_type·
+ * updated_at·updated_by·section까지 실어 보냈지만 읽는 곳이 한 군데도 없었다.
+ */
 export interface PageContent {
-  id: string;
   content_key: string;
-  content_type: string;
   value: string;
   metadata: Record<string, string>;
   page: string;
-  section: string | null;
-  updated_at: string;
-  updated_by: string;
 }
+
+const PAGE_CONTENT_COLUMNS = "content_key,value,metadata,page";
 
 /**
  * Fetch all content overrides for a given page (or all pages).
@@ -28,7 +31,7 @@ async function fetchAllPageContent(): Promise<Record<string, PageContent>> {
 
   const { data, error } = await supabase
     .from("page_content")
-    .select("*")
+    .select(PAGE_CONTENT_COLUMNS)
     .order("content_key");
 
   if (error || !data) return {};
@@ -51,7 +54,9 @@ async function fetchAllPageContent(): Promise<Record<string, PageContent>> {
  */
 const getCachedPageContent = unstable_cache(fetchAllPageContent, ["page-content-all"], {
   tags: [PAGE_CONTENT_CACHE_TAG],
-  revalidate: 3600,
+  // 1시간이었다. 이 값이 곧 모든 정적 페이지의 재생성 주기가 되어, 바뀐 것이
+  // 없어도 하루 24번씩 사이트 전체를 다시 렌더하고 page_content를 다시 읽었다.
+  revalidate: 86400,
 });
 
 export async function getAllPageContent(): Promise<Record<string, PageContent>> {

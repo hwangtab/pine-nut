@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site-config";
-import { getPublishedNews } from "@/lib/data/news";
+import { getPublishedNewsSummaries } from "@/lib/data/news";
 
 // 정적 라우트. 영문 하위 페이지가 빠져 있어 색인 대상에서 통째로 누락됐었다.
 const STATIC_PAGES = [
@@ -51,7 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 조회가 실패해도 sitemap 자체는 정적 목록으로 응답해야 하므로 삼킨다.
   let newsEntries: MetadataRoute.Sitemap = [];
   try {
-    const news = await getPublishedNews();
+    const news = await getPublishedNewsSummaries();
     newsEntries = news.map((item) => ({
       url: `${SITE_URL}/news/${encodeURIComponent(item.slug)}`,
       lastModified: item.date ? new Date(item.date) : now,

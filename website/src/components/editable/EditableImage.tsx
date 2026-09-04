@@ -117,9 +117,15 @@ export default function EditableImage({
     setUrlValue("");
   }, [contentKey, urlValue, page, section, stageChange]);
 
+  // priority가 붙은 이미지는 그 페이지의 LCP 요소다. next/image는 preload 링크만
+  // 넣고 우선순위는 표시하지 않아, 브라우저가 히어로 사진을 다른 리소스와 같은
+  // 순위로 다룬다. fetchPriority를 같이 얹어 경쟁에서 앞세운다.
+  const priorityProps = priority
+    ? { priority: true as const, fetchPriority: "high" as const }
+    : { priority };
   const imageProps = fill
-    ? { fill: true as const, sizes, priority, className }
-    : { width, height, sizes, priority, className };
+    ? { fill: true as const, sizes, className, ...priorityProps }
+    : { width, height, sizes, className, ...priorityProps };
 
   if (!isEditMode) {
     return <Image src={src} alt={alt} onError={handleError} {...imageProps} {...rest} />;

@@ -108,8 +108,10 @@ export default function LoginPage() {
 
     failCount.current = 0;
     const path = await getLandingPath();
-    router.push(path);
-    router.refresh();
+    // 전체 페이지 이동으로 끝낸다. 루트 레이아웃의 세션 훅은 마운트 시점에
+    // 세션 쿠키를 한 번 보고 판정하므로(useAdminSession), 클라이언트 내비게이션으로
+    // 넘어가면 방금 로그인한 사실이 내비게이션·툴바에 반영되지 않는다.
+    window.location.assign(path);
   }
 
   if (checking) {

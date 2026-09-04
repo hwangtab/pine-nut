@@ -1,7 +1,11 @@
 import { ImageResponse } from "next/og";
 import { SITE_HOST } from "@/lib/site-config";
 
-export const runtime = "edge";
+// edge 런타임을 쓰지 않는다. Vercel의 기본 런타임(Fluid Compute)이 같은 리전에서
+// 같은 값으로 돌면서 Node API를 온전히 쓸 수 있고, edge는 더 이상 권장되지 않는다.
+// 아울러 edge 지정이 이 라우트를 요청마다 실행되는 동적 라우트로 못박고 있었다 —
+// 카드 내용은 방문자와 무관하게 고정이라 그럴 이유가 없다.
+export const revalidate = 86400;
 export const alt = "비 내리는 풍천리 잣나무 숲 — 우리가 나무다";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";

@@ -11,6 +11,9 @@ export interface NewsItem {
   thumbnailUrl?: string;
 }
 
+/** 목록·이전글/다음글에 쓰는 형태. 본문(content)이 빠진다. */
+export type NewsSummary = Omit<NewsItem, "content">;
+
 export const newsItems: NewsItem[] = [
   {
     id: 1,

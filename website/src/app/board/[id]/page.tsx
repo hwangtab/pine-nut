@@ -70,9 +70,20 @@ export default async function BoardPostPage({
 
       {post.images.length > 0 && (
         <div className="mt-6 space-y-3">
+          {/* next/image를 쓰지 않는다 — 이 주소는 private 버킷의 만료되는 signed URL이라
+              요청마다 값이 달라진다. 최적화 캐시가 매번 빗나가고 원본 재요청만 늘어난다.
+              대신 화면 밖 사진은 스크롤할 때까지 받지 않도록 지연 로딩을 건다: 사진 여러
+              장이 붙은 글에서 전부를 한꺼번에 내려받던 것을 막는다. */}
           {post.images.map((im) => (
             // eslint-disable-next-line @next/next/no-img-element
-            <img key={im.id} src={im.url} alt="" className="w-full rounded-[var(--radius-card)]" />
+            <img
+              key={im.id}
+              src={im.url}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="w-full rounded-[var(--radius-card)]"
+            />
           ))}
         </div>
       )}

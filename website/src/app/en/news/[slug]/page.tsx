@@ -5,15 +5,33 @@ import type { Metadata } from "next";
 import ShareButtons from "@/components/ShareButtons";
 import UtilityHeader from "@/components/UtilityHeader";
 import { EditableLink, EditableText } from "@/components/editable";
-import { getNewsBySlug, getPublishedNews } from "@/lib/data/news";
+import { getNewsBySlug, getPublishedNewsSummaries } from "@/lib/data/news";
 import {
   translateNewsItemToEnglish,
-  translateNewsItemsToEnglish,
+  translateNewsSummariesToEnglish,
 } from "@/lib/i18n/news-en";
 
-export const dynamic = "force-dynamic";
+/**
+ * 정적 프리렌더 + 태그 무효화로 서빙한다. 관리자가 소식을 저장·삭제하면
+ * revalidateNewsPaths()가 이 경로를 즉시 무효화하므로(lib/actions/news/revalidation.ts)
+ * 아래 시간값은 그 경로를 타지 않는 변경(DB 직접 수정 등)에 대비한 안전판이다.
+ * 예전에는 force-dynamic이 걸려 있었는데, 이 페이지들은 방문자가 누구든 같은
+ * 내용을 보여주면서도 조회 1회마다 서버 렌더 + Supabase 왕복을 냈다.
+ */
+export const revalidate = 3600;
 
 type Params = Promise<{ slug: string }>;
+
+/**
+ * 발행된 기사를 빌드 때 미리 렌더한다. 여기 없는 slug(빌드 뒤 등록된 기사)는
+ * 첫 요청 때 렌더돼 캐시된다 — 관리자 저장 시 revalidatePath가 함께 돌므로
+ * 목록과 상세가 어긋나지 않는다.
+ */
+export async function generateStaticParams() {
+  const items = await getPublishedNewsSummaries();
+  return items.map((item) => ({ slug: item.slug }));
+}
+
 
 export async function generateMetadata({
   params,
@@ -62,7 +80,7 @@ export default async function EnglishNewsDetailPage({
   }
 
   const translatedItem = translateNewsItemToEnglish(item);
-  const allNews = translateNewsItemsToEnglish(await getPublishedNews());
+  const allNews = translateNewsSummariesToEnglish(await getPublishedNewsSummaries());
   const currentIndex = allNews.findIndex((newsItem) => newsItem.slug === slug);
   const prevItem =
     currentIndex < allNews.length - 1 ? allNews[currentIndex + 1] : null;

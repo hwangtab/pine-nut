@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { isAdminRole, type AdminRole } from "@/lib/admin-roles";
-import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 export interface AdminSessionState {
   /** owner/editor — 인라인 편집(편집 모드·툴바)을 할 수 있는 사람 */
@@ -18,6 +17,19 @@ const SIGNED_OUT: AdminSessionState = {
   isActiveAdmin: false,
   isLoggedIn: false,
 };
+
+/**
+ * 세션 쿠키가 있는지만 본다. @supabase/ssr의 브라우저 클라이언트는 세션을
+ * `sb-<project-ref>-auth-token` 쿠키에 담는다(용량이 크면 `.0` `.1`로 쪼갠다).
+ * 이 검사는 화면 표시용 힌트일 뿐이다 — 쿠키를 위조해도 권한은 서버가 준다.
+ */
+function hasStoredSession(): boolean {
+  try {
+    return /(?:^|;\s*)sb-[^=;]*-auth-token(?:\.\d+)?=/.test(document.cookie);
+  } catch {
+    return false;
+  }
+}
 
 /**
  * 로그인·권한 상태를 브라우저에서 판정한다.
@@ -37,69 +49,84 @@ const SIGNED_OUT: AdminSessionState = {
  * 깜빡임이 없다). 관리자 전용 화면(/admin)의 접근 통제는 이 훅과 무관하게
  * src/proxy.ts와 각 서버 액션의 requireEditor()가 계속 담당한다 — 이 값은
  * 어디까지나 화면 표시용이며, 조작해도 권한이 생기지 않는다.
+ *
+ * supabase-js는 정적으로 import하지 않는다. 이 훅이 루트 레이아웃 안에 있어,
+ * 정적 import는 인증 클라이언트 한 벌(gzip 약 55KB)을 로그인하지 않은 방문자
+ * 전원의 번들에 밀어넣는다 — 그들에게는 끝까지 쓸 일이 없는 코드다. 세션
+ * 쿠키가 있을 때만 내려받는다.
  */
+
 export default function useAdminSession(): AdminSessionState {
   const [state, setState] = useState<AdminSessionState>(SIGNED_OUT);
 
   useEffect(() => {
-    const supabase = createSupabaseBrowserClient();
-    if (!supabase) return;
+    // 세션 쿠키가 없으면 여기서 끝난다 — 인증 클라이언트를 내려받지도 않는다.
+    // 로그인·로그아웃은 모두 전체 페이지 이동으로 끝나므로(login/signup 페이지,
+    // LogoutButton, AdminSidebar), 이 훅이 다시 마운트되며 세션을 집어든다.
+    if (!hasStoredSession()) return;
 
     let cancelled = false;
+    let unsubscribe: (() => void) | undefined;
 
-    async function resolveRole(): Promise<AdminSessionState> {
-      // supabase는 위에서 null 검사를 통과했지만 클로저 안에서는 좁혀지지 않는다.
-      const client = supabase!;
-      const {
-        data: { session },
-      } = await client.auth.getSession();
+    async function boot() {
+      const { createSupabaseBrowserClient } = await import("@/lib/supabase-browser");
+      const client = createSupabaseBrowserClient();
+      if (!client || cancelled) return;
 
-      // 저장된 세션이 없으면 여기서 끝 — 네트워크 요청은 한 번도 나가지 않는다.
-      if (!session) return SIGNED_OUT;
+      const resolveRole = async (): Promise<AdminSessionState> => {
+        const {
+          data: { session },
+        } = await client.auth.getSession();
 
-      const { data, error } = await client.rpc("admin_role");
-      // 권한 조회가 실패하면 "권한 없음"으로 떨어뜨린다. 실패를 관리자로
-      // 해석하면 툴바가 잘못 뜨고, 저장은 어차피 서버에서 거부되므로 사용자는
-      // 이유 없는 에러만 보게 된다.
-      const role: AdminRole | null = !error && isAdminRole(data) ? data : null;
+        // 쿠키는 있었지만 세션이 만료됐을 수 있다. 이때도 네트워크에 나가지 않는다.
+        if (!session) return SIGNED_OUT;
 
-      return {
-        isLoggedIn: true,
-        isActiveAdmin: role != null,
-        isAdmin: role === "owner" || role === "editor",
+        const { data, error } = await client.rpc("admin_role");
+        // 권한 조회가 실패하면 "권한 없음"으로 떨어뜨린다. 실패를 관리자로
+        // 해석하면 툴바가 잘못 뜨고, 저장은 어차피 서버에서 거부되므로 사용자는
+        // 이유 없는 에러만 보게 된다.
+        const role: AdminRole | null = !error && isAdminRole(data) ? data : null;
+
+        return {
+          isLoggedIn: true,
+          isActiveAdmin: role != null,
+          isAdmin: role === "owner" || role === "editor",
+        };
       };
-    }
 
-    resolveRole()
-      .then((next) => {
-        if (!cancelled) setState(next);
-      })
-      .catch(() => {
-        if (!cancelled) setState(SIGNED_OUT);
+      const apply = () => {
+        resolveRole()
+          .then((next) => {
+            if (!cancelled) setState(next);
+          })
+          .catch(() => {
+            if (!cancelled) setState(SIGNED_OUT);
+          });
+      };
+
+      apply();
+
+      // 이 탭에서 세션이 바뀌면(토큰 갱신, 다른 탭의 로그아웃) 다시 판정한다.
+      const {
+        data: { subscription },
+      } = client.auth.onAuthStateChange((event) => {
+        // 구독을 걸면 supabase-js가 현재 상태를 INITIAL_SESSION으로 한 번 흘려보낸다.
+        // 위의 최초 조회가 이미 그 일을 했으므로 무시한다 — 그러지 않으면 로그인한
+        // 사람은 페이지를 열 때마다 admin_role() 왕복을 두 번 낸다.
+        if (event === "INITIAL_SESSION") return;
+        apply();
       });
 
-    // 로그인·로그아웃이 이 탭에서 일어나면(로그인 페이지, LogoutButton) 그
-    // 즉시 다시 판정한다. 이게 없으면 로그아웃한 뒤에도 새로고침 전까지
-    // 내비게이션이 로그인 상태를 계속 보여준다.
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event) => {
-      // 구독을 걸면 supabase-js가 현재 상태를 INITIAL_SESSION으로 한 번 흘려보낸다.
-      // 위의 최초 조회가 이미 그 일을 했으므로 무시한다 — 그러지 않으면 로그인한
-      // 사람은 페이지를 열 때마다 admin_role() 왕복을 두 번 낸다.
-      if (event === "INITIAL_SESSION") return;
-      resolveRole()
-        .then((next) => {
-          if (!cancelled) setState(next);
-        })
-        .catch(() => {
-          if (!cancelled) setState(SIGNED_OUT);
-        });
-    });
+      unsubscribe = () => subscription.unsubscribe();
+      // 클라이언트를 내려받는 사이에 언마운트됐으면 곧바로 정리한다.
+      if (cancelled) unsubscribe();
+    }
+
+    void boot();
 
     return () => {
       cancelled = true;
-      subscription.unsubscribe();
+      unsubscribe?.();
     };
   }, []);
 

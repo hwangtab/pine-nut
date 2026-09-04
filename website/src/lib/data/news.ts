@@ -1,6 +1,7 @@
+import { cache } from "react";
 import { createSupabaseAnonClient } from "@/lib/supabase-anon";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
-import { newsItems as fallbackNews, type NewsItem } from "@/data/news";
+import { newsItems as fallbackNews, type NewsItem, type NewsSummary } from "@/data/news";
 
 interface NewsRow {
   id: number;
@@ -30,6 +31,33 @@ function fallbackOrThrow<T>(fallbackFactory: () => T, errorMessage: string): T {
     throw new Error(errorMessage);
   }
   return fallbackFactory();
+}
+
+export type { NewsSummary };
+
+const NEWS_SUMMARY_COLUMNS =
+  "id,slug,title,summary,date,category,source_url,source_name,thumbnail_url";
+
+type NewsSummaryRow = Omit<NewsRow, "content" | "is_deleted" | "created_at" | "updated_at">;
+
+function newsItemToSummary(item: NewsItem): NewsSummary {
+  const { content, ...summary } = item;
+  void content;
+  return summary;
+}
+
+function rowToNewsSummary(row: NewsSummaryRow): NewsSummary {
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    summary: row.summary,
+    date: row.date,
+    category: row.category as NewsItem["category"],
+    sourceUrl: row.source_url,
+    sourceName: row.source_name,
+    thumbnailUrl: row.thumbnail_url ?? undefined,
+  };
 }
 
 function rowToNewsItem(row: NewsRow): NewsItem {
@@ -74,12 +102,48 @@ export async function getPublishedNews(): Promise<NewsItem[]> {
   return data.map(rowToNewsItem);
 }
 
+/**
+ * 목록·이전글/다음글 전용 조회. getPublishedNews()와 정렬이 같고 본문만 빠진다.
+ * 기사 수가 늘수록 본문 전량이 페이로드를 지배하므로, 본문을 그리는 상세
+ * 페이지만 getPublishedNews()/getNewsBySlug()를 쓴다.
+ */
+export async function getPublishedNewsSummaries(): Promise<NewsSummary[]> {
+  const supabase = createSupabaseAnonClient();
+  if (!supabase) {
+    return fallbackOrThrow(
+      () => sortFallbackNews().map(newsItemToSummary),
+      "Supabase is not configured in production for published news.",
+    );
+  }
+
+  const { data, error } = await supabase
+    .from("news")
+    .select(NEWS_SUMMARY_COLUMNS)
+    .eq("is_deleted", false)
+    .order("date", { ascending: false })
+    .order("id", { ascending: false });
+
+  if (error || !data) {
+    console.error("Failed to fetch published news summaries:", error);
+    return fallbackOrThrow(
+      () => sortFallbackNews().map(newsItemToSummary),
+      "Failed to fetch published news summaries from Supabase.",
+    );
+  }
+  return (data as unknown as NewsSummaryRow[]).map(rowToNewsSummary);
+}
+
 // 공개(비삭제) 콘텐츠만 읽는 경로는 쿠키를 읽지 않는 익명 클라이언트를 쓴다.
 // createSupabaseServerClient()는 next/headers의 cookies()를 호출하고, 그 한 줄이
 // 이 함수를 부르는 페이지를 요청마다 서버 렌더로 못박는다 — 방문자가 누구든
 // 같은 기사·연혁을 보여주는 페이지들이 CDN 캐시에서 빠지는 이유였다.
 // 삭제분까지 봐야 하는 관리자용 조회는 아래에서 계속 쿠키 클라이언트를 쓴다.
-export async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
+/**
+ * 같은 요청 안에서 generateMetadata와 페이지 본문이 각각 호출한다. React.cache로
+ * 감싸지 않으면 방문 1회마다 같은 SELECT가 두 번 나간다(supabase-js의 fetch는
+ * Next의 요청 단위 중복 제거 대상이 아니다).
+ */
+export const getNewsBySlug = cache(async (slug: string): Promise<NewsItem | null> => {
   const supabase = createSupabaseAnonClient();
   if (!supabase) {
     return fallbackOrThrow(() => fallbackNews.find((n) => n.slug === slug) ?? null, "Supabase is not configured in production for news detail.");
@@ -100,7 +164,7 @@ export async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
     return IS_PRODUCTION ? null : fallbackNews.find((n) => n.slug === slug) ?? null;
   }
   return rowToNewsItem(data);
-}
+});
 
 export async function getAllNews(options?: { page?: number; perPage?: number; query?: string }): Promise<{ items: (NewsItem & { isDeleted: boolean })[]; total: number }> {
   const page = options?.page ?? 1;

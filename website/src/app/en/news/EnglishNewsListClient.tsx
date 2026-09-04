@@ -2,12 +2,12 @@
 
 import { NewsListPage } from "@/components/news-list/NewsListPage";
 import { englishNewsListConfig } from "@/components/news-list/news-list-config";
-import type { EnglishNewsItem } from "@/lib/i18n/news-en";
+import type { EnglishNewsSummary } from "@/lib/i18n/news-en";
 
 export default function EnglishNewsListClient({
   newsItems,
 }: {
-  newsItems: EnglishNewsItem[];
+  newsItems: EnglishNewsSummary[];
 }) {
   return (
     <NewsListPage

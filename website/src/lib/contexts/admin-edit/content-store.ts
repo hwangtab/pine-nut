@@ -93,15 +93,10 @@ export function mergeStagedChanges(
 
   for (const change of changes) {
     next[change.content_key] = {
-      id: current[change.content_key]?.id ?? "",
       content_key: change.content_key,
-      content_type: change.content_type,
       value: change.value,
       metadata: change.metadata ?? {},
       page: change.page,
-      section: change.section ?? null,
-      updated_at: new Date().toISOString(),
-      updated_by: "",
     };
   }
 

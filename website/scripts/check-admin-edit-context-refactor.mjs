@@ -47,6 +47,10 @@ for (const removedResponsibility of [
 const contextLines = contextSource.trimEnd().split("\n").length;
 assert(contextLines <= 240, `AdminEditContext should be smaller after extraction, got ${contextLines} lines.`);
 
+// PageContent가 화면이 실제로 읽는 4개 필드(content_key·value·metadata·page)로
+// 좁혀지면서 updated_at이 사라졌다. 예전 이 목록에 있던 "new Date().toISOString"은
+// store가 그 값을 찍는다는 뜻이었는데, 이제 찍을 필드가 없다. 컨텍스트가 타임스탬프를
+// 소유하지 않는다는 아래(제거 목록) 검사는 그대로 남아 의도를 지킨다.
 const storeSource = read("src/lib/contexts/admin-edit/content-store.ts");
 for (const expected of [
   "getStoredContent",
@@ -55,7 +59,6 @@ for (const expected of [
   "removeStagedChange",
   "removeContentOverride",
   "mergeStagedChanges",
-  "new Date().toISOString",
 ]) {
   assert(storeSource.includes(expected), `content-store module must include ${expected}.`);
 }

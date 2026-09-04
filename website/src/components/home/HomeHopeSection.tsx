@@ -83,6 +83,10 @@ export default function HomeHopeSection() {
             section="hope"
             width={1200}
             height={800}
+            // 이 칸은 max-w-5xl(1024px)을 넘지 않는다. sizes를 주지 않으면
+            // next/image가 width(1200) 기준 1x·2x만 후보로 두어 모바일에도 과한
+            // 크기가 내려간다.
+            sizes="(max-width: 1024px) 100vw, 1024px"
             className="w-full rounded-[2px]"
           />
           <figcaption>

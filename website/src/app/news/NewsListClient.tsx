@@ -2,12 +2,12 @@
 
 import { NewsListPage } from "@/components/news-list/NewsListPage";
 import { koreanNewsListConfig } from "@/components/news-list/news-list-config";
-import type { NewsItem } from "@/data/news";
+import type { NewsSummary } from "@/data/news";
 
 export default function NewsListClient({
   newsItems,
 }: {
-  newsItems: NewsItem[];
+  newsItems: NewsSummary[];
 }) {
   return (
     <NewsListPage

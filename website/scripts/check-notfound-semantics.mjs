@@ -14,12 +14,25 @@ function read(path) {
   return readFileSync(join(root, path), "utf8");
 }
 
+// 조회 함수는 두 가지 형태로 선언된다: 평범한 `export async function`,
+// 그리고 요청 단위 중복 제거를 위해 React.cache로 감싼 `export const X = cache(async`.
+// 어느 쪽이든 본문을 집어낸다 — 이 검사의 관심사는 선언 방식이 아니라
+// maybeSingle()을 쓰는지다.
 function functionBody(source, name) {
-  const marker = `export async function ${name}`;
+  const markers = [
+    `export async function ${name}`,
+    `export const ${name} = cache(`,
+  ];
+  const marker = markers.find((candidate) => source.includes(candidate));
+  assert(marker !== undefined, `${name} was not found.`);
   const start = source.indexOf(marker);
-  assert(start >= 0, `${name} was not found.`);
-  const next = source.indexOf("\nexport async function ", start + marker.length);
-  return source.slice(start, next >= 0 ? next : source.length);
+  const rest = source.slice(start + marker.length);
+  const nextStarts = [
+    rest.indexOf("\nexport async function "),
+    rest.indexOf("\nexport const "),
+  ].filter((index) => index >= 0);
+  const end = nextStarts.length > 0 ? Math.min(...nextStarts) : rest.length;
+  return marker + rest.slice(0, end);
 }
 
 const newsData = read("src/lib/data/news.ts");
