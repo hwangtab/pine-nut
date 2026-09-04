@@ -23,10 +23,21 @@ type Params = Promise<{ slug: string }>;
  * 발행된 기사를 빌드 때 미리 렌더한다. 여기 없는 slug(빌드 뒤 등록된 기사)는
  * 첫 요청 때 렌더돼 캐시된다 — 관리자 저장 시 revalidatePath가 함께 돌므로
  * 목록과 상세가 어긋나지 않는다.
+ *
+ * 조회가 실패해도 빈 목록을 돌려주고 넘어간다. 이 함수는 "미리 만들어 둘 것"을
+ * 고르는 최적화일 뿐이라, 실패하면 전부 요청 시점 렌더로 떨어지면 그만이다.
+ * 여기서 예외를 던지면 Supabase가 잠깐 흔들리거나 자격증명 없는 새 클론에서
+ * 빌드 자체가 멈춘다 — 최적화가 배포를 막아서는 안 된다. 없는 기사를 404로
+ * 돌리는 fail-closed 동작은 요청 시점의 getNewsBySlug가 그대로 담당한다.
  */
 export async function generateStaticParams() {
-  const items = await getPublishedNewsSummaries();
-  return items.map((item) => ({ slug: item.slug }));
+  try {
+    const items = await getPublishedNewsSummaries();
+    return items.map((item) => ({ slug: item.slug }));
+  } catch (error) {
+    console.error("generateStaticParams: 기사 목록을 읽지 못해 사전 렌더를 건너뛴다", error);
+    return [];
+  }
 }
 
 
