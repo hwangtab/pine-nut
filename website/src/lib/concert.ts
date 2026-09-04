@@ -115,9 +115,9 @@ export interface FeastArtist {
 // 열지만 무대는 2시부터다. 앞뒤로 붙는 여는 한 시간과 단체사진은 페이지에서
 // 별도 표기한다.
 export const FEAST_TIMETABLE: ConcertSlot[] = [
-  { start: "14:00", end: "14:15", name: "경하와 세민" },
+  { start: "14:00", end: "14:15", name: "길가는밴드 장현호" },
   { start: "14:20", end: "14:35", name: "박지휘" },
-  { start: "14:40", end: "14:55", name: "길가는밴드 장현호" },
+  { start: "14:40", end: "14:55", name: "경하와 세민" },
   { start: "15:00", end: "15:15", name: "최양다음 NEXT" },
   { start: "15:20", end: "15:35", name: "자이" },
   { start: "15:40", end: "15:55", name: "김동산과 블루이웃" },
