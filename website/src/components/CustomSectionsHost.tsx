@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePublicPathname } from "@/lib/use-public-pathname";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 import {
   PATH_TO_BUILDER_PAGE,
@@ -39,7 +39,7 @@ function renderSectionLink(
 }
 
 export default function CustomSectionsHost() {
-  const pathname = usePathname();
+  const pathname = usePublicPathname();
   const { getContent } = useAdminEdit();
   const page = PATH_TO_BUILDER_PAGE[pathname];
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePublicPathname } from "@/lib/use-public-pathname";
 import DesktopNavigation from "@/components/navigation/DesktopNavigation";
 import MobileNavigationButton from "@/components/navigation/MobileNavigationButton";
 import MobileNavigationMenu from "@/components/navigation/MobileNavigationMenu";
@@ -12,7 +12,7 @@ import { defaultEnNavLinks, defaultNavLinks, parseBuilderLinks } from "@/lib/cus
 
 export default function Navigation() {
   const { getContent, isActiveAdmin, isLoggedIn } = useAdminEdit();
-  const pathname = usePathname();
+  const pathname = usePublicPathname();
   // 영문 구간에서는 영문 링크 세트를 쓴다. 한국어 링크를 그대로 두면 영문 사용자가
   // 첫 클릭에 한국어 사이트로 이탈하고, /en 하위 페이지로 갈 경로가 없다.
   const isEnglish = pathname === "/en" || pathname.startsWith("/en/");

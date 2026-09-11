@@ -7,14 +7,14 @@ import FooterContact from "@/components/footer/FooterContact";
 import FooterPrivacyPanel from "@/components/footer/FooterPrivacyPanel";
 import FooterQuickLinks from "@/components/footer/FooterQuickLinks";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
-import { usePathname } from "next/navigation";
+import { usePublicPathname } from "@/lib/use-public-pathname";
 import { defaultEnFooterLinks, defaultFooterLinks, parseBuilderLinks } from "@/lib/custom-sections";
 import { RidgeDivider } from "@/components/visuals/ForestLetterMotifs";
 
 export default function Footer() {
   const { getContent } = useAdminEdit();
   const [showPrivacy, setShowPrivacy] = useState(false);
-  const pathname = usePathname();
+  const pathname = usePublicPathname();
   // 영문 구간에서는 영문 링크 세트(Navigation과 동일한 이유).
   const isEnglish = pathname === "/en" || pathname.startsWith("/en/");
   const quickLinks = isEnglish

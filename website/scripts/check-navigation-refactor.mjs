@@ -51,6 +51,20 @@ for (const removedResponsibility of [
   assert(!navSource.includes(removedResponsibility), `Navigation should not own ${removedResponsibility}.`);
 }
 
+// 공개 화면의 경로 판정은 usePublicPathname 을 거쳐야 한다. Vercel 이 홈을
+// 재생성할 때 usePathname() 이 "/index" 를 돌려줘, 투명 내비·상단 여백·커스텀
+// 섹션이 "홈 아님"으로 그려진 채 CDN 에 굳은 적이 있다(lib/use-public-pathname.ts).
+for (const path of [
+  "src/components/Navigation.tsx",
+  "src/components/PublicShell.tsx",
+  "src/components/Footer.tsx",
+  "src/components/CustomSectionsHost.tsx",
+]) {
+  const source = read(path);
+  assert(source.includes("usePublicPathname"), `${path} must read the path through usePublicPathname.`);
+  assert(!/from "next\/navigation"[^\n]*usePathname|usePathname\(\)/.test(source), `${path} must not call usePathname directly.`);
+}
+
 const navLines = navSource.trimEnd().split("\n").length;
 assert(navLines <= 130, `Navigation should stay orchestration-focused, got ${navLines} lines.`);
 

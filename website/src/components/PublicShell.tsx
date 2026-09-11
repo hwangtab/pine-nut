@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePublicPathname } from "@/lib/use-public-pathname";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import CustomSectionsHost from "@/components/CustomSectionsHost";
@@ -9,7 +9,7 @@ import { PATH_TO_BUILDER_PAGE, parseCustomSections } from "@/lib/custom-sections
 import { needsFooterRidgeGap, needsNavTopPadding } from "@/lib/nav-routes";
 
 export default function PublicShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+  const pathname = usePublicPathname();
   const { getContent } = useAdminEdit();
   const isAdmin = pathname.startsWith("/admin");
 
