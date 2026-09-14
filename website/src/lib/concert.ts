@@ -187,7 +187,13 @@ export const FEAST_LINEUP: ConcertArtist[] = [
     name: "최양다음 NEXT",
     photo: "/images/concert/artists/next.jpg",
     photoCredit: "주최 측 제공",
-    blurb: "싱어송라이터. 이름을 여러 나라 말로 씁니다 — 다음, NEXT, 次, Nächste, 翌.",
+    // 이름의 유래와 공연 이력은 본인이 링크트리에 공개해둔 이력서에서 왔다.
+    // https://docs.google.com/document/d/16nwDjfv7_O2XZzg2Kr7af01oF1Vlb8YdASaFEUCoDGQ
+    // 이력서에는 윤석열 퇴진 집회·팔레스타인 연대 집회 공연도 적혀 있으나, 이 페이지가
+    // 소개할 것은 이 사람이 어떤 자리에서 노래해왔느냐이지 정당 사안이 아니라서
+    // 대표적인 자리 셋만 적었다. 빼야 할 이유가 있으면 이 줄과 함께 지우면 된다.
+    blurb:
+      "독학으로 음악을 익힌 싱어송라이터. 아버지 성 ‘최’와 어머니 성 ‘양’에 ‘다음’을 붙인 이름으로, 호주제에 맞선다는 뜻을 담아 지었습니다. 그 이름을 여러 나라 말로 씁니다 — 다음, NEXT, 次, Nächste, 翌. 세월호 10주기 추모, 수요시위, 5·18 기념식 같은 자리에서 노래해왔습니다.",
     source: "https://www.instagram.com/nextisnexttoyou/",
   },
   {
@@ -273,7 +279,13 @@ export const MOK_LINEUP: ConcertArtist[] = [
     name: "최양다음 NEXT",
     photo: "/images/concert/artists/next.jpg",
     photoCredit: "주최 측 제공",
-    blurb: "싱어송라이터. 이름을 여러 나라 말로 씁니다 — 다음, NEXT, 次, Nächste, 翌.",
+    // 이름의 유래와 공연 이력은 본인이 링크트리에 공개해둔 이력서에서 왔다.
+    // https://docs.google.com/document/d/16nwDjfv7_O2XZzg2Kr7af01oF1Vlb8YdASaFEUCoDGQ
+    // 이력서에는 윤석열 퇴진 집회·팔레스타인 연대 집회 공연도 적혀 있으나, 이 페이지가
+    // 소개할 것은 이 사람이 어떤 자리에서 노래해왔느냐이지 정당 사안이 아니라서
+    // 대표적인 자리 셋만 적었다. 빼야 할 이유가 있으면 이 줄과 함께 지우면 된다.
+    blurb:
+      "독학으로 음악을 익힌 싱어송라이터. 아버지 성 ‘최’와 어머니 성 ‘양’에 ‘다음’을 붙인 이름으로, 호주제에 맞선다는 뜻을 담아 지었습니다. 그 이름을 여러 나라 말로 씁니다 — 다음, NEXT, 次, Nächste, 翌. 세월호 10주기 추모, 수요시위, 5·18 기념식 같은 자리에서 노래해왔습니다.",
     source: "https://www.instagram.com/nextisnexttoyou/",
   },
   {
