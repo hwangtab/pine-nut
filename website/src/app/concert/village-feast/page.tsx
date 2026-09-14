@@ -13,7 +13,7 @@ import {
   Ticket,
   Users,
 } from "lucide-react";
-import { localeAlternates } from "@/lib/seo-alternates";
+import { OG_SITE, localeAlternates } from "@/lib/seo-alternates";
 import { SITE_URL } from "@/lib/site-config";
 import {
   FEAST_ADDRESS,
@@ -107,6 +107,7 @@ export const metadata: Metadata = {
   title: `${FEAST_TITLE} — 9·5 홍천 마을회관`,
   description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 양수발전소에 맞서 8년째 싸워온 마을에서 여는 잔치입니다. ${LINEUP_NAMES} 등 ${FEAST_LINEUP.length}팀이 함께합니다.`,
   openGraph: {
+    ...OG_SITE,
     title: `${FEAST_TITLE} — 9·5 홍천 마을회관`,
     description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 음악가 ${FEAST_LINEUP.length}팀이 마을로 내려옵니다.`,
     images: [

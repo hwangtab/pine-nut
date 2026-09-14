@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE_NAME } from "./site-config";
 
 /**
  * 페이지별 canonical + 한/영 hreflang 선언을 만든다.
@@ -32,3 +33,26 @@ export function englishAlternates(enPath: string, koPath?: string): Metadata["al
     languages,
   };
 }
+
+/**
+ * openGraph 공통 필드.
+ *
+ * Next 의 메타데이터 병합은 openGraph 를 깊게 합치지 않는다. 페이지가 openGraph 를
+ * 선언하는 순간 루트 layout 의 openGraph 는 통째로 버려지고, siteName·type·locale 이
+ * 조용히 사라진다 — 공유 카드에서 사이트 이름 줄이 없어지는데 화면에는 아무 표시가
+ * 나지 않아 알아채기 어렵다. 실제로 공연 세 페이지가 그 상태였다.
+ *
+ * openGraph 를 선언하는 페이지는 이 객체를 먼저 펼치고 자기 값을 덮어쓴다.
+ */
+export const OG_SITE = {
+  siteName: SITE_NAME,
+  type: "website",
+  locale: "ko_KR",
+} as const;
+
+/** 영문 라우트용 */
+export const OG_SITE_EN = {
+  siteName: SITE_NAME,
+  type: "website",
+  locale: "en_US",
+} as const;

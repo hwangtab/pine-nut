@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CalendarDays, MapPin, Users } from "lucide-react";
 import SubHero from "@/components/SubHero";
-import { localeAlternates } from "@/lib/seo-alternates";
+import { OG_SITE, localeAlternates } from "@/lib/seo-alternates";
 import { SITE_URL } from "@/lib/site-config";
 import { pastConcerts, upcomingConcert, type ConcertEntry } from "@/lib/concert";
 
@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   description:
     "숲이 베어지기 전에, 음악가와 예술가들이 풍천리 곁에 섭니다. 마을에서, 거리에서, 청와대 앞에서 이어져온 예술연대를 이 페이지에 기록합니다.",
   openGraph: {
+    ...OG_SITE,
     title: "예술연대 — 풍천리를 지키는 공연들",
     description: "숲이 베어지기 전에, 음악가와 예술가들이 풍천리 곁에 섭니다.",
     images: [

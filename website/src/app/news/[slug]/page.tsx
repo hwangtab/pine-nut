@@ -5,7 +5,7 @@ import { getNewsBySlug, getPublishedNewsSummaries } from "@/lib/data/news";
 import ShareButtons from "@/components/ShareButtons";
 import UtilityHeader from "@/components/UtilityHeader";
 import type { Metadata } from "next";
-import { localeAlternates } from "@/lib/seo-alternates";
+import { OG_SITE, localeAlternates } from "@/lib/seo-alternates";
 import { EditableLink, EditableText } from "@/components/editable";
 
 /**
@@ -55,10 +55,10 @@ export async function generateMetadata({
     title: `${item.title} — 풍천리를 지켜주세요`,
     description: item.summary,
     openGraph: {
+      ...OG_SITE,
       title: item.title,
       description: item.summary,
       type: "article",
-      locale: "ko_KR",
       ...(item.thumbnailUrl ? { images: [item.thumbnailUrl] } : {}),
     },
   };

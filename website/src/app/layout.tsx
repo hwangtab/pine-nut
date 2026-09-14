@@ -21,7 +21,7 @@ const nanumPen = Nanum_Pen_Script({
 });
 import Analytics from "@/components/Analytics";
 import AdminEditShell from "@/components/admin/AdminEditShell";
-import { SITE_URL } from "@/lib/site-config";
+import { SITE_NAME, SITE_URL } from "@/lib/site-config";
 import { getAllPageContent } from "@/lib/data/page-content";
 
 export const metadata: Metadata = {
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     title: "풍천리를 지켜주세요 — 양수발전소 건설 반대",
     description:
       "8년째, 705번의 외침. 강원도 홍천 풍천리 주민들의 양수발전소 반대 투쟁에 함께해주세요.",
-    siteName: "풍천리를 지켜주세요",
+    siteName: SITE_NAME,
     // og:url을 여기서 고정하면 모든 하위 페이지의 공유 링크가 홈으로 수렴한다.
     // 각 페이지가 자기 경로를 openGraph.url / alternates.canonical로 선언한다.
     type: "website",

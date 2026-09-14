@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { OG_SITE_EN } from "@/lib/seo-alternates";
 import ShareButtons from "@/components/ShareButtons";
 import UtilityHeader from "@/components/UtilityHeader";
 import { EditableLink, EditableText } from "@/components/editable";
@@ -69,10 +70,10 @@ export async function generateMetadata({
       },
     },
     openGraph: {
+      ...OG_SITE_EN,
       title: translated.title,
       description: translated.summary,
       type: "article",
-      locale: "en_US",
       ...(translated.thumbnailUrl ? { images: [translated.thumbnailUrl] } : {}),
     },
   };

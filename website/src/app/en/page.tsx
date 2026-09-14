@@ -3,6 +3,7 @@ import SubHero from "@/components/SubHero";
 import { EditableLink, EditableText, EditableRichText } from "@/components/editable";
 import ManagedSection from "@/components/builder/ManagedSection";
 import OrderedSectionGroup from "@/components/builder/OrderedSectionGroup";
+import { OG_SITE_EN } from "@/lib/seo-alternates";
 import { SITE_URL } from "@/lib/site-config";
 import {
   EnglishHelpCards,
@@ -22,11 +23,10 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
+    ...OG_SITE_EN,
     title: "Save Pungcheon-ri — Stop the Pumped-Storage Power Plant",
     description:
       "A 7-year fight to protect a village, a forest, and a way of life. Learn how you can help.",
-    type: "website",
-    locale: "en_US",
     url: `${SITE_URL}/en`,
   },
 };

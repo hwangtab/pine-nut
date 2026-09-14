@@ -13,7 +13,7 @@ import {
   Ticket,
   Users,
 } from "lucide-react";
-import { localeAlternates } from "@/lib/seo-alternates";
+import { OG_SITE, localeAlternates } from "@/lib/seo-alternates";
 import { SITE_URL } from "@/lib/site-config";
 import {
   MOK_ADDRESS,
@@ -80,6 +80,7 @@ export const metadata: Metadata = {
   title: `${MOK_TITLE} — ${MOK_DATE_LABEL} 풍천리`,
   description: `${MOK_DATE_LABEL} ${MOK_TIME_LABEL}, ${MOK_PLACE}. 우리의 나무를 자르는 건 우리의 목을 자르는 거야. 본공사가 착공된 홍천 양수발전소 벌목 예정지에서 ${LINEUP_NAMES} 등 ${MOK_LINEUP.length}팀이 함께합니다.`,
   openGraph: {
+    ...OG_SITE,
     title: `${MOK_TITLE} — ${MOK_DATE_LABEL} 풍천리`,
     description: `${MOK_DATE_LABEL} ${MOK_TIME_LABEL}, ${MOK_PLACE}. 잣나무가 베어지기 전에, 음악가 ${MOK_LINEUP.length}팀이 모입니다.`,
     url: MOK_URL,
