@@ -150,6 +150,7 @@
 | 최양다음 NEXT | `concert.ts`에 소개문·사진 있음. 재사용 |
 | 사바하 | **확인됨** — 둠드론 듀오 Sabbaha. The Slaughter(기타·보컬)·The Mortician(드럼) 2인, 서울·수원 기반. 스스로 '사이비 오컬트 둠드론'이라 부른다. 2024년 정규 「THUNDER ROCKS」. 출처: [sabbaha.kr](https://sabbaha.kr/profile), [경기아트콜렉티브](https://ggac.kr/artists/sabbaha) |
 | 달 위의 콜린스 | **확인됨** — 영문명 Collins on The Moon. 홍대 클럽빵을 거점으로 2024~2025년 공연 9건. 2025년 9~10월에 싱글·EP·앨범 4장을 잇달아 냈다. 멤버·결성 연도·프로필 사진은 어디에도 등록돼 있지 않다. 출처: [인디스트릿](https://indistreet.com/ko/artists/dalwiyikolrinseu), [유튜브](https://www.youtube.com/channel/UCsjzm6YsR7aQeH25fzrTWEA/videos) |
+| VAN KIDEN | **주최 측 제공 소개 확보**. 공개 자료는 여전히 없다. 사진 미확보 |
 | 양차애 | **확인됨** — 2인조 밴드 물장구클럽(양차애·김찬유)의 멤버. 2023년 데뷔, EP 《사랑타령》(2023.08), 싱글 〈단꿈〉(2024.04)·〈You Want It〉(2025.03). 출처: [벅스](https://music.bugs.co.kr/artist/20193293) |
 | DJ 스탑원 | 사실상 자료 없음. 사운드클라우드 `soundcloud.com/7adgknpb91de`에 표시명 "스탑원" 프로필이 있으나 트랙 0·팔로워 0의 빈 계정. 개인 블로그에 노동절 파티·결혼선포대회 디제잉 언급이 있으나 1차 출처로 쓰기엔 약하다 |
 | DJ 괄 | 계정 확인. [사운드클라우드 `gwalgwal`](https://soundcloud.com/gwalgwal) — 표시명 "괄", 서울. 클럽 채널1969 등의 세트 녹음 3건. 인스타는 [`rottenmogwa`](https://www.instagram.com/rottenmogwa). **장르 명시 없음** |
@@ -182,6 +183,15 @@ dossier 3원칙에 따라 **연도를 단정하지 않고 발매작 연도만 �
 애플뮤직에 같은 이름의 「Paranoia」가 있으나 발매 연도·레이블·장르가 전부 어긋나
 동명이인으로 판단하고 쓰지 않는다.
 
+**VAN KIDEN** (주최 측 제공 — `source` 없음, `photoCredit: "주최 측 제공"`)
+> 랩과 싱잉을 오가는 뮤지션. 2022년 싱글 「LIGHT」로 데뷔했습니다. 느끼는 감정을
+> 그대로 전하고, 스스로에게 부끄럽지 않은 음악을 만들어가려 합니다.
+
+원문은 "2022년 데뷔 싱글 〈LIGHT〉로 데뷔 후"로 '데뷔'가 겹쳐 그 부분만 풀었고,
+사이트 문체('~습니다')에 맞췄다. 내용은 그대로다. `FEAST_LINEUP`의 마쓰모토 코타·
+박지휘와 같은 처리다 — 공개 출처가 없는 대신 주최 측에서 받은 소개글이므로
+`source`를 비운다.
+
 **박지휘 · 최양다음 NEXT** — `concert.ts`의 기존 `FEAST_LINEUP` 항목을 그대로 재사용.
 
 ### DJ 두 팀 — 표기 주의
@@ -199,7 +209,7 @@ DJ 스탑원의 노동 관련 행사 디제잉 이력은 개인 블로그 한 �
 2. DJ 스탑원이 실제로 쓰는 계정 (`soundcloud.com/7adgknpb91de`가 맞는지)
 3. 두 사람의 프로필 사진과 짧은 자기소개 문구
 4. 달 위의 콜린스의 멤버 구성과 프로필 사진 (공개 자료에 전혀 없다)
-5. VAN KIDEN의 정확한 표기와 SNS 핸들 — 7팀 중 유일하게 아무것도 못 찾았다
+5. VAN KIDEN의 프로필 사진 (소개문은 받았으나 사진이 없다)
 
 소개문이 확보되지 않은 팀은 이름만 렌더한다.
 `village-feast`가 쓰는 잣송이 자리표시가 이미 그 용도로 있다.
