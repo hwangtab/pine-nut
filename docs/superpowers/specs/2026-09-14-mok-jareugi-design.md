@@ -149,7 +149,7 @@
 | 박지휘 | `concert.ts`에 소개문·사진 있음. 재사용 |
 | 최양다음 NEXT | `concert.ts`에 소개문·사진 있음. 재사용 |
 | 사바하 | **확인됨** — 둠드론 듀오 Sabbaha. The Slaughter(기타·보컬)·The Mortician(드럼) 2인, 서울·수원 기반. 스스로 '사이비 오컬트 둠드론'이라 부른다. 2024년 정규 「THUNDER ROCKS」. 출처: [sabbaha.kr](https://sabbaha.kr/profile), [경기아트콜렉티브](https://ggac.kr/artists/sabbaha) |
-| 달 위의 콜린스 | 영문명 Collins on The Moon. 포크라노스 배급, 인디스트릿 페이지 있음. 주최 측이 동일 팀 확인 |
+| 달 위의 콜린스 | **확인됨** — 영문명 Collins on The Moon. 홍대 클럽빵을 거점으로 2024~2025년 공연 9건. 2025년 9~10월에 싱글·EP·앨범 4장을 잇달아 냈다. 멤버·결성 연도·프로필 사진은 어디에도 등록돼 있지 않다. 출처: [인디스트릿](https://indistreet.com/ko/artists/dalwiyikolrinseu), [유튜브](https://www.youtube.com/channel/UCsjzm6YsR7aQeH25fzrTWEA/videos) |
 | 양차애 | **확인됨** — 2인조 밴드 물장구클럽(양차애·김찬유)의 멤버. 2023년 데뷔, EP 《사랑타령》(2023.08), 싱글 〈단꿈〉(2024.04)·〈You Want It〉(2025.03). 출처: [벅스](https://music.bugs.co.kr/artist/20193293) |
 | DJ 스탑원 | 사실상 자료 없음. 사운드클라우드 `soundcloud.com/7adgknpb91de`에 표시명 "스탑원" 프로필이 있으나 트랙 0·팔로워 0의 빈 계정. 개인 블로그에 노동절 파티·결혼선포대회 디제잉 언급이 있으나 1차 출처로 쓰기엔 약하다 |
 | DJ 괄 | 계정 확인. [사운드클라우드 `gwalgwal`](https://soundcloud.com/gwalgwal) — 표시명 "괄", 서울. 클럽 채널1969 등의 세트 녹음 3건. 인스타는 [`rottenmogwa`](https://www.instagram.com/rottenmogwa). **장르 명시 없음** |
@@ -173,6 +173,15 @@
 결성 연도는 출처가 엇갈린다(CJ문화재단 튠업 2022년 결성 / 벅스 2023년 데뷔).
 dossier 3원칙에 따라 **연도를 단정하지 않고 발매작 연도만 적는다.**
 
+**달 위의 콜린스** (`source`: https://indistreet.com/ko/artists/dalwiyikolrinseu)
+> 홍대 클럽빵을 거점으로 공연해온 팀입니다. 2025년 가을 두 달 사이에 싱글 「비둘기의
+> 失樂園」·「PM 7:37」과 EP 「19.8m²에서의 漂流記」, 앨범 「Thief 86」을 잇달아 냈습니다.
+
+멤버·결성 연도는 인디스트릿·멜론 어디에도 등록돼 있지 않아 쓰지 않는다.
+**프로필 사진도 없다** — 잣송이 자리표시로 간다.
+애플뮤직에 같은 이름의 「Paranoia」가 있으나 발매 연도·레이블·장르가 전부 어긋나
+동명이인으로 판단하고 쓰지 않는다.
+
 **박지휘 · 최양다음 NEXT** — `concert.ts`의 기존 `FEAST_LINEUP` 항목을 그대로 재사용.
 
 ### DJ 두 팀 — 표기 주의
@@ -189,7 +198,8 @@ DJ 스탑원의 노동 관련 행사 디제잉 이력은 개인 블로그 한 �
 1. DJ 괄의 장르와 소속 크루·정기 파티 (사운드클라우드에 보이는 채널1969·ACS 세트가 정기 활동인지)
 2. DJ 스탑원이 실제로 쓰는 계정 (`soundcloud.com/7adgknpb91de`가 맞는지)
 3. 두 사람의 프로필 사진과 짧은 자기소개 문구
-4. 나머지 팀(달 위의 콜린스·VAN KIDEN)의 정확한 표기와 SNS 핸들
+4. 달 위의 콜린스의 멤버 구성과 프로필 사진 (공개 자료에 전혀 없다)
+5. VAN KIDEN의 정확한 표기와 SNS 핸들 — 7팀 중 유일하게 아무것도 못 찾았다
 
 소개문이 확보되지 않은 팀은 이름만 렌더한다.
 `village-feast`가 쓰는 잣송이 자리표시가 이미 그 용도로 있다.
