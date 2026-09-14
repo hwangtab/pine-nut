@@ -232,6 +232,8 @@ export const MOK_PHONE_STAGE_NAME = CONCERT_PHONE_NAME;
 export const MOK_LINEUP: ConcertArtist[] = [
   {
     name: "양차애",
+    photo: "/images/concert/artists/yangchaae.jpg",
+    photoCredit: "뉴스아트",
     blurb:
       "2인조 밴드 물장구클럽의 양차애. EP 「사랑타령」(2023), 싱글 「단꿈」(2024)·「You Want It」(2025)을 냈습니다.",
     source: "https://music.bugs.co.kr/artist/20193293",
@@ -246,6 +248,8 @@ export const MOK_LINEUP: ConcertArtist[] = [
   },
   {
     name: "사바하",
+    photo: "/images/concert/artists/sabbaha.jpg",
+    photoCredit: "경기아트콜렉티브",
     blurb:
       "2013년 솔로 프로젝트로 출발해 2023년 듀오로 자리잡은 둠드론 밴드. 리더 The Slaughter의 기타·보컬에 2025년 드러머 The Mortician이 합류해 서울·수원을 기반으로 활동합니다. 스스로 ‘사이비 오컬트 둠드론’이라 부릅니다. 2024년 정규 「THUNDER ROCKS」.",
     source: "https://ggac.kr/artists/sabbaha",
