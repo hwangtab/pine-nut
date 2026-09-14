@@ -1,13 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import {
-  FEAST_DATE_LABEL,
-  FEAST_PLACE,
-  FEAST_START,
-  FEAST_TIME_LABEL,
-} from "@/lib/concert";
-import { useDday } from "@/lib/use-concert-status";
+import { FEAST_DATE_LABEL, FEAST_PLACE, FEAST_TIME_LABEL } from "@/lib/concert";
 import { RidgeDivider } from "@/components/visuals/ForestLetterMotifs";
 import { PosterFlower, PosterGrain, TornStrip } from "./VillageFeastMotifs";
 
@@ -20,8 +12,6 @@ const POSTER_LIME = "#BFFF64";
 const POSTER_INK = "#12200C";
 
 export default function VillageFeastHero() {
-  const dday = useDday(FEAST_START)?.label ?? null;
-
   return (
     <section
       className="relative flex min-h-[88svh] flex-col items-center justify-center overflow-hidden px-4 pt-32 pb-24 text-center sm:px-6"
@@ -69,37 +59,34 @@ export default function VillageFeastHero() {
         </h1>
 
         <p className="rise-in rise-in-2 mx-auto mt-6 max-w-2xl text-balance break-keep text-base font-medium leading-relaxed sm:text-xl">
-          이번엔 음악가들이 마을로 내려옵니다. 8년째 싸워온 사람들이 하루쯤은 웃고, 먹고,
-          춤추는 날입니다.
+          음악가들이 마을로 내려온 날이었습니다. 8년째 싸워온 사람들이 하루쯤 웃고, 먹고,
+          춤췄습니다.
         </p>
 
-        <div
-          className="rise-in rise-in-3 mt-8 flex items-center justify-center"
-          aria-label="잔치까지 남은 날"
-        >
+        <div className="rise-in rise-in-3 mt-8 flex items-center justify-center">
           <span
-            className="rounded-2xl px-8 py-3 text-4xl font-black tracking-tight sm:text-6xl"
+            className="rounded-full px-6 py-2.5 text-sm font-bold tracking-wide"
             style={{ backgroundColor: POSTER_INK, color: POSTER_LIME }}
           >
-            {dday ?? "9·5"}
+            지난 공연 · 2026. 9. 5.
           </span>
         </div>
 
         <div className="rise-in rise-in-3 mx-auto mt-10 flex w-full max-w-xs flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row sm:items-center">
-          <a
-            href="#lineup"
+          <Link
+            href="/concert/mok-jareugi"
             className="inline-flex min-h-[52px] items-center justify-center rounded-full px-8 py-3.5 text-base font-bold transition-opacity hover:opacity-85 sm:text-lg"
             style={{ backgroundColor: POSTER_INK, color: POSTER_LIME }}
           >
-            함께하는 음악가 보기
-          </a>
-          <Link
-            href="/petition"
+            다음 공연 보기
+          </Link>
+          <a
+            href="#lineup"
             className="inline-flex min-h-[52px] items-center justify-center rounded-full border-2 px-8 py-3.5 text-base font-bold transition-colors hover:bg-black/5 sm:text-lg"
             style={{ borderColor: POSTER_INK, color: POSTER_INK }}
           >
-            서명으로 함께하기
-          </Link>
+            함께한 음악가 보기
+          </a>
         </div>
       </div>
     </section>

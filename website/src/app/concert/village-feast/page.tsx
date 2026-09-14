@@ -3,26 +3,17 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   CalendarDays,
-  Car,
-  Heart,
   MapPin,
   Megaphone,
-  Music,
-  Phone,
-  Share2,
   Ticket,
   Users,
 } from "lucide-react";
 import { OG_SITE, localeAlternates } from "@/lib/seo-alternates";
 import { SITE_URL } from "@/lib/site-config";
 import {
-  FEAST_ADDRESS,
   FEAST_DATE_LABEL,
   FEAST_LINEUP,
   FEAST_TIMETABLE,
-  FEAST_PHONE_COMMITTEE,
-  FEAST_PHONE_STAGE,
-  FEAST_PHONE_STAGE_NAME,
   FEAST_PLACE,
   FEAST_START,
   FEAST_TIME_LABEL,
@@ -34,15 +25,15 @@ import VillageFeastHero from "./VillageFeastHero";
 
 const FEAST_URL = `${SITE_URL}/concert/village-feast`;
 
-// 검색엔진·AI 검색이 이 페이지를 "9월 5일 홍천에서 열리는 무료 공연"으로
-// 읽게 하는 구조화 데이터. 포스터를 놓친 사람이 검색으로 찾아오는 경로다.
-// 종료 시각은 아직 정해지지 않았으므로 endDate 를 넣지 않는다 — 모르는 값을
-// 지어내면 리치결과에 틀린 시간이 박힌다.
+// 끝난 공연의 기록. 날짜가 지났어도 구조화 데이터는 남긴다 — 검색에서 "그때
+// 무슨 공연이 있었나"로 찾아오는 경로이고, 지운다고 색인이 깨끗해지지 않는다.
+// 종료 시각은 그날 단체사진을 찍고 마친 17시로 확정됐으므로 이제 endDate 를 적는다.
 const eventJsonLd = {
   "@context": "https://schema.org",
   "@type": "MusicEvent",
   name: FEAST_TITLE,
   startDate: FEAST_START.toISOString(),
+  endDate: new Date("2026-09-05T17:00:00+09:00").toISOString(),
   eventStatus: "https://schema.org/EventScheduled",
   eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
   url: FEAST_URL,
@@ -50,7 +41,7 @@ const eventJsonLd = {
     `${SITE_URL}/images/concert/village-feast-og.jpg`,
     `${SITE_URL}/images/concert/village-feast-poster.jpg`,
   ],
-  description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}에서 열리는 마을 잔치. 홍천 양수발전소 건설에 8년째 반대해온 풍천리에서 음악가 ${FEAST_LINEUP.length}팀이 함께합니다. 관람료는 없습니다.`,
+  description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}에서 열린 마을 잔치. 홍천 양수발전소 건설에 8년째 반대해온 풍천리에서 음악가 ${FEAST_LINEUP.length}팀이 함께했습니다. 관람료는 없었습니다.`,
   isAccessibleForFree: true,
   inLanguage: "ko",
   location: {
@@ -63,14 +54,6 @@ const eventJsonLd = {
       addressRegion: "강원특별자치도",
       addressCountry: "KR",
     },
-  },
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "KRW",
-    availability: "https://schema.org/InStock",
-    url: FEAST_URL,
-    validFrom: new Date("2026-08-25T00:00:00+09:00").toISOString(),
   },
   performer: FEAST_LINEUP.map((artist) => ({
     "@type": "MusicGroup",
@@ -105,11 +88,11 @@ const HAS_MISSING_PHOTO = FEAST_LINEUP.some((artist) => !artist.photo);
 export const metadata: Metadata = {
   alternates: localeAlternates("/concert/village-feast"),
   title: `${FEAST_TITLE} — 9·5 홍천 마을회관`,
-  description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 양수발전소에 맞서 8년째 싸워온 마을에서 음악가 ${FEAST_LINEUP.length}팀이 여는 잔치입니다.`,
+  description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 양수발전소에 맞서 8년째 싸워온 마을에서 음악가 ${FEAST_LINEUP.length}팀이 연 잔치입니다.`,
   openGraph: {
     ...OG_SITE,
     title: `${FEAST_TITLE} — 9·5 홍천 마을회관`,
-    description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 음악가 ${FEAST_LINEUP.length}팀이 마을로 내려옵니다.`,
+    description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 음악가 ${FEAST_LINEUP.length}팀이 마을로 내려온 날.`,
     images: [
       {
         url: `${SITE_URL}/images/concert/village-feast-og.jpg`,
@@ -124,7 +107,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: `${FEAST_TITLE} — 9·5 홍천 마을회관`,
-    description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 음악가 ${FEAST_LINEUP.length}팀이 마을로 내려옵니다.`,
+    description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 음악가 ${FEAST_LINEUP.length}팀이 마을로 내려온 날.`,
     images: [`${SITE_URL}/images/concert/village-feast-og.jpg`],
   },
 };
@@ -133,63 +116,8 @@ const INFO_CARDS = [
   { icon: CalendarDays, label: "일시", value: FEAST_DATE_LABEL, sub: FEAST_TIME_LABEL },
   { icon: MapPin, label: "장소", value: FEAST_PLACE, sub: "강원 홍천 화촌면" },
   { icon: Ticket, label: "관람", value: "무료", sub: "예매 없이 누구나" },
-  {
-    icon: Phone,
-    label: "문의",
-    value: FEAST_PHONE_COMMITTEE,
-    sub: "대책위 이창후 총무",
-    href: `tel:${FEAST_PHONE_COMMITTEE}`,
-  },
+  { icon: Users, label: "출연", value: `${FEAST_LINEUP.length}팀`, sub: "오후 2시 – 5시" },
 ];
-
-const PARTICIPATE = [
-  {
-    icon: Share2,
-    title: "오기 전, 알려주세요",
-    body: "포스터와 이 페이지를 SNS·단체방에 공유해주세요. 마을에 차 한 대가 더 들어오는 것이 주민들에게는 큰 힘입니다.",
-  },
-  {
-    icon: Users,
-    title: "마을에서, 함께 놀아요",
-    body: "잔치는 구경하는 자리가 아니라 섞이는 자리입니다. 노래를 듣고, 밥을 나누고, 주민들과 이야기를 나눠주세요.",
-  },
-  {
-    icon: Heart,
-    title: "못 오셔도, 연대해요",
-    body: "서명·후원·게시판 응원으로도 함께할 수 있습니다. 멀리 있어도 마음은 잣나무 숲에 닿습니다.",
-  },
-];
-
-const FAQ = [
-  {
-    q: "관람료가 있나요?",
-    a: "무료입니다. 예매나 사전 신청 없이 누구나 오실 수 있어요.",
-  },
-  {
-    q: "몇 시에 끝나나요?",
-    a: "오후 1시에 열어 한 시간 동안 함께 밥을 먹고 춤추고 이야기합니다. 2시에 길가는밴드 장현호의 무대로 공연을 시작해, 4시 40분 삼각전파사가 마지막으로 오릅니다. 5시에 다 함께 단체사진을 찍고 마칩니다. 팀별 시각은 위 라인업에 있습니다.",
-  },
-  {
-    q: "어떻게 가나요?",
-    a: "풍천리는 대중교통이 드문 산촌 마을입니다. 자가용을 권하고, 함께 오실 분들끼리 차를 나눠 타시면 좋습니다. 이동이 어려우시면 대책위로 미리 연락 주세요.",
-  },
-  {
-    q: "무엇을 준비하면 좋나요?",
-    a: "야외 자리가 많습니다. 앉을 자리(돗자리)와 모자, 초가을 저녁에 대비한 겉옷을 챙기시면 편합니다.",
-  },
-];
-
-// 페이지의 FAQ 를 그대로 구조화한다 — "관람료 있나요" 같은 질문에 검색·AI
-// 답변이 직접 답하게 하려면 화면 문구와 같은 내용이어야 한다.
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: FAQ.map((item) => ({
-    "@type": "Question",
-    name: item.q,
-    acceptedAnswer: { "@type": "Answer", text: item.a },
-  })),
-};
 
 export default function VillageFeastPage() {
   return (
@@ -197,10 +125,6 @@ export default function VillageFeastPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
       <VillageFeastHero />
@@ -215,18 +139,9 @@ export default function VillageFeastPage() {
                 <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
                   {card.label}
                 </p>
-                {card.href ? (
-                  <a
-                    href={card.href}
-                    className="mt-1 block break-keep text-lg font-bold text-[var(--color-text)] hover:text-[var(--color-forest)]"
-                  >
-                    {card.value}
-                  </a>
-                ) : (
-                  <p className="mt-1 break-keep text-lg font-bold text-[var(--color-text)]">
-                    {card.value}
-                  </p>
-                )}
+                <p className="mt-1 break-keep text-lg font-bold text-[var(--color-text)]">
+                  {card.value}
+                </p>
                 <p className="mt-0.5 break-keep text-xs text-[var(--color-text-muted)]">
                   {card.sub}
                 </p>
@@ -268,14 +183,14 @@ export default function VillageFeastPage() {
           </div>
 
           <p className="mt-12 break-keep text-lg leading-loose text-[var(--color-text)] sm:text-xl">
-            그래서 다시 모입니다. 음악가들이 풍천리 곁에 선 것은 처음이 아닙니다. 마을에서,
+            그래서 다시 모였습니다. 음악가들이 풍천리 곁에 선 것은 처음이 아닙니다. 마을에서,
             거리에서, 서울에서 여러 차례 이어져왔습니다. 8월 1일 청와대 앞 공연이 마을의
-            목소리를 서울로 올려보낸 자리였다면, 이번 <b className="font-bold">9월 5일</b>은
-            반대로 음악가들이 마을로 내려오는 자리입니다.
+            목소리를 서울로 올려보낸 자리였다면, <b className="font-bold">9월 5일</b>은
+            반대로 음악가들이 마을로 내려온 자리였습니다.
           </p>
 
           <p className="mt-8 break-keep text-xl font-bold text-[var(--color-forest)] sm:text-2xl">
-            숲을 지키는 일에는 이런 하루도 필요합니다.
+            숲을 지키는 일에는 이런 하루도 필요했습니다.
           </p>
         </div>
       </section>
@@ -287,12 +202,12 @@ export default function VillageFeastPage() {
             Line-up
           </p>
           <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
-            함께하는 음악가 {FEAST_LINEUP.length}팀
+            함께한 음악가 {FEAST_LINEUP.length}팀
           </h2>
           <p className="mt-3 break-keep text-sm text-[var(--color-text-muted)]">
-            오후 1시에 열어 밥 먹고 춤추고 이야기하다가, 2시부터 무대가 이어집니다.
-            한 팀이 15분씩 노래하고 5분씩 무대를 바꿉니다. 현장 사정에 따라 시각은
-            조금씩 밀릴 수 있습니다.
+            오후 1시에 열어 밥 먹고 춤추고 이야기하다가, 2시부터 무대가 이어졌습니다.
+            한 팀이 15분씩 노래하고 5분씩 무대를 바꿨습니다. 아래는 그날 예정했던
+            순서입니다.
           </p>
 
           <ul className="mt-10 space-y-2">
@@ -361,92 +276,57 @@ export default function VillageFeastPage() {
         </div>
       </section>
 
-      {/* 이렇게 함께해주세요 */}
+      {/* 다음 공연 — 끝난 페이지가 할 수 있는 가장 쓸모 있는 일이다.
+          여기까지 읽은 사람은 이미 관심이 있는 사람이고, 그 관심을 아직 열리지
+          않은 자리로 넘겨주는 것이 이 자리의 몫이다. */}
       <section className="bg-[var(--color-bg-moss)] px-6 py-16 sm:py-24">
-        <div className="mx-auto max-w-5xl">
-          <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
-            Join Us
-          </p>
-          <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
-            이렇게 함께해주세요
-          </h2>
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {PARTICIPATE.map((p) => (
-              <div key={p.title} className="paper p-6">
-                <div className="relative z-[1]">
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-forest)]/10 text-[var(--color-forest)]">
-                    <p.icon className="h-6 w-6" aria-hidden />
-                  </span>
-                  <h3 className="mt-4 text-lg font-bold text-[var(--color-text)]">{p.title}</h3>
-                  <p className="mt-2 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                    {p.body}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 오시는 길 */}
-      <section className="px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-3xl">
           <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
-            Location
+            Next
           </p>
           <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
-            오시는 길
+            싸움은 아직 끝나지 않았습니다
           </h2>
-          <p className="mt-4 text-balance break-keep text-lg font-bold text-[var(--color-text)]">
-            {FEAST_PLACE} · {FEAST_ADDRESS}
+          <p className="mt-4 break-keep text-lg leading-relaxed text-[var(--color-text-muted)]">
+            잔치가 끝난 뒤에도 톱날은 숲으로 다가오고 있습니다. 10월 10일, 같은 마을회관
+            앞에서 세 번째 자리가 열립니다.
           </p>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <div className="paper p-6">
-              <div className="relative z-[1]">
-                <span className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-forest)]">
-                  <Car className="h-5 w-5" aria-hidden />
-                  자가용
+          <Link
+            href="/concert/mok-jareugi"
+            className="paper group mt-8 block overflow-hidden transition-transform duration-300 hover:-translate-y-1"
+          >
+            <div className="relative z-[1] grid gap-6 p-5 sm:grid-cols-[minmax(0,0.5fr)_minmax(0,1fr)] sm:p-6">
+              <div className="photo-frame">
+                <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[2px]">
+                  <Image
+                    src="/images/concert/mok-jareugi-poster.jpg"
+                    alt="목자르기 포스터"
+                    fill
+                    sizes="(max-width: 640px) 100vw, 260px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col justify-center">
+                <span className="self-start rounded-full bg-[var(--color-warm)]/15 px-3 py-1 text-xs font-bold text-[var(--color-warm)]">
+                  예정된 공연
                 </span>
-                <p className="mt-3 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                  가리산 자락 해발 400~700m의 산촌 마을입니다. 내비게이션에{" "}
-                  <b className="text-[var(--color-text)]">‘풍천리 마을회관’</b>을 검색해 오세요.
-                  함께 오실 분들끼리 차를 나눠 타시면 좋습니다.
+                <h3 className="mt-3 break-keep font-serif-display text-2xl font-bold leading-tight text-[var(--color-text)] sm:text-3xl">
+                  목자르기
+                </h3>
+                <p className="mt-3 break-keep text-base leading-relaxed text-[var(--color-text-muted)]">
+                  2026년 10월 10일(토) 오후 2시, 풍천리 마을회관 앞. 우리의 나무를 자르는
+                  건 우리의 목을 자르는 거야.
                 </p>
+                <span className="mt-5 inline-flex items-center gap-1 text-sm font-bold text-[var(--color-forest)]">
+                  공연 보기
+                  <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
+                </span>
               </div>
             </div>
-            <div className="paper p-6">
-              <div className="relative z-[1]">
-                <span className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-forest)]">
-                  <Music className="h-5 w-5" aria-hidden />
-                  초가을 야외 잔치
-                </span>
-                <p className="mt-3 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                  돗자리와 모자, 해가 진 뒤를 위한 겉옷을 챙겨오시면 오래 편하게 함께할 수 있어요.
-                  이동이 어려우시면 대책위로 미리 연락 주세요.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
-            <a
-              href="https://map.kakao.com/link/search/%ED%99%8D%EC%B2%9C%20%ED%99%94%EC%B4%8C%EB%A9%B4%20%ED%92%8D%EC%B2%9C%EB%A6%AC%20%EB%A7%88%EC%9D%84%ED%9A%8C%EA%B4%80"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[#FEE500] px-6 py-3 text-base font-bold text-[#191919] transition-opacity hover:opacity-85"
-            >
-              카카오맵에서 보기
-            </a>
-            <a
-              href="https://map.naver.com/p/search/%ED%99%8D%EC%B2%9C%20%ED%99%94%EC%B4%8C%EB%A9%B4%20%ED%92%8D%EC%B2%9C%EB%A6%AC%20%EB%A7%88%EC%9D%84%ED%9A%8C%EA%B4%80"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[#03C75A] px-6 py-3 text-base font-bold text-white transition-opacity hover:opacity-85"
-            >
-              네이버지도에서 보기
-            </a>
-          </div>
+          </Link>
         </div>
       </section>
 
@@ -454,13 +334,13 @@ export default function VillageFeastPage() {
       <section id="poster" className="scroll-mt-20 bg-[var(--color-bg-moss)] px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
-            Spread the Word
+            Record
           </p>
           <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
-            포스터를 널리 알려주세요
+            그날의 포스터
           </h2>
           <p className="mt-3 break-keep text-base text-[var(--color-text-muted)]">
-            내려받아 SNS·단체방·동네 게시판에 공유해주세요.
+            마을 곳곳과 단체방에 걸렸던 포스터입니다.
           </p>
           <div className="photo-frame mt-8">
             <Image
@@ -478,7 +358,7 @@ export default function VillageFeastPage() {
               download="풍천리-잣나무-마을-잔치-포스터.jpg"
               className="inline-flex min-h-[48px] items-center rounded-full bg-[var(--color-forest)] px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-[var(--color-forest-light)]"
             >
-              포스터 저장하기
+              포스터 내려받기
             </a>
           </div>
 
@@ -495,53 +375,12 @@ export default function VillageFeastPage() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="px-6 py-16 sm:py-24">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
-            FAQ
-          </p>
-          <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
-            자주 묻는 질문
-          </h2>
-          <dl className="mt-10 space-y-3">
-            {FAQ.map((item) => (
-              <div key={item.q} className="paper p-6">
-                <div className="relative z-[1]">
-                  <dt className="text-lg font-bold text-[var(--color-text)]">Q. {item.q}</dt>
-                  <dd className="mt-2 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                    {item.a}
-                  </dd>
-                </div>
-              </div>
-            ))}
-          </dl>
-          <p className="mt-6 break-keep text-center text-sm text-[var(--color-text-muted)]">
-            잔치 문의{" "}
-            <a
-              href={`tel:${FEAST_PHONE_COMMITTEE}`}
-              className="font-bold text-[var(--color-forest)] hover:underline"
-            >
-              {FEAST_PHONE_COMMITTEE}
-            </a>{" "}
-            (대책위 이창후 총무) · 공연 문의{" "}
-            <a
-              href={`tel:${FEAST_PHONE_STAGE}`}
-              className="font-bold text-[var(--color-forest)] hover:underline"
-            >
-              {FEAST_PHONE_STAGE}
-            </a>{" "}
-            ({FEAST_PHONE_STAGE_NAME})
-          </p>
-        </div>
-      </section>
-
       {/* 마무리 CTA — 푸터와 같은 색이면 경계가 사라지므로 한 단 밝은 어둠을 쓴다 */}
       <section className="ridge-tail relative overflow-hidden bg-[var(--color-deep-raised)] px-6 text-center">
         <div className="mx-auto max-w-3xl">
           <Megaphone className="mx-auto h-10 w-10 text-[var(--color-earth-light)]" aria-hidden />
           <h2 className="mx-auto mt-5 max-w-[16ch] text-balance break-keep font-serif-display text-3xl font-bold leading-tight text-white sm:text-4xl">
-            마을에 오지 못해도 함께할 수 있어요
+            그날 못 오셨어도 함께할 수 있어요
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-balance break-keep text-base text-white/80 sm:text-lg">
             서명 한 번, 응원 한 줄, 후원 한 걸음이 풍천리의 숲을 지키는 힘이 됩니다.
