@@ -105,7 +105,7 @@ const HAS_MISSING_PHOTO = FEAST_LINEUP.some((artist) => !artist.photo);
 export const metadata: Metadata = {
   alternates: localeAlternates("/concert/village-feast"),
   title: `${FEAST_TITLE} — 9·5 홍천 마을회관`,
-  description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 양수발전소에 맞서 8년째 싸워온 마을에서 여는 잔치입니다. ${LINEUP_NAMES} 등 ${FEAST_LINEUP.length}팀이 함께합니다.`,
+  description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 양수발전소에 맞서 8년째 싸워온 마을에서 음악가 ${FEAST_LINEUP.length}팀이 여는 잔치입니다.`,
   openGraph: {
     ...OG_SITE,
     title: `${FEAST_TITLE} — 9·5 홍천 마을회관`,

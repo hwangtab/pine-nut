@@ -78,7 +78,7 @@ const eventJsonLd = {
 export const metadata: Metadata = {
   alternates: localeAlternates("/concert/mok-jareugi"),
   title: `${MOK_TITLE} — ${MOK_DATE_LABEL} 풍천리`,
-  description: `${MOK_DATE_LABEL} ${MOK_TIME_LABEL}, ${MOK_PLACE}. 우리의 나무를 자르는 건 우리의 목을 자르는 거야. 본공사가 착공된 홍천 양수발전소 벌목 예정지에서 ${LINEUP_NAMES} 등 ${MOK_LINEUP.length}팀이 함께합니다.`,
+  description: `${MOK_DATE_LABEL} ${MOK_TIME_LABEL}, ${MOK_PLACE}. 곧 베어질 잣나무 숲에서 음악가 ${MOK_LINEUP.length}팀이 노래합니다. 무료.`,
   openGraph: {
     ...OG_SITE,
     title: `${MOK_TITLE} — ${MOK_DATE_LABEL} 풍천리`,

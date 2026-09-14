@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   title: "풍천리를 지켜주세요 — 양수발전소 건설 반대",
   metadataBase: new URL(SITE_URL),
   description:
-    "강원도 홍천군 화촌면 풍천리 주민들은 양수발전소 건설에 반대하며 8년째 싸우고 있습니다. 705여 차례 집회, 70대 이상 고령 주민들의 생존권 투쟁에 함께해주세요.",
+    "강원도 홍천 풍천리 주민들이 8년째 양수발전소 건설에 맞서고 있습니다. 705번이 넘는 집회, 평균 70세의 싸움에 함께해주세요.",
   openGraph: {
     title: "풍천리를 지켜주세요 — 양수발전소 건설 반대",
     description:
