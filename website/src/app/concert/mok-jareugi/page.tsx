@@ -31,7 +31,7 @@ import {
 import { PineConeIcon } from "@/components/visuals/ForestLetterMotifs";
 import ShareButtons from "@/components/ShareButtons";
 import MokHero from "./MokHero";
-import { SawEdge, StumpRings } from "./MokMotifs";
+import { SawBoundary } from "./MokMotifs";
 
 const MOK_URL = `${SITE_URL}/concert/mok-jareugi`;
 const LINEUP_NAMES = MOK_LINEUP.map((artist) => artist.name).join("·");
@@ -261,10 +261,7 @@ export default function MokJareugiPage() {
       </section>
 
       {/* 풍천리에서 무슨 일이 — 다크 밴드. 이 페이지의 독자는 여기서 처음 사정을 안다 */}
-      <section className="relative overflow-hidden bg-[var(--color-deep)] px-6 py-16 sm:py-20">
-        <StumpRings
-          className="pointer-events-none absolute -right-24 -top-24 h-[28rem] w-[28rem] text-white/[0.05]"
-        />
+      <section className="relative overflow-hidden bg-[var(--color-deep)] px-6 pt-16 pb-24 sm:pt-20 sm:pb-32">
         <div className="relative z-[1] mx-auto max-w-5xl">
           <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-earth-light)]">
             What&apos;s Happening
@@ -308,9 +305,12 @@ export default function MokJareugiPage() {
             </Link>
           </div>
         </div>
+
+        {/* 어둠과 크림이 맞닿는 자리를 톱니로 물어낸다. 띠를 따로 띄우면
+            위아래 어디에도 붙지 않아 아무 뜻 없는 장식이 된다. */}
+        <SawBoundary className="absolute bottom-0 left-0 h-10 w-full sm:h-14" />
       </section>
 
-      <SawEdge className="h-16 w-full text-[var(--color-warm)] sm:h-24" teeth={3} />
 
       {/* 왜 "목"인가 — 제목을 푸는 자리이자 경고의 핵심 */}
       <section className="px-6 py-16 sm:py-20">

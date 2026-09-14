@@ -256,6 +256,8 @@ export const MOK_LINEUP: ConcertArtist[] = [
   },
   {
     name: "달 위의 콜린스",
+    photo: "/images/concert/artists/collins-on-the-moon.jpg",
+    photoCredit: "주최 측 제공",
     blurb:
       "홍대 클럽빵을 거점으로 공연해온 팀. 2025년 가을 두 달 사이에 싱글 「비둘기의 失樂園」·「PM 7:37」과 EP 「19.8㎡에서의 漂流記」, 앨범 「Thief 86」을 잇달아 냈습니다.",
     source: "https://indistreet.com/ko/artists/dalwiyikolrinseu",
@@ -278,6 +280,8 @@ export const MOK_LINEUP: ConcertArtist[] = [
     // 공개 자료가 하나도 없어 주최 측 소개글을 그대로 쓴다. 마쓰모토 코타·박지휘와
     // 같은 처리다 — source 를 비우는 것이 "공개 웹자료가 아니다"라는 표시다.
     name: "VAN KIDEN",
+    photo: "/images/concert/artists/van-kiden.jpg",
+    photoCredit: "주최 측 제공",
     blurb:
       "랩과 싱잉을 오가는 뮤지션. 2022년 싱글 「LIGHT」로 데뷔했습니다. 느끼는 감정을 그대로 전하고, 스스로에게 부끄럽지 않은 음악을 만들어가려 합니다.",
   },
