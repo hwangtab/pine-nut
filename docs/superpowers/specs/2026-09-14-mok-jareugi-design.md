@@ -151,8 +151,8 @@
 | 사바하 | **확인됨** — 둠드론 듀오 Sabbaha. The Slaughter(기타·보컬)·The Mortician(드럼) 2인, 서울·수원 기반. 스스로 '사이비 오컬트 둠드론'이라 부른다. 2024년 정규 「THUNDER ROCKS」. 출처: [sabbaha.kr](https://sabbaha.kr/profile), [경기아트콜렉티브](https://ggac.kr/artists/sabbaha) |
 | 달 위의 콜린스 | 영문명 Collins on The Moon. 포크라노스 배급, 인디스트릿 페이지 있음. 주최 측이 동일 팀 확인 |
 | 양차애 | **확인됨** — 2인조 밴드 물장구클럽(양차애·김찬유)의 멤버. 2023년 데뷔, EP 《사랑타령》(2023.08), 싱글 〈단꿈〉(2024.04)·〈You Want It〉(2025.03). 출처: [벅스](https://music.bugs.co.kr/artist/20193293) |
-| DJ 스탑원 | 공개 자료 없음. 조사 중 |
-| DJ 괄 | `soundcloud.com/gwalgwal`·`instagram.com/gwalgwal` 단서만. 조사 중 |
+| DJ 스탑원 | 사실상 자료 없음. 사운드클라우드 `soundcloud.com/7adgknpb91de`에 표시명 "스탑원" 프로필이 있으나 트랙 0·팔로워 0의 빈 계정. 개인 블로그에 노동절 파티·결혼선포대회 디제잉 언급이 있으나 1차 출처로 쓰기엔 약하다 |
+| DJ 괄 | 계정 확인. [사운드클라우드 `gwalgwal`](https://soundcloud.com/gwalgwal) — 표시명 "괄", 서울. 클럽 채널1969 등의 세트 녹음 3건. 인스타는 [`rottenmogwa`](https://www.instagram.com/rottenmogwa). **장르 명시 없음** |
 
 ### 확정 소개문
 
@@ -174,6 +174,22 @@
 dossier 3원칙에 따라 **연도를 단정하지 않고 발매작 연도만 적는다.**
 
 **박지휘 · 최양다음 NEXT** — `concert.ts`의 기존 `FEAST_LINEUP` 항목을 그대로 재사용.
+
+### DJ 두 팀 — 표기 주의
+
+**`instagram.com/gwalgwal`은 DJ 괄이 아니다.** 네이버 요약이 제시한 이 계정은 2019년이
+마지막 게시물인 무관한 사람으로 확인됐다. 실제 계정은 사운드클라우드 프로필의 링크를
+타고 나오는 `instagram.com/rottenmogwa`다. 이 오탐을 여기 적어두는 이유는, 다음에
+누가 같은 검색을 하면 같은 함정에 빠지기 때문이다.
+
+두 팀 모두 **장르·크루·연대 이력이 확인되지 않아 소개문을 쓰지 않는다.** 이름만 렌더한다.
+DJ 스탑원의 노동 관련 행사 디제잉 이력은 개인 블로그 한 건이 전부라 사이트에 쓰지 않는다.
+
+주최 측에 확인을 요청할 항목:
+1. DJ 괄의 장르와 소속 크루·정기 파티 (사운드클라우드에 보이는 채널1969·ACS 세트가 정기 활동인지)
+2. DJ 스탑원이 실제로 쓰는 계정 (`soundcloud.com/7adgknpb91de`가 맞는지)
+3. 두 사람의 프로필 사진과 짧은 자기소개 문구
+4. 나머지 팀(달 위의 콜린스·VAN KIDEN)의 정확한 표기와 SNS 핸들
 
 소개문이 확보되지 않은 팀은 이름만 렌더한다.
 `village-feast`가 쓰는 잣송이 자리표시가 이미 그 용도로 있다.
