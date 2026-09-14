@@ -92,7 +92,7 @@ export const FEAST_PHONE_COMMITTEE = "010-8918-8933";
 export const FEAST_PHONE_STAGE = CONCERT_PHONE;
 export const FEAST_PHONE_STAGE_NAME = CONCERT_PHONE_NAME;
 
-export interface FeastArtist {
+export interface ConcertArtist {
   name: string;
   /** 한 줄 소개. 확인된 자료가 없으면 비운다 — 지어내지 않는다. */
   blurb?: string;
@@ -128,7 +128,7 @@ export const FEAST_TIMETABLE: ConcertSlot[] = [
 
 // 포스터에 적힌 순서 그대로. 소개는 확인된 것만 적는다 — source 가 있으면 공개
 // 웹자료, 없으면(마쓰모토 코타·박지휘) 주최 측에서 받은 소개글을 다듬은 것이다.
-export const FEAST_LINEUP: FeastArtist[] = [
+export const FEAST_LINEUP: ConcertArtist[] = [
   {
     name: "경하와 세민",
     photo: "/images/concert/artists/kyungha-semin.jpg",
@@ -200,6 +200,85 @@ export const FEAST_LINEUP: FeastArtist[] = [
   },
 ];
 
+// ── 「木자르기」(2026-10-10 풍천리 마을회관 앞) ─────────────────────────────
+// 세 번째 자리. 앞선 둘과 성격이 다르다 — 8·1 청와대 앞이 목소리를 서울로 올린
+// 자리였고 9·5 마을 잔치가 하루쯤 웃는 자리였다면, 이번은 경고다. 2026년 1월
+// 본공사가 착공됐고 이설도로 공사로 잣나무 2,256그루가 이미 쓰러졌다.
+//
+// 제목 표기 규칙: 히어로의 대형 타이포와 포스터만 「木자르기」로 쓰고, 메타데이터·
+// 내비·본문은 전부 「목자르기」다. 한자를 이미지로 만들면 검색에 안 잡히고, 텍스트로만
+// 두면 스크린리더가 "나무 자르기"로 읽어 말장난이 무너진다. 히어로에서 aria-label 로 보정한다.
+export const MOK_TITLE = "목자르기";
+/** 히어로 대형 타이포·포스터에만 쓰는 표기 */
+export const MOK_TITLE_HANJA = "木자르기";
+export const MOK_SUBTITLE_LINES = ["우리의 나무를 자르는 건", "우리의 목을 자르는 거야"];
+export const MOK_DATE_LABEL = "2026년 10월 10일(토)";
+export const MOK_TIME_LABEL = "오후 2시 시작";
+export const MOK_PLACE = "풍천리 마을회관 앞";
+export const MOK_ADDRESS = FEAST_ADDRESS;
+export const MOK_START = new Date("2026-10-10T14:00:00+09:00");
+
+/** 대책위 문의 — 마을 잔치와 같은 사람이다 */
+export const MOK_PHONE_COMMITTEE = FEAST_PHONE_COMMITTEE;
+export const MOK_PHONE_STAGE = CONCERT_PHONE;
+export const MOK_PHONE_STAGE_NAME = CONCERT_PHONE_NAME;
+
+// 무대 순서는 아직 정해지지 않았다. 그래서 ConcertSlot 배열을 만들지 않는다 —
+// 확정되지 않은 시각을 표에 적으면 확정된 일정처럼 읽힌다. 라인업은 포스터 순서
+// 그대로 이름만 보여주고, 순서가 나오면 그때 시각표를 붙인다.
+//
+// 순서는 대표 포스터(붉은 목) 기준이다. 초록 글리치 포스터는 VAN KIDEN 이 넷째
+// 자리에 있어 둘이 어긋나는데, 대표로 쓰는 쪽을 따랐다.
+export const MOK_LINEUP: ConcertArtist[] = [
+  {
+    name: "양차애",
+    blurb:
+      "2인조 밴드 물장구클럽의 양차애. EP 「사랑타령」(2023), 싱글 「단꿈」(2024)·「You Want It」(2025)을 냈습니다.",
+    source: "https://music.bugs.co.kr/artist/20193293",
+  },
+  {
+    // 두 사람의 장르도 이력도 어느 출처로도 확인되지 않았다. 그래서 인물을 소개하지
+    // 않고 무대를 소개한다 — 이 문장이 주장하는 사실은 b2b 라는 것과 장소뿐이고,
+    // 둘 다 포스터에 적혀 있다. 지어낸 이력으로 칸을 채우느니 이편이 낫다.
+    name: "DJ스탑원 x DJ괄",
+    blurb:
+      "두 사람이 번갈아 판을 올리는 b2b 세트. 마을회관 앞마당에 턴테이블이 놓입니다. 노래가 멎은 자리를 비트가 이어받습니다.",
+  },
+  {
+    name: "사바하",
+    blurb:
+      "2013년 솔로 프로젝트로 출발해 2023년 듀오로 자리잡은 둠드론 밴드. 리더 The Slaughter의 기타·보컬에 2025년 드러머 The Mortician이 합류해 서울·수원을 기반으로 활동합니다. 스스로 ‘사이비 오컬트 둠드론’이라 부릅니다. 2024년 정규 「THUNDER ROCKS」.",
+    source: "https://ggac.kr/artists/sabbaha",
+  },
+  {
+    name: "달 위의 콜린스",
+    blurb:
+      "홍대 클럽빵을 거점으로 공연해온 팀. 2025년 가을 두 달 사이에 싱글 「비둘기의 失樂園」·「PM 7:37」과 EP 「19.8㎡에서의 漂流記」, 앨범 「Thief 86」을 잇달아 냈습니다.",
+    source: "https://indistreet.com/ko/artists/dalwiyikolrinseu",
+  },
+  {
+    name: "박지휘",
+    photo: "/images/concert/artists/parkjihwi.jpg",
+    photoCredit: "주최 측 제공",
+    blurb:
+      "프리포크 싱어송라이터. 일러스트레이터 2da(이다)의 그림에서 따온 ‘sickbaby’라는 이름으로도 불렀습니다. 로파이한 프리포크로 시작해, 근래에는 엘리엇 스미스의 새드코어에 기운 곡을 씁니다.",
+  },
+  {
+    name: "최양다음 NEXT",
+    photo: "/images/concert/artists/next.jpg",
+    photoCredit: "주최 측 제공",
+    blurb: "싱어송라이터. 이름을 여러 나라 말로 씁니다 — 다음, NEXT, 次, Nächste, 翌.",
+    source: "https://www.instagram.com/nextisnexttoyou/",
+  },
+  {
+    // 공개 자료가 하나도 없어 주최 측 소개글을 그대로 쓴다. 마쓰모토 코타·박지휘와
+    // 같은 처리다 — source 를 비우는 것이 "공개 웹자료가 아니다"라는 표시다.
+    name: "VAN KIDEN",
+    blurb:
+      "랩과 싱잉을 오가는 뮤지션. 2022년 싱글 「LIGHT」로 데뷔했습니다. 느끼는 감정을 그대로 전하고, 스스로에게 부끄럽지 않은 음악을 만들어가려 합니다.",
+  },
+];
+
 // ── 예술연대 아카이브 ──────────────────────────────────────────────────────
 // 공연은 정해진 주기 없이 열린다. 그래서 회차 번호를 쓰지 않고, 끝난 공연을
 // 아래 배열에 최신순으로 쌓기만 한다. 다음 공연 날짜가 잡히면 upcoming: true 로
@@ -225,6 +304,21 @@ export interface ConcertEntry {
 
 export const CONCERTS: ConcertEntry[] = [
   {
+    slug: "mok-jareugi",
+    startAt: MOK_START,
+    title: MOK_TITLE,
+    navLabel: MOK_TITLE,
+    dateLabel: MOK_DATE_LABEL,
+    timeLabel: MOK_TIME_LABEL,
+    place: MOK_PLACE,
+    posterImage: "/images/concert/mok-jareugi-poster.jpg",
+    posterAlt: "목자르기 공연 포스터 — 2026년 10월 10일 토요일 오후 2시, 풍천리 마을회관 앞",
+    summary:
+      "우리의 나무를 자르는 건 우리의 목을 자르는 거야. 본공사가 착공됐고 톱날은 이미 숲의 가장자리를 지났습니다. 벌목을 앞둔 잣나무 숲 앞에서 음악가 7팀이 경고합니다.",
+    lineupCount: MOK_LINEUP.length,
+    upcoming: true,
+  },
+  {
     slug: "village-feast",
     startAt: FEAST_START,
     title: FEAST_TITLE,
@@ -237,7 +331,6 @@ export const CONCERTS: ConcertEntry[] = [
     summary:
       "이번엔 음악가들이 마을로 내려옵니다. 8년째 싸워온 사람들이 하루쯤은 웃고 먹고 춤추는, 풍천리 마을회관 앞마당의 잔치입니다.",
     lineupCount: FEAST_LINEUP.length,
-    upcoming: true,
   },
   {
     slug: "before-cut",

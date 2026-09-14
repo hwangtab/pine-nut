@@ -34,6 +34,11 @@ export function defaultNavLinks(): BuilderLinkItem[] {
       href: "/concert",
       children: [
         {
+          id: "nav-concert-mok-jareugi",
+          label: "목자르기",
+          href: "/concert/mok-jareugi",
+        },
+        {
           id: "nav-concert-village-feast",
           label: "풍천리 잣나무 마을 잔치",
           href: "/concert/village-feast",

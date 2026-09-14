@@ -29,6 +29,7 @@ export function hasPageHero(pathname: string): boolean {
 // UtilityHeader를 쓰므로 투명 내비(흰 글씨)가 아니라 불투명 페이퍼 내비여야 읽힌다.
 // /concert/village-feast 는 빠져 있다 — 히어로가 포스터의 연둣빛(밝은 배경)이라
 // 흰 잉크 투명 내비가 읽히지 않는다. 불투명 페이퍼 내비여야 한다.
+// /concert/mok-jareugi 는 반대로 들어 있다 — 히어로가 먹빛 숲(#0E1A0B)이다.
 const TRANSPARENT_NAV_ROUTES = [
   "/",
   "/story",
@@ -41,6 +42,7 @@ const TRANSPARENT_NAV_ROUTES = [
   "/donate",
   "/concert",
   "/concert/before-cut",
+  "/concert/mok-jareugi",
   "/en",
 ];
 
@@ -84,6 +86,7 @@ export function needsNavTopPadding(pathname: string): boolean {
 //   /                        home.stats  bg-deep-raised  py-16 md:py-20 (64/80px)
 //   /concert/before-cut      마무리 CTA   bg-deep-raised  py-20 sm:py-24 (80/96px)
 //   /concert/village-feast   마무리 CTA   bg-deep-raised  py-20 sm:py-24 (80/96px)
+//   /concert/mok-jareugi     마무리 CTA   bg-deep-raised  py-20 sm:py-24 (80/96px)
 //   /story                   story.cta   bg-forest       py-20 md:py-28 (80/112px)
 //   /en                      en.cta      bg-forest       py-20 md:py-28 (80/112px)
 //
@@ -96,6 +99,7 @@ const DARK_TAIL_ROUTES = [
   "/en/story",
   "/concert/before-cut",
   "/concert/village-feast",
+  "/concert/mok-jareugi",
 ];
 
 // 능선 아래 여백을 전역으로 줄 것인가.
