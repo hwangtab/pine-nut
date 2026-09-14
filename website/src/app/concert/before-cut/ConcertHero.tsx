@@ -1,19 +1,9 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import {
-  CONCERT_DATE_LABEL,
-  CONCERT_PLACE,
-  CONCERT_START,
-  CONCERT_TIME_LABEL,
-} from "@/lib/concert";
-import { useDday } from "@/lib/use-concert-status";
+import { CONCERT_DATE_LABEL, CONCERT_PLACE, CONCERT_TIME_LABEL } from "@/lib/concert";
 import { RidgeDivider } from "@/components/visuals/ForestLetterMotifs";
 
 export default function ConcertHero() {
-  const dday = useDday(CONCERT_START)?.label ?? null;
-
   return (
     <section className="relative flex min-h-[88svh] flex-col items-center justify-center overflow-hidden px-4 pt-28 pb-20 text-center text-white sm:px-6">
       <Image
@@ -49,30 +39,27 @@ export default function ConcertHero() {
         </h1>
 
         <p className="rise-in rise-in-2 mx-auto mt-6 max-w-2xl text-balance break-keep text-base leading-relaxed text-white/85 sm:text-xl">
-          잣나무 11만 그루가 베어지기 전에. 풍천리를 지키려는 음악가 14팀이 청와대 앞에 모입니다.
+          잣나무 11만 그루가 베어지기 전에. 풍천리를 지키려는 음악가 14팀이 청와대 앞에 모였습니다.
         </p>
 
-        <div
-          className="rise-in rise-in-3 mt-8 flex items-center justify-center"
-          aria-label="공연까지 남은 날"
-        >
-          <span className="rounded-2xl border-2 border-[#3BEF7C]/60 bg-black/40 px-8 py-3 text-4xl font-black tracking-tight text-[#3BEF7C] sm:text-6xl">
-            {dday ?? "8·1"}
+        <div className="rise-in rise-in-3 mt-8 flex items-center justify-center">
+          <span className="rounded-full border-2 border-[#3BEF7C]/60 bg-black/40 px-6 py-2.5 text-sm font-bold tracking-wide text-[#3BEF7C]">
+            지난 공연 · 2026. 8. 1.
           </span>
         </div>
 
         <div className="rise-in rise-in-3 mx-auto mt-10 flex w-full max-w-xs flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row sm:items-center">
           <Link
-            href="/petition"
+            href="/concert/mok-jareugi"
             className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[var(--color-warm)] px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-[var(--color-warm-light)] sm:text-lg"
           >
-            서명으로 함께하기
+            다음 공연 보기
           </Link>
           <a
-            href="#poster"
+            href="#timetable"
             className="inline-flex min-h-[52px] items-center justify-center rounded-full border-2 border-white/60 px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-white/10 sm:text-lg"
           >
-            포스터 보기
+            함께한 음악가 보기
           </a>
         </div>
       </div>
