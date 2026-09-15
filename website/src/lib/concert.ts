@@ -107,6 +107,11 @@ export interface ConcertArtist {
   photo?: string;
   /** 사진 출처. 게시 허락을 확인할 때 근거가 된다. */
   photoCredit?: string;
+  /**
+   * b2b 세트처럼 한 자리에 두 사람이 서는 경우의 둘째 사진.
+   * 항목을 둘로 쪼개면 같은 세트 소개가 두 번 붙으므로 한 칸에 둘을 겹쳐 놓는다.
+   */
+  photoSecondary?: string;
 }
 
 // 무대 순서: 세트 15분 + 전환 5분이라 한 팀이 20분씩 차지한다. 「베어지기 전에」와
@@ -249,6 +254,9 @@ export const MOK_LINEUP: ConcertArtist[] = [
     // 않고 무대를 소개한다 — 이 문장이 주장하는 사실은 b2b 라는 것과 장소뿐이고,
     // 둘 다 포스터에 적혀 있다. 지어낸 이력으로 칸을 채우느니 이편이 낫다.
     name: "DJ스탑원 x DJ괄",
+    photo: "/images/concert/artists/dj-stopone.jpg",
+    photoSecondary: "/images/concert/artists/dj-gwal.jpg",
+    photoCredit: "주최 측 제공",
     blurb:
       "두 사람이 번갈아 판을 올리는 b2b 세트. 마을회관 앞마당에 턴테이블이 놓입니다. 노래가 멎은 자리를 비트가 이어받습니다.",
   },

@@ -389,19 +389,42 @@ export default function MokJareugiPage() {
             {MOK_LINEUP.map((artist) => (
               <li key={artist.name} className="paper">
                 <div className="relative z-[1] flex items-start gap-4 px-5 py-5">
-                  {/* 사진이 없는 팀도 같은 자리를 차지해야 이름 줄이 어긋나지 않는다 */}
-                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full sm:h-20 sm:w-20">
+                  {/* 사진이 없는 팀도 같은 자리를 차지해야 이름 줄이 어긋나지 않는다.
+                      b2b 세트는 두 사람이라 원을 겹쳐 놓는다 — 한 사람만 걸면
+                      나머지 한 사람이 없는 것처럼 읽힌다. */}
+                  <div className="relative h-16 w-16 shrink-0 sm:h-20 sm:w-20">
                     {artist.photo ? (
-                      <Image
-                        src={artist.photo}
-                        alt={`${artist.name} 프로필 사진`}
-                        fill
-                        sizes="80px"
-                        className="object-cover"
-                      />
+                      <>
+                        <span
+                          className={`absolute overflow-hidden rounded-full ${
+                            artist.photoSecondary
+                              ? "left-0 top-0 h-11 w-11 sm:h-14 sm:w-14"
+                              : "inset-0"
+                          }`}
+                        >
+                          <Image
+                            src={artist.photo}
+                            alt={`${artist.name} 프로필 사진`}
+                            fill
+                            sizes="80px"
+                            className="object-cover"
+                          />
+                        </span>
+                        {artist.photoSecondary ? (
+                          <span className="absolute bottom-0 right-0 h-11 w-11 overflow-hidden rounded-full ring-2 ring-[var(--color-bg-moss)] sm:h-14 sm:w-14">
+                            <Image
+                              src={artist.photoSecondary}
+                              alt=""
+                              fill
+                              sizes="80px"
+                              className="object-cover"
+                            />
+                          </span>
+                        ) : null}
+                      </>
                     ) : (
                       <span
-                        className="flex h-full w-full items-center justify-center bg-[var(--color-bg-warm)] text-[var(--color-forest)]/45"
+                        className="flex h-full w-full items-center justify-center rounded-full bg-[var(--color-bg-warm)] text-[var(--color-forest)]/45"
                         aria-hidden
                       >
                         <PineConeIcon className="h-8 w-8" />
