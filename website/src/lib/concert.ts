@@ -242,12 +242,11 @@ export const MOK_PHONE_STAGE_NAME = CONCERT_PHONE_NAME;
 // 자리에 있어 둘이 어긋나는데, 대표로 쓰는 쪽을 따랐다.
 export const MOK_LINEUP: ConcertArtist[] = [
   {
+    // 소개문을 두지 않는다. 본인 이름으로 확인되는 활동 기록이 아직 없고,
+    // 이전 소속 밴드는 쓰지 않는다. 본인 소개를 받으면 그때 채운다.
     name: "양차애",
     photo: "/images/concert/artists/yangchaae.jpg",
     photoCredit: "뉴스아트",
-    blurb:
-      "2인조 밴드 물장구클럽의 양차애. EP 「사랑타령」(2023), 싱글 「단꿈」(2024)·「You Want It」(2025)을 냈습니다.",
-    source: "https://music.bugs.co.kr/artist/20193293",
   },
   {
     // 두 사람의 장르도 이력도 어느 출처로도 확인되지 않았다. 그래서 인물을 소개하지
