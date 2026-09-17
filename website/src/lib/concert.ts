@@ -242,11 +242,12 @@ export const MOK_PHONE_STAGE_NAME = CONCERT_PHONE_NAME;
 // 자리에 있어 둘이 어긋나는데, 대표로 쓰는 쪽을 따랐다.
 export const MOK_LINEUP: ConcertArtist[] = [
   {
-    // 소개문을 두지 않는다. 본인 이름으로 확인되는 활동 기록이 아직 없고,
-    // 이전 소속 밴드는 쓰지 않는다. 본인 소개를 받으면 그때 채운다.
+    // 본인이 보내온 소개다. 문체만 사이트에 맞췄고 말은 그대로 뒀다.
+    // 이전 소속 밴드는 쓰지 않는다.
     name: "양차애",
     photo: "/images/concert/artists/yangchaae.jpg",
     photoCredit: "뉴스아트",
+    blurb: "사랑노래를 짓고 부릅니다. 잘 패배하는 사람이 되는 것이 꿈입니다.",
   },
   {
     // 두 사람의 장르도 이력도 어느 출처로도 확인되지 않았다. 그래서 인물을 소개하지
