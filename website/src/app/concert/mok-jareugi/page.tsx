@@ -73,7 +73,7 @@ const eventJsonLd = {
   },
   image: [`${SITE_URL}/images/concert/mok-jareugi-og.jpg`],
   description: `${MOK_DATE_LABEL} ${MOK_TIME_LABEL}, ${MOK_PLACE}. 벌목을 앞둔 잣나무 숲 앞에서 음악가 ${MOK_LINEUP.length}팀이 함께합니다. 관람료는 없습니다.`,
-  organizer: { "@type": "Organization", name: "풍천리 양수발전소 건설 반대 대책위원회" },
+  organizer: { "@type": "Organization", name: "야호야호단" },
 };
 
 export const metadata: Metadata = {
