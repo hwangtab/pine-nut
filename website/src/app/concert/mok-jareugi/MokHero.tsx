@@ -3,6 +3,7 @@
 import Link from "next/link";
 import {
   MOK_DATE_LABEL,
+  MOK_FUNDING_URL,
   MOK_PLACE,
   MOK_START,
   MOK_SUBTITLE_LINES,
@@ -93,6 +94,13 @@ export default function MokHero() {
             >
               서명으로 함께하기
             </Link>
+            <a
+              href={MOK_FUNDING_URL}
+              className="inline-flex min-h-[52px] items-center border-b-2 px-1 text-base font-bold transition-opacity hover:opacity-70"
+              style={{ borderColor: BONE }}
+            >
+              펀딩으로 함께하기
+            </a>
           </div>
 
           {/* D-day 를 붉은 덩어리로 키우면 제목과 싸운다. 톱자국과 같은 색의

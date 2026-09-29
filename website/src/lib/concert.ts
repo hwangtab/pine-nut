@@ -234,6 +234,10 @@ export const MOK_PHONE_COMMITTEE = FEAST_PHONE_COMMITTEE;
 export const MOK_PHONE_STAGE = CONCERT_PHONE;
 export const MOK_PHONE_STAGE_NAME = CONCERT_PHONE_NAME;
 
+// 공연 펀딩은 스튜디오 놀 펀딩에서 받는다(결제·환불·리워드 발송이 그쪽에만 있다).
+// 10/24 마감. 리워드는 강정피스앤뮤직캠프 앨범 〈이름을 모르는 먼 곳의 그대에게〉 음원.
+export const MOK_FUNDING_URL = "https://studionol.co.kr/ko/funding/mok-jareugi";
+
 // 무대 순서는 아직 정해지지 않았다. 그래서 ConcertSlot 배열을 만들지 않는다 —
 // 확정되지 않은 시각을 표에 적으면 확정된 일정처럼 읽힌다. 라인업은 포스터 순서
 // 그대로 이름만 보여주고, 순서가 나오면 그때 시각표를 붙인다.

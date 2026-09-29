@@ -18,6 +18,7 @@ import { SITE_URL } from "@/lib/site-config";
 import {
   MOK_ADDRESS,
   MOK_DATE_LABEL,
+  MOK_FUNDING_URL,
   MOK_LINEUP,
   MOK_PHONE_COMMITTEE,
   MOK_PHONE_STAGE,
@@ -662,6 +663,9 @@ export default function MokJareugiPage() {
             <Link href="/petition" className="letter-btn letter-btn--primary">
               서명하기
             </Link>
+            <a href={MOK_FUNDING_URL} className="letter-btn letter-btn--outline">
+              공연 펀딩하기
+            </a>
             <Link href="/board" className="letter-btn letter-btn--outline">
               게시판에 응원 남기기
             </Link>
