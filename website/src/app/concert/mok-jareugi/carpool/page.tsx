@@ -1,21 +1,32 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { OG_SITE } from "@/lib/seo-alternates";
 import { SITE_URL } from "@/lib/site-config";
 import { MOK_PLACE } from "@/lib/concert";
 import { CARPOOL_CONTACT_NAME, CARPOOL_CONTACT_PHONE, CARPOOL_DATE_LABEL } from "@/lib/carpool";
 import CarpoolBoard from "./CarpoolBoard";
 
-const DESCRIPTION = "목자르기(10/10) 풍천리 가는 카풀 — 차량과 빈자리를 골라 이름과 연락처로 신청하세요.";
+const PAGE_URL = `${SITE_URL}/concert/mok-jareugi/carpool`;
+const TITLE = "목자르기 카풀 — 풍천리 같이 타고 가요";
+const DESCRIPTION =
+  "10월 10일(토) 목자르기 공연, 광화문·강변역·불광역·뚝섬역에서 풍천리까지 함께 가는 차량입니다. 빈자리를 골라 신청하세요.";
 
+// og:image 는 같은 폴더의 opengraph-image.tsx 가 채운다.
 export const metadata: Metadata = {
-  title: "카풀 신청 — 목자르기 | 풍천리를 지켜주세요",
+  title: TITLE,
   description: DESCRIPTION,
-  alternates: { canonical: `${SITE_URL}/concert/mok-jareugi/carpool` },
+  alternates: { canonical: PAGE_URL },
   openGraph: {
-    title: "목자르기 카풀 신청",
+    ...OG_SITE,
+    title: TITLE,
     description: DESCRIPTION,
-    url: `${SITE_URL}/concert/mok-jareugi/carpool`,
+    url: PAGE_URL,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
   },
 };
 

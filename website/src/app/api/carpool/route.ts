@@ -16,24 +16,33 @@ const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const SERVICE_UNAVAILABLE = "지금은 신청을 받을 수 없습니다. 잠시 뒤 다시 시도해주세요.";
 
-/** 차량별로 이미 찬 좌석 번호. 이름·연락처는 내보내지 않는다. */
+/** 차량별로 이미 찬 좌석 번호와 신청자 이름. 연락처는 내보내지 않는다. */
 export async function GET() {
   const supabase = createSupabaseServiceClient();
   if (!supabase) return jsonErrorResponse(SERVICE_UNAVAILABLE, 503);
 
-  const { data, error } = await supabase.from("carpool_riders").select("vehicle_id, seat_no");
+  const { data, error } = await supabase
+    .from("carpool_riders")
+    .select("vehicle_id, seat_no, name")
+    .order("created_at");
   if (error) {
     console.error("carpool: fetch failed", error.message);
     return jsonErrorResponse(SERVICE_UNAVAILABLE, 500);
   }
 
-  const taken: Record<string, number[]> = Object.fromEntries(
-    CARPOOL_VEHICLES.map((vehicle) => [vehicle.id, []]),
-  );
-  for (const row of data ?? []) taken[row.vehicle_id]?.push(row.seat_no);
+  const taken: Record<string, number[]> = {};
+  const riders: Record<string, string[]> = {};
+  for (const vehicle of CARPOOL_VEHICLES) {
+    taken[vehicle.id] = [];
+    riders[vehicle.id] = [];
+  }
+  for (const row of data ?? []) {
+    taken[row.vehicle_id]?.push(row.seat_no);
+    riders[row.vehicle_id]?.push(row.name);
+  }
 
   return NextResponse.json(
-    { taken, closed: Date.now() >= CARPOOL_CLOSE_AT.getTime() },
+    { taken, riders, closed: Date.now() >= CARPOOL_CLOSE_AT.getTime() },
     { headers: { "Cache-Control": "no-store" } },
   );
 }

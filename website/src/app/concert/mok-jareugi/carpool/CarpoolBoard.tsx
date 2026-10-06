@@ -10,6 +10,7 @@ import {
 } from "@/lib/carpool";
 
 type Taken = Record<string, number[]>;
+type Riders = Record<string, string[]>;
 
 interface Selection {
   vehicleId: string;
@@ -23,6 +24,7 @@ interface Confirmed {
 
 export default function CarpoolBoard() {
   const [taken, setTaken] = useState<Taken | null>(null);
+  const [riders, setRiders] = useState<Riders>({});
   const [closed, setClosed] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [selection, setSelection] = useState<Selection | null>(null);
@@ -32,8 +34,9 @@ export default function CarpoolBoard() {
     try {
       const res = await fetch("/api/carpool", { cache: "no-store" });
       if (!res.ok) throw new Error(String(res.status));
-      const data = (await res.json()) as { taken: Taken; closed: boolean };
+      const data = (await res.json()) as { taken: Taken; riders?: Riders; closed: boolean };
       setTaken(data.taken);
+      setRiders(data.riders ?? {});
       setClosed(data.closed);
       setLoadError(false);
     } catch {
@@ -108,6 +111,7 @@ export default function CarpoolBoard() {
             key={vehicle.id}
             vehicle={vehicle}
             takenSeats={taken?.[vehicle.id] ?? null}
+            riderNames={riders[vehicle.id] ?? []}
             disabled={closed || taken === null}
             selectedSeat={selection?.vehicleId === vehicle.id ? selection.seatNo : null}
             onSelect={(seatNo) => setSelection({ vehicleId: vehicle.id, seatNo })}
@@ -127,6 +131,7 @@ export default function CarpoolBoard() {
 function VehicleCard({
   vehicle,
   takenSeats,
+  riderNames,
   disabled,
   selectedSeat,
   onSelect,
@@ -136,6 +141,7 @@ function VehicleCard({
 }: {
   vehicle: CarpoolVehicle;
   takenSeats: number[] | null;
+  riderNames: string[];
   disabled: boolean;
   selectedSeat: number | null;
   onSelect: (seatNo: number) => void;
@@ -184,9 +190,9 @@ function VehicleCard({
 
         <p className="mt-5 text-sm font-semibold text-[var(--color-text-muted)]">이미 타는 사람</p>
         <ul className="mt-2 flex flex-wrap gap-1.5">
-          {vehicle.boarded.map((name) => (
+          {[...vehicle.boarded, ...riderNames].map((name, i) => (
             <li
-              key={name}
+              key={`${i}-${name}`}
               className="rounded-full bg-[var(--color-bg-moss)] px-3 py-1 text-sm font-semibold text-[var(--color-forest)]"
             >
               {name}
@@ -319,7 +325,7 @@ function RiderForm({
           className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-forest)]"
         />
         <span className="break-keep">
-          카풀 연락을 위해 이름과 휴대전화 번호를 모으는 데 동의합니다. 공연이 끝나면 지웁니다.
+          카풀 연락을 위해 이름과 휴대전화 번호를 모으는 데 동의합니다. 이름은 차량 카드의 ‘이미 타는 사람’에 보이고, 번호는 공개되지 않습니다. 공연이 끝나면 지웁니다.
         </span>
       </label>
 
