@@ -22,6 +22,10 @@ export const CARPOOL_DATE_LABEL = "10월 10일(토)";
 export const CARPOOL_RETURN_LABEL = "다음 날 10월 11일(일) 오전 11시 풍천리 출발";
 export const CARPOOL_SAME_DAY_RETURN_LABEL = "공연 마치고 당일 귀환";
 
+/** 신청 변경·취소 문의 */
+export const CARPOOL_CONTACT_NAME = "황경하";
+export const CARPOOL_CONTACT_PHONE = "010-4255-7893";
+
 /** 이 시각 이후로는 신청을 받지 않는다(첫 차 출발 시각) */
 export const CARPOOL_CLOSE_AT = new Date("2026-10-10T08:00:00+09:00");
 

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { SITE_URL } from "@/lib/site-config";
-import { MOK_PHONE_STAGE, MOK_PHONE_STAGE_NAME, MOK_PLACE } from "@/lib/concert";
-import { CARPOOL_DATE_LABEL } from "@/lib/carpool";
+import { MOK_PLACE } from "@/lib/concert";
+import { CARPOOL_CONTACT_NAME, CARPOOL_CONTACT_PHONE, CARPOOL_DATE_LABEL } from "@/lib/carpool";
 import CarpoolBoard from "./CarpoolBoard";
 
 const DESCRIPTION = "목자르기(10/10) 풍천리 가는 카풀 — 차량과 빈자리를 골라 이름과 연락처로 신청하세요.";
@@ -45,11 +45,11 @@ export default function MokCarpoolPage() {
         <CarpoolBoard />
 
         <p className="mt-10 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-          신청을 바꾸거나 취소하려면 {MOK_PHONE_STAGE_NAME}(
-          <a href={`tel:${MOK_PHONE_STAGE}`} className="font-semibold text-[var(--color-text)] underline">
-            {MOK_PHONE_STAGE}
+          신청을 바꾸거나 취소하려면 {CARPOOL_CONTACT_NAME}(
+          <a href={`tel:${CARPOOL_CONTACT_PHONE}`} className="font-semibold text-[var(--color-text)] underline">
+            {CARPOOL_CONTACT_PHONE}
           </a>
-          )께 알려주세요. 남겨주신 이름과 연락처는 카풀 연락에만 쓰고 공연이 끝나면 지웁니다.
+          )에게 알려주세요. 남겨주신 이름과 연락처는 카풀 연락에만 쓰고 공연이 끝나면 지웁니다.
         </p>
       </div>
     </div>
