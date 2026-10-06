@@ -50,7 +50,7 @@ export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
   },
   {
     id: "dulgama",
-    name: "둘가마",
+    name: "둠가마",
     departurePlace: "강변역",
     departureTime: "오전 8시",
     boardedCount: 3,
