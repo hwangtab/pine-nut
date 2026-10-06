@@ -19,6 +19,12 @@ export default async function AdminCarpoolPage() {
     .order("seat_no");
 
   const riders = (data ?? []) as RiderRow[];
+
+  // 시트 탑승자 번호(carpool_boarded_contacts). 이름은 코드에, 번호는 DB에만 있다.
+  const { data: contactData } = await supabase
+    .from("carpool_boarded_contacts")
+    .select("vehicle_id, name, phone");
+  const contacts = (contactData ?? []) as { vehicle_id: string; name: string; phone: string }[];
   const totalOpen = CARPOOL_VEHICLES.reduce((sum, v) => sum + v.openSeats, 0);
 
   return (
@@ -59,10 +65,29 @@ export default async function AdminCarpoolPage() {
                   </b>
                 </span>
               </div>
+              <p className="mt-3 text-sm font-semibold text-[var(--color-admin-muted)]">시트 탑승자</p>
+              <ul className="mt-1 flex flex-wrap gap-x-5 gap-y-1 text-sm">
+                {vehicle.boarded.map((name) => {
+                  const contact = contacts.find((c) => c.vehicle_id === vehicle.id && c.name === name);
+                  return (
+                    <li key={name}>
+                      <b className="text-[var(--color-admin-text)]">{name}</b>{" "}
+                      {contact ? (
+                        <a href={`tel:${contact.phone}`} className="text-[var(--color-sky)]">
+                          {formatCarpoolPhone(contact.phone)}
+                        </a>
+                      ) : (
+                        <span className="text-[var(--color-admin-muted)]">번호 없음</span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="mt-4 text-sm font-semibold text-[var(--color-admin-muted)]">신청자</p>
               {list.length === 0 ? (
-                <p className="mt-3 text-sm text-[var(--color-admin-muted)]">아직 신청자가 없습니다.</p>
+                <p className="mt-1 text-sm text-[var(--color-admin-muted)]">아직 신청자가 없습니다.</p>
               ) : (
-                <ul className="mt-3 divide-y divide-[var(--color-admin-border)]">
+                <ul className="mt-1 divide-y divide-[var(--color-admin-border)]">
                   {list.map((rider) => (
                     <li key={rider.id} className="flex items-center justify-between gap-3 py-2.5">
                       <span className="min-w-0">

@@ -82,6 +82,24 @@ export async function POST(request: NextRequest) {
   const supabase = createSupabaseServiceClient();
   if (!supabase) return jsonErrorResponse(SERVICE_UNAVAILABLE, 503);
 
+  // 시트에서 이미 자리가 정해진 사람이 다른 이름으로 또 신청하는 것을 번호로 막는다.
+  const { data: boardedContact, error: boardedError } = await supabase
+    .from("carpool_boarded_contacts")
+    .select("vehicle_id")
+    .eq("phone", phone)
+    .maybeSingle();
+  if (boardedError) {
+    console.error("carpool: boarded check failed", boardedError.message);
+    return jsonErrorResponse(SERVICE_UNAVAILABLE, 500);
+  }
+  const boardedByPhone = boardedContact ? findCarpoolVehicle(boardedContact.vehicle_id) : undefined;
+  if (boardedByPhone) {
+    return jsonErrorResponse(
+      `이 번호는 이미 ${boardedByPhone.name}에 타기로 되어 있어요. 따로 신청하지 않으셔도 됩니다.`,
+      409,
+    );
+  }
+
   const ipHash = hashIp(getClientIp(request));
   const { count, error: rateError } = await supabase
     .from("carpool_riders")
