@@ -41,6 +41,9 @@ export default function MokCarpoolPage() {
           {CARPOOL_DATE_LABEL} 서울에서 {MOK_PLACE}까지 함께 가는 차량입니다. 출발지가 가까운 차를
           고르고, 빈자리를 눌러 이름과 연락처를 남겨주세요.
         </p>
+        <p className="mt-3 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+          ‘이미 타는 사람’에 이름이 있으면 자리가 정해진 것이니 따로 신청하지 않으셔도 됩니다.
+        </p>
 
         <CarpoolBoard />
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   CARPOOL_CLOSE_AT,
   CARPOOL_VEHICLES,
+  findBoardedVehicle,
   findCarpoolVehicle,
   normalizeCarpoolPhone,
 } from "@/lib/carpool";
@@ -60,6 +61,14 @@ export async function POST(request: NextRequest) {
   if (!name || name.length > 30) return jsonErrorResponse("이름을 확인해주세요.", 400);
   if (!phone) return jsonErrorResponse("휴대전화 번호를 확인해주세요.", 400);
   if (body.consent !== true) return jsonErrorResponse("개인정보 수집·이용에 동의해주세요.", 400);
+
+  const boardedVehicle = findBoardedVehicle(name);
+  if (boardedVehicle) {
+    return jsonErrorResponse(
+      `${name}님은 이미 ${boardedVehicle.name}에 타기로 되어 있어요. 따로 신청하지 않으셔도 됩니다.`,
+      409,
+    );
+  }
 
   const supabase = createSupabaseServiceClient();
   if (!supabase) return jsonErrorResponse(SERVICE_UNAVAILABLE, 503);

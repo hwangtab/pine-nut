@@ -182,9 +182,19 @@ function VehicleCard({
           </li>
         </ul>
 
-        <p className="mt-5 text-sm font-semibold text-[var(--color-text-muted)]">
-          자리 고르기 <span className="font-normal">(이미 {vehicle.boardedCount}명 탑승)</span>
-        </p>
+        <p className="mt-5 text-sm font-semibold text-[var(--color-text-muted)]">이미 타는 사람</p>
+        <ul className="mt-2 flex flex-wrap gap-1.5">
+          {vehicle.boarded.map((name) => (
+            <li
+              key={name}
+              className="rounded-full bg-[var(--color-bg-moss)] px-3 py-1 text-sm font-semibold text-[var(--color-forest)]"
+            >
+              {name}
+            </li>
+          ))}
+        </ul>
+
+        <p className="mt-5 text-sm font-semibold text-[var(--color-text-muted)]">빈자리 고르기</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {seats.map((seatNo) => {
             const isTaken = takenSeats?.includes(seatNo) ?? false;

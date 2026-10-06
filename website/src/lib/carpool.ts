@@ -2,8 +2,7 @@
 // 차량 정보는 DB가 아니라 여기서 관리한다. 신청자만 carpool_riders 테이블에 쌓이고,
 // 좌석 번호 범위(1..openSeats)는 API가 이 값으로 검증한다.
 //
-// 운전자·기존 탑승자의 연락처는 공개하지 않는다 — 이 파일은 클라이언트 번들에도
-// 실리므로 이름도 넣지 않고 인원 수만 둔다.
+// 이 파일은 클라이언트 번들에도 실린다. 기존 탑승자는 이름만 두고 연락처는 넣지 않는다.
 
 export interface CarpoolVehicle {
   id: string;
@@ -11,8 +10,8 @@ export interface CarpoolVehicle {
   departurePlace: string;
   /** null이면 "추후 안내" */
   departureTime: string | null;
-  /** 이미 타기로 한 사람 수(운전자 포함) */
-  boardedCount: number;
+  /** 이미 타기로 한 사람(운전자 포함) — 차량 카드에 이름으로 보여준다 */
+  boarded: string[];
   /** 신청받는 빈자리 수 */
   openSeats: number;
   sameDayReturn: boolean;
@@ -34,8 +33,8 @@ export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
     id: "chotbul",
     name: "촛불교회 차량",
     departurePlace: "광화문",
-    departureTime: "오전 8시",
-    boardedCount: 3,
+    departureTime: "오전 9시",
+    boarded: ["삼각전파사", "황경하", "정정훈"],
     openSeats: 5,
     sameDayReturn: false,
   },
@@ -43,8 +42,8 @@ export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
     id: "parkjihwi",
     name: "박지휘님 차량",
     departurePlace: "강변역",
-    departureTime: "오전 8시",
-    boardedCount: 2,
+    departureTime: "오전 9시",
+    boarded: ["박지휘", "달 위의 콜리스"],
     openSeats: 3,
     sameDayReturn: false,
   },
@@ -53,7 +52,7 @@ export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
     name: "둠가마",
     departurePlace: "강변역",
     departureTime: "오전 8시",
-    boardedCount: 3,
+    boarded: ["사바하", "곽민", "관객 1인"],
     openSeats: 3,
     sameDayReturn: false,
   },
@@ -62,7 +61,7 @@ export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
     name: "영준카",
     departurePlace: "강변역",
     departureTime: "오전 8시",
-    boardedCount: 1,
+    boarded: ["김영준"],
     openSeats: 4,
     sameDayReturn: false,
   },
@@ -70,8 +69,8 @@ export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
     id: "chichi",
     name: "치치카",
     departurePlace: "불광역",
-    departureTime: "오전 8시",
-    boardedCount: 2,
+    departureTime: "오전 9시",
+    boarded: ["치치", "VAN KIDEN"],
     openSeats: 3,
     sameDayReturn: true,
   },
@@ -80,11 +79,21 @@ export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
     name: "차애카",
     departurePlace: "뚝섬역",
     departureTime: "오전 9시",
-    boardedCount: 3,
+    boarded: ["양차애", "DJ 스탑원", "DJ 괄"],
     openSeats: 4,
     sameDayReturn: true,
   },
 ];
+
+const compactName = (name: string) => name.replace(/\s+/g, "").toLowerCase();
+
+/** 시트에 이미 이름이 올라 있는 사람이면 그 차량 */
+export function findBoardedVehicle(name: string): CarpoolVehicle | undefined {
+  const target = compactName(name);
+  return CARPOOL_VEHICLES.find((vehicle) =>
+    vehicle.boarded.some((boardedName) => compactName(boardedName) === target),
+  );
+}
 
 export function findCarpoolVehicle(id: string): CarpoolVehicle | undefined {
   return CARPOOL_VEHICLES.find((vehicle) => vehicle.id === id);
