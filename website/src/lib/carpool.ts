@@ -81,7 +81,7 @@ export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
     departurePlace: "뚝섬역",
     departureTime: "오전 9시",
     boardedCount: 3,
-    openSeats: 5,
+    openSeats: 4,
     sameDayReturn: true,
   },
 ];
