@@ -92,12 +92,10 @@ export async function POST(request: NextRequest) {
     console.error("carpool: boarded check failed", boardedError.message);
     return jsonErrorResponse(SERVICE_UNAVAILABLE, 500);
   }
-  const boardedByPhone = boardedContact ? findCarpoolVehicle(boardedContact.vehicle_id) : undefined;
-  if (boardedByPhone) {
-    return jsonErrorResponse(
-      `이 번호는 이미 ${boardedByPhone.name}에 타기로 되어 있어요. 따로 신청하지 않으셔도 됩니다.`,
-      409,
-    );
+  // 어느 차량인지는 응답에 싣지 않는다 — 실으면 번호를 넣어 보는 것만으로 공개된
+  // 탑승자 이름과 번호를 짝지을 수 있다. 신청자 번호 중복(23505)과 같은 문구를 쓴다.
+  if (boardedContact) {
+    return jsonErrorResponse("이 번호로 이미 자리가 잡혀 있습니다. 변경은 문의 연락처로 알려주세요.", 409);
   }
 
   const ipHash = hashIp(getClientIp(request));
@@ -125,7 +123,7 @@ export async function POST(request: NextRequest) {
   if (error) {
     if (error.code === "23505") {
       return error.message.includes("phone")
-        ? jsonErrorResponse("이 번호로 이미 신청하셨습니다. 변경은 문의 연락처로 알려주세요.", 409)
+        ? jsonErrorResponse("이 번호로 이미 자리가 잡혀 있습니다. 변경은 문의 연락처로 알려주세요.", 409)
         : jsonErrorResponse("방금 다른 분이 이 자리를 신청했습니다. 다른 자리를 골라주세요.", 409);
     }
     console.error("carpool: insert failed", error.message);
