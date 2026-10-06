@@ -34,8 +34,8 @@ export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
     name: "촛불교회 차량",
     departurePlace: "광화문",
     departureTime: "오전 9시",
-    boarded: ["삼각전파사", "황경하", "정정훈"],
-    openSeats: 5,
+    boarded: ["삼각전파사", "정정훈"],
+    openSeats: 6,
     sameDayReturn: false,
   },
   {
@@ -43,8 +43,8 @@ export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
     name: "박지휘님 차량",
     departurePlace: "연신내역",
     departureTime: "오전 9시",
-    boarded: ["박지휘", "달 위의 콜린스"],
-    openSeats: 3,
+    boarded: ["박지휘", "달 위의 콜린스", "황경하"],
+    openSeats: 2,
     sameDayReturn: false,
   },
   {
