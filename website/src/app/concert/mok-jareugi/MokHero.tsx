@@ -101,6 +101,13 @@ export default function MokHero() {
             >
               펀딩으로 함께하기
             </a>
+            <Link
+              href="/concert/mok-jareugi/carpool"
+              className="inline-flex min-h-[52px] items-center border-b-2 px-1 text-base font-bold transition-opacity hover:opacity-70"
+              style={{ borderColor: BONE }}
+            >
+              카풀 신청
+            </Link>
           </div>
 
           {/* D-day 를 붉은 덩어리로 키우면 제목과 싸운다. 톱자국과 같은 색의

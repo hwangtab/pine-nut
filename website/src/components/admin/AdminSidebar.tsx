@@ -15,6 +15,7 @@ import {
   History,
   ClipboardList,
   Flag,
+  Car,
 } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
@@ -27,6 +28,7 @@ const baseNavItems = [
   { href: "/admin/news", label: "소식 관리", icon: Newspaper },
   { href: "/admin/timeline", label: "타임라인 관리", icon: Clock },
   { href: "/admin/signatures", label: "서명 현황", icon: Users },
+  { href: "/admin/carpool", label: "카풀", icon: Car },
 ];
 
 interface AdminSidebarProps {

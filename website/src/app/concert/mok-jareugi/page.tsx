@@ -203,7 +203,7 @@ const FAQ = [
   },
   {
     q: "어떻게 가나요?",
-    a: "대중교통이 드문 산촌 마을입니다. 자가용을 권하고, 함께 오실 분들끼리 차를 나눠 타시면 좋습니다. 이동이 어려우시면 대책위로 미리 연락 주세요.",
+    a: "대중교통이 드문 산촌 마을입니다. 서울 광화문·강변역·불광역·뚝섬역에서 출발하는 카풀이 있습니다. 맨 위 ‘카풀 신청’에서 자리를 골라주세요. 이동이 어려우시면 대책위로 미리 연락 주세요.",
   },
   {
     q: "무엇을 준비하면 좋나요?",
@@ -503,8 +503,14 @@ export default function MokJareugiPage() {
                 <p className="mt-3 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
                   가리산 자락 해발 400~700m의 산촌 마을입니다. 내비게이션에{" "}
                   <b className="text-[var(--color-text)]">‘풍천리 마을회관’</b>을 검색해 오세요.
-                  대중교통이 드무니 함께 오실 분들끼리 차를 나눠 타시면 좋습니다.
+                  대중교통이 드무니 서울에서 함께 가는 카풀을 이용해보세요.
                 </p>
+                <Link
+                  href="/concert/mok-jareugi/carpool"
+                  className="letter-btn letter-btn--primary mt-4"
+                >
+                  카풀 자리 고르기
+                </Link>
               </div>
             </div>
             <div className="paper p-6">
