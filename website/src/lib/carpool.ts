@@ -41,7 +41,7 @@ export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
   {
     id: "parkjihwi",
     name: "박지휘님 차량",
-    departurePlace: "강변역",
+    departurePlace: "연신내역",
     departureTime: "오전 9시",
     boarded: ["박지휘", "달 위의 콜린스"],
     openSeats: 3,

@@ -10,7 +10,7 @@ import CarpoolBoard from "./CarpoolBoard";
 const PAGE_URL = `${SITE_URL}/concert/mok-jareugi/carpool`;
 const TITLE = "목자르기 카풀 — 풍천리 같이 타고 가요";
 const DESCRIPTION =
-  "10월 10일(토) 목자르기 공연, 광화문·강변역·불광역·뚝섬역에서 풍천리까지 함께 가는 차량입니다. 빈자리를 골라 신청하세요.";
+  "10월 10일(토) 목자르기 공연, 광화문·강변역·연신내역·불광역·뚝섬역에서 풍천리까지 함께 가는 차량입니다. 빈자리를 골라 신청하세요.";
 
 // og:image 는 같은 폴더의 opengraph-image.tsx 가 채운다.
 export const metadata: Metadata = {

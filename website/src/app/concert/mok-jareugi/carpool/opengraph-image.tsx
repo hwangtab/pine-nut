@@ -12,7 +12,7 @@ export const contentType = "image/png";
 const EYEBROW = "목자르기 · 10월 10일(토)";
 const TITLE = "풍천리 같이 타고 가요";
 const SUBTITLE = "빈자리를 골라 카풀을 신청하세요";
-const PLACES = ["광화문", "강변역", "불광역", "뚝섬역"];
+const PLACES = ["광화문", "강변역", "연신내역", "불광역", "뚝섬역"];
 const PLACES_SUFFIX = "출발";
 
 const OG_TEXT = [EYEBROW, TITLE, SUBTITLE, ...PLACES, PLACES_SUFFIX, SITE_HOST].join("");
