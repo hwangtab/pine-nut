@@ -43,7 +43,7 @@ export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
     name: "박지휘님 차량",
     departurePlace: "강변역",
     departureTime: "오전 9시",
-    boarded: ["박지휘", "달 위의 콜리스"],
+    boarded: ["박지휘", "달위의 콜린스"],
     openSeats: 3,
     sameDayReturn: false,
   },
