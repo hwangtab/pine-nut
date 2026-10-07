@@ -26,7 +26,7 @@ export const CARPOOL_CONTACT_NAME = "황경하";
 export const CARPOOL_CONTACT_PHONE = "010-4255-7893";
 
 /** 이 시각 이후로는 신청을 받지 않는다(첫 차 출발 시각) */
-export const CARPOOL_CLOSE_AT = new Date("2026-10-10T08:00:00+09:00");
+export const CARPOOL_CLOSE_AT = new Date("2026-10-10T09:00:00+09:00");
 
 export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
   {
@@ -51,16 +51,16 @@ export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
     id: "dulgama",
     name: "둠가마",
     departurePlace: "강변역",
-    departureTime: "오전 8시",
-    boarded: ["사바하", "곽민", "관객 1인"],
-    openSeats: 3,
+    departureTime: "오전 9시",
+    boarded: ["사바하", "관객 1인"],
+    openSeats: 4,
     sameDayReturn: false,
   },
   {
     id: "youngjun",
     name: "영준카",
     departurePlace: "강변역",
-    departureTime: "오전 8시",
+    departureTime: "오전 9시",
     boarded: ["김영준"],
     openSeats: 4,
     sameDayReturn: false,
