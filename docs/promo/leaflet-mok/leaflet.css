@@ -1,0 +1,254 @@
+/* 목자르기 리플렛 — A4 가로 3단 감싸접기. 판형·좌표는 마을 잔치 리플렛(../leaflet)과 같고 색만 공연 페이지(먹빛 숲 + 톱자국 빨강)를 따른다.
+   좌표는 모두 재단 후(297×210) 기준이고, 재단 여백 3㎜는 .trim 이 흡수한다. */
+@import url("../leaflet/fonts.css");
+
+@font-face {
+  font-family: 'MaruBuri';
+  src: url("../../../website/public/fonts/maruburi/MaruBuri-Regular.woff2") format('woff2');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'MaruBuri';
+  src: url("../../../website/public/fonts/maruburi/MaruBuri-Bold.woff2") format('woff2');
+  font-weight: 700;
+}
+
+:root {
+  --forest: #0B160A;
+  --warm: #D93A2B;
+  --ink: #1a1a1a;
+  --bleed: 3mm;
+}
+
+@page { size: 303mm 216mm; margin: 0; }
+
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Pretendard Variable', 'Pretendard', sans-serif;
+  color: var(--ink);
+  word-break: keep-all;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* 한 면 = 재단 여백까지 포함한 실제 인쇄 크기 */
+.sheet {
+  position: relative;
+  width: 303mm;
+  height: 216mm;
+  overflow: hidden;
+  page-break-after: always;
+}
+.sheet:last-child { page-break-after: auto; }
+
+/* 재단선 안쪽. 여기 좌표가 접지선 계산의 기준이다. */
+.trim {
+  position: absolute;
+  left: var(--bleed);
+  top: var(--bleed);
+  width: 297mm;
+  height: 210mm;
+}
+
+/* 겉면: .sheet(303×216) 전면에 배경을 깐다 — 재단선(.trim) 안쪽이 아니라
+   시트 전체에 깔아야 재단이 몇 밀리 어긋나도 흰 테두리가 드러나지 않는다.
+   플랩 100.5 / 뒤표지 99.5 / 표지 103(= 303㎜). 플랩은 왼쪽으로, 표지는
+   오른쪽으로 3㎜씩 재단 여백 몫을 더 가져간다. 접지선 좌표(97.5/197,
+   .trim 기준)는 바뀌지 않는다 — 뒤표지 칸의 좌우 경계는 그대로다. */
+.outside { position: absolute; left: 0; top: 0; width: 303mm; height: 216mm;
+  display: flex; }
+.panel-flap  { width: 100.5mm; height: 100%; }
+.panel-back  { width: 99.5mm;  height: 100%; }
+.panel-cover { width: 103mm;   height: 100%; }
+
+/* 안면: 세 칸을 나누지 않고 한 판으로 쓴다.
+   배경이 흰색이고 종이도 흰색이라 재단 여백을 칠할 필요가 없으므로
+   .trim(재단 후 좌표, 297×210) 안에 그대로 둔다 — 겉면과 달리 +3mm 보정 없음. */
+.inside { width: 297mm; height: 100%; position: relative;
+  background: #fff; box-sizing: border-box; padding: 15mm 0 12mm;
+  display: flex; flex-direction: column; }
+/* 첫 칸(0~100mm) 폭 안에서 끝나도록 좁힌다 — 접지선1(100mm)까지 최소 8mm
+   남기고, 왼쪽 시작선은 .in-col 의 좌측 패딩(8mm)과 맞춘다. */
+.in-head { margin: 0 0 11mm 8mm; width: 84mm; flex: 0 0 auto; }
+.in-head h2 { font-size: 24pt; font-weight: 800; color: var(--forest);
+  margin: 0 0 2.5mm; }
+.in-head p { font-size: 9.5pt; margin: 0; color: #555; }
+/* 인용문 — 안면 접지선(트림 기준 100 / 199.5㎜) 사이, 양쪽 8㎜ 이상을 남긴
+   트림 좌표 108~191㎜(=시트 기준 111~194㎜)에 절대 배치한다. 헤더 상단과
+   높이를 맞추고, 칸 시작선(헤더 아래 약 45㎜) 위에서 끝나도록 크기를 억제한다. */
+.in-quote { position: absolute; left: 109mm; top: 15mm; width: 82mm;
+  margin: 0; font-family: 'MaruBuri', serif; }
+.in-quote p { margin: 0; font-size: 14pt; line-height: 1.4; font-weight: 700;
+  color: var(--forest); }
+.in-quote cite { display: block; font-family: 'Pretendard Variable', sans-serif;
+  font-style: normal; font-weight: 400; font-size: 8pt; color: #666;
+  margin-top: 3mm; line-height: 1.4; }
+/* 헤더 아래 남는 세로 공간을 세 칸이 통째로 나눠 갖는다 — 칸 높이는
+   .inside 의 세로 여백(패딩 + 헤더)을 뺀 만큼 자동으로 정해진다. */
+.in-cols { display: flex; flex: 1 1 auto; min-height: 0; }
+/* 칸 폭은 접지선과 같아야 한다 — 안면 접지선은 100 / 199.5 */
+.in-col:nth-child(1) { width: 100mm; }
+.in-col:nth-child(2) { width: 99.5mm; }
+.in-col:nth-child(3) { width: 97.5mm; }
+/* 칸 안에서 항목을 위-아래로 고르게 펴 첫 항목은 위에, 마지막 항목은
+   칸 바닥에 닿도록 한다 — 안면 하단에 백지가 남지 않게 하는 핵심 규칙. */
+.in-col { box-sizing: border-box; padding: 0 8mm;
+  display: flex; flex-direction: column; justify-content: space-between; }
+/* 접지선에 글자가 닿지 않도록 칸 사이에 숨 쉴 자리를 둔다 */
+.slot { display: flex; gap: 5mm; align-items: flex-start; }
+.slot img { width: 30mm; height: 30mm; border-radius: 50%; object-fit: cover;
+  flex: 0 0 30mm; }
+.slot .t { font-size: 10.5pt; font-weight: 800; color: var(--warm);
+  margin: 0; font-variant-numeric: tabular-nums; }
+.slot .n { font-size: 14.5pt; font-weight: 800; margin: 1mm 0 0;
+  color: var(--ink); }
+.slot .b { font-size: 9pt; line-height: 1.6; margin: 2mm 0 0; color: #444; }
+.slot-open { display: block; background: #F5F3EC; border-radius: 2mm;
+  padding: 7mm; }
+.slot-open .n { font-size: 15pt; color: var(--forest); }
+/* 항목 수가 적은 칸(2칸=3개)은 space-between 이 만드는 간격이 더 넓게
+   벌어지는데, 그 칸만 사진·활자를 한 단계 더 키워 빈 리듬을 메운다. */
+.in-col:nth-child(2) .slot img { width: 34mm; height: 34mm; flex-basis: 34mm; }
+.in-col:nth-child(2) .slot .n { font-size: 16pt; }
+.in-col:nth-child(2) .slot .b { font-size: 9.5pt; line-height: 1.65; }
+
+/* 접지선 안내선 — 시험 출력용. 최종 출력 전에 body 에 .final 을 붙여 끈다. */
+.fold {
+  position: absolute; top: 0; bottom: 0;
+  width: 0; border-left: 0.2mm dashed rgba(255,0,0,.6);
+}
+body.final .fold { display: none; }
+
+/* ── 겉면: 표지 ── */
+.panel-cover { background: var(--forest); color: #fff; }
+/* 표지 칸이 오른쪽으로 3㎜, 위아래로 3㎜씩 재단 여백을 더 갖게 됐으므로
+   그만큼 안쪽 여백을 늘려 글자 위치는 재단 후 기준으로 그대로 유지한다.
+   왼쪽(뒤표지와 맞닿는 접지선 쪽)은 패널 경계가 안 바뀌었으니 그대로 10mm. */
+.cover-body { padding: 17mm 13mm 17mm 10mm; height: 100%; box-sizing: border-box;
+  display: flex; flex-direction: column; }
+.cover-title { font-size: 40pt; line-height: 1.08; font-weight: 800;
+  margin: 0; letter-spacing: -0.02em; }
+.cover-when { font-size: 15pt; font-weight: 700; margin: 8mm 0 0;
+  line-height: 1.35; color: #F5F3EC; }
+.cover-where { font-size: 11pt; margin: 4mm 0 0; line-height: 1.4; }
+.cover-where span { font-size: 9pt; opacity: .75; }
+/* 출연진 목록을 장소 정보 바로 아래로 끌어올리고(더 이상 auto 여백으로
+   맨 아래까지 밀지 않는다), 대신 하단 여백은 cover-foot 쪽 auto 여백이
+   흡수해 하단에 자연스럽게 붙인다 — 가운데가 통째로 비어 보이던 문제 해소. */
+.cover-lineup { list-style: none; padding: 0; margin: 12mm 0 0;
+  font-size: 10.5pt; line-height: 1.7; opacity: .9; }
+.cover-foot { margin: auto 0 0; font-size: 9pt; font-weight: 700;
+  display: flex; justify-content: space-between; border-top: .3mm solid rgba(255,255,255,.35);
+  padding-top: 3mm; }
+.cover-foot span { font-weight: 400; opacity: .8; }
+
+/* ── 겉면: 플랩 ── */
+.panel-flap { background: #F5F3EC; }
+/* 플랩 칸은 왼쪽(바깥 가장자리)으로 3㎜, 위아래로 3㎜씩 재단 여백을 더
+   갖게 됐으므로 그만큼 안쪽 여백을 늘린다. 오른쪽(뒤표지와 맞닿는 접지선
+   쪽)은 패널 경계가 안 바뀌었으니 그대로 8mm. */
+.flap-body { padding: 17mm 8mm 17mm 11mm; height: 100%; box-sizing: border-box;
+  display: flex; flex-direction: column; }
+.flap-eyebrow { font-size: 7.5pt; font-weight: 800; letter-spacing: .18em;
+  color: var(--warm); margin: 0 0 2.5mm; }
+.flap-h { font-size: 13.5pt; line-height: 1.25; margin: 0 0 4mm;
+  font-weight: 800; color: var(--forest); }
+.flap-lede { font-size: 8.3pt; line-height: 1.55; margin: 0 0 4.5mm;
+  color: var(--ink); }
+.flap-facts { list-style: none; padding: 0; margin: 0 0 4mm; }
+.flap-facts li { margin-bottom: 3.2mm; }
+.flap-facts b { display: block; font-size: 10.5pt; color: var(--warm); font-weight: 800; }
+.flap-facts span { display: block; font-size: 8pt; line-height: 1.45; margin-top: 0.8mm; }
+.flap-note { font-size: 8.3pt; line-height: 1.58; margin: 0 0 3mm; color: #444; }
+.flap-note + .flap-note { margin-top: 3mm; padding-top: 3.2mm;
+  border-top: .2mm solid rgba(11,22,10,.2); }
+.flap-note-latest { color: #333; background: rgba(217,58,43,.08);
+  border-radius: 1.5mm; padding: 3mm 3.2mm; margin-top: 3mm !important;
+  border-top: none !important; }
+.flap-tail { margin: auto 0 0; font-size: 9.5pt; font-weight: 700;
+  line-height: 1.45; color: var(--forest); border-top: .3mm solid rgba(11,22,10,.3);
+  padding-top: 3.5mm; }
+
+/* ── 겉면: 뒤표지 ── */
+.panel-back { background: var(--forest); color: #fff; }
+/* 뒤표지 칸은 좌우 폭이 안 바뀌었지만(99.5㎜ 그대로), 위아래로 3㎜씩
+   재단 여백을 더 갖게 됐으므로 위아래 안쪽 여백만 그만큼 늘린다. */
+.back-body { padding: 17mm 9mm; height: 100%; box-sizing: border-box;
+  display: flex; flex-direction: column; }
+.back-h { font-size: 17pt; line-height: 1.25; margin: 0 0 7mm; font-weight: 800; }
+.qr-row { display: flex; gap: 4mm; }
+.qr-row figure { margin: 0; text-align: center; flex: 1; }
+/* QR 둘레 흰 여백이 없으면 인식률이 떨어진다 */
+.qr-row img { width: 100%; background: #fff; padding: 1.5mm; box-sizing: border-box;
+  border-radius: 1mm; display: block; }
+.qr-row figcaption { font-size: 7.5pt; margin-top: 1.5mm; line-height: 1.3; }
+.qr-row figcaption span { opacity: .7; }
+.site-url { margin: 4mm 0 0; font-size: 10pt; font-weight: 700; color: #fff;
+  text-align: center; }
+.site-url b { font-weight: 800; letter-spacing: .01em; }
+.account { margin-top: 6mm; border: .4mm solid rgba(255,255,255,.5);
+  border-radius: 1.5mm; padding: 4mm; }
+.account-label { font-size: 8pt; margin: 0; opacity: .8; }
+.account-no { font-size: 13.5pt; font-weight: 800; margin: 1.5mm 0 0;
+  letter-spacing: .01em; }
+.account-holder { font-size: 9pt; margin: 1mm 0 0; opacity: .85; }
+.contact { margin-top: 7mm; font-size: 9pt; line-height: 1.6; }
+.contact p { margin: 0; }
+.contact p:first-child { font-size: 8pt; opacity: .7; margin-bottom: 1mm; }
+
+.demands { margin-top: 6mm; }
+.demands-h { font-size: 9.5pt; font-weight: 800; letter-spacing: .1em;
+  margin: 0 0 3mm; opacity: .9; }
+.demands-list { list-style: none; counter-reset: demand; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 2.5mm; }
+.demands-list li { counter-increment: demand; position: relative;
+  padding-left: 6mm; font-size: 11pt; font-weight: 800; line-height: 1.35; }
+.demands-list li::before { content: counter(demand) "."; position: absolute;
+  left: 0; top: 0; color: #F5F3EC; font-weight: 800; }
+
+.host { margin: auto 0 0; font-size: 8.5pt; font-weight: 700; }
+.credit { font-size: 6.5pt; opacity: .65; margin: 2mm 0 0; line-height: 1.45; }
+
+/* ── 큰 글씨는 세리프(마루부리)로 ──────────────────────────────────
+   사이트가 제목에 쓰는 활자와 같은 계열이라 인쇄물에서도 결이 이어진다.
+   숫자·시각·계좌번호·본문은 산세리프로 둔다 — 세리프 숫자는 작은 크기에서
+   획이 가늘어져 인쇄에서 읽기가 떨어진다. */
+.cover-title,
+.cover-when,
+.flap-h,
+.flap-tail,
+.back-h,
+.in-head h2,
+.slot-open .n {
+  font-family: 'MaruBuri', serif;
+}
+
+/* 마루부리는 Regular·Bold 두 굵기뿐이다. 800 을 그대로 두면 브라우저가
+   가짜 굵기를 만들어 인쇄에서 획이 뭉친다. */
+.cover-title,
+.cover-when,
+.flap-h,
+.flap-tail,
+.back-h,
+.in-head h2,
+.slot-open .n {
+  font-weight: 700;
+}
+
+/* ── 목자르기 전용 ───────────────────────────────────────────── */
+/* 포스터 부제. 표지 제목 바로 아래, 톱자국 빨강으로 */
+.cover-sub { font-family: 'MaruBuri', serif; font-weight: 700; font-size: 12pt;
+  line-height: 1.45; margin: 6mm 0 0; color: var(--warm); }
+.cover-sub span { display: block; padding-left: 2.5em; }
+/* 어두운 바탕 위 요구 번호도 빨강으로 */
+.demands-list li::before { color: var(--warm); }
+/* DJ b2b — 두 사람 사진을 한 자리(30㎜)에 겹쳐 놓는다 */
+.slot .pair { position: relative; flex: 0 0 30mm; width: 30mm; height: 30mm; }
+.slot .pair img { position: absolute; width: 21mm; height: 21mm; flex: none;
+  border: .6mm solid #fff; box-sizing: border-box; }
+.slot .pair img:first-child { left: 0; top: 0; }
+.slot .pair img:last-child { right: 0; bottom: 0; }
+.in-col:nth-child(2) .slot .pair img { width: 21mm; height: 21mm; }
+.slot-open .s { font-size: 9pt; line-height: 1.6; margin: 2mm 0 0; color: #444; }
+/* 출연진이 일곱 팀이라 마을 잔치(아홉 팀)보다 목록이 짧다 — 한 단계 키워 표지 가운데를 채운다 */
+.cover-lineup { font-size: 12.5pt; line-height: 1.75; }
