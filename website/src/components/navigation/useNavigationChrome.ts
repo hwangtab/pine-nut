@@ -6,37 +6,47 @@ import { hasTransparentNavHero } from "@/lib/nav-routes";
 export default function useNavigationChrome(pathname: string) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [visible, setVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const [scrollY, setScrollY] = useState(0);
+  // 실제 좌표 대신 "히어로를 지났는가"만 state로 둔다. 같은 값이면 React가 렌더를
+  // 건너뛰므로, 스크롤 이벤트마다 내비 전체가 다시 그려지지 않는다.
+  const [pastHero, setPastHero] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
 
-  const isTransparent = hasTransparentNavHero(pathname) && scrollY < 80 && !mobileMenuOpen;
+  const isTransparent = hasTransparentNavHero(pathname) && !pastHero && !mobileMenuOpen;
 
-  const handleScroll = useCallback(() => {
-    const currentScrollY = window.scrollY;
-
-    if (currentScrollY < 10) {
-      setVisible(true);
-    } else if (currentScrollY < lastScrollY) {
-      setVisible(true);
-    } else if (currentScrollY > lastScrollY) {
-      setVisible(false);
-    }
-
-    setLastScrollY(currentScrollY);
-    setScrollY(currentScrollY);
-  }, [lastScrollY]);
+  // 직전 스크롤 위치는 화면에 그리지 않는 값이라 ref로 둔다. state로 두면 스크롤할
+  // 때마다 핸들러가 새로 만들어져 리스너를 떼고 다시 붙였고, 그때마다 합성
+  // scroll 이벤트까지 다시 흘렸다.
+  const lastScrollYRef = useRef(0);
 
   useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const lastScrollY = lastScrollYRef.current;
+
+      if (currentScrollY < 10) {
+        setVisible(true);
+      } else if (currentScrollY < lastScrollY) {
+        setVisible(true);
+      } else if (currentScrollY > lastScrollY) {
+        setVisible(false);
+      }
+
+      lastScrollYRef.current = currentScrollY;
+      setPastHero(currentScrollY >= 80);
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     // 브라우저가 스크롤 위치를 복원한 채 새로고침되면 scrollY 초기값 0 때문에
-    // 투명 내비(흰 글씨)로 그려져 밝은 배경 위에서 읽히지 않는다. 리스너 등록 직후
-    // 스크롤 이벤트를 한 번 흘려 실제 위치를 반영시킨다.
-    // (effect 본문에서 setState를 직접 부르면 연쇄 렌더를 유발하므로 이벤트로 전달한다)
-    window.dispatchEvent(new Event("scroll"));
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
+    // 투명 내비(흰 글씨)로 그려져 밝은 배경 위에서 읽히지 않는다. 등록 직후
+    // 다음 프레임에 한 번 실제 위치를 반영한다(마운트 때 한 번뿐이다).
+    // (effect 본문에서 setState를 직접 부르면 연쇄 렌더를 유발하므로 프레임을 넘긴다)
+    const frame = requestAnimationFrame(handleScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     if (mobileMenuOpen) {

@@ -55,20 +55,21 @@ assert(
 );
 
 // ── The known trap this pattern has: satori silently drops Korean glyphs
-// with no font supplied. The image must load a Korean font subset and must
-// not let a font-loading failure crash image generation (fonts stays
-// optional — `fonts.length > 0 ? { fonts } : {}`).
+// with no font supplied. The image must load a Korean font subset, and a
+// font-loading failure must fail the image rather than cache a card with the
+// Hangul missing — a build stops, and a periodic regeneration keeps the last
+// good card. The loader returns null; Image() throws on null.
 assert(
   /loadKoreanFont/.test(ogImageSource),
   `${ogImagePath} must load a Korean font subset (see src/app/opengraph-image.tsx's loadKoreanFont) — without it, Hangul renders as a blank card.`,
 );
 assert(
   /catch\s*\{\s*return null;\s*\}/.test(ogImageSource),
-  `${ogImagePath}'s font loader must fail closed to null (not throw) so a font-fetch failure doesn't break image generation.`,
+  `${ogImagePath}'s font loader must return null on failure so Image() decides how to fail.`,
 );
 assert(
-  /fonts\.length > 0 \? \{ fonts \} : \{\}/.test(ogImageSource),
-  `${ogImagePath} must make the fonts option conditional on fonts.length > 0, so ImageResponse still renders (Latin-only) if the Korean font failed to load.`,
+  /if \(!bold \|\| !regular\) throw new Error/.test(ogImageSource),
+  `${ogImagePath} must throw when the Korean font failed to load, instead of rendering a card with the Hangul missing.`,
 );
 
 // ── Facts that must appear on the card, anchored with unit/context so a

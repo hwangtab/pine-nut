@@ -87,6 +87,7 @@ export function StoryReasonsSection() {
               section="reasons"
               width={1200}
               height={800}
+              sizes="(max-width: 768px) 100vw, 768px"
               className="w-full rounded-[2px]"
             />
             <figcaption>

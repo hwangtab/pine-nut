@@ -40,17 +40,6 @@ export default function HomeShareEditControls() {
         {(value, editButton) => editButton ?? <span>{value}</span>}
       </EditableValue>
       <EditableValue
-        contentKey="home.toast.prefix"
-        defaultValue="방금"
-        page="home"
-        section="cta"
-        buttonLabel="토스트 앞문구"
-        wrapperClassName="relative"
-        buttonClassName="rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
-      >
-        {(value, editButton) => editButton ?? <span>{value}</span>}
-      </EditableValue>
-      <EditableValue
         contentKey="home.toast.suffix"
         defaultValue="님이 서명했습니다"
         page="home"

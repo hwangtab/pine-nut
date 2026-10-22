@@ -28,8 +28,9 @@ const HOME_SECTION_ORDER = [
 export default function HomeClient() {
   const { getContent, isEditMode } = useAdminEdit();
   const storyRef = useRef<HTMLDivElement>(null);
-  const { signatureCount, toastName, toastVisible } = useHomeSignatureActivity();
-  const toastPrefix = getContent("home.toast.prefix") ?? "방금";
+  // 토스트 앞머리("방금"·"3시간 전")는 서명 시각에서 계산한다 — 고정 문구였던
+  // home.toast.prefix는 오래된 서명에도 "방금"을 붙여 더는 쓰지 않는다.
+  const { signatureCount, toast, toastVisible } = useHomeSignatureActivity();
   const toastSuffix = getContent("home.toast.suffix") ?? "님이 서명했습니다";
 
   const scrollToStory = useCallback(() => {
@@ -110,8 +111,7 @@ export default function HomeClient() {
 
       <HomeSocialProofToast
         visible={toastVisible}
-        name={toastName}
-        prefix={toastPrefix}
+        toast={toast}
         suffix={toastSuffix}
       />
 

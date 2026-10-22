@@ -178,14 +178,14 @@ export function EnglishHelpCards() {
                   href={card.linkUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center text-sm font-bold text-white underline underline-offset-4 decoration-white/40 hover:decoration-white transition-colors"
+                  className="inline-flex min-h-11 items-center text-sm font-bold text-white underline underline-offset-4 decoration-white/40 hover:decoration-white transition-colors"
                 >
                   {card.linkText}
                 </a>
               ) : card.linkUrl ? (
                 <Link
                   href={card.linkUrl}
-                  className="inline-flex items-center text-sm font-bold text-white underline underline-offset-4 decoration-white/40 hover:decoration-white transition-colors"
+                  className="inline-flex min-h-11 items-center text-sm font-bold text-white underline underline-offset-4 decoration-white/40 hover:decoration-white transition-colors"
                 >
                   {card.linkText}
                 </Link>

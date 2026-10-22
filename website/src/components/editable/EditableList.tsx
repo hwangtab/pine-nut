@@ -17,6 +17,7 @@ export default function EditableList<T extends EditableListItem>({
     items,
     editing,
     localItems,
+    hasLocalChanges,
     handleOpen,
     handleClose,
     handleSave,
@@ -55,6 +56,7 @@ export default function EditableList<T extends EditableListItem>({
           contentKey={contentKey}
           fields={fields}
           localItems={localItems}
+          hasChanges={hasLocalChanges}
           onClose={handleClose}
           onCancel={handleCancel}
           onSave={handleSave}

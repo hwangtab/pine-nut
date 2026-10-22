@@ -54,7 +54,7 @@ export default function ShareButtons({
         </ShareButton>
         <ShareButton
           onClick={handleFacebook}
-          className="rounded-full bg-[#1877F2] text-white hover:bg-[#166FE5]"
+          className="rounded-full bg-[#166FE5] text-white hover:bg-[#1464D8]"
           ariaLabel={aria.facebook}
           icon={<Facebook className="w-4 h-4" />}
         >

@@ -2,9 +2,12 @@
 
 import { useCallback, useState } from "react";
 import { events } from "@/lib/analytics";
+import type { ShareCopiedKind } from "./types";
 
 export function useShareButtons({ title, url }: { title: string; url?: string }) {
-  const [copied, setCopied] = useState(false);
+  // null이면 토스트 없음. "kakao"는 데스크톱처럼 navigator.share가 없어 카카오톡
+  // 버튼이 링크 복사로 대신한 경우 — 말없이 복사만 하면 아무 일도 안 일어난 것처럼 보인다.
+  const [copied, setCopied] = useState<ShareCopiedKind | null>(null);
 
   const getUrl = useCallback(() => {
     if (url) return url;
@@ -12,18 +15,18 @@ export function useShareButtons({ title, url }: { title: string; url?: string })
     return "";
   }, [url]);
 
-  const markCopied = useCallback(() => {
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const markCopied = useCallback((kind: ShareCopiedKind) => {
+    setCopied(kind);
+    setTimeout(() => setCopied(null), kind === "kakao" ? 3500 : 2000);
   }, []);
 
-  const handleCopyUrl = useCallback(async () => {
+  const copyUrl = useCallback(async (kind: ShareCopiedKind) => {
     const shareUrl = getUrl();
 
     try {
       await navigator.clipboard.writeText(shareUrl);
-      events.shareClick("copy_url");
-      markCopied();
+      events.shareClick(kind === "kakao" ? "clipboard_share" : "copy_url");
+      markCopied(kind);
     } catch {
       const textarea = document.createElement("textarea");
       textarea.value = shareUrl;
@@ -31,10 +34,12 @@ export function useShareButtons({ title, url }: { title: string; url?: string })
       textarea.select();
       document.execCommand("copy");
       document.body.removeChild(textarea);
-      events.shareClick("copy_url");
-      markCopied();
+      events.shareClick(kind === "kakao" ? "clipboard_share" : "copy_url");
+      markCopied(kind);
     }
   }, [getUrl, markCopied]);
+
+  const handleCopyUrl = useCallback(() => copyUrl("link"), [copyUrl]);
 
   const handleKakao = useCallback(async () => {
     if (typeof navigator !== "undefined" && navigator.share) {
@@ -50,8 +55,8 @@ export function useShareButtons({ title, url }: { title: string; url?: string })
       return;
     }
 
-    handleCopyUrl();
-  }, [getUrl, handleCopyUrl, title]);
+    copyUrl("kakao");
+  }, [getUrl, copyUrl, title]);
 
   const handleTwitter = useCallback(() => {
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(

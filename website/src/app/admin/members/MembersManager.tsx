@@ -8,6 +8,12 @@ import {
   removeAdminMemberAction,
 } from "@/lib/actions/admin-members";
 
+// 대기 중이면서 계정이 연결된 행은 /admin/signup 자가 가입(또는 그 고스트 복구)으로만 생긴다.
+// 가입 시 이메일 확인 메일을 보내지 않으므로, 이 이메일이 실제 신청자의 것인지는 아무도 확인하지 않았다.
+function isUnverifiedSelfSignup(m: AdminMember): boolean {
+  return m.role === "pending" && m.claimed;
+}
+
 const inputCls = "px-4 py-3 text-base border border-[var(--color-admin-border)] rounded-xl outline-none focus:ring-2 focus:ring-[var(--color-forest)]/40";
 
 export default function MembersManager({ members }: { members: AdminMember[] }) {
@@ -25,7 +31,15 @@ export default function MembersManager({ members }: { members: AdminMember[] }) 
     }
   }
 
-  function changeRole(id: number, role: string) {
+  function changeRole(m: AdminMember, role: string) {
+    // owner는 명부·역할 전체를 바꿀 수 있다 → 실수 한 번으로 넘겨주지 않도록 반드시 확인받는다.
+    if (role === "owner" && m.role !== "owner") {
+      const unverified = isUnverifiedSelfSignup(m)
+        ? "\n\n⚠️ 이 계정은 이메일 소유가 확인되지 않은 자가 가입입니다."
+        : "";
+      if (!confirm(`${m.email}에게 owner 권한을 줄까요?\nowner는 관리자 명부와 역할을 모두 바꿀 수 있습니다.${unverified}`)) return;
+    }
+    const id = m.id;
     setError(null);
     startTransition(async () => {
       const r = await updateAdminRoleAction(id, role);
@@ -89,7 +103,15 @@ export default function MembersManager({ members }: { members: AdminMember[] }) 
                 {m.claimed ? "가입됨" : "미가입"} {m.active ? "" : "· 비활성"}
               </p>
             </div>
-            <select value={m.role} disabled={pending} onChange={(e) => changeRole(m.id, e.target.value)}
+            {isUnverifiedSelfSignup(m) && (
+              <span
+                title="가입 시 이메일 확인 절차가 없습니다. 역할을 주기 전에 전화·메신저로 본인 신청인지 확인하세요."
+                className="shrink-0 rounded-lg bg-[var(--color-warm)]/10 px-2.5 py-1 text-xs font-semibold text-[var(--color-warm)]"
+              >
+                ⚠️ 이메일 미확인(자가 가입)
+              </span>
+            )}
+            <select value={m.role} disabled={pending} onChange={(e) => changeRole(m, e.target.value)}
               className={`${inputCls} bg-[var(--color-admin-surface)] sm:w-32`}>
               <option value="pending">대기(권한없음)</option>
               <option value="viewer">viewer</option>

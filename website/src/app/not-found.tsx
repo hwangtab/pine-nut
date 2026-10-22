@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import UtilityHeader from "@/components/UtilityHeader";
 import { EditableLink, EditableText } from "@/components/editable";
+
+// 루트 레이아웃의 홈 제목을 그대로 물려받으면 404 탭·검색 결과가 홈처럼 보인다.
+// 사이트의 하위 페이지 제목 형식("제목 — 풍천리를 지켜주세요")을 따른다.
+export const metadata: Metadata = {
+  title: "페이지를 찾을 수 없습니다 — 풍천리를 지켜주세요",
+};
 
 export default function NotFound() {
   return (

@@ -19,6 +19,16 @@ export default function GalleryLightbox({
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
+  // 열려 있는 동안 뒤 페이지 스크롤을 잠그고, 닫히거나 언마운트되면 원래 값으로 돌린다.
+  useEffect(() => {
+    const { style } = document.body;
+    const previousOverflow = style.overflow;
+    style.overflow = "hidden";
+    return () => {
+      style.overflow = previousOverflow;
+    };
+  }, []);
+
   useEffect(() => {
     closeButtonRef.current?.focus();
 
@@ -103,6 +113,7 @@ export default function GalleryLightbox({
             alt={photo.description}
             width={1600}
             height={1200}
+            sizes="(max-width: 896px) 100vw, 896px"
             className="w-full max-h-[75vh] object-contain rounded-lg"
           />
           <div className="mt-4 text-center">

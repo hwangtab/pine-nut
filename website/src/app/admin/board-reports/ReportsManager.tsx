@@ -15,16 +15,34 @@ function ReportCard({ group }: { group: ReportGroup }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  function run(fn: () => Promise<{ error: string } | null>) {
+  // 여러 액션을 순서대로 실행하고, 하나라도 실패하면 거기서 멈춘다.
+  function run(...fns: (() => Promise<{ error: string } | null>)[]) {
     setError(null);
     startTransition(async () => {
-      const res = await fn();
-      if (res?.error) {
-        setError(res.error);
-        return;
+      for (const fn of fns) {
+        const res = await fn();
+        if (res?.error) {
+          setError(res.error);
+          router.refresh();
+          return;
+        }
       }
       router.refresh();
     });
+  }
+
+  // 숨김/해제. 숨김은 그 자체로 신고 처리이므로 미해결 신고를 함께 '해결'로 닫는다.
+  function setHidden(hidden: boolean) {
+    const { targetType, targetId, postId } = group;
+    const toggle = () =>
+      targetType === "post"
+        ? setPostHidden(targetId, hidden)
+        : setCommentHidden(targetId, postId ?? 0, hidden);
+    if (hidden && group.hasPending) {
+      run(toggle, () => resolveReports(targetType, targetId, "resolved"));
+    } else {
+      run(toggle);
+    }
   }
 
   const isPost = group.targetType === "post";
@@ -60,27 +78,43 @@ function ReportCard({ group }: { group: ReportGroup }) {
       </p>
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <Link
-          href={`/board/${group.postId}`}
-          target="_blank"
-          className="rounded-lg border border-[var(--color-admin-border)] px-3 py-1.5 text-xs font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-bg)]"
-        >
-          내용 보기
-        </Link>
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() =>
-            run(() =>
-              isPost
-                ? setPostHidden(group.targetId, true)
-                : setCommentHidden(group.targetId, group.postId, true),
-            )
-          }
-          className="rounded-lg border border-[var(--color-admin-border)] px-3 py-1.5 text-xs font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-bg)] disabled:opacity-50"
-        >
-          숨김 처리
-        </button>
+        {/* 대상을 찾지 못하면(삭제된 댓글 등) 어느 글로 가야 할지 모른다 → 링크 대신 안내 문구 */}
+        {group.postId !== null ? (
+          <Link
+            href={`/board/${group.postId}`}
+            target="_blank"
+            className="rounded-lg border border-[var(--color-admin-border)] px-3 py-1.5 text-xs font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-bg)]"
+          >
+            내용 보기
+          </Link>
+        ) : (
+          <span className="text-xs text-[var(--color-admin-muted)]">원문을 찾을 수 없음</span>
+        )}
+        {group.isHidden === true && (
+          <>
+            <span className="rounded-full bg-[var(--color-border)] px-2.5 py-0.5 text-xs font-semibold text-[var(--color-admin-muted)]">
+              숨김 중
+            </span>
+            <button
+              type="button"
+              disabled={pending}
+              onClick={() => setHidden(false)}
+              className="rounded-lg border border-[var(--color-admin-border)] px-3 py-1.5 text-xs font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-bg)] disabled:opacity-50"
+            >
+              숨김 해제
+            </button>
+          </>
+        )}
+        {group.isHidden === false && (
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => setHidden(true)}
+            className="rounded-lg border border-[var(--color-admin-border)] px-3 py-1.5 text-xs font-semibold text-[var(--color-admin-text)] transition-colors hover:bg-[var(--color-bg)] disabled:opacity-50"
+          >
+            숨김 처리
+          </button>
+        )}
         {group.hasPending && (
           <>
             <button

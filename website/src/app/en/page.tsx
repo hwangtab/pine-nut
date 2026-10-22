@@ -3,7 +3,7 @@ import SubHero from "@/components/SubHero";
 import { EditableLink, EditableText, EditableRichText } from "@/components/editable";
 import ManagedSection from "@/components/builder/ManagedSection";
 import OrderedSectionGroup from "@/components/builder/OrderedSectionGroup";
-import { OG_SITE_EN } from "@/lib/seo-alternates";
+import { OG_SITE_EN_BASE } from "@/lib/i18n/seo-en";
 import { SITE_URL } from "@/lib/site-config";
 import {
   EnglishHelpCards,
@@ -23,11 +23,14 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    ...OG_SITE_EN,
+    ...OG_SITE_EN_BASE,
     title: "Save Pungcheon-ri — Stop the Pumped-Storage Power Plant",
     description:
-      "A 7-year fight to protect a village, a forest, and a way of life. Learn how you can help.",
+      "An 8-year fight to protect a village, a forest, and a way of life. Learn how you can help.",
     url: `${SITE_URL}/en`,
+  },
+  twitter: {
+    card: "summary_large_image",
   },
 };
 
@@ -42,7 +45,7 @@ export default function EnglishPage() {
         imagePage="en"
         imageSection="hero"
         title={<EditableText contentKey="en.hero.title" defaultValue="Save Pungcheon-ri" as="span" page="en" section="hero" />}
-        subtitle={<EditableText contentKey="en.hero.subtitle" defaultValue="A 7-Year Fight to Protect a Village, a Forest, and a Way of Life" as="span" page="en" section="hero" />}
+        subtitle={<EditableText contentKey="en.hero.subtitle" defaultValue="An 8-Year Fight to Protect a Village, a Forest, and a Way of Life" as="span" page="en" section="hero" />}
         eyebrow={<EditableText contentKey="en.hero.eyebrow" defaultValue="English Summary" as="span" page="en" section="hero" />}
       />
 

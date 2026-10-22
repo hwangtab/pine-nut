@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { EN_OG_IMAGE, EN_SITE_NAME } from "@/lib/i18n/seo-en";
 
 /**
  * 영문 구간의 기본 메타데이터.
@@ -15,12 +16,12 @@ export const metadata: Metadata = {
   // 적용되면 접미사가 두 번 붙는다("… — Save Pungcheon-ri | Save Pungcheon-ri").
   title: "Save Pungcheon-ri — Stop the Pumped-Storage Plant",
   description:
-    "Residents of Pungcheon-ri, Hongcheon County, Gangwon Province have opposed a pumped-storage hydroelectric plant for more than seven years — over 705 weekly protests to protect their homes, forests, and livelihoods.",
+    "Residents of Pungcheon-ri, Hongcheon County, Gangwon Province have opposed a pumped-storage hydroelectric plant for eight years — over 705 weekly protests to protect their homes, forests, and livelihoods.",
   openGraph: {
     title: "Save Pungcheon-ri — Stop the Pumped-Storage Plant",
     description:
-      "Seven years, more than 705 protests. Stand with the residents of Pungcheon-ri.",
-    siteName: "Save Pungcheon-ri",
+      "Eight years, more than 705 protests. Stand with the residents of Pungcheon-ri.",
+    siteName: EN_SITE_NAME,
     // url은 여기 두지 않는다. openGraph는 필드 단위로 깊게 병합되지 않고 가장 가까운
     // 선언으로 통째로 대체되므로, 여기서 /en으로 고정하면 모든 영문 하위 페이지의
     // 공유 링크가 영문 홈으로 수렴한다(루트 layout에서 똑같이 겪은 문제다).
@@ -28,14 +29,11 @@ export const metadata: Metadata = {
     locale: "en_US",
     // 같은 이유로 images도 여기서 명시해야 한다. 이 선언이 루트의 openGraph를
     // 대체해버려, 명시하지 않으면 영문 페이지에는 og:image가 아예 남지 않는다.
-    images: [
-      {
-        url: "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535387_std.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Aerial view of Pungcheon-ri",
-      },
-    ],
+    images: [EN_OG_IMAGE],
+  },
+  // 루트에 twitter 선언이 없어 기본 "summary"(작은 썸네일)로 나갔다.
+  twitter: {
+    card: "summary_large_image",
   },
   alternates: {
     canonical: "/en",

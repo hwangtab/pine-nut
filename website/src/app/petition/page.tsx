@@ -92,7 +92,7 @@ export default function PetitionPage() {
     const text = encodeURIComponent(shareText);
     const url = encodeURIComponent(window.location.href);
     events.shareClick("twitter");
-    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank", "noopener,noreferrer");
   }, [shareText]);
 
   const handleShareKakao = useCallback(async () => {

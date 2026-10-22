@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { OG_SITE_EN } from "@/lib/seo-alternates";
+import { OG_SITE_EN_BASE } from "@/lib/i18n/seo-en";
 import ShareButtons from "@/components/ShareButtons";
 import UtilityHeader from "@/components/UtilityHeader";
 import { EditableLink, EditableText } from "@/components/editable";
@@ -70,11 +70,17 @@ export async function generateMetadata({
       },
     },
     openGraph: {
-      ...OG_SITE_EN,
+      ...OG_SITE_EN_BASE,
       title: translated.title,
       description: translated.summary,
       type: "article",
+      // og:url이 없으면 공유 카드 링크가 상위 선언으로 수렴한다. 썸네일이 없는 기사도
+      // 카드가 비지 않게 영문 공통 이미지(OG_SITE_EN_BASE.images)를 그대로 둔다.
+      url: `/en/news/${slug}`,
       ...(translated.thumbnailUrl ? { images: [translated.thumbnailUrl] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
     },
   };
 }

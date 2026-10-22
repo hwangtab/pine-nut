@@ -9,6 +9,7 @@ const LABELS: Record<ShareLocale, Record<ShareLabelKey, string>> = {
     facebook: "페이스북",
     copy: "URL 복사",
     copied: "복사되었습니다!",
+    copiedForKakao: "링크를 복사했습니다. 카카오톡 대화창에 붙여넣어 주세요",
   },
   en: {
     label: "Share",
@@ -17,6 +18,7 @@ const LABELS: Record<ShareLocale, Record<ShareLabelKey, string>> = {
     facebook: "Facebook",
     copy: "Copy link",
     copied: "Link copied",
+    copiedForKakao: "Link copied — paste it into your chat app",
   },
 };
 

@@ -173,7 +173,7 @@ export default function PressPage() {
                         defaultHref="https://campaigns.do/campaigns/1328"
                         page="press"
                         section="contact"
-                        className="text-base font-medium text-[var(--color-text)] hover:text-[var(--color-forest)] transition-colors"
+                        className="inline-flex min-h-11 items-center text-base font-medium text-[var(--color-text)] hover:text-[var(--color-forest)] transition-colors"
                       >
                         <EditableText
                           contentKey="press.contact.campaignLink"

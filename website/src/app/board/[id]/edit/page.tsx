@@ -33,7 +33,7 @@ export default async function EditBoardPostPage({
     <div className="mx-auto max-w-3xl px-4 py-10">
       <Link
         href={`/board/${id}`}
-        className="text-base text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+        className="-ml-2 inline-flex min-h-11 items-center px-2 text-base text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
       >
         ← 글로
       </Link>

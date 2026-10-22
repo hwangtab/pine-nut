@@ -66,7 +66,27 @@ export default async function RootLayout({
   const initialContent = await getAllPageContent();
 
   return (
-    <html lang="ko" className={nanumPen.variable}>
+    // suppressHydrationWarning: 아래 인라인 스크립트가 하이드레이션 전에 <html>에
+    // `js` 클래스를 붙이므로 서버 HTML과 className이 달라진다(이 요소 한 단계만 무시).
+    <html lang="ko" className={nanumPen.variable} suppressHydrationWarning>
+      <head>
+        {/* 첫 페인트 전에 동기 실행 — .reveal 숨김 상태를 JS가 켜진 환경에서만 건다
+            (globals.css `.js .reveal:not(.is-visible)`). JS가 꺼지면 내용이 그대로 보인다. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.classList.add('js')",
+          }}
+        />
+        {/* 영문 구간(/en/*)이면 lang="en"으로 고친다. 서버에서 경로별로 내보내려면
+            요청 헤더를 읽어야 해 전 페이지가 CDN에서 빠진다. 이후 클라이언트 이동은
+            PublicShell의 useDocumentLang이 맞춘다. lang 차이도 위 suppressHydrationWarning이 덮는다. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "if(/^\\/en(\\/|$)/.test(location.pathname))document.documentElement.lang='en'",
+          }}
+        />
+      </head>
       <body className="antialiased">
         <Analytics />
         <AdminEditShell initialContent={initialContent}>

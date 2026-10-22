@@ -72,7 +72,7 @@ export default function EnglishGalleryPage() {
             titleKey="en.gallery.struggle.title"
             titleDefault="Scenes from the struggle"
             descriptionKey="en.gallery.struggle.description"
-            descriptionDefault="Weekly protests, forced confrontations, and the daily work of holding a line for more than seven years."
+            descriptionDefault="Weekly protests, forced confrontations, and the daily work of holding a line for eight years."
             section="struggle"
             defaultItems={englishStrugglePhotos}
             indexOffset={englishBeautyPhotos.length}

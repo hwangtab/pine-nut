@@ -37,36 +37,52 @@ export async function getBoardPosts(
   page = 1,
   opts: { category?: string; q?: string } = {},
   perPage = 20,
-): Promise<{ items: BoardPostListItem[]; total: number }> {
+): Promise<{ items: BoardPostListItem[]; total: number; failed: boolean }> {
   const supabase = await createSupabaseServerClient();
-  if (!supabase) return { items: [], total: 0 };
+  if (!supabase) return { items: [], total: 0, failed: true };
   const from = (page - 1) * perPage;
   const to = from + perPage - 1;
 
-  let query = supabase
-    .from("board_posts")
-    .select("id, title, category, author_nickname, created_at, is_hidden, is_deleted, like_count, board_comments(count)", { count: "exact" })
-    .order("created_at", { ascending: false });
-
   const category = opts.category;
-  if (category && (BOARD_CATEGORIES as readonly string[]).includes(category)) {
-    query = query.eq("category", category);
-  }
+  const validCategory = category && (BOARD_CATEGORIES as readonly string[]).includes(category) ? category : "";
   const q = sanitizeSearch(opts.q ?? "");
-  if (q) {
-    const pat = `%${q}%`;
-    query = query.or(`title.ilike.${pat},content.ilike.${pat}`);
+
+  // 목록 조회와 '범위 밖 페이지'일 때의 개수 조회가 같은 필터를 써야 해서 함수로 묶는다.
+  function build(columns: string, head = false) {
+    let query = supabase!
+      .from("board_posts")
+      .select(columns, { count: "exact", head })
+      .order("created_at", { ascending: false });
+    if (validCategory) query = query.eq("category", validCategory);
+    if (q) {
+      const pat = `%${q}%`;
+      query = query.or(`title.ilike.${pat},content.ilike.${pat}`);
+    }
+    return query;
   }
 
-  const { data, error, count } = await query.range(from, to);
-  if (error || !data) { console.error("getBoardPosts", error); return { items: [], total: 0 }; }
+  const { data, error, count } = await build(
+    "id, title, category, author_nickname, created_at, is_hidden, is_deleted, like_count, board_comments(count)",
+  ).range(from, to);
+
+  if (error?.code === "PGRST103") {
+    // ?page=N이 마지막 페이지를 넘으면 PostgREST가 416(PGRST103)을 돌려준다.
+    // 이를 '글 없음'으로 삼키면 페이지 이동 버튼까지 사라지므로, 전체 개수만 다시 세어
+    // 호출부가 마지막 페이지로 보낼 수 있게 한다.
+    const { count: total, error: countErr } = await build("id", true);
+    if (countErr) { console.error("getBoardPosts count", countErr); return { items: [], total: 0, failed: true }; }
+    return { items: [], total: total ?? 0, failed: false };
+  }
+  // DB 오류를 빈 목록과 구분해 돌려준다. 같은 "글이 없습니다"로 보이면 장애를 알아챌 수 없다.
+  if (error || !data) { console.error("getBoardPosts", error); return { items: [], total: 0, failed: true }; }
   return {
-    items: (data as PostRow[]).map((r) => ({
+    items: (data as unknown as PostRow[]).map((r) => ({
       id: r.id, title: r.title, category: r.category, authorNickname: r.author_nickname, createdAt: r.created_at,
       commentCount: r.board_comments?.[0]?.count ?? 0, isHidden: r.is_hidden, isDeleted: r.is_deleted,
       likeCount: r.like_count ?? 0,
     })),
     total: count ?? 0,
+    failed: false,
   };
 }
 

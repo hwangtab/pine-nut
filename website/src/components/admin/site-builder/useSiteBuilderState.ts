@@ -40,6 +40,7 @@ export default function useSiteBuilderState(
     sectionStylesByPage,
   });
   const persistence = useSiteBuilderPersistence({
+    initialValues,
     navLinks,
     footerLinks,
     selectedPage,
@@ -47,6 +48,9 @@ export default function useSiteBuilderState(
     existingSections: selection.existingSections,
     currentSectionOrder: selection.currentSectionOrder,
     currentSectionStyles: selection.currentSectionStyles,
+    sectionsByPage,
+    sectionOrdersByPage,
+    sectionStylesByPage,
   });
 
   return {

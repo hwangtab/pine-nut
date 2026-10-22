@@ -145,7 +145,7 @@ export const englishTimelineConfig: TimelineConfig = {
     imageContentKey: "en.timeline.hero.image",
     imageSection: "hero",
     titleKey: "en.timeline.hero.title",
-    titleDefault: "Seven Years of Resistance",
+    titleDefault: "Eight Years of Resistance",
     subtitleKey: "en.timeline.hero.subtitle",
     subtitleDefault:
       "A timeline of the Pungcheon-ri residents' struggle from 2019 to the present",

@@ -38,7 +38,7 @@ export default function MokCarpoolPage() {
       <div className="mx-auto max-w-3xl">
         <Link
           href="/concert/mok-jareugi"
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+          className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden />
           목자르기 공연 안내

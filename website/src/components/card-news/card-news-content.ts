@@ -87,7 +87,7 @@ export const CARD_NEWS_TEXT = {
       { num: "110K", label: "Pine trees" },
     ],
     card1Body:
-      "Residents have spent more than seven years defending their village and pine forest from a pumped-storage power plant.",
+      "Residents have spent eight years defending their village and pine forest from a pumped-storage power plant.",
     card2Title1: "110,000 Pine Trees",
     card2Title2: "Could Be Lost",
     card2Bullets: [

@@ -264,7 +264,7 @@ export const MOK_LINEUP: ConcertArtist[] = [
     photoSecondary: "/images/concert/artists/dj-gwal.jpg",
     photoCredit: "주최 측 제공",
     blurb:
-      "두 사람이 번갈아 판을 올리는 b2b 세트. 마을회관 앞마당에 턴테이블이 놓입니다. 노래가 멎은 자리를 비트가 이어받습니다.",
+      "두 사람이 번갈아 판을 올리는 b2b 세트. 마을회관 앞마당에 턴테이블이 놓였습니다. 노래가 멎은 자리를 비트가 이어받았습니다.",
   },
   {
     name: "사바하",

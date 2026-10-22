@@ -118,7 +118,7 @@ export default function HomeHeroSection({
           as="p"
           page="home"
           section="hero"
-          className="text-[10px] text-white/45 sm:text-xs"
+          className="text-[11px] text-white/75 sm:text-xs"
         />
       </div>
 

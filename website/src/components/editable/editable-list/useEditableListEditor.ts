@@ -43,6 +43,12 @@ export function useEditableListEditor<T extends EditableListItem>({
     setEditing(true);
   }, [contentKey, defaultItems, getContent]);
 
+  // 모달 바깥 클릭으로 닫을 때 확인을 물을지 판단한다. 열 때 items를 그대로 복사하고
+  // _uid만 붙이므로, 손대지 않았다면 직렬화 결과가 같다.
+  const hasLocalChanges =
+    editing &&
+    JSON.stringify(stripEditableListIds(localItems)) !== JSON.stringify(items);
+
   const handleClose = useCallback(() => {
     setEditing(false);
   }, []);
@@ -105,6 +111,7 @@ export function useEditableListEditor<T extends EditableListItem>({
     items,
     editing,
     localItems,
+    hasLocalChanges,
     handleOpen,
     handleClose,
     handleSave,

@@ -9,15 +9,16 @@ import FooterQuickLinks from "@/components/footer/FooterQuickLinks";
 import { useAdminEdit } from "@/lib/contexts/AdminEditContext";
 import { usePublicPathname } from "@/lib/use-public-pathname";
 import { defaultEnFooterLinks, defaultFooterLinks, parseBuilderLinks } from "@/lib/custom-sections";
+import { chromeLocale } from "@/lib/i18n/chrome";
 import { RidgeDivider } from "@/components/visuals/ForestLetterMotifs";
 
 export default function Footer() {
   const { getContent } = useAdminEdit();
   const [showPrivacy, setShowPrivacy] = useState(false);
   const pathname = usePublicPathname();
-  // 영문 구간에서는 영문 링크 세트(Navigation과 동일한 이유).
-  const isEnglish = pathname === "/en" || pathname.startsWith("/en/");
-  const quickLinks = isEnglish
+  // 영문 구간에서는 영문 링크 세트·문구(Navigation과 동일한 이유).
+  const locale = chromeLocale(pathname);
+  const quickLinks = locale === "en"
     ? defaultEnFooterLinks()
     : parseBuilderLinks(getContent("builder.global.footerLinks"), defaultFooterLinks());
 
@@ -36,14 +37,19 @@ export default function Footer() {
       <div className="bg-[var(--color-deep)] text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 md:py-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
-            <FooterBrand />
-            <FooterQuickLinks quickLinks={quickLinks} />
-            <FooterContact />
+            <FooterBrand locale={locale} />
+            <FooterQuickLinks quickLinks={quickLinks} locale={locale} />
+            <FooterContact locale={locale} />
           </div>
 
-          <FooterBottomBar onTogglePrivacy={() => setShowPrivacy((current) => !current)} />
+          <FooterBottomBar
+            locale={locale}
+            onTogglePrivacy={() => setShowPrivacy((current) => !current)}
+          />
 
-          {showPrivacy && <FooterPrivacyPanel onClose={() => setShowPrivacy(false)} />}
+          {showPrivacy && (
+            <FooterPrivacyPanel locale={locale} onClose={() => setShowPrivacy(false)} />
+          )}
         </div>
       </div>
     </footer>

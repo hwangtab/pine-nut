@@ -5,6 +5,7 @@ import { EditableLink, EditableText } from "@/components/editable";
 import NavigationAuthLinks from "@/components/navigation/NavigationAuthLinks";
 import NavigationLink from "@/components/navigation/NavigationLink";
 import type { BuilderLinkItem } from "@/lib/custom-sections";
+import { NAV_COPY, type ChromeLocale } from "@/lib/i18n/chrome";
 
 interface MobileNavigationMenuProps {
   menuRef: RefObject<HTMLDivElement | null>;
@@ -14,7 +15,15 @@ interface MobileNavigationMenuProps {
   onDismiss: () => void;
   isActiveAdmin?: boolean;
   isLoggedIn?: boolean;
+  locale?: ChromeLocale;
+  /** 링크 세트에 후원 링크가 이미 있으면 false — 같은 링크가 두 번 서지 않게 */
+  showDonate?: boolean;
 }
+
+const CTA_CLASS =
+  "px-4 py-3 rounded-full text-lg font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[48px] flex items-center justify-center transition-colors";
+const DONATE_CLASS =
+  "px-4 py-3 rounded-full text-lg font-bold text-[var(--color-warm)] border border-[var(--color-warm)]/45 hover:bg-[var(--color-warm)]/10 min-h-[48px] flex items-center justify-center transition-colors";
 
 export default function MobileNavigationMenu({
   menuRef,
@@ -24,7 +33,11 @@ export default function MobileNavigationMenu({
   onDismiss,
   isActiveAdmin = false,
   isLoggedIn = false,
+  locale = "ko",
+  showDonate = true,
 }: MobileNavigationMenuProps) {
+  const copy = NAV_COPY[locale];
+
   return (
     <div
       id="mobile-menu"
@@ -35,7 +48,7 @@ export default function MobileNavigationMenu({
       aria-labelledby="mobile-menu-title"
     >
       <h2 id="mobile-menu-title" className="sr-only">
-        모바일 메뉴
+        {copy.mobileMenuTitle}
       </h2>
       <div className="relative z-[1] px-6 pt-2">
         <button
@@ -43,12 +56,71 @@ export default function MobileNavigationMenu({
           onClick={onClose}
           className="min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-black/5 transition-colors"
         >
-          메뉴 닫기
+          {copy.closeMenu}
         </button>
+      </div>
+      {/* 주 행동(서명·후원)은 스크롤 영역 밖 맨 위에 고정한다. 목록 끝에 두면
+          작은 화면에서 첫 화면 아래로 밀려, 메뉴를 열어도 서명 버튼이 보이지 않았다. */}
+      <div
+        className={`relative z-[1] grid gap-2 px-6 pt-2 pb-3 border-b border-[var(--color-border)] ${
+          showDonate ? "grid-cols-2" : "grid-cols-1"
+        }`}
+      >
+        {locale === "en" ? (
+          <NavigationLink
+            href={copy.ctaHref}
+            className={CTA_CLASS}
+            label={copy.cta}
+            onClick={onDismiss}
+          />
+        ) : (
+          <EditableLink
+            contentKey="nav.cta.href"
+            defaultHref={copy.ctaHref}
+            page="nav"
+            section="header"
+            className={CTA_CLASS}
+            onNavigate={onDismiss}
+          >
+            <EditableText
+              contentKey="nav.cta"
+              defaultValue={copy.cta}
+              as="span"
+              page="nav"
+              section="header"
+            />
+          </EditableLink>
+        )}
+        {showDonate &&
+          (locale === "en" ? (
+            <NavigationLink
+              href={copy.donateHref}
+              className={DONATE_CLASS}
+              label={copy.donate}
+              onClick={onDismiss}
+            />
+          ) : (
+            <EditableLink
+              contentKey="nav.donate.href"
+              defaultHref={copy.donateHref}
+              page="nav"
+              section="header"
+              className={DONATE_CLASS}
+              onNavigate={onDismiss}
+            >
+              <EditableText
+                contentKey="nav.donate"
+                defaultValue={copy.donate}
+                as="span"
+                page="nav"
+                section="header"
+              />
+            </EditableLink>
+          ))}
       </div>
       <nav
         className="relative z-[1] flex flex-1 flex-col gap-1 overflow-y-auto px-6 py-3 pb-8"
-        aria-label="모바일 내비게이션"
+        aria-label={copy.mobileNavLabel}
       >
         {navLinks.map((link) => {
           const active = isActive(link.href);
@@ -95,27 +167,11 @@ export default function MobileNavigationMenu({
             </span>
           );
         })}
-        <EditableLink
-          contentKey="nav.cta.href"
-          defaultHref="/petition"
-          page="nav"
-          section="header"
-          className="px-4 py-3 rounded-full text-lg font-bold text-white bg-[var(--color-warm)] hover:bg-[var(--color-warm-light)] min-h-[48px] flex items-center justify-center transition-colors"
-          containerClassName="mt-3"
-          onNavigate={onDismiss}
-        >
-          <EditableText
-            contentKey="nav.cta"
-            defaultValue="연대서명"
-            as="span"
-            page="nav"
-            section="header"
-          />
-        </EditableLink>
         <NavigationAuthLinks
           isActiveAdmin={isActiveAdmin}
           isLoggedIn={isLoggedIn}
           variant="mobile"
+          locale={locale}
         />
       </nav>
     </div>

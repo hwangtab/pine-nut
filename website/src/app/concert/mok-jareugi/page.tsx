@@ -97,7 +97,7 @@ export const metadata: Metadata = {
 const INFO_CARDS = [
   { icon: CalendarDays, label: "일시", value: MOK_DATE_LABEL, sub: MOK_TIME_LABEL },
   { icon: MapPin, label: "장소", value: MOK_PLACE, sub: "강원 홍천 화촌면" },
-  { icon: Ticket, label: "관람", value: "무료", sub: "예매 없이 누구나" },
+  { icon: Ticket, label: "관람", value: "무료", sub: "예매 없이 열린 공연" },
   { icon: Users, label: "출연", value: `${MOK_LINEUP.length}팀`, sub: "포스터 순서대로" },
 ];
 

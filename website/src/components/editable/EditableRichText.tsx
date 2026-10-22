@@ -154,7 +154,15 @@ export default function EditableRichText({
         <div
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4"
           onClick={(e) => {
-            if (e.target === e.currentTarget) handleCancel();
+            if (e.target !== e.currentTarget) return;
+            // 바깥을 한 번 잘못 눌러(모바일 탭 포함) 편집이 날아가지 않게, 바뀐 게 있으면 묻는다.
+            if (
+              localValue !== value &&
+              !window.confirm("저장하지 않은 변경 사항이 있습니다. 닫을까요?")
+            ) {
+              return;
+            }
+            handleCancel();
           }}
         >
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">

@@ -1,6 +1,7 @@
 import { isValidRegionPair } from "@/lib/regions";
 import {
   AFFILIATION_MAX_LENGTH,
+  EMAIL_MAX_LENGTH,
   EMAIL_PATTERN,
   MESSAGE_MAX_LENGTH,
   NAME_MAX_LENGTH,
@@ -55,6 +56,8 @@ export function validateSignatureForm(values: SignatureFormValues): SignatureFor
   const email = values.email.trim();
   if (email && !EMAIL_PATTERN.test(email)) {
     errors.email = "올바른 이메일을 입력해주세요.";
+  } else if (email.length > EMAIL_MAX_LENGTH) {
+    errors.email = `이메일은 ${EMAIL_MAX_LENGTH}자 이내로 입력해주세요.`;
   }
 
   if (values.message.length > MESSAGE_MAX_LENGTH) {

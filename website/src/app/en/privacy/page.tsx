@@ -91,7 +91,7 @@ export default function EnglishPrivacyPage() {
                 <strong>
                   <EditableText contentKey="en.privacy.section6.campaignLabel" defaultValue="Campaign page:" as="span" page="en/privacy" section="section6" />
                 </strong>{" "}
-                <EditableLink contentKey="en.privacy.section6.campaignHref" defaultHref="https://campaigns.do/campaigns/1328" page="en/privacy" section="section6" inline className="text-[var(--color-sky)] underline underline-offset-2 hover:text-[var(--color-sky)]/80 transition-colors">
+                <EditableLink contentKey="en.privacy.section6.campaignHref" defaultHref="https://campaigns.do/campaigns/1328" page="en/privacy" section="section6" inline className="inline-flex min-h-11 items-center text-[var(--color-sky)] underline underline-offset-2 hover:text-[var(--color-sky)]/80 transition-colors">
                   campaigns.do/campaigns/1328
                 </EditableLink>
               </p>
@@ -99,7 +99,7 @@ export default function EnglishPrivacyPage() {
                 <strong>
                   <EditableText contentKey="en.privacy.section6.phoneLabel" defaultValue="Phone:" as="span" page="en/privacy" section="section6" />
                 </strong>{" "}
-                <EditableLink contentKey="en.privacy.section6.phoneHref" defaultHref="tel:010-8918-8933" page="en/privacy" section="section6" inline className="text-[var(--color-sky)] underline underline-offset-2 hover:text-[var(--color-sky)]/80 transition-colors">
+                <EditableLink contentKey="en.privacy.section6.phoneHref" defaultHref="tel:010-8918-8933" page="en/privacy" section="section6" inline className="inline-flex min-h-11 items-center text-[var(--color-sky)] underline underline-offset-2 hover:text-[var(--color-sky)]/80 transition-colors">
                   <EditableText contentKey="en.privacy.section6.phoneValue" defaultValue="010-8918-8933 (Lee Chang-hoo, campaign coordinator)" as="span" page="en/privacy" section="section6" />
                 </EditableLink>
               </p>
@@ -113,7 +113,7 @@ export default function EnglishPrivacyPage() {
             defaultHref="/en"
             page="en/privacy"
             section="footer"
-            className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] text-[15px] underline underline-offset-4 transition-colors"
+            className="inline-flex min-h-11 items-center text-[var(--color-text-muted)] hover:text-[var(--color-text)] text-[15px] underline underline-offset-4 transition-colors"
           >
             <EditableText contentKey="en.privacy.back" defaultValue="Back to home" as="span" page="en/privacy" section="footer" />
           </EditableLink>

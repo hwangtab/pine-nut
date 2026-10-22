@@ -79,6 +79,7 @@ export function StoryBattleSection() {
               section="battle"
               width={1200}
               height={800}
+              sizes="(max-width: 768px) 100vw, 768px"
               className="w-full rounded-[2px]"
             />
             <figcaption>
@@ -101,6 +102,7 @@ export function StoryBattleSection() {
               section="battle"
               width={1200}
               height={800}
+              sizes="(max-width: 768px) 100vw, 768px"
               className="w-full rounded-[2px]"
             />
             <figcaption>

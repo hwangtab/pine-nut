@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Heart } from "lucide-react";
 import { getBoardPosts } from "@/lib/data/board";
 import { getMyMemberProfile } from "@/lib/data/member";
@@ -28,7 +29,7 @@ export default async function BoardPage({
   const category = sp.category ?? "";
   const q = sp.q ?? "";
 
-  const [{ items, total }, profile] = await Promise.all([
+  const [{ items, total, failed }, profile] = await Promise.all([
     getBoardPosts(page, { category, q }, PER_PAGE),
     getMyMemberProfile(),
   ]);
@@ -42,6 +43,11 @@ export default async function BoardPage({
     if (params.q) usp.set("q", params.q);
     const qs = usp.toString();
     return qs ? `/board?${qs}` : "/board";
+  }
+
+  // 마지막 페이지를 넘는 ?page=N(글 삭제 뒤의 옛 링크 등)은 빈 화면 대신 마지막 페이지로 보낸다.
+  if (!failed && page > totalPages) {
+    redirect(buildHref({ page: totalPages, category, q }));
   }
 
   return (
@@ -101,7 +107,11 @@ export default async function BoardPage({
         </button>
       </form>
 
-      {items.length === 0 ? (
+      {failed ? (
+        <p role="alert" className="py-20 text-center text-[var(--color-danger)]">
+          글 목록을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.
+        </p>
+      ) : items.length === 0 ? (
         <p className="py-20 text-center text-[var(--color-text-muted)]">
           {q ? "검색 결과가 없습니다." : "글이 없습니다."}
         </p>
@@ -130,7 +140,7 @@ export default async function BoardPage({
               <p className="mt-1 flex items-center gap-1 text-sm text-[var(--color-text-muted)]">
                 <span>
                   {item.authorNickname} ·{" "}
-                  {new Date(item.createdAt).toLocaleDateString("ko-KR")} · 댓글{" "}
+                  {new Date(item.createdAt).toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" })} · 댓글{" "}
                   {item.commentCount} ·
                 </span>
                 <span className="inline-flex items-center gap-0.5">
@@ -149,12 +159,12 @@ export default async function BoardPage({
           {page > 1 ? (
             <Link
               href={buildHref({ page: page - 1, category, q })}
-              className="rounded-xl border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-bg)]"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-bg)]"
             >
               이전
             </Link>
           ) : (
-            <span className="rounded-xl border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-muted)] opacity-50">
+            <span className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-muted)] opacity-50">
               이전
             </span>
           )}
@@ -164,12 +174,12 @@ export default async function BoardPage({
           {page < totalPages ? (
             <Link
               href={buildHref({ page: page + 1, category, q })}
-              className="rounded-xl border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-bg)]"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-bg)]"
             >
               다음
             </Link>
           ) : (
-            <span className="rounded-xl border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-muted)] opacity-50">
+            <span className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-muted)] opacity-50">
               다음
             </span>
           )}

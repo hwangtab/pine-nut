@@ -57,9 +57,18 @@ export function isFullscreenRoute(pathname: string): boolean {
   return FULLSCREEN_ROUTES.includes(pathname);
 }
 
-// 콘텐츠가 페이지 최상단부터 시작해 플로팅 내비 아래로 여백이 필요한 라우트인지.
+// 히어로 없이 콘텐츠가 페이지 최상단부터 시작해 고정 내비 아래로 여백이 필요한 라우트.
+// "히어로가 없으면 전부"로 판정하던 시절엔 /privacy와 404(임의 경로)가
+// UtilityHeader의 자체 상단 여백(pt-32 md:pt-40, 내비 높이 포함)과 셸의
+// pt-20 md:pt-24를 이중으로 받았다. 404는 경로로 가려낼 수 없으므로 반대로
+// 여백이 필요한 라우트만 명시한다 — 새 무(無)히어로 라우트를 만들면 여기 추가한다.
+const NAV_PADDED_ROUTE_PREFIXES = ["/board", "/mypage"];
+
 export function needsNavTopPadding(pathname: string): boolean {
-  return !hasPageHero(pathname) && !isFullscreenRoute(pathname);
+  if (hasPageHero(pathname) || isFullscreenRoute(pathname)) return false;
+  return NAV_PADDED_ROUTE_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
 }
 
 // ── 푸터 능선(RidgeDivider)과 그 아래 여백 ─────────────────────────────────

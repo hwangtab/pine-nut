@@ -7,6 +7,8 @@ export interface NewsDisplayItem {
   category: string;
   sourceName?: string;
   thumbnailUrl?: string;
+  /** /en 목록에서 번역이 없어 한국어 원문을 그대로 보여주는 항목은 false */
+  isTranslated?: boolean;
 }
 
 export interface NewsListConfig {

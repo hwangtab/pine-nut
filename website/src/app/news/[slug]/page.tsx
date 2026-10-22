@@ -7,6 +7,7 @@ import UtilityHeader from "@/components/UtilityHeader";
 import type { Metadata } from "next";
 import { OG_SITE, localeAlternates } from "@/lib/seo-alternates";
 import { EditableLink, EditableText } from "@/components/editable";
+import LinkifiedText from "@/components/news-list/LinkifiedText";
 
 /**
  * 정적 프리렌더 + 태그 무효화로 서빙한다. 관리자가 소식을 저장·삭제하면
@@ -40,6 +41,8 @@ export async function generateStaticParams() {
   }
 }
 
+const DEFAULT_NEWS_OG_IMAGE =
+  "https://hxcoeowfjanltwrsqhyz.supabase.co/storage/v1/object/public/images/press/ie003535387_std.jpg";
 
 export async function generateMetadata({
   params,
@@ -59,8 +62,12 @@ export async function generateMetadata({
       title: item.title,
       description: item.summary,
       type: "article",
-      ...(item.thumbnailUrl ? { images: [item.thumbnailUrl] } : {}),
+      url: `/news/${slug}`,
+      // openGraph 를 선언하면 루트 layout 의 images 가 통째로 사라진다 — 썸네일이
+      // 없는 기사도 공유 카드에 사진이 붙도록 루트와 같은 드론 사진으로 채운다.
+      images: [item.thumbnailUrl ?? DEFAULT_NEWS_OG_IMAGE],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 
@@ -161,7 +168,7 @@ export default async function NewsDetailPage({
               key={index}
               className="whitespace-pre-line text-[var(--color-text-muted)] leading-relaxed mb-6 text-base md:text-lg"
             >
-              {paragraph}
+              <LinkifiedText text={paragraph} />
             </p>
           ))}
         </div>

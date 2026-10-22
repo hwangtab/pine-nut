@@ -60,7 +60,7 @@ for (const expected of ["isInternalEditableHref", "isExternalEditableHref", "nex
 }
 
 const quickLinksSource = read("src/components/footer/FooterQuickLinks.tsx");
-for (const expected of ["FooterLink", "BuilderLinkItem", "바로가기"]) {
+for (const expected of ["FooterLink", "BuilderLinkItem", "quickLinksTitle"]) {
   assert(quickLinksSource.includes(expected), `FooterQuickLinks must include ${expected}.`);
 }
 

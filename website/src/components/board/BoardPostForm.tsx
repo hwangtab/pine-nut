@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import type { ActionState } from "@/lib/actions/state";
+import { BOARD_POST_CONTENT_MAX, BOARD_POST_TITLE_MAX } from "./board-limits";
 
 interface BoardPostFormProps {
   action: (prev: ActionState, formData: FormData) => Promise<ActionState>;
@@ -30,6 +31,9 @@ export default function BoardPostForm({
   submitLabel,
 }: BoardPostFormProps) {
   const [state, formAction] = useActionState(action, null);
+  // 저장 실패 시 서버가 돌려준 제출값을 우선 사용한다. React 19가 폼을 자동
+  // 리셋해도 이 값이 새 defaultValue가 되므로 작성 내용이 유지된다.
+  const sent = state?.values;
 
   return (
     <form action={formAction} className="space-y-6">
@@ -49,7 +53,7 @@ export default function BoardPostForm({
         <select
           id="category"
           name="category"
-          defaultValue={initial?.category ?? "자유"}
+          defaultValue={sent?.category ?? initial?.category ?? "자유"}
           className="paper-field focus:outline-none focus:ring-2 focus:ring-[var(--color-forest)]/30"
         >
           <option value="자유">자유</option>
@@ -71,8 +75,8 @@ export default function BoardPostForm({
           name="title"
           type="text"
           required
-          maxLength={200}
-          defaultValue={initial?.title}
+          maxLength={BOARD_POST_TITLE_MAX}
+          defaultValue={sent?.title ?? initial?.title}
           placeholder="제목을 입력하세요"
           className="paper-field focus:outline-none focus:ring-2 focus:ring-[var(--color-forest)]/30"
         />
@@ -90,7 +94,8 @@ export default function BoardPostForm({
           name="content"
           required
           rows={10}
-          defaultValue={initial?.content}
+          maxLength={BOARD_POST_CONTENT_MAX}
+          defaultValue={sent?.content ?? initial?.content}
           placeholder="내용을 입력하세요"
           className="paper-field w-full resize-y focus:outline-none focus:ring-2 focus:ring-[var(--color-forest)]/30"
         />

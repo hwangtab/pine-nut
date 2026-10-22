@@ -40,7 +40,7 @@ export default async function BoardPostPage({
     <div className="mx-auto max-w-3xl px-4 py-10">
       <Link
         href="/board"
-        className="text-base text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+        className="-ml-2 inline-flex min-h-11 items-center px-2 text-base text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
       >
         ← 목록
       </Link>
@@ -61,7 +61,7 @@ export default async function BoardPostPage({
       </h1>
       <p className="mt-2 text-sm text-[var(--color-text-muted)]">
         {post.authorNickname} ·{" "}
-        {new Date(post.createdAt).toLocaleDateString("ko-KR")}
+        {new Date(post.createdAt).toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" })}
       </p>
 
       <p className="mt-6 whitespace-pre-line text-base leading-relaxed text-[var(--color-text)]">
@@ -79,7 +79,7 @@ export default async function BoardPostPage({
             <img
               key={im.id}
               src={im.url}
-              alt=""
+              alt={`${post.title} 첨부 사진 ${index + 1}`}
               // 첫 장은 글을 열면 곧바로 보이는 자리라 미루지 않는다. 화면 안에
               // 있는 사진에 lazy를 걸면 발견이 한 박자 늦어져 오히려 손해다.
               loading={index === 0 ? "eager" : "lazy"}

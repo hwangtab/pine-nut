@@ -215,17 +215,44 @@ html {
 .rise-in-3 { animation-delay: 0.38s; }
 
 /* 스크롤 진입 리빌 — framer-motion 대체(IntersectionObserver가 .is-visible 토글).
-   below-fold 전용(초기 opacity:0는 LCP 요소에 쓰지 않는다). */
+   below-fold 전용(초기 opacity:0는 LCP 요소에 쓰지 않는다).
+   숨김 상태는 <html class="js">일 때만 건다 — 루트 레이아웃 <head>의 인라인
+   스크립트가 첫 페인트 전에 붙이므로 JS 켠 방문자에겐 깜빡임이 없고, JS가 꺼진
+   환경·크롤러에선 처음부터 보인다. 지연은 --reveal-delay로만 받아 등장 전환에만
+   걸고, 등장 뒤 hover 전환(카드 리프트 등)에는 지연이 새지 않게 한다. */
 .reveal {
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s);
+}
+.js .reveal:not(.is-visible) {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
 }
 .reveal.is-visible {
   opacity: 1;
   transform: none;
+}
+@media print {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* 고정 내비 바로 아래에 붙는 sticky 바(타임라인 연도 필터 등). 내비는 아래로
+   스크롤하면 위로 숨는데(Navigation의 -translate-y-full), 그때도 top:5rem이면
+   80px 빈 틈이 생긴다. 숨김 상태를 :has()로 읽어 꼭대기로 따라 올린다 —
+   :has() 미지원 브라우저는 기존처럼 5rem에 머문다. */
+.sticky-below-nav {
+  top: 5rem;
+  transition: top 0.3s ease;
+}
+body:has(header.-translate-y-full) .sticky-below-nav {
+  top: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sticky-below-nav { transition: none; }
 }
 
 /* 소셜 프루프 토스트 진입(좌측 슬라이드) */
@@ -258,7 +285,8 @@ html {
 
 @media (prefers-reduced-motion: reduce) {
   .rise-in { animation: none; }
-  .reveal {
+  .reveal,
+  .js .reveal:not(.is-visible) {
     opacity: 1;
     transform: none;
     transition: none;

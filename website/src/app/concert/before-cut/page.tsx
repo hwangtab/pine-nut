@@ -55,7 +55,7 @@ export const metadata: Metadata = {
 const INFO_CARDS = [
   { icon: CalendarDays, label: "일시", value: `${CONCERT_DATE_LABEL}`, sub: CONCERT_TIME_LABEL },
   { icon: MapPin, label: "장소", value: CONCERT_PLACE, sub: "사랑채 앞 도로" },
-  { icon: Ticket, label: "관람", value: "무료", sub: "예매 없이 누구나" },
+  { icon: Ticket, label: "관람", value: "무료", sub: "예매 없이 열린 공연" },
   { icon: Users, label: "출연", value: `${CONCERT_LINEUP.length}팀`, sub: "일곱 시간" },
 ];
 

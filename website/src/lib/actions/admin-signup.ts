@@ -1,7 +1,9 @@
 "use server";
 
+import { headers } from "next/headers";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { createSupabaseServiceClient } from "@/lib/supabase-service";
+import { getClientIpFromHeaders, hashIp } from "@/lib/signatures/api/request";
 import type { ActionState } from "./state";
 
 // 보상 삭제 실패로 생긴 고스트는 "방금 만들어진" 계정이다. 그보다 오래된 계정은
@@ -86,6 +88,25 @@ async function healOrphanMember(
   return !error;
 }
 
+const SIGNUP_LIMIT_ERRORS: Record<string, string> = {
+  ip_limited: "가입 시도가 너무 많습니다. 1시간 뒤 다시 시도해주세요.",
+  global_limited: "지금은 가입 요청이 많아 잠시 막혀 있습니다. 1시간 뒤 다시 시도하거나 관리자에게 문의해주세요.",
+};
+
+// 비로그인으로 확인된 계정을 만드는 경로라 IP·전역 시간당 횟수로 묶는다(DB 함수가 원자적으로
+// 확인·소비). 중복 확인보다 먼저 걸어 이메일 존재 여부 탐색과 고스트 복구 경로의 비밀번호
+// 대입도 함께 늦춘다. 제한 확인 자체가 실패하면 fail-closed로 가입을 막는다.
+async function claimSignupSlot(service: SupabaseClient): Promise<string | null> {
+  const ipHash = hashIp(getClientIpFromHeaders(await headers()));
+  const { data, error } = await service.rpc("claim_admin_signup_slot", { p_ip_hash: ipHash });
+  if (error) {
+    console.error("claimAdminAccount: rate limit rpc failed", error.message);
+    return "서버 설정 오류입니다. 관리자에게 문의해주세요.";
+  }
+  if (data !== "ok") return SIGNUP_LIMIT_ERRORS[data as string] ?? "가입 처리에 실패했습니다. 다시 시도해주세요.";
+  return null;
+}
+
 export async function claimAdminAccount(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const email = (formData.get("email") as string | null)?.trim().toLowerCase() ?? "";
   const password = (formData.get("password") as string | null) ?? "";
@@ -95,6 +116,10 @@ export async function claimAdminAccount(_prev: ActionState, formData: FormData):
 
   const service = createSupabaseServiceClient();
   if (!service) return { error: "서버 설정 오류입니다. 관리자에게 문의해주세요." };
+
+  // 0) 레이트리밋(IP 3회/시간, 전체 20회/시간)
+  const limited = await claimSignupSlot(service);
+  if (limited) return { error: limited };
 
   // 1) 중복 가입 확인
   const { data: existing } = await service

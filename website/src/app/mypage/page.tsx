@@ -35,7 +35,7 @@ export default async function MyPage() {
         <p className="mb-8 text-[var(--color-text)]">
           {me
             ? `기획단 · ${me.role}`
-            : "일반 회원 · 게시판 기능이 곧 추가됩니다."}
+            : "일반 회원 · 게시판에 글과 댓글을 쓸 수 있습니다."}
         </p>
 
         <div className="mb-8">

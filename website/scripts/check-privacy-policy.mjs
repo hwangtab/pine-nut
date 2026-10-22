@@ -375,8 +375,8 @@ assert(
   "privacy.section1.antiAbuseContent must state the raw IP address is not stored.",
 );
 assert(
-  /export function hashIp\(ip: string\): string \{\s*return createHash\("sha256"\)/.test(requestSource),
-  `${requestPath}'s hashIp must hash with sha256 — this check's claim of hashing (not storing raw IP) depends on it.`,
+  /export function hashIp\(ip: string\): string \{[\s\S]*?createHmac\("sha256", pepper\)[\s\S]*?return createHash\("sha256"\)[\s\S]*?\n\}/.test(requestSource),
+  `${requestPath}'s hashIp must hash with HMAC-SHA256 (IP_HASH_PEPPER), falling back to sha256 — this check's claim of hashing (not storing raw IP) depends on it.`,
 );
 // 서명 저장은 2026-08-31부터 submit_signature RPC를 거친다(재서명 시 기존 행을
 // 갱신하려면 INSERT ... ON CONFLICT가 필요한데, PostgREST의 insert()로는 표현식

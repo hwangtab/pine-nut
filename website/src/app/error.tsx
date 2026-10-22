@@ -22,7 +22,8 @@ export default function PublicError({
   }, [error]);
 
   return (
-    <main className="min-h-[60vh] flex items-center justify-center px-4 py-20">
+    // PublicShell이 이미 <main>을 깔고 있으므로 중첩 랜드마크를 만들지 않는다.
+    <div className="min-h-[60vh] flex items-center justify-center px-4 py-20">
       <div className="max-w-lg text-center">
         <p className="text-sm font-semibold text-[var(--color-forest)] mb-3">
           일시적인 오류
@@ -61,6 +62,6 @@ export default function PublicError({
           </Link>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

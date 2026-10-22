@@ -4,7 +4,7 @@ import { englishAlternates } from "@/lib/seo-alternates";
 
 export const metadata: Metadata = {
   title: "Support the Campaign — Save Pungcheon-ri",
-  description: "Help fund the residents' seven-year fight to protect Pungcheon-ri.",
+  description: "Help fund the residents' eight-year fight to protect Pungcheon-ri.",
   alternates: englishAlternates("/en/donate", "/donate"),
 };
 

@@ -1,20 +1,36 @@
 "use client";
 
+import Link from "next/link";
 import { EditableLink, EditableRichText, EditableText } from "@/components/editable";
+import { FOOTER_COPY, type ChromeLocale } from "@/lib/i18n/chrome";
 
-export default function FooterBrand() {
+export default function FooterBrand({ locale = "ko" }: { locale?: ChromeLocale }) {
+  const copy = FOOTER_COPY[locale];
+
+  // 영문 구간은 편집 키를 공유하지 않는다(lib/i18n/chrome.ts).
+  if (locale === "en") {
+    return (
+      <div>
+        <Link href={copy.brandHref} className="mb-3 block text-xl font-bold">
+          {copy.brandName}
+        </Link>
+        <p className="text-white/70 text-sm leading-relaxed">{copy.brandDescription}</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <EditableLink
         contentKey="footer.brand.href"
-        defaultHref="/"
+        defaultHref={copy.brandHref}
         page="footer"
         section="brand"
         className="mb-3 block text-xl font-bold"
       >
         <EditableText
           contentKey="footer.brand.name"
-          defaultValue="풍천리를 지켜주세요"
+          defaultValue={copy.brandName}
           as="span"
           page="footer"
           section="brand"
@@ -22,7 +38,7 @@ export default function FooterBrand() {
       </EditableLink>
       <EditableRichText
         contentKey="footer.brand.description"
-        defaultValue="풍천리양수발전소건설반대위원회는 마을과 자연을 지키기 위해 양수발전소 건설에 반대하는 주민들의 모임입니다."
+        defaultValue={copy.brandDescription}
         page="footer"
         section="brand"
       >

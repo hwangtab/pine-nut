@@ -117,7 +117,7 @@ export const metadata: Metadata = {
 const INFO_CARDS = [
   { icon: CalendarDays, label: "일시", value: FEAST_DATE_LABEL, sub: FEAST_TIME_LABEL },
   { icon: MapPin, label: "장소", value: FEAST_PLACE, sub: "강원 홍천 화촌면" },
-  { icon: Ticket, label: "관람", value: "무료", sub: "예매 없이 누구나" },
+  { icon: Ticket, label: "관람", value: "무료", sub: "예매 없이 열린 공연" },
   { icon: Users, label: "출연", value: `${FEAST_LINEUP.length}팀`, sub: "오후 2시 – 5시" },
 ];
 

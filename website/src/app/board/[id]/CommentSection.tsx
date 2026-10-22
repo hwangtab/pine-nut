@@ -11,6 +11,7 @@ import {
   setCommentHidden,
 } from "@/lib/actions/board";
 import type { BoardComment } from "@/lib/data/board";
+import { BOARD_COMMENT_MAX } from "@/components/board/board-limits";
 import ReportButton from "./ReportButton";
 
 interface CommentSectionProps {
@@ -90,7 +91,7 @@ function CommentItem({
       <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--color-text-muted)]">
         <span>{comment.authorNickname}</span>
         <span>·</span>
-        <span>{new Date(comment.createdAt).toLocaleDateString("ko-KR")}</span>
+        <span>{new Date(comment.createdAt).toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" })}</span>
         {isHiddenOrDeleted && (
           <span className="rounded-full bg-[var(--color-border)] px-2 py-0.5 text-xs font-medium text-[var(--color-text-muted)]">
             {comment.isDeleted ? "삭제됨" : "숨김"}
@@ -191,6 +192,9 @@ export default function CommentSection({
               name="content"
               required
               rows={3}
+              maxLength={BOARD_COMMENT_MAX}
+              // 등록 실패 시 서버가 돌려준 입력을 다시 채운다(React 19 폼 자동 리셋 대비).
+              defaultValue={state?.values?.content ?? ""}
               placeholder="댓글을 입력하세요"
               className="paper-field w-full resize-y focus:outline-none focus:ring-2 focus:ring-[var(--color-forest)]/30"
             />

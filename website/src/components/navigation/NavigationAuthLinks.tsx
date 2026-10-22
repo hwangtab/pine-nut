@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import LogoutButton from "@/components/auth/LogoutButton";
+import type { ChromeLocale } from "@/lib/i18n/chrome";
 
 interface NavigationAuthLinksProps {
   isActiveAdmin: boolean;
   isLoggedIn: boolean;
   variant?: "desktop" | "mobile";
   isTransparent?: boolean;
+  locale?: ChromeLocale;
 }
 
 export default function NavigationAuthLinks({
@@ -15,6 +17,7 @@ export default function NavigationAuthLinks({
   isLoggedIn,
   variant = "desktop",
   isTransparent = false,
+  locale = "ko",
 }: NavigationAuthLinksProps) {
   const isMobile = variant === "mobile";
   // 투명 헤더(히어로 위)에서는 어두운 텍스트가 배경에 묻히므로 흰색 계열로 전환
@@ -45,6 +48,10 @@ export default function NavigationAuthLinks({
       }`;
 
   if (!isLoggedIn) {
+    // 로그인·회원가입은 한국어 화면뿐이다. 영문 방문자에게 한국어 가입 폼을
+    // 내미는 대신 영문 구간에서는 아예 감춘다(운영자는 한국어 화면에서 로그인한다).
+    if (locale === "en") return null;
+
     return (
       // prefetch를 끈다. 이 두 링크는 모든 공개 페이지의 내비게이션에 붙어 있어,
       // 켜두면 Next가 화면에 보이는 링크를 미리 당겨오면서 로그인 화면의 인증
@@ -67,7 +74,7 @@ export default function NavigationAuthLinks({
     <div className={containerClassName}>
       {isActiveAdmin && (
         <Link href="/admin" className={linkClassName}>
-          관리자
+          {locale === "en" ? "Admin" : "관리자"}
         </Link>
       )}
       <LogoutButton className={buttonClassName} />

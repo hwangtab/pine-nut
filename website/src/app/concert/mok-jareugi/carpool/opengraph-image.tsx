@@ -7,13 +7,14 @@ import { SITE_HOST } from "@/lib/site-config";
 // 카드 내용은 고정이지만 루트·서명 카드처럼 하루마다 다시 만든다 — 빌드 중 폰트 받기가
 // 실패하면 한글이 빈 카드가 만들어지는데, 빌드 때 한 번만 만들면 다음 배포까지 그대로 남는다.
 export const revalidate = 86400;
-export const alt = "목자르기 카풀 — 10월 10일(토) 서울에서 풍천리까지 같이 타고 가요";
+export const alt = "목자르기 카풀 — 10월 10일(토) 서울에서 풍천리까지 함께 간 카풀, 신청 마감";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const EYEBROW = "목자르기 · 10월 10일(토)";
 const TITLE = "풍천리 같이 타고 가요";
-const SUBTITLE = "빈자리를 골라 카풀을 신청하세요";
+// 공연이 끝나 신청을 닫았다(carpool/page.tsx). 공유 카드가 신청을 권하면 안 된다.
+const SUBTITLE = "카풀 신청이 마감되었습니다";
 const PLACES = ["광화문", "강변역", "연신내역", "불광역", "뚝섬역"];
 const PLACES_SUFFIX = "출발";
 

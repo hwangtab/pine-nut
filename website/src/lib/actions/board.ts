@@ -4,55 +4,81 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireMember, requireEditor } from "./auth";
 import { logAudit } from "./audit";
-import type { ActionState } from "./state";
+import { formValues, type ActionState } from "./state";
 import { BOARD_CATEGORIES, type BoardCategory } from "@/lib/board-categories";
+import {
+  ALLOWED_IMAGE_TYPES,
+  IMAGE_EXT_BY_TYPE,
+  MAX_IMAGE_BYTES,
+  MAX_IMAGE_MB,
+  sniffImageType,
+} from "@/lib/image-upload-limits";
+import {
+  BOARD_COMMENT_MAX,
+  BOARD_POST_CONTENT_MAX,
+  BOARD_POST_TITLE_MAX,
+} from "@/components/board/board-limits";
+
+// 실패 시 제출값을 함께 돌려준다. React 19가 폼을 자동 리셋해도 폼이 이 값으로
+// 다시 그려지므로 작성 중이던 글이 사라지지 않는다.
+function withValues(state: ActionState, formData: FormData): ActionState {
+  return state?.error ? { ...state, values: formValues(formData) } : state;
+}
+
+// DB 트리거(board_rate_limit)가 작성 속도 제한에 걸리면 이 메시지로 예외를 낸다.
+function isRateLimited(error: { message?: string } | null): boolean {
+  return !!error?.message?.includes("board_rate_limited");
+}
 
 function parseCategory(formData: FormData): BoardCategory {
   const raw = (formData.get("category") as string | null)?.trim() ?? "";
   return (BOARD_CATEGORIES as readonly string[]).includes(raw) ? (raw as BoardCategory) : "자유";
 }
 
-const MAX_POST_CONTENT = 20_000;
-
 function parseTitleContent(formData: FormData): { title: string; content: string } | { error: string } {
   const title = (formData.get("title") as string | null)?.trim() ?? "";
   const content = (formData.get("content") as string | null)?.trim() ?? "";
-  if (!title || title.length > 200) return { error: "제목을 1~200자로 입력해주세요." };
+  if (!title || title.length > BOARD_POST_TITLE_MAX) {
+    return { error: `제목을 1~${BOARD_POST_TITLE_MAX}자로 입력해주세요.` };
+  }
   if (!content) return { error: "내용을 입력해주세요." };
   // 댓글에는 2000자 상한이 있는데 본문에는 어디에도 없었다. 초장문 하나로
   // 목록·상세 렌더와 감사 로그 payload가 함께 무거워진다.
-  if (content.length > MAX_POST_CONTENT) {
-    return { error: `내용은 ${MAX_POST_CONTENT.toLocaleString()}자 이내로 입력해주세요.` };
+  if (content.length > BOARD_POST_CONTENT_MAX) {
+    return { error: `내용은 ${BOARD_POST_CONTENT_MAX.toLocaleString()}자 이내로 입력해주세요.` };
   }
   return { title, content };
 }
 
 export async function createBoardPost(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const fail = (error: string) => withValues({ error }, formData);
   const parsed = parseTitleContent(formData);
-  if ("error" in parsed) return { error: parsed.error };
+  if ("error" in parsed) return fail(parsed.error);
   const gate = await requireMember();
-  if ("error" in gate) return { error: gate.error };
-  if (!gate.nickname) return { error: "닉네임을 먼저 설정해주세요. (마이페이지)" };
+  if ("error" in gate) return fail(gate.error);
+  if (!gate.nickname) return fail("닉네임을 먼저 설정해주세요. (마이페이지)");
   const { data, error } = await gate.supabase
     .from("board_posts")
     .insert({ author_user_id: gate.user.id, author_nickname: gate.nickname, title: parsed.title, content: parsed.content, category: parseCategory(formData) })
     .select("id").single();
-  if (error || !data) return { error: "글 작성에 실패했습니다." };
+  if (isRateLimited(error)) return fail("짧은 시간에 글을 너무 많이 썼습니다. 잠시 후 다시 시도해주세요.");
+  if (error || !data) return fail("글 작성에 실패했습니다.");
   await logAudit(gate.supabase, "board_posts", data.id, "create", { entityKey: parsed.title });
   revalidatePath("/board");
   redirect(`/board/${data.id}`);
 }
 
 export async function updateBoardPost(id: number, _prev: ActionState, formData: FormData): Promise<ActionState> {
+  const fail = (error: string) => withValues({ error }, formData);
   const parsed = parseTitleContent(formData);
-  if ("error" in parsed) return { error: parsed.error };
+  if ("error" in parsed) return fail(parsed.error);
   const gate = await requireMember();
-  if ("error" in gate) return { error: gate.error };
+  if ("error" in gate) return fail(gate.error);
   // 본인 글만: RLS(owner_update)로 강제되며, 앱에서도 author 확인
   const { data, error } = await gate.supabase
     .from("board_posts").update({ title: parsed.title, content: parsed.content, category: parseCategory(formData) })
     .eq("id", id).eq("author_user_id", gate.user.id).select("id").single();
-  if (error || !data) return { error: "수정에 실패했습니다. (본인 글만 수정 가능)" };
+  if (error || !data) return fail("수정에 실패했습니다. (본인 글만 수정 가능)");
   await logAudit(gate.supabase, "board_posts", id, "update", { entityKey: parsed.title });
   revalidatePath("/board"); revalidatePath(`/board/${id}`);
   redirect(`/board/${id}`);
@@ -61,9 +87,14 @@ export async function updateBoardPost(id: number, _prev: ActionState, formData: 
 export async function deleteBoardPost(id: number): Promise<ActionState> {
   const gate = await requireMember();
   if ("error" in gate) return { error: gate.error };
-  const { error } = await gate.supabase
-    .from("board_posts").update({ is_deleted: true }).eq("id", id).eq("author_user_id", gate.user.id).select("id").single();
-  if (error) return { error: "삭제에 실패했습니다. (본인 글만)" };
+  // update().select()로 지우면 갱신된 행이 SELECT 정책(public_read: NOT is_deleted)에
+  // 걸러져 일반 회원은 언제나 실패했다. 작성자 확인까지 SECURITY DEFINER RPC에서 한다.
+  const { data, error } = await gate.supabase.rpc("soft_delete_my_board_post", { p_id: id });
+  if (error) {
+    console.error("deleteBoardPost: rpc failed", error.message);
+    return { error: "삭제에 실패했습니다." };
+  }
+  if (data !== true) return { error: "삭제에 실패했습니다. (본인 글만)" };
   await logAudit(gate.supabase, "board_posts", id, "delete", {});
   revalidatePath("/board"); revalidatePath(`/board/${id}`);
   return null;
@@ -81,17 +112,19 @@ export async function setPostHidden(id: number, hidden: boolean): Promise<Action
 }
 
 export async function createBoardComment(postId: number, _prev: ActionState, formData: FormData): Promise<ActionState> {
+  const fail = (error: string) => withValues({ error }, formData);
   const content = (formData.get("content") as string | null)?.trim() ?? "";
-  if (!content) return { error: "댓글 내용을 입력해주세요." };
-  if (content.length > 2000) return { error: "댓글은 2000자 이하로 입력해주세요." };
+  if (!content) return fail("댓글 내용을 입력해주세요.");
+  if (content.length > BOARD_COMMENT_MAX) return fail(`댓글은 ${BOARD_COMMENT_MAX}자 이하로 입력해주세요.`);
   const gate = await requireMember();
-  if ("error" in gate) return { error: gate.error };
-  if (!gate.nickname) return { error: "닉네임을 먼저 설정해주세요. (마이페이지)" };
+  if ("error" in gate) return fail(gate.error);
+  if (!gate.nickname) return fail("닉네임을 먼저 설정해주세요. (마이페이지)");
   const { data, error } = await gate.supabase
     .from("board_comments")
     .insert({ post_id: postId, author_user_id: gate.user.id, author_nickname: gate.nickname, content })
     .select("id").single();
-  if (error || !data) return { error: "댓글 작성에 실패했습니다." };
+  if (isRateLimited(error)) return fail("짧은 시간에 댓글을 너무 많이 썼습니다. 잠시 후 다시 시도해주세요.");
+  if (error || !data) return fail("댓글 작성에 실패했습니다.");
   await logAudit(gate.supabase, "board_comments", data.id, "create", {});
   revalidatePath(`/board/${postId}`);
   return null;
@@ -100,9 +133,13 @@ export async function createBoardComment(postId: number, _prev: ActionState, for
 export async function deleteBoardComment(id: number, postId: number): Promise<ActionState> {
   const gate = await requireMember();
   if ("error" in gate) return { error: gate.error };
-  const { error } = await gate.supabase
-    .from("board_comments").update({ is_deleted: true }).eq("id", id).eq("author_user_id", gate.user.id).select("id").single();
-  if (error) return { error: "삭제에 실패했습니다. (본인 댓글만)" };
+  // 글 삭제와 같은 이유로 RPC를 쓴다(soft_delete_my_board_post 주석 참고).
+  const { data, error } = await gate.supabase.rpc("soft_delete_my_board_comment", { p_id: id });
+  if (error) {
+    console.error("deleteBoardComment: rpc failed", error.message);
+    return { error: "삭제에 실패했습니다." };
+  }
+  if (data !== true) return { error: "삭제에 실패했습니다. (본인 댓글만)" };
   await logAudit(gate.supabase, "board_comments", id, "delete", {});
   revalidatePath(`/board/${postId}`);
   return null;
@@ -119,21 +156,25 @@ export async function setCommentHidden(id: number, postId: number, hidden: boole
 }
 
 const BOARD_IMAGE_BUCKET = "board-images";
-const BOARD_IMAGE_MAX = 5 * 1024 * 1024;
-const BOARD_IMAGE_TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
 
 export async function uploadBoardImage(postId: number, _prev: ActionState, formData: FormData): Promise<ActionState> {
   const file = formData.get("image_file");
   if (!(file instanceof File) || file.size === 0) return { error: "이미지를 선택해주세요." };
-  const ext = BOARD_IMAGE_TYPES[file.type];
-  if (!ext) return { error: "JPG, PNG, WebP 형식만 올릴 수 있습니다." };
-  if (file.size > BOARD_IMAGE_MAX) return { error: "이미지는 5MB 이하만 가능합니다." };
+  if (!(ALLOWED_IMAGE_TYPES as readonly string[]).includes(file.type)) {
+    return { error: "JPG, PNG, WebP 형식만 올릴 수 있습니다." };
+  }
+  if (file.size > MAX_IMAGE_BYTES) return { error: `이미지는 ${MAX_IMAGE_MB}MB 이하만 가능합니다.` };
+  // 선언된 MIME(file.type)은 확장자 기반이라 믿을 수 없다. 실제 바이트로 형식을 판정하고,
+  // 확장자·contentType도 판정 결과로 정한다.
+  const sniffed = await sniffImageType(file);
+  if (!sniffed) return { error: "JPG, PNG, WebP 형식만 올릴 수 있습니다." };
+  const ext = IMAGE_EXT_BY_TYPE[sniffed];
   const gate = await requireMember();
   if ("error" in gate) return { error: gate.error };
 
   const path = `${postId}/${crypto.randomUUID()}.${ext}`;
   const { error: upErr } = await gate.supabase.storage.from(BOARD_IMAGE_BUCKET)
-    .upload(path, file, { contentType: file.type, upsert: false });
+    .upload(path, file, { contentType: sniffed, upsert: false });
   if (upErr) return { error: "이미지 업로드에 실패했습니다." };
 
   // 정렬 순서: 현재 최대값 + 1.

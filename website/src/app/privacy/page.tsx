@@ -229,7 +229,7 @@ export default function PrivacyPage() {
                   page="privacy"
                   section="section6"
                   inline
-                  className="text-[var(--color-sky)] underline underline-offset-2 hover:text-[var(--color-sky)]/80 transition-colors"
+                  className="inline-flex min-h-11 items-center text-[var(--color-sky)] underline underline-offset-2 hover:text-[var(--color-sky)]/80 transition-colors"
                 >
                   campaigns.do/campaigns/1328
                 </EditableLink>
@@ -250,7 +250,7 @@ export default function PrivacyPage() {
                   page="privacy"
                   section="section6"
                   inline
-                  className="text-[var(--color-sky)] underline underline-offset-2 hover:text-[var(--color-sky)]/80 transition-colors"
+                  className="inline-flex min-h-11 items-center text-[var(--color-sky)] underline underline-offset-2 hover:text-[var(--color-sky)]/80 transition-colors"
                 >
                   <EditableText
                     contentKey="privacy.section6.phoneValue"
@@ -271,7 +271,7 @@ export default function PrivacyPage() {
             defaultHref="/"
             page="privacy"
             section="footer"
-            className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] text-[15px] underline underline-offset-4 transition-colors"
+            className="inline-flex min-h-11 items-center text-[var(--color-text-muted)] hover:text-[var(--color-text)] text-[15px] underline underline-offset-4 transition-colors"
           >
             <EditableText contentKey="privacy.back" defaultValue="홈으로 돌아가기" as="span" page="privacy" section="footer" />
           </EditableLink>

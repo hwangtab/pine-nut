@@ -30,14 +30,16 @@ export default function BoardImageManager({
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  async function handleDelete(imageId: number) {
+  function handleDelete(imageId: number) {
     if (!confirm("이 이미지를 삭제할까요?")) return;
-    const result = await deleteBoardImage(imageId, postId);
-    if (result?.error) {
-      alert(result.error);
-      return;
-    }
-    startTransition(() => {
+    // 서버 호출까지 전환 안에서 해야 isPending이 요청 내내 켜져 버튼이 잠긴다.
+    // (예전에는 refresh만 감싸 삭제 요청 중에 버튼을 다시 누를 수 있었다.)
+    startTransition(async () => {
+      const result = await deleteBoardImage(imageId, postId);
+      if (result?.error) {
+        alert(result.error);
+        return;
+      }
       router.refresh();
     });
   }

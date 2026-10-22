@@ -2,6 +2,7 @@
 
 import type { RefObject } from "react";
 import { Menu, X } from "lucide-react";
+import { NAV_COPY, type ChromeLocale } from "@/lib/i18n/chrome";
 
 interface MobileNavigationButtonProps {
   buttonRef: RefObject<HTMLButtonElement | null>;
@@ -9,6 +10,7 @@ interface MobileNavigationButtonProps {
   isTransparent: boolean;
   onOpen: () => void;
   onClose: () => void;
+  locale?: ChromeLocale;
 }
 
 export default function MobileNavigationButton({
@@ -17,7 +19,9 @@ export default function MobileNavigationButton({
   isTransparent,
   onOpen,
   onClose,
+  locale = "ko",
 }: MobileNavigationButtonProps) {
+  const copy = NAV_COPY[locale];
   return (
     <button
       ref={buttonRef}
@@ -34,7 +38,7 @@ export default function MobileNavigationButton({
       }}
       aria-expanded={isOpen}
       aria-controls="mobile-menu"
-      aria-label={isOpen ? "메뉴 닫기" : "메뉴 열기"}
+      aria-label={isOpen ? copy.closeMenu : copy.openMenu}
     >
       {isOpen ? (
         <X className="w-6 h-6 text-[var(--color-text)]" />

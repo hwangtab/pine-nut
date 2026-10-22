@@ -134,6 +134,7 @@ export default function CustomSectionsHost() {
                     alt={section.imageAlt || section.title}
                     width={960}
                     height={720}
+                    sizes="(max-width: 1024px) 100vw, 480px"
                     className="h-full w-full object-cover"
                   />
                 </div>
@@ -146,6 +147,7 @@ export default function CustomSectionsHost() {
                     alt={section.imageAlt || section.title}
                     width={1200}
                     height={840}
+                    sizes="(max-width: 896px) 100vw, 896px"
                     className="h-full w-full object-cover"
                   />
                 </div>

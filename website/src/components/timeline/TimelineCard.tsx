@@ -26,6 +26,7 @@ export function TimelineCard({
                 alt={event.imageAlt || event.title}
                 width={800}
                 height={450}
+                sizes="(max-width: 768px) 100vw, 720px"
                 className="w-full h-48 md:h-56 object-cover"
               />
               <span className="ink-chip absolute bottom-2 right-2">

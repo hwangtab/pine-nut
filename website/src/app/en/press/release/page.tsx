@@ -83,7 +83,7 @@ export default function EnglishPressReleasePage() {
           <div className="bg-[var(--color-bg-warm)] rounded-xl p-5 border border-[var(--color-border)]">
             <EditableRichText
               contentKey="en.press.release.lead"
-              defaultValue="[Hongcheon, South Korea] Residents of Pungcheon-ri in Hongcheon County, Gangwon Province, are calling for the full cancellation of the pumped-storage power plant proposed by Korea Hydro & Nuclear Power. Since the first protest in March 2019, residents have continued weekly resistance for more than seven years, making the struggle one of South Korea's most sustained community environmental campaigns."
+              defaultValue="[Hongcheon, South Korea] Residents of Pungcheon-ri in Hongcheon County, Gangwon Province, are calling for the full cancellation of the pumped-storage power plant proposed by Korea Hydro & Nuclear Power. Since the first protest in March 2019, residents have continued weekly resistance for eight years, making the struggle one of South Korea's most sustained community environmental campaigns."
               page="en/press"
               section="release"
             >
@@ -101,7 +101,7 @@ export default function EnglishPressReleasePage() {
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-[var(--color-text)] mb-3">Seven Years of Resistance</h2>
+            <h2 className="text-lg font-bold text-[var(--color-text)] mb-3">Eight Years of Resistance</h2>
             <p className="text-base text-[var(--color-text-muted)] leading-relaxed">
               Residents have opposed the project unanimously since March 2019. More than 705 weekly protests later, the campaign has become exceptional in South Korea&apos;s environmental movement, especially because many residents are in their 60s, 70s, and 80s.
             </p>

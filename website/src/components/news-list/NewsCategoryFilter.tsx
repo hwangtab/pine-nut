@@ -22,7 +22,9 @@ export function NewsCategoryFilter({
         {categories.map((category) => (
           <button
             key={category}
+            type="button"
             onClick={() => onSelectCategory(category)}
+            aria-pressed={activeCategory === category}
             className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 min-h-[44px] ${
               activeCategory === category
                 ? "bg-[var(--color-forest)] text-white shadow-md"

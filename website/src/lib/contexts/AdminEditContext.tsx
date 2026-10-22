@@ -26,6 +26,7 @@ import type {
   StagedChange,
 } from "@/lib/contexts/admin-edit/types";
 import useAdminSession from "@/lib/contexts/admin-edit/useAdminSession";
+import useDbContent from "@/lib/contexts/admin-edit/useDbContent";
 import useEditableSelection from "@/lib/contexts/admin-edit/useEditableSelection";
 
 const AdminEditContext = createContext<AdminEditContextType>({
@@ -64,7 +65,8 @@ export function AdminEditProvider({
   const [stagedChanges, setStagedChanges] = useState<
     Map<string, StagedChange>
   >(new Map());
-  const [dbContent, setDbContent] = useState(initialContent);
+  // 서버가 새 initialContent를 내려주면(복원·빌더 저장 후 revalidate) 따라간다.
+  const [dbContent, setDbContent] = useDbContent(initialContent);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const { selectedKey, resetSelectedKey } = useEditableSelection(isEditMode);
@@ -154,7 +156,7 @@ export function AdminEditProvider({
         setSaving(false);
       }
     },
-    [dbContent],
+    [dbContent, setDbContent],
   );
 
   const saveChanges = useCallback(async () => {
@@ -183,7 +185,7 @@ export function AdminEditProvider({
     } finally {
       setSaving(false);
     }
-  }, [stagedChanges]);
+  }, [stagedChanges, setDbContent]);
 
   const value = useMemo<AdminEditContextType>(
     () => ({

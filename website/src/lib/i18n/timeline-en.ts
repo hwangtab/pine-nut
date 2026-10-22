@@ -67,7 +67,7 @@ const timelineTranslations: Record<number, EnglishTimelineTranslation> = {
     date: "2019",
     title: "Residents Form Opposition Committee and Begin Weekly Protests",
     description:
-      "Villagers formally created the Pungcheon-ri Pumped-Storage Opposition Committee and launched weekly demonstrations, marking the beginning of a struggle that would last more than seven years.",
+      "Villagers formally created the Pungcheon-ri Pumped-Storage Opposition Committee and launched weekly demonstrations, marking the beginning of a struggle now in its eighth year.",
     category: "Protest",
     imageAlt: "Pungcheon-ri residents protesting the pumped-storage plant in 2019",
   },
@@ -186,7 +186,7 @@ const timelineTranslations: Record<number, EnglishTimelineTranslation> = {
     date: "As of 2026",
     title: "The Struggle Continues with Support from More Than 140 Organizations",
     description:
-      "More than seven years later, the struggle continues. The weekly protest count has passed 705, and over 140 organizations now stand in solidarity with Pungcheon-ri, turning the issue into a national question of ecology, democracy, and residents' rights.",
+      "Eight years on, the struggle continues. The weekly protest count has passed 705, and over 140 organizations now stand in solidarity with Pungcheon-ri, turning the issue into a national question of ecology, democracy, and residents' rights.",
     category: "Solidarity",
   },
 };

@@ -1,6 +1,7 @@
 "use client";
 
 import { usePublicPathname } from "@/lib/use-public-pathname";
+import { useDocumentLang } from "@/lib/i18n/use-document-lang";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import CustomSectionsHost from "@/components/CustomSectionsHost";
@@ -11,6 +12,8 @@ import { needsFooterRidgeGap, needsNavTopPadding } from "@/lib/nav-routes";
 export default function PublicShell({ children }: { children: React.ReactNode }) {
   const pathname = usePublicPathname();
   const { getContent } = useAdminEdit();
+  // 한국어↔영문 클라이언트 이동 때 <html lang>을 따라 바꾼다(첫 로드는 루트 레이아웃 스크립트).
+  useDocumentLang(pathname);
   const isAdmin = pathname.startsWith("/admin");
 
   if (isAdmin) {

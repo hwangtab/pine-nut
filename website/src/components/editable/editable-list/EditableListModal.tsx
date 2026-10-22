@@ -9,6 +9,8 @@ interface EditableListModalProps<T extends EditableListItem> {
   contentKey: string;
   fields: EditableListField<T>[];
   localItems: EditableListItemWithId<T>[];
+  /** 열었을 때와 달라진 내용이 있는지 — 바깥 클릭으로 닫기 전 확인에 쓴다. */
+  hasChanges: boolean;
   onClose: () => void;
   onCancel: () => void;
   onSave: () => void;
@@ -22,6 +24,7 @@ export function EditableListModal<T extends EditableListItem>({
   contentKey,
   fields,
   localItems,
+  hasChanges,
   onClose,
   onCancel,
   onSave,
@@ -31,7 +34,15 @@ export function EditableListModal<T extends EditableListItem>({
   onMoveItem,
 }: EditableListModalProps<T>) {
   const handleBackdropClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (event.target === event.currentTarget) onClose();
+    if (event.target !== event.currentTarget) return;
+    // 바깥을 한 번 잘못 눌러(모바일 탭 포함) 편집이 날아가지 않게, 바뀐 게 있으면 묻는다.
+    if (
+      hasChanges &&
+      !window.confirm("저장하지 않은 변경 사항이 있습니다. 닫을까요?")
+    ) {
+      return;
+    }
+    onClose();
   };
 
   return (

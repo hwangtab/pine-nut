@@ -11,7 +11,7 @@ import {
 export const metadata: Metadata = {
   title: "The Story — Save Pungcheon-ri",
   description:
-    "A detailed English overview of Pungcheon-ri, the pumped-storage project, and why residents have fought it for more than seven years.",
+    "A detailed English overview of Pungcheon-ri, the pumped-storage project, and why residents have fought it for eight years.",
   alternates: {
     canonical: "/en/story",
     languages: {
@@ -30,7 +30,7 @@ export default function EnglishStoryPage() {
         imagePage="en/story"
         imageSection="hero"
         title={<EditableText contentKey="en.storyPage.hero.title" defaultValue="The Story of Pungcheon-ri" as="span" page="en/story" section="hero" />}
-        subtitle={<EditableText contentKey="en.storyPage.hero.subtitle" defaultValue="Seven years of resistance to protect a pine forest, a mountain village, and a way of life" as="span" page="en/story" section="hero" />}
+        subtitle={<EditableText contentKey="en.storyPage.hero.subtitle" defaultValue="Eight years of resistance to protect a pine forest, a mountain village, and a way of life" as="span" page="en/story" section="hero" />}
         eyebrow={<EditableText contentKey="en.storyPage.hero.eyebrow" defaultValue="Village Voices" as="span" page="en/story" section="hero" />}
       />
 
