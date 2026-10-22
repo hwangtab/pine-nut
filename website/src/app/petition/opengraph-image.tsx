@@ -35,7 +35,7 @@ const OG_TEXT = [EYEBROW, TITLE, SUBTITLE, ...STATS, CAPTION, SITE_HOST].join(""
  *
  * public/fonts의 Pretendard는 woff2라 satori가 읽지 못하므로(ttf/otf/woff만 지원),
  * 이 카드에 쓰이는 글자만 담은 TTF 서브셋을 Google Fonts에서 받아 쓴다.
- * 실패하면 폰트 없이 렌더한다 — 한글은 비지만 이미지 생성 자체는 깨지지 않는다.
+ * 받지 못하면 null 을 돌려주고, 호출하는 쪽이 카드 생성을 실패시킨다(아래 Image 참고).
  */
 async function loadKoreanFont(weight: 400 | 700): Promise<ArrayBuffer | null> {
   try {
@@ -96,10 +96,13 @@ export default async function Image() {
     loadKoreanFont(400),
     loadBackgroundImage(),
   ]);
+  // 폰트 없이 그리면 한글이 통째로 빠진 카드가 캐시에 박제된다. 차라리 실패시킨다 —
+  // 빌드라면 배포가 멈추고, 하루 단위 재생성 중이라면 이전에 만든 정상 카드가 그대로 남는다.
+  if (!bold || !regular) throw new Error("opengraph-image: 한글 폰트(Noto Sans KR)를 받지 못했습니다.");
   const fonts = [
-    bold ? { name: "NotoSansKR", data: bold, weight: 700 as const, style: "normal" as const } : null,
-    regular ? { name: "NotoSansKR", data: regular, weight: 400 as const, style: "normal" as const } : null,
-  ].filter((f) => f !== null);
+    { name: "NotoSansKR", data: bold, weight: 700 as const, style: "normal" as const },
+    { name: "NotoSansKR", data: regular, weight: 400 as const, style: "normal" as const },
+  ];
 
   return new ImageResponse(
     (
@@ -299,7 +302,7 @@ export default async function Image() {
     ),
     {
       ...size,
-      ...(fonts.length > 0 ? { fonts } : {}),
+      fonts,
     }
   );
 }

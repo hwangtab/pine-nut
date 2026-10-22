@@ -45,10 +45,13 @@ export default async function Image() {
     loadKoreanFont(400),
     readFile(path.join(process.cwd(), "public/images/concert/mok-jareugi-og.jpg")),
   ]);
+  // 폰트 없이 그리면 한글이 통째로 빠진 카드가 캐시에 박제된다. 차라리 실패시킨다 —
+  // 빌드라면 배포가 멈추고, 하루 단위 재생성 중이라면 이전에 만든 정상 카드가 그대로 남는다.
+  if (!bold || !regular) throw new Error("opengraph-image: 한글 폰트(Noto Sans KR)를 받지 못했습니다.");
   const fonts = [
-    bold ? { name: "NotoSansKR", data: bold, weight: 700 as const, style: "normal" as const } : null,
-    regular ? { name: "NotoSansKR", data: regular, weight: 400 as const, style: "normal" as const } : null,
-  ].filter((f) => f !== null);
+    { name: "NotoSansKR", data: bold, weight: 700 as const, style: "normal" as const },
+    { name: "NotoSansKR", data: regular, weight: 400 as const, style: "normal" as const },
+  ];
 
   return new ImageResponse(
     (
@@ -137,6 +140,6 @@ export default async function Image() {
         </div>
       </div>
     ),
-    { ...size, fonts: fonts.length > 0 ? fonts : undefined },
+    { ...size, fonts },
   );
 }

@@ -374,8 +374,7 @@ export const CONCERTS: ConcertEntry[] = [
     place: CONCERT_PLACE,
     posterImage: "/images/concert/poster.jpg",
     posterAlt: "베어지기 전에 풍천리 공연 포스터",
-    summary:
-      "잣나무 11만 그루가 베어지기 전에, 풍천리를 지키려는 음악가 14팀이 청와대 앞에 모였습니다. 일곱 시간 동안 이어진 공연입니다.",
+    summary: `잣나무 11만 그루가 베어지기 전에, 풍천리를 지키려는 음악가 ${CONCERT_LINEUP.length}팀이 청와대 앞에 모였습니다. 일곱 시간 동안 이어진 공연입니다.`,
     lineupCount: CONCERT_LINEUP.length,
   },
 ];

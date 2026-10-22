@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CONCERT_DATE_LABEL, CONCERT_PLACE, CONCERT_TIME_LABEL } from "@/lib/concert";
+import { CONCERT_DATE_LABEL, CONCERT_LINEUP, CONCERT_PLACE, CONCERT_TIME_LABEL } from "@/lib/concert";
 import { RidgeDivider } from "@/components/visuals/ForestLetterMotifs";
 
 export default function ConcertHero() {
@@ -39,7 +39,7 @@ export default function ConcertHero() {
         </h1>
 
         <p className="rise-in rise-in-2 mx-auto mt-6 max-w-2xl text-balance break-keep text-base leading-relaxed text-white/85 sm:text-xl">
-          잣나무 11만 그루가 베어지기 전에. 풍천리를 지키려는 음악가 14팀이 청와대 앞에 모였습니다.
+          잣나무 11만 그루가 베어지기 전에. 풍천리를 지키려는 음악가 {CONCERT_LINEUP.length}팀이 청와대 앞에 모였습니다.
         </p>
 
         <div className="rise-in rise-in-3 mt-8 flex items-center justify-center">

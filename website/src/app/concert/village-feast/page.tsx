@@ -94,6 +94,7 @@ export const metadata: Metadata = {
     ...OG_SITE,
     title: `${FEAST_TITLE} — 9·5 홍천 마을회관`,
     description: `${FEAST_DATE_LABEL} ${FEAST_TIME_LABEL}, ${FEAST_PLACE}. 음악가 ${FEAST_LINEUP.length}팀이 마을로 내려온 날.`,
+    url: FEAST_URL,
     images: [
       {
         url: `${SITE_URL}/images/concert/village-feast-og.jpg`,

@@ -7,15 +7,19 @@ import { OG_SITE, localeAlternates } from "@/lib/seo-alternates";
 import { SITE_URL } from "@/lib/site-config";
 import { pastConcerts, upcomingConcert, type ConcertEntry } from "@/lib/concert";
 
+const SHARE_TITLE = "예술연대 — 풍천리를 지키는 공연들";
+const SHARE_DESCRIPTION = "숲이 베어지기 전에, 음악가와 예술가들이 풍천리 곁에 섭니다.";
+
 export const metadata: Metadata = {
   alternates: localeAlternates("/concert"),
-  title: "예술연대 — 풍천리를 지키는 공연들",
+  title: SHARE_TITLE,
   description:
     "숲이 베어지기 전에, 음악가와 예술가들이 풍천리 곁에 섭니다. 마을에서, 거리에서, 청와대 앞에서 이어져온 예술연대를 이 페이지에 기록합니다.",
   openGraph: {
     ...OG_SITE,
-    title: "예술연대 — 풍천리를 지키는 공연들",
-    description: "숲이 베어지기 전에, 음악가와 예술가들이 풍천리 곁에 섭니다.",
+    title: SHARE_TITLE,
+    description: SHARE_DESCRIPTION,
+    url: `${SITE_URL}/concert`,
     images: [
       {
         url: `${SITE_URL}/images/concert/poster-og.jpg`,
@@ -24,6 +28,13 @@ export const metadata: Metadata = {
         alt: "풍천리 예술연대",
       },
     ],
+  },
+  // twitter:card 이 없으면 X 는 og:image 를 작은 정사각 썸네일로 줄여 붙인다.
+  twitter: {
+    card: "summary_large_image",
+    title: SHARE_TITLE,
+    description: SHARE_DESCRIPTION,
+    images: [`${SITE_URL}/images/concert/poster-og.jpg`],
   },
 };
 

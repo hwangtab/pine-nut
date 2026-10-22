@@ -21,16 +21,19 @@ import {
 } from "@/lib/concert";
 import ConcertHero from "./ConcertHero";
 
+const PAGE_URL = `${SITE_URL}/concert/before-cut`;
+const TITLE = "베어지기 전에 풍천리 — 8·1 청와대 앞 공연";
+const SHARE_DESCRIPTION = `2026년 8월 1일(토), 청와대 앞. 풍천리를 지키려는 음악가 ${CONCERT_LINEUP.length}팀이 일곱 시간 동안 노래했습니다.`;
+
 export const metadata: Metadata = {
   alternates: localeAlternates("/concert/before-cut"),
-  title: "베어지기 전에 풍천리 — 8·1 청와대 앞 공연",
-  description:
-    "2026년 8월 1일(토), 청와대 앞. 잣나무 11만 그루가 베어지기 전에, 풍천리를 지키려는 음악가 14팀이 일곱 시간 동안 노래했습니다.",
+  title: TITLE,
+  description: `2026년 8월 1일(토), 청와대 앞. 잣나무 11만 그루가 베어지기 전에, 풍천리를 지키려는 음악가 ${CONCERT_LINEUP.length}팀이 일곱 시간 동안 노래했습니다.`,
   openGraph: {
     ...OG_SITE,
-    title: "베어지기 전에 풍천리 — 8·1 청와대 앞 공연",
-    description:
-      "2026년 8월 1일(토), 청와대 앞. 풍천리를 지키려는 음악가 14팀이 일곱 시간 동안 노래했습니다.",
+    title: TITLE,
+    description: SHARE_DESCRIPTION,
+    url: PAGE_URL,
     images: [
       {
         url: `${SITE_URL}/images/concert/poster-og.jpg`,
@@ -39,6 +42,13 @@ export const metadata: Metadata = {
         alt: "베어지기 전에 풍천리 공연 포스터",
       },
     ],
+  },
+  // twitter:card 이 없으면 X 는 og:image 를 작은 정사각 썸네일로 줄여 붙인다.
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: SHARE_DESCRIPTION,
+    images: [`${SITE_URL}/images/concert/poster-og.jpg`],
   },
 };
 
@@ -194,7 +204,7 @@ export default function ConcertPage() {
             Time Table
           </p>
           <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
-            함께한 음악가 14팀
+            함께한 음악가 {CONCERT_LINEUP.length}팀
           </h2>
           <p className="mt-3 text-sm text-[var(--color-text-muted)]">
             팀당 30분씩, 그날 예정했던 순서입니다.
@@ -291,7 +301,7 @@ export default function ConcertPage() {
           <div className="photo-frame mt-8">
             <Image
               src="/images/concert/poster.jpg"
-              alt="베어지기 전에 풍천리 공연 포스터 — 2026년 8월 1일 토요일 오후 1시부터 8시, 청와대 앞. 출연: 강민정, 강상석, 경하와 세민과 멍구와 흑염소, 길가는밴드 장현호, 김민정(알마즈), 남수, 물장구클럽, 삼각전파사, 아나자오, 이서영, 자이, 종이코트, 치핵, 하늘소년"
+              alt={`베어지기 전에 풍천리 공연 포스터 — 2026년 8월 1일 토요일 오후 1시부터 8시, 청와대 앞. 출연: ${CONCERT_LINEUP.join(", ")}`}
               width={1200}
               height={1500}
               sizes="(max-width: 768px) 100vw, 672px"
