@@ -1,17 +1,14 @@
-"use client";
-
 import Link from "next/link";
 import {
   MOK_DATE_LABEL,
-  MOK_FUNDING_URL,
+  MOK_LINEUP,
   MOK_PLACE,
-  MOK_START,
   MOK_SUBTITLE_LINES,
   MOK_TIME_LABEL,
   MOK_TITLE,
   MOK_TITLE_HANJA,
 } from "@/lib/concert";
-import { useDday } from "@/lib/use-concert-status";
+import FundingLink from "./FundingLink";
 import { PosterGrain, SawBoundary, StumpFace } from "./MokMotifs";
 
 /* 포스터(붉은 목)의 색. 이 히어로에서만 쓰는 값이라 전역 팔레트에 올리지 않는다.
@@ -22,8 +19,6 @@ const BONE = "#F5F3EC"; // 글자
 const RED = "#D93A2B"; // 톱자국
 
 export default function MokHero() {
-  const dday = useDday(MOK_START)?.label ?? null;
-
   return (
     <section
       className="relative flex min-h-[88svh] items-center overflow-hidden pt-28 pb-28 sm:pt-32 sm:pb-32"
@@ -56,11 +51,11 @@ export default function MokHero() {
 
       <div className="relative z-[2] mx-auto w-full max-w-6xl px-6">
         <div className="max-w-xl">
-          {/* 날짜는 이 페이지에서 가장 급한 정보다. 알약 안에 가두지 않고
-              한 줄로 세워 제목 바로 위에 붙인다. */}
+          {/* 공연이 끝나 날짜는 더 이상 급한 정보가 아니다. 그래도 기록의 첫 줄이라
+              제목 위 자리는 그대로 둔다. */}
           <p className="rise-in text-sm font-bold tracking-wide sm:text-base">
             {MOK_DATE_LABEL} {MOK_TIME_LABEL}
-            <span className="mt-1 block font-normal opacity-70">{MOK_PLACE} · 무료</span>
+            <span className="mt-1 block font-normal opacity-70">{MOK_PLACE}</span>
           </p>
 
           {/* 대형 타이포만 한자로 쓴다. 그대로 두면 스크린리더가 「나무 자르기」로 읽어
@@ -85,7 +80,7 @@ export default function MokHero() {
               className="inline-flex min-h-[52px] items-center rounded-full px-7 py-3.5 text-base font-bold text-white transition-opacity hover:opacity-85"
               style={{ backgroundColor: RED }}
             >
-              함께하는 음악가 7팀
+              함께한 음악가 {MOK_LINEUP.length}팀
             </a>
             <Link
               href="/petition"
@@ -94,30 +89,20 @@ export default function MokHero() {
             >
               서명으로 함께하기
             </Link>
-            <a
-              href={MOK_FUNDING_URL}
+            <FundingLink
               className="inline-flex min-h-[52px] items-center border-b-2 px-1 text-base font-bold transition-opacity hover:opacity-70"
               style={{ borderColor: BONE }}
             >
               펀딩으로 함께하기
-            </a>
-            <Link
-              href="/concert/mok-jareugi/carpool"
-              className="inline-flex min-h-[52px] items-center border-b-2 px-1 text-base font-bold transition-opacity hover:opacity-70"
-              style={{ borderColor: BONE }}
-            >
-              카풀 신청
-            </Link>
+            </FundingLink>
           </div>
 
-          {/* D-day 를 붉은 덩어리로 키우면 제목과 싸운다. 톱자국과 같은 색의
-              숫자 한 줄로 낮춰, 급한 정보이되 주인공은 아니게 둔다. */}
-          {dday ? (
-            <p className="rise-in rise-in-3 mt-8 text-sm font-bold tracking-wide">
-              <span style={{ color: RED }}>{dday}</span>
-              <span className="opacity-70"> · 아직 서 있는 나무 앞에서</span>
-            </p>
-          ) : null}
+          {/* 남은 날을 세던 자리. 마을 잔치와 같은 이유로 "공연 종료"를 박지 않는다 —
+              끝난 공연이 실패한 것처럼 읽힌다. 톱자국 색의 한 줄은 그대로 둔다. */}
+          <p className="rise-in rise-in-3 mt-8 text-sm font-bold tracking-wide">
+            <span style={{ color: RED }}>지난 공연 · 2026. 10. 10.</span>
+            <span className="opacity-70"> · 아직 서 있는 나무 앞에서</span>
+          </p>
         </div>
       </div>
     </section>

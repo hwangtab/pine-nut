@@ -83,7 +83,7 @@ export default function UpcomingConcertCard() {
             </p>
 
             <span className="mt-4 inline-flex items-center gap-1 text-[15px] font-bold text-[var(--color-forest)]">
-              잔치 보러 가기
+              공연 보러 가기
               <span aria-hidden className="transition-transform group-hover:translate-x-1">
                 →
               </span>

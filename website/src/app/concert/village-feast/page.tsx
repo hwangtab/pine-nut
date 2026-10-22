@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import FollowingConcertCard from "@/components/concert/FollowingConcertCard";
 import {
   CalendarDays,
   MapPin,
@@ -276,9 +277,9 @@ export default function VillageFeastPage() {
         </div>
       </section>
 
-      {/* 다음 공연 — 끝난 페이지가 할 수 있는 가장 쓸모 있는 일이다.
-          여기까지 읽은 사람은 이미 관심이 있는 사람이고, 그 관심을 아직 열리지
-          않은 자리로 넘겨주는 것이 이 자리의 몫이다. */}
+      {/* 이어진 공연 — 끝난 페이지가 할 수 있는 가장 쓸모 있는 일이다.
+          여기까지 읽은 사람은 이미 관심이 있는 사람이고, 그 관심을 다음 자리로
+          넘겨주는 것이 이 자리의 몫이다. */}
       <section className="bg-[var(--color-bg-moss)] px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-3xl">
           <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
@@ -288,45 +289,10 @@ export default function VillageFeastPage() {
             싸움은 아직 끝나지 않았습니다
           </h2>
           <p className="mt-4 break-keep text-lg leading-relaxed text-[var(--color-text-muted)]">
-            잔치가 끝난 뒤에도 톱날은 숲으로 다가오고 있습니다. 10월 10일, 같은 마을회관
-            앞에서 세 번째 자리가 열립니다.
+            잔치가 끝난 뒤에도 톱날은 숲으로 다가왔습니다. 10월 10일, 같은 마을회관
+            앞에서 세 번째 자리가 열렸습니다.
           </p>
-          <Link
-            href="/concert/mok-jareugi"
-            className="paper group mt-8 block overflow-hidden transition-transform duration-300 hover:-translate-y-1"
-          >
-            <div className="relative z-[1] grid gap-6 p-5 sm:grid-cols-[minmax(0,0.5fr)_minmax(0,1fr)] sm:p-6">
-              <div className="photo-frame">
-                <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[2px]">
-                  <Image
-                    src="/images/concert/mok-jareugi-poster.jpg"
-                    alt="목자르기 포스터"
-                    fill
-                    sizes="(max-width: 640px) 100vw, 260px"
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col justify-center">
-                <span className="self-start rounded-full bg-[var(--color-warm)]/15 px-3 py-1 text-xs font-bold text-[var(--color-warm)]">
-                  예정된 공연
-                </span>
-                <h3 className="mt-3 break-keep font-serif-display text-2xl font-bold leading-tight text-[var(--color-text)] sm:text-3xl">
-                  목자르기
-                </h3>
-                <p className="mt-3 break-keep text-base leading-relaxed text-[var(--color-text-muted)]">
-                  2026년 10월 10일(토) 오후 2시, 풍천리 마을회관 앞. 우리의 나무를 자르는
-                  건 우리의 목을 자르는 거야.
-                </p>
-                <span className="mt-5 inline-flex items-center gap-1 text-sm font-bold text-[var(--color-forest)]">
-                  공연 보기
-                  <span aria-hidden className="transition-transform group-hover:translate-x-1">
-                    →
-                  </span>
-                </span>
-              </div>
-            </div>
-          </Link>
+          <FollowingConcertCard slug="mok-jareugi" />
         </div>
       </section>
 

@@ -74,11 +74,11 @@ export default function VillageFeastHero() {
 
         <div className="rise-in rise-in-3 mx-auto mt-10 flex w-full max-w-xs flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row sm:items-center">
           <Link
-            href="/concert/mok-jareugi"
+            href="/concert"
             className="inline-flex min-h-[52px] items-center justify-center rounded-full px-8 py-3.5 text-base font-bold transition-opacity hover:opacity-85 sm:text-lg"
             style={{ backgroundColor: POSTER_INK, color: POSTER_LIME }}
           >
-            다음 공연 보기
+            다른 공연 보기
           </Link>
           <a
             href="#lineup"

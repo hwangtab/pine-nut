@@ -83,7 +83,7 @@ export default function HomeAboutSection({ storyRef }: HomeAboutSectionProps) {
             />
             <EditableText
               contentKey="home.about.paragraph3"
-              defaultValue="천연기념물 산양과 까막딱다구리, 수달까지. 사라져 가는 생명들이 마지막으로 기대어 사는 보금자리이기도 합니다."
+              defaultValue="천연기념물 산양과 까막딱따구리, 수달까지. 사라져 가는 생명들이 마지막으로 기대어 사는 보금자리이기도 합니다."
               as="p"
               page="home"
               section="about"

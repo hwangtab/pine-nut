@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { OG_SITE, localeAlternates } from "@/lib/seo-alternates";
 import Image from "next/image";
 import Link from "next/link";
+import FollowingConcertCard from "@/components/concert/FollowingConcertCard";
 import {
   CalendarDays,
   MapPin,
@@ -110,7 +111,7 @@ export default function ConcertPage() {
             <b className="font-bold">백 년입니다.</b> 풍천리 잣나무가 지금 키에 이르기까지 걸린
             시간이. 강원도 홍천 가리산 자락에 1,800헥타르로 펼쳐진 이 숲을 산림청은 ‘100대
             명품숲’으로 꼽았습니다. 국내에서 가장 큰 잣나무 숲입니다. 나무 사이로 산양이
-            지나가고, 까막딱다구리가 둥지를 틀고, 골짜기에는 수달이 삽니다. 마을 사람 열에
+            지나가고, 까막딱따구리가 둥지를 틀고, 골짜기에는 수달이 삽니다. 마을 사람 열에
             일곱은 이 숲이 떨어뜨린 잣을 주워 한 해를 납니다. 이곳 사람들에게 숲은 살림이자
             이웃이고, 백 년을 함께 산 식구입니다.
           </p>
@@ -163,7 +164,10 @@ export default function ConcertPage() {
           </h2>
           <dl className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4">
             {STATS.map((s) => (
-              <div key={s.label} className="text-center">
+              // 숫자가 위에 보이지만 마크업은 dt → dd 순서여야 스크린리더가 라벨과 값을
+              // 제대로 짝짓는다. 보이는 순서는 flex-col-reverse 로 뒤집는다.
+              <div key={s.label} className="flex flex-col-reverse text-center">
+                <dt className="mt-3 break-keep text-sm text-white/75 sm:text-base">{s.label}</dt>
                 <dd
                   className={`font-serif-display text-4xl font-bold leading-none sm:text-5xl ${
                     s.accent === "pink" ? "text-[var(--color-earth-light)]" : "text-[var(--color-forest-on-dark)]"
@@ -172,7 +176,6 @@ export default function ConcertPage() {
                   {s.value}
                   <span className="ml-1 text-xl font-bold sm:text-2xl">{s.unit}</span>
                 </dd>
-                <dt className="mt-3 break-keep text-sm text-white/75 sm:text-base">{s.label}</dt>
               </div>
             ))}
           </dl>
@@ -206,7 +209,7 @@ export default function ConcertPage() {
                   <span className="w-[7.5rem] shrink-0 text-sm font-bold tabular-nums text-[var(--color-text-muted)]">
                     {slot.start} – {slot.end}
                   </span>
-                  <span className="break-keep text-base font-bold leading-snug text-[var(--color-text)]">
+                  <span className="min-w-0 break-keep text-base font-bold leading-snug text-[var(--color-text)]">
                     {slot.name}
                   </span>
                 </div>
@@ -225,9 +228,9 @@ export default function ConcertPage() {
         </div>
       </section>
 
-      {/* 다음 공연 — 끝난 페이지가 할 수 있는 가장 쓸모 있는 일이다.
-          여기까지 읽은 사람은 이미 관심이 있는 사람이고, 그 관심을 아직 열리지
-          않은 자리로 넘겨주는 것이 이 자리의 몫이다. */}
+      {/* 이어진 공연 — 끝난 페이지가 할 수 있는 가장 쓸모 있는 일이다.
+          여기까지 읽은 사람은 이미 관심이 있는 사람이고, 그 관심을 다음 자리로
+          넘겨주는 것이 이 자리의 몫이다. */}
       <section className="bg-[var(--color-bg-moss)] px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-3xl">
           <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
@@ -238,44 +241,9 @@ export default function ConcertPage() {
           </h2>
           <p className="mt-4 break-keep text-lg leading-relaxed text-[var(--color-text-muted)]">
             9월에는 음악가들이 풍천리 마을로 내려가 잔치를 열었고, 10월 10일에는 같은
-            마을회관 앞에서 세 번째 자리가 열립니다.
+            마을회관 앞에서 세 번째 자리가 열렸습니다.
           </p>
-          <Link
-            href="/concert/mok-jareugi"
-            className="paper group mt-8 block overflow-hidden transition-transform duration-300 hover:-translate-y-1"
-          >
-            <div className="relative z-[1] grid gap-6 p-5 sm:grid-cols-[minmax(0,0.5fr)_minmax(0,1fr)] sm:p-6">
-              <div className="photo-frame">
-                <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[2px]">
-                  <Image
-                    src="/images/concert/mok-jareugi-poster.jpg"
-                    alt="목자르기 포스터"
-                    fill
-                    sizes="(max-width: 640px) 100vw, 260px"
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col justify-center">
-                <span className="self-start rounded-full bg-[var(--color-warm)]/15 px-3 py-1 text-xs font-bold text-[var(--color-warm)]">
-                  예정된 공연
-                </span>
-                <h3 className="mt-3 break-keep font-serif-display text-2xl font-bold leading-tight text-[var(--color-text)] sm:text-3xl">
-                  목자르기
-                </h3>
-                <p className="mt-3 break-keep text-base leading-relaxed text-[var(--color-text-muted)]">
-                  2026년 10월 10일(토) 오후 2시, 풍천리 마을회관 앞. 우리의 나무를 자르는
-                  건 우리의 목을 자르는 거야.
-                </p>
-                <span className="mt-5 inline-flex items-center gap-1 text-sm font-bold text-[var(--color-forest)]">
-                  공연 보기
-                  <span aria-hidden className="transition-transform group-hover:translate-x-1">
-                    →
-                  </span>
-                </span>
-              </div>
-            </div>
-          </Link>
+          <FollowingConcertCard slug="mok-jareugi" />
         </div>
       </section>
 

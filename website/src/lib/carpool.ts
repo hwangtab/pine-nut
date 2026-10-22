@@ -85,7 +85,16 @@ export const CARPOOL_VEHICLES: CarpoolVehicle[] = [
   },
 ];
 
-const compactName = (name: string) => name.replace(/\s+/g, "").toLowerCase();
+// 폭 없는 공백(U+200B–U+200D, U+2060, U+FEFF)은 \s 에 들지 않아 따로 지운다.
+// 지우지 않으면 눈에 같은 이름이 중복 검사를 그냥 지나간다.
+const INVISIBLE = /[\u200B-\u200D\u2060\uFEFF]/g;
+
+/** 저장·비교 전에 이름을 고른다. 맥·iOS 가 보내는 NFD 한글도 NFC 로 모은다. */
+export function normalizeCarpoolName(raw: string): string {
+  return raw.normalize("NFKC").replace(INVISIBLE, "").trim();
+}
+
+const compactName = (name: string) => normalizeCarpoolName(name).replace(/\s+/g, "").toLowerCase();
 
 /** 시트에 이미 이름이 올라 있는 사람이면 그 차량 */
 export function findBoardedVehicle(name: string): CarpoolVehicle | undefined {
@@ -101,7 +110,10 @@ export function findCarpoolVehicle(id: string): CarpoolVehicle | undefined {
 
 /** 숫자만 남긴 휴대전화 번호. 형식이 틀리면 null */
 export function normalizeCarpoolPhone(raw: string): string | null {
-  const digits = raw.replace(/\D/g, "");
+  // NFKC 로 전각 숫자를 반각으로 바꾼다. 휴대폰 자동완성이 채우는 +82 10-… 은
+  // 국내 형식 010… 으로 되돌린다.
+  let digits = raw.normalize("NFKC").replace(/\D/g, "");
+  if (digits.startsWith("82")) digits = `0${digits.slice(2).replace(/^0/, "")}`;
   return /^01[016789]\d{7,8}$/.test(digits) ? digits : null;
 }
 

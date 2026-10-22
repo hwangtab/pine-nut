@@ -3,8 +3,10 @@ import path from "node:path";
 import { ImageResponse } from "next/og";
 import { SITE_HOST } from "@/lib/site-config";
 
-// 카드 내용이 고정이라 빌드 때 한 번만 만든다. 배경은 목자르기 공유 카드를 어둡게 깔아
-// 공연 페이지와 같은 행사로 읽히게 한다.
+// 배경은 목자르기 공유 카드를 어둡게 깔아 공연 페이지와 같은 행사로 읽히게 한다.
+// 카드 내용은 고정이지만 루트·서명 카드처럼 하루마다 다시 만든다 — 빌드 중 폰트 받기가
+// 실패하면 한글이 빈 카드가 만들어지는데, 빌드 때 한 번만 만들면 다음 배포까지 그대로 남는다.
+export const revalidate = 86400;
 export const alt = "목자르기 카풀 — 10월 10일(토) 서울에서 풍천리까지 같이 타고 가요";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";

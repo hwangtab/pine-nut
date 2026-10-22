@@ -50,10 +50,10 @@ export default function ConcertHero() {
 
         <div className="rise-in rise-in-3 mx-auto mt-10 flex w-full max-w-xs flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row sm:items-center">
           <Link
-            href="/concert/mok-jareugi"
+            href="/concert"
             className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[var(--color-warm)] px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-[var(--color-warm-light)] sm:text-lg"
           >
-            다음 공연 보기
+            다른 공연 보기
           </Link>
           <a
             href="#timetable"

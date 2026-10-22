@@ -9,7 +9,7 @@ import PressSectionHeading from "@/components/press/PressSectionHeading";
 
 const damageItems = [
   { label: "산림 파괴", description: "산림청이 '100대 명품숲'으로 지정한 1,800ha 잣나무 숲이 훼손되며, 약 11만 그루의 잣나무가 벌채될 예정" },
-  { label: "생태계 파괴", description: "산양(천연기념물), 까막딱다구리, 수달 등 멸종위기종 서식지 파괴" },
+  { label: "생태계 파괴", description: "산양(천연기념물), 까막딱따구리, 수달 등 멸종위기종 서식지 파괴" },
   { label: "주민 생계 위협", description: "51가구가 수몰되며, 주민 약 70%가 잣 생산으로 생계를 유지하고 있어 경제적 기반이 완전히 붕괴" },
   { label: "공동체 와해", description: "수 세대에 걸쳐 형성된 마을 공동체가 소멸 위기에 처함" },
   { label: "환경 피해", description: "공사 기간 소음·분진으로 주민 건강 위협" },

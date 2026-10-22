@@ -237,6 +237,8 @@ export const MOK_PHONE_STAGE_NAME = CONCERT_PHONE_NAME;
 // 공연 펀딩은 스튜디오 놀 펀딩에서 받는다(결제·환불·리워드 발송이 그쪽에만 있다).
 // 10/24 마감. 리워드는 강정피스앤뮤직캠프 앨범 〈이름을 모르는 먼 곳의 그대에게〉 음원.
 export const MOK_FUNDING_URL = "https://studionol.co.kr/ko/funding/mok-jareugi";
+/** 펀딩 마지막 날. 이 날이 지나면 펀딩 링크를 숨긴다(FundingLink). */
+export const MOK_FUNDING_LAST_DAY = new Date("2026-10-24T00:00:00+09:00");
 
 // 무대 순서는 아직 정해지지 않았다. 그래서 ConcertSlot 배열을 만들지 않는다 —
 // 확정되지 않은 시각을 표에 적으면 확정된 일정처럼 읽힌다. 라인업은 포스터 순서
@@ -345,10 +347,8 @@ export const CONCERTS: ConcertEntry[] = [
     place: MOK_PLACE,
     posterImage: "/images/concert/mok-jareugi-poster.jpg",
     posterAlt: "목자르기 공연 포스터 — 2026년 10월 10일 토요일 오후 2시, 풍천리 마을회관 앞",
-    summary:
-      "우리의 나무를 자르는 건 우리의 목을 자르는 거야. 본공사가 착공됐고 톱날은 이미 숲의 가장자리를 지났습니다. 벌목을 앞둔 잣나무 숲 앞에서 음악가 7팀이 경고합니다.",
+    summary: `우리의 나무를 자르는 건 우리의 목을 자르는 거야. 본공사가 착공됐고 톱날은 이미 숲의 가장자리를 지났습니다. 벌목을 앞둔 잣나무 숲 앞에서 음악가 ${MOK_LINEUP.length}팀이 경고했습니다.`,
     lineupCount: MOK_LINEUP.length,
-    upcoming: true,
   },
   {
     slug: "village-feast",

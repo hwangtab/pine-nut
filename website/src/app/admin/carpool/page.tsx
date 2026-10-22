@@ -21,10 +21,13 @@ export default async function AdminCarpoolPage() {
   const riders = (data ?? []) as RiderRow[];
 
   // 시트 탑승자 번호(carpool_boarded_contacts). 이름은 코드에, 번호는 DB에만 있다.
-  const { data: contactData } = await supabase
+  // 이름으로만 찾는다 — 시트에서 차량을 옮긴 사람은 연락처 행의 vehicle_id 가 옛
+  // 차량으로 남아 있어, 차량까지 맞추면 번호가 있는데도 "번호 없음"으로 보인다.
+  const { data: contactData, error: contactError } = await supabase
     .from("carpool_boarded_contacts")
-    .select("vehicle_id, name, phone");
-  const contacts = (contactData ?? []) as { vehicle_id: string; name: string; phone: string }[];
+    .select("name, phone");
+  if (contactError) console.error("carpool admin: contacts fetch failed", contactError.message);
+  const contacts = (contactData ?? []) as { name: string; phone: string }[];
   const totalOpen = CARPOOL_VEHICLES.reduce((sum, v) => sum + v.openSeats, 0);
 
   return (
@@ -68,7 +71,7 @@ export default async function AdminCarpoolPage() {
               <p className="mt-3 text-sm font-semibold text-[var(--color-admin-muted)]">시트 탑승자</p>
               <ul className="mt-1 flex flex-wrap gap-x-5 gap-y-1 text-sm">
                 {vehicle.boarded.map((name) => {
-                  const contact = contacts.find((c) => c.vehicle_id === vehicle.id && c.name === name);
+                  const contact = contacts.find((c) => c.name === name);
                   return (
                     <li key={name}>
                       <b className="text-[var(--color-admin-text)]">{name}</b>{" "}

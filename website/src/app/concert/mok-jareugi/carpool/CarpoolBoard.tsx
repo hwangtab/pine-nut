@@ -105,25 +105,29 @@ export default function CarpoolBoard() {
         </p>
       )}
 
-      <ul className="grid gap-5 sm:grid-cols-2">
-        {CARPOOL_VEHICLES.map((vehicle) => (
-          <VehicleCard
-            key={vehicle.id}
-            vehicle={vehicle}
-            takenSeats={taken?.[vehicle.id] ?? null}
-            riderNames={riders[vehicle.id] ?? []}
-            disabled={closed || taken === null}
-            selectedSeat={selection?.vehicleId === vehicle.id ? selection.seatNo : null}
-            onSelect={(seatNo) => setSelection({ vehicleId: vehicle.id, seatNo })}
-            onCancel={() => setSelection(null)}
-            onSeatLost={load}
-            onConfirmed={(name) => {
-              setSelection(null);
-              setConfirmed({ vehicle, name });
-            }}
-          />
-        ))}
-      </ul>
+      {/* 마감 뒤에는 차량 카드를 그리지 않는다. 카드의 '이미 타는 사람'은 자리를
+          고르는 사람에게 보여주려던 이름이라, 고를 자리가 없으면 남길 이유가 없다. */}
+      {!closed && (
+        <ul className="grid gap-5 sm:grid-cols-2">
+          {CARPOOL_VEHICLES.map((vehicle) => (
+            <VehicleCard
+              key={vehicle.id}
+              vehicle={vehicle}
+              takenSeats={taken?.[vehicle.id] ?? null}
+              riderNames={riders[vehicle.id] ?? []}
+              disabled={taken === null}
+              selectedSeat={selection?.vehicleId === vehicle.id ? selection.seatNo : null}
+              onSelect={(seatNo) => setSelection({ vehicleId: vehicle.id, seatNo })}
+              onCancel={() => setSelection(null)}
+              onRefresh={load}
+              onConfirmed={(name) => {
+                setSelection(null);
+                setConfirmed({ vehicle, name });
+              }}
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -136,7 +140,7 @@ function VehicleCard({
   selectedSeat,
   onSelect,
   onCancel,
-  onSeatLost,
+  onRefresh,
   onConfirmed,
 }: {
   vehicle: CarpoolVehicle;
@@ -146,9 +150,11 @@ function VehicleCard({
   selectedSeat: number | null;
   onSelect: (seatNo: number) => void;
   onCancel: () => void;
-  onSeatLost: () => void;
+  onRefresh: () => void;
   onConfirmed: (name: string) => void;
 }) {
+  // 남은 자리는 신청 수로 센다. openSeats 를 줄이면 범위 밖 번호에 앉은 사람이 남는데,
+  // 그때 번호 버튼만 보면 빈자리가 있는 것처럼 보인다 — 그래서 다 찬 차는 버튼을 모두 막는다.
   const seats = Array.from({ length: vehicle.openSeats }, (_, i) => i + 1);
   const remaining = takenSeats === null ? null : vehicle.openSeats - takenSeats.length;
   const full = remaining === 0;
@@ -209,7 +215,7 @@ function VehicleCard({
               <button
                 key={seatNo}
                 type="button"
-                disabled={disabled || isTaken}
+                disabled={disabled || full || isTaken}
                 aria-pressed={isSelected}
                 aria-label={`${vehicle.name} ${seatNo}번 자리${isTaken ? " (신청 완료)" : ""}`}
                 onClick={() => onSelect(seatNo)}
@@ -231,8 +237,9 @@ function VehicleCard({
           <RiderForm
             vehicle={vehicle}
             seatNo={selectedSeat}
+            seatTaken={takenSeats?.includes(selectedSeat) ?? false}
             onCancel={onCancel}
-            onSeatLost={onSeatLost}
+            onRefresh={onRefresh}
             onConfirmed={onConfirmed}
           />
         )}
@@ -244,14 +251,17 @@ function VehicleCard({
 function RiderForm({
   vehicle,
   seatNo,
+  seatTaken,
   onCancel,
-  onSeatLost,
+  onRefresh,
   onConfirmed,
 }: {
   vehicle: CarpoolVehicle;
   seatNo: number;
+  /** 폼을 연 사이 다른 사람이 이 자리를 가져갔다 */
+  seatTaken: boolean;
   onCancel: () => void;
-  onSeatLost: () => void;
+  onRefresh: () => void;
   onConfirmed: (name: string) => void;
 }) {
   const [name, setName] = useState("");
@@ -270,13 +280,15 @@ function RiderForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ vehicleId: vehicle.id, seatNo, name, phone, consent }),
       });
-      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      const data = (await res.json().catch(() => ({}))) as { error?: string; code?: string };
       if (res.ok) {
         onConfirmed(name.trim());
         return;
       }
       setError(data.error ?? "신청하지 못했습니다. 잠시 뒤 다시 시도해주세요.");
-      if (res.status === 409) onSeatLost();
+      // 자리를 놓쳤으면 좌석을, 마감이면 보드 전체를 다시 그린다. 입력한 이름·번호는
+      // 남는다 — 같은 차의 다른 번호를 누르면 이 폼이 그대로 이어진다.
+      if (data.code === "seat_taken" || res.status === 410) onRefresh();
     } catch {
       setError("연결이 끊겼습니다. 다시 시도해주세요.");
     } finally {
@@ -336,7 +348,7 @@ function RiderForm({
       )}
 
       <div className="mt-4 flex gap-2">
-        <button type="submit" disabled={submitting} className="letter-btn letter-btn--primary flex-1 disabled:opacity-60">
+        <button type="submit" disabled={submitting || seatTaken} className="letter-btn letter-btn--primary flex-1 disabled:opacity-60">
           {submitting ? "신청 중…" : "신청하기"}
         </button>
         <button type="button" onClick={onCancel} className="letter-btn letter-btn--outline-light">

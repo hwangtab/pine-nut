@@ -1,28 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  CalendarDays,
-  Car,
-  Heart,
-  MapPin,
-  Megaphone,
-  Phone,
-  Share2,
-  Thermometer,
-  Ticket,
-  Users,
-} from "lucide-react";
+import { CalendarDays, MapPin, Megaphone, Ticket, Users } from "lucide-react";
 import { OG_SITE, localeAlternates } from "@/lib/seo-alternates";
 import { SITE_URL } from "@/lib/site-config";
 import {
-  MOK_ADDRESS,
   MOK_DATE_LABEL,
-  MOK_FUNDING_URL,
   MOK_LINEUP,
-  MOK_PHONE_COMMITTEE,
-  MOK_PHONE_STAGE,
-  MOK_PHONE_STAGE_NAME,
   MOK_PLACE,
   MOK_START,
   MOK_SUBTITLE_LINES,
@@ -31,6 +15,7 @@ import {
 } from "@/lib/concert";
 import { PineConeIcon } from "@/components/visuals/ForestLetterMotifs";
 import ShareButtons from "@/components/ShareButtons";
+import FundingLink from "./FundingLink";
 import MokHero from "./MokHero";
 import { SawBoundary } from "./MokMotifs";
 
@@ -44,46 +29,51 @@ const PHOTO_CREDITS = [
 ].join(" · ");
 const HAS_MISSING_PHOTO = MOK_LINEUP.some((artist) => !artist.photo);
 
-// 검색엔진·AI 검색이 이 페이지를 "10월 10일 홍천에서 열리는 무료 공연"으로 읽게 하는
-// 구조화 데이터. 포스터를 놓친 사람이 검색으로 찾아오는 경로다. 주최 측이 밝힌
-// 종료 시각은 '6시경'이라 endDate 를 넣지 않는다 — 어림한 시각을 구조화 데이터에
-// 박으면 캘린더와 리치결과에는 확정된 시각으로 들어간다. 화면 문구로만 안내한다.
+// 끝난 공연의 기록. 마을 잔치와 같은 원칙이다 — 날짜가 지났어도 구조화 데이터는
+// 남기고(검색에서 "그때 무슨 공연이 있었나"로 찾아오는 경로다), 아직 표를 구할 수
+// 있는 공연처럼 읽히는 offers 는 뺀다. 주최 측이 밝힌 종료 시각은 '6시경'뿐이라
+// endDate 는 여전히 넣지 않는다 — 어림한 시각이 리치결과에 확정된 시각으로 박힌다.
 const eventJsonLd = {
   "@context": "https://schema.org",
-  "@type": "Event",
+  "@type": "MusicEvent",
   name: MOK_TITLE,
   startDate: MOK_START.toISOString(),
   eventStatus: "https://schema.org/EventScheduled",
   eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  url: MOK_URL,
+  image: [
+    `${SITE_URL}/images/concert/mok-jareugi-og.jpg`,
+    `${SITE_URL}/images/concert/mok-jareugi-poster.jpg`,
+  ],
+  description: `${MOK_DATE_LABEL} ${MOK_TIME_LABEL}, ${MOK_PLACE}. 벌목을 앞둔 잣나무 숲 앞에서 음악가 ${MOK_LINEUP.length}팀이 함께했습니다. 관람료는 없었습니다.`,
+  isAccessibleForFree: true,
+  inLanguage: "ko",
   location: {
     "@type": "Place",
     name: MOK_PLACE,
-    address: { "@type": "PostalAddress", addressCountry: "KR", streetAddress: MOK_ADDRESS },
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "화촌면 풍천리",
+      addressLocality: "홍천군",
+      addressRegion: "강원특별자치도",
+      addressCountry: "KR",
+    },
   },
   performer: MOK_LINEUP.map((artist) => ({
-    "@type": "PerformingGroup",
+    "@type": "MusicGroup",
     name: artist.name,
   })),
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "KRW",
-    availability: "https://schema.org/InStock",
-    url: MOK_URL,
-  },
-  image: [`${SITE_URL}/images/concert/mok-jareugi-og.jpg`],
-  description: `${MOK_DATE_LABEL} ${MOK_TIME_LABEL}, ${MOK_PLACE}. 벌목을 앞둔 잣나무 숲 앞에서 음악가 ${MOK_LINEUP.length}팀이 함께합니다. 관람료는 없습니다.`,
   organizer: { "@type": "Organization", name: "야호야호단" },
 };
 
 export const metadata: Metadata = {
   alternates: localeAlternates("/concert/mok-jareugi"),
   title: `${MOK_TITLE} — ${MOK_DATE_LABEL} 풍천리`,
-  description: `${MOK_DATE_LABEL} ${MOK_TIME_LABEL}, ${MOK_PLACE}. 곧 베어질 잣나무 숲에서 음악가 ${MOK_LINEUP.length}팀이 노래합니다. 무료.`,
+  description: `${MOK_DATE_LABEL} ${MOK_TIME_LABEL}, ${MOK_PLACE}. 곧 베어질 잣나무 숲 앞에서 음악가 ${MOK_LINEUP.length}팀이 노래했습니다.`,
   openGraph: {
     ...OG_SITE,
     title: `${MOK_TITLE} — ${MOK_DATE_LABEL} 풍천리`,
-    description: `${MOK_DATE_LABEL} ${MOK_TIME_LABEL}, ${MOK_PLACE}. 잣나무가 베어지기 전에, 음악가 ${MOK_LINEUP.length}팀이 모입니다.`,
+    description: `${MOK_DATE_LABEL} ${MOK_TIME_LABEL}, ${MOK_PLACE}. 잣나무가 베어지기 전에, 음악가 ${MOK_LINEUP.length}팀이 모였습니다.`,
     url: MOK_URL,
     images: [
       {
@@ -99,7 +89,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: `${MOK_TITLE} — ${MOK_DATE_LABEL} 풍천리`,
-    description: `${MOK_DATE_LABEL} ${MOK_TIME_LABEL}, ${MOK_PLACE}. 잣나무가 베어지기 전에, 음악가 ${MOK_LINEUP.length}팀이 모입니다.`,
+    description: `${MOK_DATE_LABEL} ${MOK_TIME_LABEL}, ${MOK_PLACE}. 잣나무가 베어지기 전에, 음악가 ${MOK_LINEUP.length}팀이 모였습니다.`,
     images: [`${SITE_URL}/images/concert/mok-jareugi-og.jpg`],
   },
 };
@@ -108,13 +98,7 @@ const INFO_CARDS = [
   { icon: CalendarDays, label: "일시", value: MOK_DATE_LABEL, sub: MOK_TIME_LABEL },
   { icon: MapPin, label: "장소", value: MOK_PLACE, sub: "강원 홍천 화촌면" },
   { icon: Ticket, label: "관람", value: "무료", sub: "예매 없이 누구나" },
-  {
-    icon: Phone,
-    label: "문의",
-    value: MOK_PHONE_COMMITTEE,
-    sub: "대책위 이창후 총무",
-    href: `tel:${MOK_PHONE_COMMITTEE}`,
-  },
+  { icon: Users, label: "출연", value: `${MOK_LINEUP.length}팀`, sub: "포스터 순서대로" },
 ];
 
 /* 이 페이지에 처음 오는 사람은 풍천리를 모른다. 포스터가 강렬해 포스터만 보고
@@ -170,73 +154,12 @@ const BRIEFING = [
   },
 ];
 
-const PARTICIPATE = [
-  {
-    icon: Share2,
-    title: "오기 전, 알려주세요",
-    body: "포스터와 이 페이지를 SNS·단체방에 공유해주세요. 이 숲이 잘린다는 걸 아는 사람이 한 명 더 늘어나는 것이 풍천리에는 힘입니다.",
-  },
-  {
-    icon: Users,
-    title: "현장에서, 함께해요",
-    body: "함께 노래하고 웃고 떠들고 춤추며, 화내고 소리 질러주세요. 조용히 구경만 하는 자리가 아닙니다. 베어질 숲을 직접 보고, 사진을 찍어 ‘#풍천리’로 남겨주세요.",
-  },
-  {
-    icon: Heart,
-    title: "못 오셔도, 연대해요",
-    body: "서명·후원·게시판 응원으로도 함께할 수 있습니다. 멀리 있어도 마음은 잣나무 숲에 닿습니다.",
-  },
-];
-
-const FAQ = [
-  {
-    q: "관람료가 있나요?",
-    a: "무료입니다. 예매나 사전 신청 없이 누구나 오실 수 있어요.",
-  },
-  {
-    q: "몇 시에 시작하고 언제 끝나나요?",
-    a: "오후 2시에 시작해 6시쯤 마칩니다. 팀별 순서는 아직 정해지지 않았습니다. 정해지는 대로 이 페이지에 올리겠습니다.",
-  },
-  {
-    q: "풍천리가 어디인가요?",
-    a: "강원도 홍천군 화촌면 풍천리입니다. 가리산 자락 해발 400~700m의 산촌 마을이고, 양수발전소 건설이 예정된 바로 그곳입니다.",
-  },
-  {
-    q: "어떻게 가나요?",
-    a: "대중교통이 드문 산촌 마을입니다. 서울 광화문·강변역·연신내역·불광역·뚝섬역에서 출발하는 카풀이 있습니다. 맨 위 ‘카풀 신청’에서 자리를 골라주세요. 이동이 어려우시면 대책위로 미리 연락 주세요.",
-  },
-  {
-    q: "무엇을 준비하면 좋나요?",
-    a: "야외 무대입니다. 10월 산간 지역은 해가 지면 기온이 뚝 떨어집니다. 앉을 자리(돗자리)와 두꺼운 겉옷을 꼭 챙기세요.",
-  },
-  {
-    q: "아이와 함께 가도 되나요?",
-    a: "됩니다. 다만 야외에서 앰프를 쓰는 공연이라 소리가 큽니다. 어린아이와 오신다면 귀마개를 준비하시면 좋습니다.",
-  },
-];
-
-// 페이지의 FAQ 를 그대로 구조화한다 — "관람료 있나요" 같은 질문에 검색·AI 답변이
-// 직접 답하게 하려면 화면 문구와 같은 내용이어야 한다.
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: FAQ.map((item) => ({
-    "@type": "Question",
-    name: item.q,
-    acceptedAnswer: { "@type": "Answer", text: item.a },
-  })),
-};
-
 export default function MokJareugiPage() {
   return (
     <div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
       <MokHero />
@@ -251,18 +174,9 @@ export default function MokJareugiPage() {
                 <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
                   {card.label}
                 </p>
-                {card.href ? (
-                  <a
-                    href={card.href}
-                    className="mt-1 block break-keep text-lg font-bold text-[var(--color-text)] hover:text-[var(--color-forest)]"
-                  >
-                    {card.value}
-                  </a>
-                ) : (
-                  <p className="mt-1 break-keep text-lg font-bold text-[var(--color-text)]">
-                    {card.value}
-                  </p>
-                )}
+                <p className="mt-1 break-keep text-lg font-bold text-[var(--color-text)]">
+                  {card.value}
+                </p>
                 <p className="mt-0.5 break-keep text-xs text-[var(--color-text-muted)]">
                   {card.sub}
                 </p>
@@ -287,12 +201,14 @@ export default function MokJareugiPage() {
 
           <dl className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4">
             {STATS.map((s) => (
-              <div key={s.label} className="text-center">
+              // 숫자가 위에 보이지만 마크업은 dt → dd 순서여야 스크린리더가 라벨과 값을
+              // 제대로 짝짓는다. 보이는 순서는 flex-col-reverse 로 뒤집는다.
+              <div key={s.label} className="flex flex-col-reverse text-center">
+                <dt className="mt-3 break-keep text-sm text-white/75 sm:text-base">{s.label}</dt>
                 <dd className="font-serif-display text-4xl font-bold leading-none text-[var(--color-earth-light)] sm:text-5xl">
                   {s.value}
                   <span className="ml-1 text-xl font-bold sm:text-2xl">{s.unit}</span>
                 </dd>
-                <dt className="mt-3 break-keep text-sm text-white/75 sm:text-base">{s.label}</dt>
               </div>
             ))}
           </dl>
@@ -367,7 +283,7 @@ export default function MokJareugiPage() {
           </p>
 
           <p className="mt-10 break-keep text-xl font-bold text-[var(--color-warm)] sm:text-2xl">
-            10월 10일, 아직 서 있는 나무 앞에서 만납시다.
+            10월 10일, 아직 서 있는 나무 앞에서 만났습니다.
           </p>
         </div>
       </section>
@@ -379,11 +295,10 @@ export default function MokJareugiPage() {
             Line-up
           </p>
           <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
-            함께하는 음악가 {MOK_LINEUP.length}팀
+            함께한 음악가 {MOK_LINEUP.length}팀
           </h2>
           <p className="mt-3 break-keep text-sm leading-relaxed text-[var(--color-text-muted)]">
-            포스터에 적힌 순서입니다. 오후 2시에 시작해 6시쯤 마치지만, 팀별 시각은
-            아직 정해지지 않았습니다. 정해지는 대로 이 자리에 올리겠습니다.
+            포스터에 적힌 순서입니다. {MOK_TIME_LABEL}까지 무대가 이어졌습니다.
           </p>
 
           <ul className="mt-10 space-y-2">
@@ -455,110 +370,17 @@ export default function MokJareugiPage() {
         </div>
       </section>
 
-      {/* 이렇게 함께해주세요 */}
-      <section className="px-6 py-16 sm:py-24">
-        <div className="mx-auto max-w-4xl">
-          <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
-            Join Us
-          </p>
-          <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
-            이렇게 함께해주세요
-          </h2>
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {PARTICIPATE.map((p) => (
-              <div key={p.title} className="paper p-6">
-                <div className="relative z-[1]">
-                  <p.icon className="h-7 w-7 text-[var(--color-forest)]" aria-hidden />
-                  <h3 className="mt-4 text-lg font-bold text-[var(--color-text)]">{p.title}</h3>
-                  <p className="mt-2 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                    {p.body}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 오시는 길 */}
-      <section className="px-6 pb-16 sm:pb-24">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
-            Location
-          </p>
-          <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
-            오시는 길
-          </h2>
-          <p className="mt-4 text-balance break-keep text-lg font-bold text-[var(--color-text)]">
-            {MOK_PLACE} · {MOK_ADDRESS}
-          </p>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <div className="paper p-6">
-              <div className="relative z-[1]">
-                <span className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-forest)]">
-                  <Car className="h-5 w-5" aria-hidden />
-                  자가용
-                </span>
-                <p className="mt-3 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                  가리산 자락 해발 400~700m의 산촌 마을입니다. 내비게이션에{" "}
-                  <b className="text-[var(--color-text)]">‘풍천리 마을회관’</b>을 검색해 오세요.
-                  대중교통이 드무니 서울에서 함께 가는 카풀을 이용해보세요.
-                </p>
-                <Link
-                  href="/concert/mok-jareugi/carpool"
-                  className="letter-btn letter-btn--primary mt-4"
-                >
-                  카풀 자리 고르기
-                </Link>
-              </div>
-            </div>
-            <div className="paper p-6">
-              <div className="relative z-[1]">
-                <span className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-forest)]">
-                  <Thermometer className="h-5 w-5" aria-hidden />
-                  10월 산간의 밤
-                </span>
-                <p className="mt-3 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                  해발 수백 미터의 야외 무대입니다. 해가 지면 기온이 뚝 떨어지니 두꺼운 겉옷과
-                  앉을 자리를 꼭 챙기세요. 이동이 어려우시면 대책위로 미리 연락 주세요.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
-            <a
-              href="https://map.kakao.com/link/search/%ED%99%8D%EC%B2%9C%20%ED%99%94%EC%B4%8C%EB%A9%B4%20%ED%92%8D%EC%B2%9C%EB%A6%AC%20%EB%A7%88%EC%9D%84%ED%9A%8C%EA%B4%80"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[#FEE500] px-6 py-3 text-base font-bold text-[#191919] transition-opacity hover:opacity-85"
-            >
-              카카오맵에서 보기
-            </a>
-            <a
-              href="https://map.naver.com/p/search/%ED%99%8D%EC%B2%9C%20%ED%99%94%EC%B4%8C%EB%A9%B4%20%ED%92%8D%EC%B2%9C%EB%A6%AC%20%EB%A7%88%EC%9D%84%ED%9A%8C%EA%B4%80"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[#03C75A] px-6 py-3 text-base font-bold text-white transition-opacity hover:opacity-85"
-            >
-              네이버지도에서 보기
-            </a>
-          </div>
-        </div>
-      </section>
-
       {/* 포스터 — 두 장이 나왔다. 대표는 붉은 목이고, 초록 글리치를 나란히 둔다 */}
       <section id="poster" className="scroll-mt-20 bg-[var(--color-bg-moss)] px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
-            Spread the Word
+            Record
           </p>
           <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
-            포스터를 널리 알려주세요
+            그날의 포스터
           </h2>
           <p className="mt-3 break-keep text-base text-[var(--color-text-muted)]">
-            두 가지가 있습니다. 내려받아 SNS·단체방·동네 게시판에 공유해주세요.
+            두 가지가 나왔습니다. SNS와 단체방, 동네 게시판에 걸렸던 포스터입니다.
           </p>
 
           <div className="mt-8 grid gap-6 sm:grid-cols-2">
@@ -614,53 +436,12 @@ export default function MokJareugiPage() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="px-6 py-16 sm:py-24">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-forest)]">
-            FAQ
-          </p>
-          <h2 className="mt-3 text-balance break-keep font-serif-display text-3xl font-bold text-[var(--color-text)] sm:text-4xl">
-            자주 묻는 질문
-          </h2>
-          <dl className="mt-10 space-y-3">
-            {FAQ.map((item) => (
-              <div key={item.q} className="paper p-6">
-                <div className="relative z-[1]">
-                  <dt className="text-lg font-bold text-[var(--color-text)]">Q. {item.q}</dt>
-                  <dd className="mt-2 break-keep text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-                    {item.a}
-                  </dd>
-                </div>
-              </div>
-            ))}
-          </dl>
-          <p className="mt-6 break-keep text-center text-sm text-[var(--color-text-muted)]">
-            공연 문의{" "}
-            <a
-              href={`tel:${MOK_PHONE_COMMITTEE}`}
-              className="font-bold text-[var(--color-forest)] hover:underline"
-            >
-              {MOK_PHONE_COMMITTEE}
-            </a>{" "}
-            (대책위 이창후 총무) · 무대 문의{" "}
-            <a
-              href={`tel:${MOK_PHONE_STAGE}`}
-              className="font-bold text-[var(--color-forest)] hover:underline"
-            >
-              {MOK_PHONE_STAGE}
-            </a>{" "}
-            ({MOK_PHONE_STAGE_NAME})
-          </p>
-        </div>
-      </section>
-
       {/* 마무리 CTA — 푸터와 같은 색이면 경계가 사라지므로 한 단 밝은 어둠을 쓴다 */}
       <section className="ridge-tail relative overflow-hidden bg-[var(--color-deep-raised)] px-6 text-center">
         <div className="mx-auto max-w-3xl">
           <Megaphone className="mx-auto h-10 w-10 text-[var(--color-earth-light)]" aria-hidden />
           <h2 className="mx-auto mt-5 max-w-[18ch] text-balance break-keep font-serif-display text-3xl font-bold leading-tight text-white sm:text-4xl">
-            풍천리에 오지 못해도 함께할 수 있어요
+            그날 못 오셨어도 함께할 수 있어요
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-balance break-keep text-base text-white/80 sm:text-lg">
             서명 한 번, 응원 한 줄, 후원 한 걸음이 아직 서 있는 나무를 지키는 힘이 됩니다.
@@ -669,9 +450,7 @@ export default function MokJareugiPage() {
             <Link href="/petition" className="letter-btn letter-btn--primary">
               서명하기
             </Link>
-            <a href={MOK_FUNDING_URL} className="letter-btn letter-btn--outline">
-              공연 펀딩하기
-            </a>
+            <FundingLink className="letter-btn letter-btn--outline">공연 펀딩하기</FundingLink>
             <Link href="/board" className="letter-btn letter-btn--outline">
               게시판에 응원 남기기
             </Link>
