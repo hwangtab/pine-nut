@@ -177,9 +177,9 @@ const timelineTranslations: Record<number, EnglishTimelineTranslation> = {
   },
   20: {
     date: "January 2026",
-    title: "Main Construction Scheduled to Begin",
+    title: "Main Construction Scheduled — Delayed by Residents' Resistance",
     description:
-      "Full construction of the pumped-storage plant was scheduled to begin, threatening irreversible changes to the village and the surrounding mountain environment.",
+      "Full construction of the pumped-storage plant was scheduled to begin, threatening irreversible changes to the village and the surrounding mountain environment. Residents' resistance has delayed the start, and KHNP is still preparing to break ground.",
     category: "Other",
   },
   21: {

@@ -57,7 +57,7 @@ export const CARD_NEWS_TEXT = {
       { date: "2024.10", event: "잣나무 2,256그루 벌채 시작" },
       { date: "2025.08", event: "실시계획인가 고시" },
       { date: "2025.11", event: "주민 7명 기소" },
-      { date: "2026.01", event: "본공사 착공 예정" },
+      { date: "2026.01", event: "본공사 착공 연기·준비 중" },
     ],
     cardTitles: [
       "8년째, 705번의 외침",
