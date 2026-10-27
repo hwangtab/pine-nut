@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react";
 
+// matchMedia는 이펙트 안에서만 읽는다 — 렌더 중에 읽으면 SSR(항상 false)과
+// 클라이언트 첫 렌더가 갈라져 하이드레이션 불일치가 난다.
 function prefersReducedMotion() {
-  return (
-    typeof window !== "undefined" &&
-    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
-  );
+  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 }
 
 export default function PetitionAnimatedCounter({
@@ -19,7 +18,10 @@ export default function PetitionAnimatedCounter({
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    if (prefersReducedMotion()) return; // 아래 렌더에서 target 직접 표시
+    if (prefersReducedMotion()) {
+      const raf = requestAnimationFrame(() => setValue(target));
+      return () => cancelAnimationFrame(raf);
+    }
     let raf = 0;
     let startTs = 0;
     const durationMs = 2000;
@@ -34,11 +36,9 @@ export default function PetitionAnimatedCounter({
     return () => cancelAnimationFrame(raf);
   }, [target]);
 
-  const shown = prefersReducedMotion() ? target : value;
-
   return (
     <span className="rise-in font-serif-display font-bold text-4xl sm:text-5xl text-[var(--color-warm)]">
-      {shown.toLocaleString(locale)}
+      {value.toLocaleString(locale)}
     </span>
   );
 }

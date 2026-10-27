@@ -1,6 +1,13 @@
 "use client";
 
+function prefersReducedMotion() {
+  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+}
+
 export default function SignatureConfetti() {
+  // 서명 직후 클라이언트 상태로만 렌더된다(SSR 없음) — 렌더 중에 읽어도 안전하다.
+  if (prefersReducedMotion()) return null;
+
   const colors = ["#C75000", "#FF6B1A", "#2D5016", "#4A7A2E", "#D4A843", "#1B4965"];
   const confettiPieces = Array.from({ length: 40 }, (_, i) => ({
     id: i,

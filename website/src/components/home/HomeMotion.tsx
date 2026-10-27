@@ -70,8 +70,6 @@ export function FadeIn({
   children: React.ReactNode;
   delay?: number;
   className?: string;
-  /** @deprecated framer 시절 y 이동거리 — CSS 리빌은 고정 24px 사용 */
-  y?: number;
 }) {
   const { ref, inView } = useReveal<HTMLDivElement>();
 
